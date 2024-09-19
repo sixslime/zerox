@@ -109,16 +109,17 @@ namespace Perfection
     }
     public record PList<T>
     {
-        public required IEnumerable<T> Elements { get
-            {
-                return _list.Also(ConsumingIter());
-            }
-            init
-            {
-                _enumerator = value.GetEnumerator();
-            }
+        public required IEnumerable<T> Elements {
+            get => _list.Also(ConsumingIter());
+            init => _enumerator = value.GetEnumerator();
         }
         public Updater<IEnumerable<T>> dElements { init => Elements = value(Elements); }
+        public int Count { get
+            {
+                while (_enumerator.MoveNext())
+                    _ = Consume();
+                return _list.Count;
+            } }
         public PList()
         {
             _list = new(0);
