@@ -1,0 +1,361 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Perfection;
+using ControlledFlows;
+using FourZeroOne;
+
+#nullable enable
+namespace FourZeroOne.Core.Tokens
+{
+    using Token;
+    using ResObj = Resolution.IResolution;
+    using r = Resolutions;
+    using Runtime;
+
+    namespace Board
+    {
+        using rb = r.Board;
+        namespace Coordinates
+        {
+            public sealed record Of : PureFunction<Resolution.Board.IPositioned, rb.Coordinates>
+            {
+                public Of(IToken<Resolution.Board.IPositioned> of) : base(of) { }
+                protected override rb.Coordinates EvaluatePure(Resolution.Board.IPositioned in1)
+                {
+                    return in1.Position;
+                }
+            }
+            public sealed record OffsetArea : PureFunction<rb.Coordinates, Resolution.IMulti<rb.Coordinates>, r.Multi<rb.Coordinates>>
+            {
+                public OffsetArea(IToken<rb.Coordinates> offset, IToken<Resolution.IMulti<rb.Coordinates>> area) : base(offset, area) { }
+                protected override r.Multi<rb.Coordinates> EvaluatePure(rb.Coordinates in1, Resolution.IMulti<rb.Coordinates> in2)
+                {
+                    return new() { Values = in2.Values.Map(x => x.Add(in1)) };
+                }
+            }
+        }
+        namespace Hex
+        {
+            public sealed record AllHexes : Value<r.Multi<rb.Hex>>
+            {
+                protected override ICeasableFlow<IOption<r.Multi<rb.Hex>>> Evaluate(IRuntime runtime)
+                {
+                    return ControlledFlow.Resolved(new r.Multi<rb.Hex>() { Values = runtime.GetState().Board.Hexes }.AsSome());
+                }
+            }
+            public sealed record AtPresent : PresentStateGetter<rb.Hex>
+            {
+                public AtPresent(IToken<rb.Hex> source) : base(source) { }
+                protected override PIndexedSet<int, rb.Hex> GetStatePSet(IRuntime runtime) { return runtime.GetState().Board.Hexes; }
+            }
+            namespace Get
+            {
+
+            }
+        }
+        namespace Unit
+        {
+            public sealed record AllUnits : Value<r.Multi<rb.Unit>>
+            {
+                protected override ICeasableFlow<IOption<r.Multi<rb.Unit>>> Evaluate(IRuntime runtime)
+                {
+                    return ControlledFlow.Resolved(new r.Multi<rb.Unit>() { Values = runtime.GetState().Board.Units }.AsSome());
+                }
+            }
+            public sealed record AtPresent : PresentStateGetter<rb.Unit>
+            {
+                public AtPresent(IToken<rb.Unit> source) : base(source) { }
+                protected override PIndexedSet<int, rb.Unit> GetStatePSet(IRuntime runtime) { return runtime.GetState().Board.Units; }
+            }
+            namespace Get
+            {
+                public sealed record HP : PureFunction<rb.Unit, r.Number>
+                {
+                    public HP(IToken<rb.Unit> of) : base(of) { }
+                    protected override r.Number EvaluatePure(rb.Unit in1) { return in1.HP; }
+                }
+                public sealed record Effects : PureFunction<rb.Unit, r.Multi<rb.Unit.Effect>>
+                {
+                    public Effects(IToken<rb.Unit> of) : base(of) { }
+                    protected override r.Multi<rb.Unit.Effect> EvaluatePure(rb.Unit in1) { return in1.Effects; }
+
+                }
+                public sealed record Owner : PureFunction<rb.Unit, rb.Player>
+                {
+                    public Owner(IToken<rb.Unit> source) : base(source) { }
+                    protected override rb.Player EvaluatePure(rb.Unit in1) { return in1.Owner; }
+                }
+            }
+        }
+        namespace Player
+        {
+            public sealed record AllPlayers : Value<r.Multi<rb.Player>>
+            {
+                protected override ICeasableFlow<IOption<r.Multi<rb.Player>>> Evaluate(IRuntime runtime)
+                {
+                    return ControlledFlow.Resolved(new r.Multi<rb.Player>() { Values = runtime.GetState().Board.Players }.AsSome());
+                }
+            }
+            public sealed record AtPresent : PresentStateGetter<rb.Player>
+            {
+                public AtPresent(IToken<rb.Player> source) : base(source) { }
+                protected override PIndexedSet<int, rb.Player> GetStatePSet(IRuntime runtime) { return runtime.GetState().Board.Players; }
+            }
+        }
+    }
+    namespace IO
+    {
+        namespace Select
+        {
+            public sealed record One<R> : Function<Resolution.IMulti<R>, R> where R : class, ResObj
+            {
+                public One(IToken<Resolution.IMulti<R>> from) : base(from) { }
+
+                protected override ICeasableFlow<IOption<R>> Evaluate(IRuntime runtime, IOption<Resolution.IMulti<R>> fromOpt)
+                {
+                    return fromOpt.Check(out var from)
+                        ? runtime.ReadSelection(from.Values, 1)
+                            .WithTransformedResult(selection => selection.RemapAs(x => x.First().NullToNone()).Press())
+                        : ControlledFlow.Resolved(new None<R>());
+                }
+            }
+
+            //make range instead of single int count
+            public sealed record Multiple<R> : Function<Resolution.IMulti<R>, r.Number, r.Multi<R>> where R : class, ResObj
+            {
+                public Multiple(IToken<Resolution.IMulti<R>> from, IToken<r.Number> count) : base(from, count) { }
+
+                protected override ICeasableFlow<IOption<r.Multi<R>>> Evaluate(IRuntime runtime, IOption<Resolution.IMulti<R>> fromOpt, IOption<r.Number> countOpt)
+                {
+                    return (fromOpt.Check(out var from) && countOpt.Check(out var count))
+                        ? runtime.ReadSelection(from.Values, count.Value)
+                            .WithTransformedResult(selection => selection.RemapAs(v => new r.Multi<R>() { Values = v }))
+                        : ControlledFlow.Resolved(new None<r.Multi<R>>());
+                }
+            }
+        }
+    }
+    namespace Number
+    {
+        public sealed record Add : PureFunction<r.Number, r.Number, r.Number>
+        {
+            public Add(IToken<r.Number> operand1, IToken<r.Number> operand2) : base(operand1, operand2) { }
+            protected override r.Number EvaluatePure(r.Number a, r.Number b) { return new() { Value = a.Value + b.Value }; }
+        }
+
+        public sealed record Subtract : PureFunction<r.Number, r.Number, r.Number>
+        {
+            public Subtract(IToken<r.Number> operand1, IToken<r.Number> operand2) : base(operand1, operand2) { }
+            protected override r.Number EvaluatePure(r.Number a, r.Number b) { return new() { Value = a.Value - b.Value }; }
+        }
+
+        public sealed record Multiply : PureFunction<r.Number, r.Number, r.Number>
+        {
+            public Multiply(IToken<r.Number> operand1, IToken<r.Number> operand2) : base(operand1, operand2) { }
+            protected override r.Number EvaluatePure(r.Number a, r.Number b) { return new() { Value = a.Value * b.Value }; }
+        }
+
+        public sealed record Negate : PureFunction<r.Number, r.Number>
+        {
+            public Negate(IToken<r.Number> operand) : base(operand) { }
+            protected override r.Number EvaluatePure(r.Number operand) { return new() { Value = -operand.Value }; }
+        }
+        namespace Compare
+        {
+            public sealed record GreaterThan : PureFunction<r.Number, r.Number, r.Bool>
+            {
+                public GreaterThan(IToken<r.Number> a, IToken<r.Number> b) : base(a, b) { }
+                protected override r.Bool EvaluatePure(r.Number in1, r.Number in2)
+                {
+                    return new() { IsTrue = in1.Value > in2.Value };
+                }
+            }
+        }
+    }
+    namespace Multi
+    {
+        
+        public sealed record Union<R> : PureCombiner<Resolution.IMulti<R>, r.Multi<R>> where R : class, ResObj
+        {
+            public Union(IEnumerable<IToken<Resolution.IMulti<R>>> elements) : base(elements) { }
+            public Union(params IToken<Resolution.IMulti<R>>[] elements) : base(elements) { }
+            protected override r.Multi<R> EvaluatePure(IEnumerable<Resolution.IMulti<R>> inputs)
+            {
+                return new() { Values = inputs.Map(x => x.Values).Flatten() };
+            }
+        }
+
+        public sealed record Intersection<R> : PureCombiner<Resolution.IMulti<R>, r.Multi<R>> where R : class, ResObj
+        {
+            public Intersection(IEnumerable<IToken<Resolution.IMulti<R>>> sets) : base(sets) { }
+            public Intersection(params IToken<Resolution.IMulti<R>>[] sets) : base(sets) { }
+            protected override r.Multi<R> EvaluatePure(IEnumerable<Resolution.IMulti<R>> inputs)
+            {
+                var iter = inputs.GetEnumerator();
+                if (!iter.MoveNext()) return new();
+                var o = iter.Current.Values;
+                while (iter.MoveNext())
+                {
+                    o = o.Where(x => iter.Current.Values.HasMatch(y => x.Equals(y)));
+                }
+                return new() { Values = o };
+            }
+        }
+
+        public sealed record Exclusion<R> : PureFunction<Resolution.IMulti<R>, Resolution.IMulti<R>, r.Multi<R>> where R : class, ResObj
+        {
+            public Exclusion(IToken<Resolution.IMulti<R>> from, IToken<Resolution.IMulti<R>> exclude) : base(from, exclude) { }
+            protected override r.Multi<R> EvaluatePure(Resolution.IMulti<R> in1, Resolution.IMulti<R> in2)
+            {
+                return new() { Values = in1.Values.Where(x => !in2.Values.HasMatch(y => y.ResEqual(x))) };
+            }
+        }
+
+        public sealed record Yield<R> : PureFunction<R, r.Multi<R>> where R : class, ResObj
+        {
+            public Yield(IToken<R> value) : base(value) { }
+            protected override r.Multi<R> EvaluatePure(R in1)
+            {
+                return new() { Values = in1.Yield() };
+            }
+        }
+
+        public sealed record Count : PureFunction<Resolution.IMulti<ResObj>, r.Number>
+        {
+            public Count(IToken<Resolution.IMulti<ResObj>> of) : base(of) { }
+            protected override r.Number EvaluatePure(Resolution.IMulti<ResObj> in1)
+            {
+                return new() { Value = in1.Count };
+            }
+        }
+    }
+
+    public record PerformAction<R> : Function<r.Action<R>, R> where R : class, ResObj
+    {
+        public PerformAction(IToken<r.Action<R>> a) : base(a) { }
+
+        protected override ICeasableFlow<IOption<R>> Evaluate(IRuntime runtime, IOption<r.Action<R>> in1)
+        {
+            return in1.Check(out var action) ? runtime.PerformAction(action.Token) : ControlledFlow.Resolved(new None<R>());
+        }
+    }
+    public record SubEnvironment<ROut> : PureFunction<Resolution.IMulti<ResObj>, ROut, ROut>
+        where ROut : class, ResObj
+    {
+        public SubEnvironment(IToken<Resolution.IMulti<ResObj>> envModifiers, IToken<ROut> evalToken) : base(envModifiers, evalToken) { }
+        protected override ROut EvaluatePure(Resolution.IMulti<ResObj> _, ROut in2)
+        {
+            return in2;
+        }
+    }
+
+    public record Recursive<RArg1, ROut> : Macro.OneArg<RArg1, ROut>
+        where RArg1 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public readonly Proxy.IProxy<Recursive<RArg1, ROut>, ROut> RecursiveProxy;
+        public Recursive(IToken<RArg1> arg1, Proxy.IProxy<Recursive<RArg1, ROut>, ROut> recursiveProxy) : base(arg1, recursiveProxy)
+        {
+            RecursiveProxy = recursiveProxy;
+        }
+    }
+    public record Recursive<RArg1, RArg2, ROut> : Macro.TwoArg<RArg1, RArg2, ROut>
+        where RArg1 : class, ResObj
+        where RArg2 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public readonly Proxy.IProxy<Recursive<RArg1, RArg2, ROut>, ROut> RecursiveProxy;
+        public Recursive(IToken<RArg1> arg1, IToken<RArg2> arg2, Proxy.IProxy<Recursive<RArg1, RArg2, ROut>, ROut> recursiveProxy) : base(arg1, arg2, recursiveProxy)
+        {
+            RecursiveProxy = recursiveProxy;
+        }
+    }
+    public record Recursive<RArg1, RArg2, RArg3, ROut> : Macro.ThreeArg<RArg1, RArg2, RArg3, ROut>
+        where RArg1 : class, ResObj
+        where RArg2 : class, ResObj
+        where RArg3 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public readonly Proxy.IProxy<Recursive<RArg1, RArg2, RArg3, ROut>, ROut> RecursiveProxy;
+        public Recursive(IToken<RArg1> arg1, IToken<RArg2> arg2, IToken<RArg3> arg3, Proxy.IProxy<Recursive<RArg1, RArg2, RArg3, ROut>, ROut> recursiveProxy) : base(arg1, arg2, arg3, recursiveProxy)
+        {
+            RecursiveProxy = recursiveProxy;
+        }
+    }
+    
+    // there should only be 1 token that returns an action and it should be fixed
+    public record IfElse<R> : Function<r.Bool, r.Action<R>, r.Action<R>, r.Action<R>> where R : class, ResObj
+    {
+        public IfElse(IToken<r.Bool> condition, IToken<r.Action<R>> positive, IToken<r.Action<R>> negative) : base(condition, positive, negative) { }
+        protected override ICeasableFlow<IOption<r.Action<R>>> Evaluate(IRuntime runtime, IOption<r.Bool> in1, IOption<r.Action<R>> in2, IOption<r.Action<R>> in3)
+        {
+            return ControlledFlow.Resolved( in1.RemapAs(x => x.IsTrue ? in2 : in3).Press() );
+        }
+    }
+    public sealed record Variable<R> : Token<r.DeclareVariable<R>> where R : class, ResObj
+    {
+        public Variable(VariableIdentifier<R> identifier, IToken<R> token) : base(token)
+        {
+            _identifier = identifier;
+        }
+        public override ICeasableFlow<IOption<r.DeclareVariable<R>>> Resolve(IRuntime runtime, IOption<ResObj>[] args)
+        {
+            var refObject = (IOption<R>)args[0];
+            return ControlledFlow.Resolved(refObject.RemapAs(x => new r.DeclareVariable<R>(_identifier) { Object = refObject }));
+        }
+
+        private readonly VariableIdentifier<R> _identifier;
+    }
+
+    public sealed record Rule<R> : PureValue<r.DeclareRule> where R : class, ResObj
+    {
+        public Rule(Rule.IRule rule)
+        {
+            _rule = rule;
+        }
+
+        protected override r.DeclareRule EvaluatePure()
+        {
+            return new r.DeclareRule() { Rule = _rule };
+        }
+
+        private readonly Rule.IRule _rule;
+    }
+    public sealed record Fixed<R> : PureValue<R> where R : class, ResObj
+    {
+        public Fixed(R resolution)
+        {
+            _resolution = resolution;
+        }
+        protected override R EvaluatePure()
+        {
+            return _resolution;
+        }
+        private readonly R _resolution;
+    }
+    public sealed record Nolla<R> : Value<R> where R : class, ResObj
+    {
+        public Nolla() { }
+        protected override ICeasableFlow<IOption<R>> Evaluate(IRuntime _) { return ControlledFlow.Resolved(new None<R>()); }
+    }
+    public sealed record Reference<R> : Value<R> where R : class, ResObj
+    {
+        public Reference(VariableIdentifier<R> toIdentifier) => _toIdentifier = toIdentifier;
+
+        protected override ICeasableFlow<IOption<R>> Evaluate(IRuntime runtime)
+        {
+            var o = (runtime.GetState().Variables[_toIdentifier] is IOption<R> val) ? val :
+                throw new Exception($"Reference token resolved to non-existent or wrongly-typed object.\n" +
+                $"Identifier: {_toIdentifier}\n" +
+                $"Expected: {typeof(R).Name}\n" +
+                $"Recieved: {runtime.GetState().Variables[_toIdentifier]}\n" +
+                $"Current Scope:\n" +
+                $"{runtime.GetState().Variables.Elements.AccumulateInto("", (msg, x) => msg + $"> '{x.key}' : {x.val}\n")}");
+            return ControlledFlow.Resolved(o);
+        }
+
+        private readonly VariableIdentifier<R> _toIdentifier;
+    }
+}
