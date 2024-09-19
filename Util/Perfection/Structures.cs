@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System;
 
+#nullable disable
 namespace Perfection
 {
     /// <summary>
@@ -108,18 +109,53 @@ namespace Perfection
     }
     public record PList<T>
     {
-        public IEnumerable<T> Elements { get => _list; init { _list = new(value); Count = _list.Count; } }
+        public required IEnumerable<T> Elements { get
+            {
+                return _list.Also(ConsumingIter());
+            }
+            init
+            {
+                _enumerator = value.GetEnumerator();
+            }
+        }
         public Updater<IEnumerable<T>> dElements { init => Elements = value(Elements); }
-        public readonly int Count;
         public PList()
         {
             _list = new(0);
-            Count = 0;
+            _cachedIndex = -1;
         }
-        public T this[int i] => _list[i];
+        public T this[int i] { get
+            {
+                _ = ConsumeToIndex(i);
+                return _list[i];
+            } 
+        }
         public T[] ToArray() { return _list.ToArray(); }
         public override string ToString() => Elements.AccumulateInto("PList:\n", (msg, x) => msg + $"- {x}\n");
 
+        private IEnumerable<T> ConsumingIter()
+        {
+            while (_enumerator.MoveNext())
+            {
+                yield return Consume();
+            }
+        }
+        private IEnumerable<T> ConsumeToIndex(int index)
+        {
+            while (index < _cachedIndex)
+            {
+                yield return Consume();
+            }
+        }
+        private T Consume()
+        {
+            var v = _enumerator.Current;
+            _list.Add(v);
+            _cachedIndex++;
+            return v;
+        }
+        private IEnumerator<T> _enumerator;
+        private int _cachedIndex;
         private readonly List<T> _list;
     }
 }
