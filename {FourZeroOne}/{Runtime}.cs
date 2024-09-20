@@ -172,7 +172,7 @@ namespace FourZeroOne.Runtime
                         _stateStack = (linkedStateNode with { Value = newState }).AsSome();
                     }
                     PushToStack(ref _resolutionStack, operationNode.Depth, resolution);
-                    PopFromStack(ref _operationStack);
+                    _ = PopFromStack(ref _operationStack);
                     StoreFrame(operationNode.Value, resolution.AsSome());
                 }
                 else
