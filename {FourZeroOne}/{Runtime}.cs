@@ -145,7 +145,6 @@ namespace FourZeroOne.Runtime
                     // Assert(appliedRules.Count = 0 || appliedPostMacro.Count = 0); logically right?
                     appliedRules.AddRange(appliedPostMacro);
                 }
-                PushToStack(ref _stateStack, currentStateNode.Depth, stateMinusApplied);
                 RecieveRuleSteps(appliedRules);
                 RecieveToken(ruledToken);
                 operationNode = operationNode with { Value = ruledToken };
@@ -163,7 +162,15 @@ namespace FourZeroOne.Runtime
                     _evalThread = operationNode.Value.ResolveUnsafe(this, argPass);
                     var resolution = await _evalThread;
                     RecieveResolution(resolution);
-                    if (resolution.Check(out var notNolla)) _currentState = _currentState.WithResolution(notNolla);
+
+                    var poppedStateNode = PopFromStack(ref _stateStack);
+                    if (_stateStack.Check(out var linkedStateNode) && linkedStateNode.Depth == poppedStateNode.Depth)
+                    {
+                        var newState = resolution.Check(out var notNolla)
+                            ? poppedStateNode.Value.WithResolution(notNolla)
+                            : poppedStateNode.Value;
+                        _stateStack = (linkedStateNode with { Value = newState }).AsSome();
+                    }
                     PushToStack(ref _resolutionStack, operationNode.Depth, resolution);
                     PopFromStack(ref _operationStack);
                     StoreFrame(operationNode.Value, resolution.AsSome());
@@ -171,6 +178,7 @@ namespace FourZeroOne.Runtime
                 else
                 {
                     PushToStack(ref _operationStack, operationNode.Depth + 1, operationNode.Value.ArgTokens.AsMutList().Reversed());
+                    PushToStack(ref _stateStack, currentStateNode.Depth + 1, currentStateNode.Value.Yield(argAmount));
                 }
             }
 
