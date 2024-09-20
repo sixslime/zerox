@@ -29,6 +29,7 @@ namespace FourZeroOne.Runtime
             _evalThread = ControlledFlow.Resolved(new None<ResObj>());
             _runThread = ControlledFlow.Resolved((Resolved)(new None<ResObj>()));
             _frameStack = new None<LinkedStack<Frame>>();
+            _appliedRuleStack = new None<LinkedStack<PList<Rule.IRule>>>();
             StoreFrame(program, new None<Resolved>());
         }
         public async Task<Resolved> Run()

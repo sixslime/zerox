@@ -69,7 +69,7 @@ public class Tester
 
         var startState = new FourZeroOne.State()
         {
-            Rules = new() { Elements = Iter.Over<FourZeroOne.Rule.IRule>() },
+            Rules = new() { Elements = [] },
             Variables = new(7),
             Board = new() { }
         };
