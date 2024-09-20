@@ -23,7 +23,7 @@ namespace FourZeroOne.Runtime
     {
         public FrameSaving(State startingState, IToken program)
         {
-            _currentState = startingState;
+            _stateStack = new LinkedStack<State>(startingState).AsSome();
             _operationStack = new LinkedStack<IToken>(program).AsSome();
             _resolutionStack = new None<LinkedStack<Resolved>>();
             _evalThread = ControlledFlow.Resolved(new None<ResObj>());
@@ -41,7 +41,7 @@ namespace FourZeroOne.Runtime
         {
             _runThread.Resolve(resolution);
         }
-        public State GetState() => _currentState;
+        public State GetState() => _stateStack.Check(out var state) ? state.Value : throw new Exception("[FrameSaving Runtime] No state exists on state stack?");
         public ICeasableFlow<IOption<R>> PerformAction<R>(IToken<R> action) where R : class, ResObj
         {
             var node = _operationStack.Unwrap();
@@ -78,7 +78,7 @@ namespace FourZeroOne.Runtime
             var frame = frameStack.Value;
             _operationStack = frame.OperationStack;
             _resolutionStack = frame.ResolutionStack;
-            _currentState = frame.State;
+            _stateStack = frame.StateStack;
             _frameStack = frameStack.AsSome();
             _evalThread.Cease();
             StartEvalThread();
@@ -86,11 +86,11 @@ namespace FourZeroOne.Runtime
 
         protected record Frame
         {
-            public IToken Token { get; init; }
-            public IOption<Resolved> Resolution { get; init; }
-            public State State { get; init; }
-            public IOption<LinkedStack<IToken>> OperationStack { get; init; }
-            public IOption<LinkedStack<Resolved>> ResolutionStack { get; init; }
+            public required IToken Token { get; init; }
+            public required IOption<Resolved> Resolution { get; init; }
+            public required IOption<LinkedStack<State>> StateStack { get; init; }
+            public required IOption<LinkedStack<IToken>> OperationStack { get; init; }
+            public required IOption<LinkedStack<Resolved>> ResolutionStack { get; init; }
         }
         protected record LinkedStack<T>
         {
@@ -133,7 +133,10 @@ namespace FourZeroOne.Runtime
         {
             while (_operationStack.Check(out var operationNode))
             {
-                var (ruledToken, stateMinusApplied) = RuleStep(operationNode.Value, _currentState, out var appliedRules);
+                // _stateStack should never be empty, depth 0 is the starting state.
+                var currentStateNode = _stateStack.Unwrap();
+
+                var (ruledToken, stateMinusApplied) = RuleStep(operationNode.Value, currentStateNode.Value, out var appliedRules);
                 if (ruledToken is Macro.Unsafe.IMacro macro)
                 {
                     var expanded = macro.ExpandUnsafe();
@@ -142,13 +145,12 @@ namespace FourZeroOne.Runtime
                     // Assert(appliedRules.Count = 0 || appliedPostMacro.Count = 0); logically right?
                     appliedRules.AddRange(appliedPostMacro);
                 }
-                _currentState = stateMinusApplied;
+                PushToStack(ref _stateStack, currentStateNode.Depth, stateMinusApplied);
                 RecieveRuleSteps(appliedRules);
                 RecieveToken(ruledToken);
                 operationNode = operationNode with { Value = ruledToken };
                 _operationStack = operationNode.AsSome();
 
-                //we need a depth based state, _currentState isnt gunna cut it.
                 int argAmount = operationNode.Value.ArgTokens.Length;
 
                 if (argAmount == 0 || (_resolutionStack.Check(out var resolutionNode) && resolutionNode.Depth == operationNode.Depth + 1))
@@ -181,7 +183,7 @@ namespace FourZeroOne.Runtime
             {
                 Resolution = resolution,
                 Token = token,
-                State = _currentState,
+                StateStack = _stateStack,
                 OperationStack = _operationStack,
                 ResolutionStack = _resolutionStack,
             };
@@ -213,10 +215,9 @@ namespace FourZeroOne.Runtime
             }
             return o;
         }
-
-        private State _currentState;
         private ICeasableFlow<Resolved> _evalThread;
         private ControlledFlow<Resolved> _runThread;
+        private IOption<LinkedStack<State>> _stateStack;
         private IOption<LinkedStack<Frame>> _frameStack;
         private IOption<LinkedStack<IToken>> _operationStack;
         private IOption<LinkedStack<Resolved>> _resolutionStack;
