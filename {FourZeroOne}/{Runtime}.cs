@@ -217,6 +217,7 @@ namespace FourZeroOne.Runtime
         }
         private ICeasableFlow<Resolved> _evalThread;
         private ControlledFlow<Resolved> _runThread;
+        private IOption<LinkedStack<PList<Rule.IRule>>> _appliedRuleStack;
         private IOption<LinkedStack<State>> _stateStack;
         private IOption<LinkedStack<Frame>> _frameStack;
         private IOption<LinkedStack<IToken>> _operationStack;
