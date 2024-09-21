@@ -65,12 +65,12 @@ public class Tester
                     }).pPerform()
                 })
         });
-        var token_test = token_tutorial_1;
+        var token_test = token_tutorial_3;
         var rule_test = MakeProxy.AsRuleFor<t.Number.Add, r.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tConst().pDirect(P))));
 
         var startState = new FourZeroOne.State()
         {
-            Rules = new() { Elements = [rule_test] },
+            Rules = new() { Elements = [] },
             Variables = new(7),
             Board = new() { }
         };
