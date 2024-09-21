@@ -145,6 +145,7 @@ namespace Perfection
         {
             while (index < _cachedIndex)
             {
+                if (!_enumerator.MoveNext()) throw new IndexOutOfRangeException();
                 yield return Consume();
             }
         }
