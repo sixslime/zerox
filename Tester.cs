@@ -23,7 +23,7 @@ public class Tester
         // ALL user input is gathered via IO tokens.
         // tutorial on how to make tokens to get you up to speed:
         // (tokens for in-game usage will include resolutions of actual objects/actions, but work exactly the same)
-        var token_tutorial_1 = 5.tConst().tAdd(10.tConst()); // 5 + 10 
+        var token_tutorial_1 = 1.tConst().tAdd(2.tConst().tAdd(3.tConst())); // 5 + 10 
         var token_tutorial_2 = Iter.Over(1, 2, 3, 4).Map(x => x.tConst()).tToMulti(); // [1, 2, 3, 4]
         var token_tutorial_3 = token_tutorial_2.tIO_SelectOne(); //prompt user to select one from [1, 2, 3, 4], and return it
         var token_tutorial_4 = MakeToken.tSubEnvironment<r.Number>(new()
@@ -66,10 +66,11 @@ public class Tester
                 })
         });
         var token_test = token_tutorial_1;
+        var rule_test = MakeProxy.AsRuleFor<t.Number.Add, r.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tConst().pDirect(P))));
 
         var startState = new FourZeroOne.State()
         {
-            Rules = new() { Elements = [] },
+            Rules = new() { Elements = [rule_test] },
             Variables = new(7),
             Board = new() { }
         };

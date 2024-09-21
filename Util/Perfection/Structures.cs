@@ -110,7 +110,15 @@ namespace Perfection
     public record PList<T>
     {
         public required IEnumerable<T> Elements {
-            get => _list.Also(ConsumingIter());
+            get
+            {
+                int i = 0;
+                while (ConsumeToIndex(i))
+                {
+                    yield return _list[i];
+                    i++;
+                }
+            }
             init => _enumerator = value.GetEnumerator();
         }
         public Updater<IEnumerable<T>> dElements { init => Elements = value(Elements); }
@@ -127,7 +135,7 @@ namespace Perfection
         }
         public T this[int i] { get
             {
-                _ = ConsumeToIndex(i);
+                if (!ConsumeToIndex(i)) throw new IndexOutOfRangeException();
                 return _list[i];
             } 
         }
@@ -141,13 +149,14 @@ namespace Perfection
                 yield return Consume();
             }
         }
-        private IEnumerable<T> ConsumeToIndex(int index)
+        private bool ConsumeToIndex(int index)
         {
-            while (index < _cachedIndex)
+            while (index > _cachedIndex)
             {
-                if (!_enumerator.MoveNext()) throw new IndexOutOfRangeException();
-                yield return Consume();
+                if (!_enumerator.MoveNext()) return false;
+                _ = Consume();
             }
+            return true;
         }
         private T Consume()
         {
