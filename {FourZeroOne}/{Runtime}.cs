@@ -104,6 +104,15 @@ namespace FourZeroOne.Runtime
                 Link = this.None();
                 Depth = 0;
             }
+            public IEnumerable<LinkedStack<T>> ThroughStack()
+            {
+                var link = this;
+                do
+                {
+                    yield return link;
+                } while (link.Link.Check(out link) && link is not null);
+
+            }
             public static IOption<LinkedStack<T>> Linked(IOption<LinkedStack<T>> parent, int depth, IEnumerable<T> values)
             {
                 return values.AccumulateInto(parent, (stack, x) => new LinkedStack<T>(stack, x, depth).AsSome());
@@ -117,32 +126,33 @@ namespace FourZeroOne.Runtime
             }
         }
 
-        private static (IToken token, State state) RuleStep(IToken token, State state, out PList<(IToken fromToken, Rule.IRule appliedRule)> appliedRules)
-        {
-            var oToken = ApplyRules(token, state.Rules.Elements, out var internalAppliedRules);
-            var oState = state with
-            {
-                dRules = Q => Q with
-                {
-                    dElements = Q => Q.Where(x => !internalAppliedRules.Elements.Map(a => a.rule).HasMatch(y => x == y))
-                }
-            };
-            appliedRules = internalAppliedRules;
-            return (oToken, oState);
-        }
         private async void StartEvalThread()
         {
             while (_operationStack.Check(out var operationNode))
             {
                 // _stateStack should never be empty, depth 0 is the starting state.
                 var currentStateNode = _stateStack.Unwrap();
+                var rulesToApply = currentStateNode.Value.Rules.Elements;
 
-                var (ruledToken, stateMinusApplied) = RuleStep(operationNode.Value, currentStateNode.Value, out var appliedRules);
+                if (_appliedRuleStack.Check(out var appliedRuleNode))
+                {
+                    for (int t = appliedRuleNode.Depth - currentStateNode.Depth; t > 0; t--)
+                    {
+                        _ = PopFromStack(ref _appliedRuleStack);
+                    }
+                    if (_appliedRuleStack.Check(out appliedRuleNode) && appliedRuleNode is not null)
+                    {
+                        rulesToApply = rulesToApply.Except(appliedRuleNode.Value.Elements);
+                    }
+                }
+                
+                var ruledToken = ApplyRules(operationNode.Value, rulesToApply, out var appliedRules);
+                rulesToApply = rulesToApply.Except(appliedRules.Elements.Map(x => x.rule));
                 if (ruledToken is Macro.Unsafe.IMacro macro)
                 {
                     var expanded = macro.ExpandUnsafe();
                     RecieveMacroExpansion(macro, expanded);
-                    (ruledToken, stateMinusApplied) = RuleStep(expanded, stateMinusApplied, out var appliedPostMacro);
+                    ruledToken = ApplyRules(expanded, rulesToApply, out var appliedPostMacro);
                     // Assert(appliedRules.Count = 0 || appliedPostMacro.Count = 0); logically right?
                     appliedRules = appliedRules with { dElements = Q => Q.Also(appliedPostMacro.Elements) };
                 }
@@ -180,6 +190,8 @@ namespace FourZeroOne.Runtime
                 {
                     PushToStack(ref _operationStack, operationNode.Depth + 1, operationNode.Value.ArgTokens.AsMutList().Reversed());
                     PushToStack(ref _stateStack, currentStateNode.Depth + 1, currentStateNode.Value.Yield(argAmount));
+                    var previousRules = _appliedRuleStack.Check(out var ruleStack) ? ruleStack.Value.Elements : [];
+                    PushToStack(ref _appliedRuleStack, operationNode.Depth + 1, new PList<Rule.IRule>() { Elements = previousRules.Also(appliedRules.Elements.Map(x => x.rule))});
                 }
             }
 
@@ -227,6 +239,7 @@ namespace FourZeroOne.Runtime
         }
         private ICeasableFlow<Resolved> _evalThread;
         private ControlledFlow<Resolved> _runThread;
+        // I guess _appliedRuleStack could be a stack of normal IEnumerables, but PList has P in it
         private IOption<LinkedStack<PList<Rule.IRule>>> _appliedRuleStack;
         private IOption<LinkedStack<State>> _stateStack;
         private IOption<LinkedStack<Frame>> _frameStack;

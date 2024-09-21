@@ -41,6 +41,7 @@ namespace Perfection
         {
             return new Some<T>(value);
         }
+        // kinda gay that it cannot be compiler asserted that val is not null if returns true.
         public static bool Check<T>(this IOption<T> option, out T val)
         {
             if (option is ISome<T> ok)
