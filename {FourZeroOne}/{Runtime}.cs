@@ -117,14 +117,14 @@ namespace FourZeroOne.Runtime
             }
         }
 
-        private static (IToken token, State state) RuleStep(IToken token, State state, out List<(IToken fromToken, Rule.IRule appliedRule)> appliedRules)
+        private static (IToken token, State state) RuleStep(IToken token, State state, out PList<(IToken fromToken, Rule.IRule appliedRule)> appliedRules)
         {
             var oToken = ApplyRules(token, state.Rules.Elements, out var internalAppliedRules);
             var oState = state with
             {
                 dRules = Q => Q with
                 {
-                    dElements = Q => Q.Where(x => !internalAppliedRules.Map(a => a.rule).HasMatch(y => x == y))
+                    dElements = Q => Q.Where(x => !internalAppliedRules.Elements.Map(a => a.rule).HasMatch(y => x == y))
                 }
             };
             appliedRules = internalAppliedRules;
@@ -144,9 +144,9 @@ namespace FourZeroOne.Runtime
                     RecieveMacroExpansion(macro, expanded);
                     (ruledToken, stateMinusApplied) = RuleStep(expanded, stateMinusApplied, out var appliedPostMacro);
                     // Assert(appliedRules.Count = 0 || appliedPostMacro.Count = 0); logically right?
-                    appliedRules.AddRange(appliedPostMacro);
+                    appliedRules = appliedRules with { dElements = Q => Q.Also(appliedPostMacro.Elements) };
                 }
-                RecieveRuleSteps(appliedRules);
+                RecieveRuleSteps(appliedRules.Elements);
                 RecieveToken(ruledToken);
                 operationNode = operationNode with { Value = ruledToken };
                 _operationStack = operationNode.AsSome();
@@ -210,18 +210,19 @@ namespace FourZeroOne.Runtime
             return o;
         }
         private static void PushToStack<T>(ref IOption<LinkedStack<T>> stack, int depth, params T[] values) { PushToStack(ref stack, depth, values.IEnumerable()); }
-        private static IToken ApplyRules(IToken token, IEnumerable<Rule.IRule> rules, out List<(IToken fromToken, Rule.IRule rule)> appliedRules)
+        private static IToken ApplyRules(IToken token, IEnumerable<Rule.IRule> rules, out PList<(IToken fromToken, Rule.IRule rule)> appliedRules)
         {
             var o = token;
-            appliedRules = new();
+            var appliedRulesList = new List<(IToken fromToken, Rule.IRule rule)>();
             foreach (var rule in rules)
             {
                 if (rule.TryApply(o).Check(out var newToken))
                 {
-                    appliedRules.Add((o, rule));
+                    appliedRulesList.Add((o, rule));
                     o = newToken;
                 }
             }
+            appliedRules = new() { Elements = appliedRulesList };
             return o;
         }
         private ICeasableFlow<Resolved> _evalThread;
