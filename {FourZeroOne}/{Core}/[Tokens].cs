@@ -284,7 +284,7 @@ namespace FourZeroOne.Core.Tokens
         {
             RecursiveProxy = recursiveProxy;
         }
-        protected override IOption<string> CustomToString() => $"@{(RecursiveProxy.GetHashCode()%7777).ToBase("yfohetnsqjkbmwvzp", "")}({Arg1})".AsSome();
+        protected override IOption<string> CustomToString() => $"@\"{(RecursiveProxy.GetHashCode()%7777).ToBase("vwmbkjqzsnthdiueoalrcgpfy", "")}\"({Arg1})".AsSome();
 
     }
     public record Recursive<RArg1, RArg2, ROut> : Macro.TwoArg<RArg1, RArg2, ROut>
@@ -297,7 +297,7 @@ namespace FourZeroOne.Core.Tokens
         {
             RecursiveProxy = recursiveProxy;
         }
-        protected override IOption<string> CustomToString() => $"@{(RecursiveProxy.GetHashCode() % 7777).ToBase("lroeuhnsntqjkxz", "")}({Arg1}, {Arg2})".AsSome();
+        protected override IOption<string> CustomToString() => $"@\"{(RecursiveProxy.GetHashCode() % 7777).ToBase("vwmbkjqzsnthdiueoalrcgpfy", "")}\"({Arg1}, {Arg2})".AsSome();
 
     }
     public record Recursive<RArg1, RArg2, RArg3, ROut> : Macro.ThreeArg<RArg1, RArg2, RArg3, ROut>
@@ -311,7 +311,7 @@ namespace FourZeroOne.Core.Tokens
         {
             RecursiveProxy = recursiveProxy;
         }
-        protected override IOption<string> CustomToString() => $"@{(RecursiveProxy.GetHashCode() % 7777).ToBase("aoeuhtnszqjkbmwvx", "")}({Arg1}, {Arg2}, {Arg3})".AsSome();
+        protected override IOption<string> CustomToString() => $"@\"{(RecursiveProxy.GetHashCode() % 7777).ToBase("vwmbkjqzsnthdiueoalrcgpfy", "")}\"({Arg1}, {Arg2}, {Arg3})".AsSome();
 
     }
 
