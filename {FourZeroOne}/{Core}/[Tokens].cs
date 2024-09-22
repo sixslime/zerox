@@ -263,6 +263,8 @@ namespace FourZeroOne.Core.Tokens
         {
             return in2;
         }
+        protected override IOption<string> CustomToString() => $"let {Arg1} in {{{Arg2}}}".AsSome();
+
     }
 
     public record Recursive<RArg1, ROut> : Macro.OneArg<RArg1, ROut>
@@ -319,6 +321,7 @@ namespace FourZeroOne.Core.Tokens
             var refObject = (IOption<R>)args[0];
             return ControlledFlow.Resolved(refObject.RemapAs(x => new r.DeclareVariable<R>(_identifier) { Object = refObject }));
         }
+        protected override IOption<string> CustomToString() => $"{_identifier}={ArgTokens[0]}".AsSome();
 
         private readonly VariableIdentifier<R> _identifier;
     }
