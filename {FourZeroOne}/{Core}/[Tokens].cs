@@ -6,6 +6,7 @@ using Perfection;
 using ControlledFlows;
 using FourZeroOne;
 using MorseCode.ITask;
+using PROTO_ZeroxFour_1.Util;
 
 #nullable enable
 namespace FourZeroOne.Core.Tokens
@@ -214,6 +215,11 @@ namespace FourZeroOne.Core.Tokens
                 }
                 return new() { Values = o };
             }
+            protected override IOption<string> CustomToString()
+            {
+                List<IToken<Resolution.IMulti<R>>> argList = [.. Args];
+                return $"{argList[0]}{argList[1..].AccumulateInto("", (msg, v) => $"{msg}I{v}")}".AsSome();
+            }
         }
 
         public sealed record Exclusion<R> : PureFunction<Resolution.IMulti<R>, Resolution.IMulti<R>, r.Multi<R>> where R : class, ResObj
@@ -223,6 +229,8 @@ namespace FourZeroOne.Core.Tokens
             {
                 return new() { Values = in1.Values.Where(x => !in2.Values.HasMatch(y => y.ResEqual(x))) };
             }
+            protected override IOption<string> CustomToString() => $"{Arg1} - {Arg2}".AsSome();
+
         }
 
         public sealed record Yield<R> : PureFunction<R, r.Multi<R>> where R : class, ResObj
@@ -253,6 +261,7 @@ namespace FourZeroOne.Core.Tokens
         {
             return in1.Check(out var action) ? runtime.PerformAction(action.Token) : Task.FromResult(new None<R>()).AsITask();
         }
+        protected override IOption<string> CustomToString() => $"!{Arg1}".AsSome();
     }
     public record SubEnvironment<ROut> : PureFunction<Resolution.IMulti<ResObj>, ROut, ROut>
         where ROut : class, ResObj
@@ -275,6 +284,8 @@ namespace FourZeroOne.Core.Tokens
         {
             RecursiveProxy = recursiveProxy;
         }
+        protected override IOption<string> CustomToString() => $"@{(RecursiveProxy.GetHashCode()%7777).ToBase("yfohetnsqjkbmwvzp", "")}({Arg1})".AsSome();
+
     }
     public record Recursive<RArg1, RArg2, ROut> : Macro.TwoArg<RArg1, RArg2, ROut>
         where RArg1 : class, ResObj
@@ -286,6 +297,8 @@ namespace FourZeroOne.Core.Tokens
         {
             RecursiveProxy = recursiveProxy;
         }
+        protected override IOption<string> CustomToString() => $"@{(RecursiveProxy.GetHashCode() % 7777).ToBase("lroeuhnsntqjkxz", "")}({Arg1}, {Arg2})".AsSome();
+
     }
     public record Recursive<RArg1, RArg2, RArg3, ROut> : Macro.ThreeArg<RArg1, RArg2, RArg3, ROut>
         where RArg1 : class, ResObj
@@ -298,8 +311,10 @@ namespace FourZeroOne.Core.Tokens
         {
             RecursiveProxy = recursiveProxy;
         }
+        protected override IOption<string> CustomToString() => $"@{(RecursiveProxy.GetHashCode() % 7777).ToBase("aoeuhtnszqjkbmwvx", "")}({Arg1}, {Arg2}, {Arg3})".AsSome();
+
     }
-    
+
     // there should only be 1 token that returns an action and it should be fixed
     public record IfElse<R> : Function<r.Bool, r.Action<R>, r.Action<R>, r.Action<R>> where R : class, ResObj
     {
@@ -308,6 +323,7 @@ namespace FourZeroOne.Core.Tokens
         {
             return Task.FromResult( in1.RemapAs(x => x.IsTrue ? in2 : in3).Press() ).AsITask();
         }
+        protected override IOption<string> CustomToString() => $"if {Arg1} then {Arg2} else {Arg3}".AsSome();
     }
     public sealed record Variable<R> : Token<r.DeclareVariable<R>> where R : class, ResObj
     {
