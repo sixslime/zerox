@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Perfection;
 using ControlledFlows;
-
+using MorseCode.ITask;
 #nullable enable
 namespace FourZeroOne.Macro
 {
@@ -18,7 +18,7 @@ namespace FourZeroOne.Macro
     }
     public record Macro<R> : Token<R>, IMacro<R> where R : class, ResObj
     {
-        public override ICeasableFlow<IOption<R>> Resolve(IRuntime _, IOption<ResObj>[] __)
+        public override ITask<IOption<R>> Resolve(IRuntime _, IOption<ResObj>[] __)
         {
             throw new System.Exception("Macro directly resolved without expansion.");
         }

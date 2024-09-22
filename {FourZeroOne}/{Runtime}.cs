@@ -4,6 +4,7 @@ using Perfection;
 using ControlledFlows;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using MorseCode.ITask;
 #nullable enable
 namespace FourZeroOne.Runtime
 {
@@ -15,8 +16,8 @@ namespace FourZeroOne.Runtime
     {
         public State GetState();
         public Task<Resolved> Run();
-        public ICeasableFlow<IOption<R>> PerformAction<R>(IToken<R> action) where R : class, ResObj;
-        public ICeasableFlow<IOption<IEnumerable<R>>> ReadSelection<R>(IEnumerable<R> from, int count) where R : class, ResObj;
+        public ITask<IOption<R>> PerformAction<R>(IToken<R> action) where R : class, ResObj;
+        public ITask<IOption<IEnumerable<R>>> ReadSelection<R>(IEnumerable<R> from, int count) where R : class, ResObj;
     }
 
     public abstract class FrameSaving : Runtime.IRuntime
@@ -26,7 +27,6 @@ namespace FourZeroOne.Runtime
             _stateStack = new LinkedStack<State>(startingState).AsSome();
             _operationStack = new LinkedStack<IToken>(program).AsSome();
             _resolutionStack = new None<LinkedStack<Resolved>>();
-            _evalThread = ControlledFlow.Resolved(new None<ResObj>());
             _runThread = ControlledFlow.Resolved((Resolved)(new None<ResObj>()));
             _frameStack = new None<LinkedStack<Frame>>();
             _appliedRuleStack = new None<LinkedStack<PList<Rule.IRule>>>();
@@ -44,7 +44,7 @@ namespace FourZeroOne.Runtime
             _runThread.Resolve(resolution);
         }
         public State GetState() => _stateStack.Check(out var state) ? state.Value : throw new Exception("[FrameSaving Runtime] No state exists on state stack?");
-        public ICeasableFlow<IOption<R>> PerformAction<R>(IToken<R> action) where R : class, ResObj
+        public ITask<IOption<R>> PerformAction<R>(IToken<R> action) where R : class, ResObj
         {
             var node = _operationStack.Unwrap();
             if (node.Value is not Core.Tokens.PerformAction<R> pToken)
@@ -57,12 +57,12 @@ namespace FourZeroOne.Runtime
                 Value = action
             }).AsSome();
             _restartThreadDueToAction = true;
-            return ControlledFlow.Resolved(new None<R>());
+            return Task.FromResult(new None<R>()).AsITask();
 
             // This thread should be ceased, as it is part of the eval thread.
 
         }
-        public ICeasableFlow<IOption<IEnumerable<R>>> ReadSelection<R>(IEnumerable<R> from, int count) where R : class, ResObj
+        public ITask<IOption<IEnumerable<R>>> ReadSelection<R>(IEnumerable<R> from, int count) where R : class, ResObj
         {
             return SelectionImplementation(from, count);
         }
@@ -72,7 +72,7 @@ namespace FourZeroOne.Runtime
         protected abstract void RecieveFrame(LinkedStack<Frame> frameStackNode);
         protected abstract void RecieveMacroExpansion(IToken macro, IToken expanded);
         protected abstract void RecieveRuleSteps(IEnumerable<(IToken token, Rule.IRule appliedRule)> steps);
-        protected abstract ICeasableFlow<IOption<IEnumerable<R>>> SelectionImplementation<R>(IEnumerable<R> from, int count) where R : class, ResObj;
+        protected abstract ITask<IOption<IEnumerable<R>>> SelectionImplementation<R>(IEnumerable<R> from, int count) where R : class, ResObj;
 
         protected void GoToFrame(LinkedStack<Frame> frameStack)
         {
@@ -81,7 +81,6 @@ namespace FourZeroOne.Runtime
             _resolutionStack = frame.ResolutionStack;
             _stateStack = frame.StateStack;
             _frameStack = frameStack.AsSome();
-            _evalThread.Cease();
             StartEvalThread();
         }
 
@@ -170,8 +169,7 @@ namespace FourZeroOne.Runtime
                     {
                         argPass[i] = PopFromStack(ref _resolutionStack).Value;
                     }
-                    _evalThread = operationNode.Value.ResolveUnsafe(this, argPass);
-                    var resolution = await _evalThread;
+                    var resolution = await operationNode.Value.ResolveUnsafe(this, argPass);
                     if (_restartThreadDueToAction)
                     {
                         _restartThreadDueToAction = false;
@@ -242,7 +240,6 @@ namespace FourZeroOne.Runtime
             appliedRules = new() { Elements = appliedRulesList };
             return o;
         }
-        private ICeasableFlow<Resolved> _evalThread;
         private ControlledFlow<Resolved> _runThread;
         // I guess _appliedRuleStack could be a stack of normal IEnumerables, but PList has P in it
         private IOption<LinkedStack<PList<Rule.IRule>>> _appliedRuleStack;

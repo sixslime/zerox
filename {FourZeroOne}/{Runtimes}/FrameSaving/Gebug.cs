@@ -4,6 +4,7 @@ using FourZeroOne.Resolution;
 using FourZeroOne.Rule;
 using FourZeroOne.Token.Unsafe;
 using Perfection;
+using MorseCode.ITask;
 namespace FourZeroOne.Runtimes.FrameSaving
 {
     public class Gebug : Runtime.FrameSaving
@@ -47,10 +48,10 @@ namespace FourZeroOne.Runtimes.FrameSaving
             Console.WriteLine($"{depthPad}> {token}");
         }
 
-        protected override ICeasableFlow<IOption<IEnumerable<R>>> SelectionImplementation<R>(IEnumerable<R> from, int count)
+        protected override ITask<IOption<IEnumerable<R>>> SelectionImplementation<R>(IEnumerable<R> from, int count)
         {
             R[] selectables = [.. from];
-            if (selectables.Length < count) return ControlledFlow.Resolved(new None<IEnumerable<R>>());
+            if (selectables.Length < count) return Task.FromResult(new None<IEnumerable<R>>()).AsITask();
             string showString =
                 selectables
                 .Enumerate()
@@ -76,7 +77,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
                     Console.WriteLine(showString);
                     continue;
                 }
-                return ControlledFlow.Resolved(selectionIndicies.Map(x => selectables[x]).AsSome());
+                return Task.FromResult(selectionIndicies.Map(x => selectables[x]).AsSome()).AsITask();
             }
             
         }
