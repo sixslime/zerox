@@ -31,12 +31,12 @@ namespace FourZeroOne.Runtime
             _frameStack = new None<LinkedStack<Frame>>();
             _appliedRuleStack = new None<LinkedStack<PList<Rule.IRule>>>();
             StoreFrame(program, new None<Resolved>());
-            _restartThreadDueToAction = false;
+            _discontinueEval = false;
         }
         public async Task<Resolved> Run()
         {
             _runThread = new ControlledFlow<Resolved>();
-            StartEvalThread();
+            StartEval();
             return await _runThread;
         }
         private void ResolveRun(Resolved resolution)
@@ -56,7 +56,7 @@ namespace FourZeroOne.Runtime
             {
                 Value = action
             }).AsSome();
-            _restartThreadDueToAction = true;
+            _discontinueEval = true;
             return Task.FromResult(new None<R>()).AsITask();
 
             // This thread should be ceased, as it is part of the eval thread.
@@ -81,7 +81,7 @@ namespace FourZeroOne.Runtime
             _resolutionStack = frame.ResolutionStack;
             _stateStack = frame.StateStack;
             _frameStack = frameStack.AsSome();
-            StartEvalThread();
+            StartEval();
         }
 
         protected record Frame
@@ -125,7 +125,7 @@ namespace FourZeroOne.Runtime
             }
         }
 
-        private async void StartEvalThread()
+        private async void StartEval()
         {
             while (_operationStack.Check(out var operationNode))
             {
@@ -170,9 +170,9 @@ namespace FourZeroOne.Runtime
                         argPass[i] = PopFromStack(ref _resolutionStack).Value;
                     }
                     var resolution = await operationNode.Value.ResolveUnsafe(this, argPass);
-                    if (_restartThreadDueToAction)
+                    if (_discontinueEval)
                     {
-                        _restartThreadDueToAction = false;
+                        _discontinueEval = false;
                         continue;
                     }
                     RecieveResolution(resolution);
@@ -247,6 +247,6 @@ namespace FourZeroOne.Runtime
         private IOption<LinkedStack<Frame>> _frameStack;
         private IOption<LinkedStack<IToken>> _operationStack;
         private IOption<LinkedStack<Resolved>> _resolutionStack;
-        private bool _restartThreadDueToAction;
+        private bool _discontinueEval;
     }
 }
