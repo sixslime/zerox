@@ -120,6 +120,7 @@ namespace FourZeroOne.Core.Tokens
                             .WithTransformedResult(selection => selection.RemapAs(x => x.First().NullToNone()).Press())
                         : ControlledFlow.Resolved(new None<R>());
                 }
+                protected override IOption<string> CustomToString() => $"Select({Arg1})".AsSome();
             }
 
             //make range instead of single int count
@@ -134,6 +135,8 @@ namespace FourZeroOne.Core.Tokens
                             .WithTransformedResult(selection => selection.RemapAs(v => new r.Multi<R>() { Values = v }))
                         : ControlledFlow.Resolved(new None<r.Multi<R>>());
                 }
+                protected override IOption<string> CustomToString() => $"SelectMulti({Arg1}, {Arg2})".AsSome();
+
             }
         }
     }
@@ -143,24 +146,28 @@ namespace FourZeroOne.Core.Tokens
         {
             public Add(IToken<r.Number> operand1, IToken<r.Number> operand2) : base(operand1, operand2) { }
             protected override r.Number EvaluatePure(r.Number a, r.Number b) { return new() { Value = a.Value + b.Value }; }
+            protected override IOption<string> CustomToString() => $"({Arg1} + {Arg2})".AsSome();
         }
 
         public sealed record Subtract : PureFunction<r.Number, r.Number, r.Number>
         {
             public Subtract(IToken<r.Number> operand1, IToken<r.Number> operand2) : base(operand1, operand2) { }
             protected override r.Number EvaluatePure(r.Number a, r.Number b) { return new() { Value = a.Value - b.Value }; }
+            protected override IOption<string> CustomToString() => $"({Arg1} - {Arg2})".AsSome();
         }
 
         public sealed record Multiply : PureFunction<r.Number, r.Number, r.Number>
         {
             public Multiply(IToken<r.Number> operand1, IToken<r.Number> operand2) : base(operand1, operand2) { }
             protected override r.Number EvaluatePure(r.Number a, r.Number b) { return new() { Value = a.Value * b.Value }; }
+            protected override IOption<string> CustomToString() => $"({Arg1} * {Arg2})".AsSome();
         }
 
         public sealed record Negate : PureFunction<r.Number, r.Number>
         {
             public Negate(IToken<r.Number> operand) : base(operand) { }
             protected override r.Number EvaluatePure(r.Number operand) { return new() { Value = -operand.Value }; }
+            protected override IOption<string> CustomToString() => $"(-{Arg1})".AsSome();
         }
         namespace Compare
         {
@@ -171,6 +178,7 @@ namespace FourZeroOne.Core.Tokens
                 {
                     return new() { IsTrue = in1.Value > in2.Value };
                 }
+                protected override IOption<string> CustomToString() => $"({Arg1} > {Arg2})".AsSome();
             }
         }
     }
@@ -184,6 +192,11 @@ namespace FourZeroOne.Core.Tokens
             protected override r.Multi<R> EvaluatePure(IEnumerable<Resolution.IMulti<R>> inputs)
             {
                 return new() { Values = inputs.Map(x => x.Values).Flatten() };
+            }
+            protected override IOption<string> CustomToString()
+            {
+                List<IToken<Resolution.IMulti<R>>> argList = [.. Args];
+                return $"[{argList[0]}{argList[1..].AccumulateInto("", (msg, v) => $"{msg}, {v}")}]".AsSome();
             }
         }
 
@@ -220,6 +233,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 return new() { Values = in1.Yield() };
             }
+            protected override IOption<string> CustomToString() => $"^{Arg1}".AsSome();
         }
 
         public sealed record Count : PureFunction<Resolution.IMulti<ResObj>, r.Number>
@@ -334,11 +348,13 @@ namespace FourZeroOne.Core.Tokens
             return _resolution;
         }
         private readonly R _resolution;
+        protected override IOption<string> CustomToString() => $"|{_resolution}|".AsSome();
     }
     public sealed record Nolla<R> : Value<R> where R : class, ResObj
     {
         public Nolla() { }
         protected override ICeasableFlow<IOption<R>> Evaluate(IRuntime _) { return ControlledFlow.Resolved(new None<R>()); }
+        protected override IOption<string> CustomToString() => "nolla".AsSome();
     }
     public sealed record Reference<R> : Value<R> where R : class, ResObj
     {

@@ -27,7 +27,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
 
         protected override void RecieveResolution(IOption<IResolution> resolution)
         {
-            Console.WriteLine($"{depthPad}* {resolution}");
+            Console.WriteLine($"{depthPad}: {resolution}");
             depth--;
         }
 
@@ -40,11 +40,11 @@ namespace FourZeroOne.Runtimes.FrameSaving
         protected override void RecieveToken(IToken token)
         {
             if (_seenTokens.Add(token)) {
-                Console.WriteLine($"{depthPad}: {token}");
+                Console.WriteLine($"{depthPad}>> {token}");
                 depth++;
                 return;
             }
-            Console.WriteLine($"{depthPad}^ {token}");
+            Console.WriteLine($"{depthPad}> {token}");
         }
 
         protected override ICeasableFlow<IOption<IEnumerable<R>>> SelectionImplementation<R>(IEnumerable<R> from, int count)

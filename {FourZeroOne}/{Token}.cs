@@ -35,7 +35,13 @@ namespace FourZeroOne.Token
         public Token(IEnumerable<Unsafe.IToken> args) : this(args.AsList().ToArray()) { }
         public abstract ICeasableFlow<IOption<R>> Resolve(IRuntime runtime, IOption<ResObj>[] args);
         public ICeasableFlow<IOption<ResObj>> ResolveUnsafe(IRuntime runtime, IOption<ResObj>[] args) { return Resolve(runtime, args); }
+        protected virtual IOption<string> CustomToString() => new None<string>();
+
         private Unsafe.IToken[] _argTokens;
+
+        public sealed override string ToString() => CustomToString().Check(out var custom)
+                ? custom
+                : $"{this.GetType().Name}( {_argTokens.AccumulateInto("", (msg, arg) => $"{msg}{arg} ")})";
     }
 
     #region Functions

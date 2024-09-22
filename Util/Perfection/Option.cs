@@ -17,7 +17,7 @@ namespace Perfection
         private readonly T _value;
         public override string ToString()
         {
-            return $"| {_value} |";
+            return $"{_value}";
         }
     }
     public record None<T> : IOption<T>

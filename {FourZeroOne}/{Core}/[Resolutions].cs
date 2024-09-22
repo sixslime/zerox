@@ -103,12 +103,14 @@ namespace FourZeroOne.Core.Resolutions
         public int Value { get; init; }
         public Updater<int> dValue { init => Value = value(Value); }
         public static implicit operator Number(int value) => new() { Value = value };
+        public override string ToString() => $"{Value}";
     }
     public sealed record Bool : NoOp
     {
         public bool IsTrue { get; init; }
         public Updater<bool> dIsTrue { init => IsTrue = value(IsTrue); }
         public static implicit operator Bool(bool value) => new() { IsTrue = value };
+        public override string ToString() => $"{IsTrue}";
     }
 
     public sealed record Multi<R> : Operation, IMulti<R> where R : class, ResObj
@@ -130,7 +132,8 @@ namespace FourZeroOne.Core.Resolutions
         private readonly PList<R> _list;
         public override string ToString()
         {
-            return $"[Multi<{typeof(R).Name}> : {_list}]";
+            List<R> argList = [.. _list.Elements];
+            return $"[{argList[0]}{argList[1..].AccumulateInto("", (msg, v) => $"{msg}, {v}")}]";
         }
     }
 
