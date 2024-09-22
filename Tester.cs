@@ -28,11 +28,19 @@ public class Tester
         var token_tutorial_3 = token_tutorial_2.tIO_SelectOne(); //prompt user to select one from [1, 2, 3, 4], and return it
         var token_tutorial_4 = MakeToken.tSubEnvironment<r.Number>(new()
         {
-            Environment = token_tutorial_2.tIO_SelectOne().tAs(out var mySelection).tYield(),
+            Environment = token_tutorial_2.tIO_SelectOne().tAsVariable(out var mySelection).tYield(),
             SubToken = mySelection.tRef().tMultiply(mySelection.tRef())
         }); //creates a Sub-Environment (aka scope) where 'mySelection' stores the resolution of a user selection, then references it twice to multiply it by itself.
         // is different than just calling 'token_tutorial_2.tIO_SelectOne()' twice, that would prompt the user selection 2 times, possibly resolving different values each time (because the user could select 2 different things obv.).
-
+        var token_tutorial_5 = MakeToken.tSubEnvironment<r.Number>(new()
+        {
+            Environment = 0.tConst().tAsVariable(out var x).tYield(),
+            SubToken = MakeToken.tSubEnvironment<r.Number>(new()
+            {
+                Environment = 1.tConst().tAsVariable(out var y).tYield(),
+                SubToken = y.tRef()
+            }).tAdd(x.tRef())
+        });
         // 'Rules' can be made and applied to tokens to replace certain types of tokens with other tokens.
         // Rules are expressed by 'Proxies', which are basically just tokens, but have the ability to reference information about the token they are meant to replace (such as arguements).
         // logically, the replaced token and replacing token must both have the same resolution type.
@@ -65,7 +73,7 @@ public class Tester
                     }).pPerform()
                 })
         });
-        var token_test = token_complicated;
+        var token_test = token_tutorial_5;
         var rule_test = MakeProxy.AsRuleFor<t.Number.Add, r.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tConst().pDirect(P))));
 
         var startState = new FourZeroOne.State()

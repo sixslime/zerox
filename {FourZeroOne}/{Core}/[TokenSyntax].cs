@@ -89,10 +89,12 @@ namespace FourZeroOne.Core.TokenSyntax
     {
         public static Tokens.IO.Select.One<R> tIO_SelectOne<R>(this IToken<Multi<R>> source) where R : class, ResObj
         { return new(source); }
+        public static Tokens.PerformAction<R> tPerform<R>(this IToken<Action<R>> source) where R : class, ResObj
+        { return new(source); }
         public static Tokens.IO.Select.Multiple<R> tIO_SelectMany<R>(this IToken<Multi<R>> source, IToken<Number> count) where R : class, ResObj
         { return new(source, count); }
 
-        public static Variable<R> tAs<R>(this IToken<R> token, out VariableIdentifier<R> ident) where R : class, ResObj
+        public static Variable<R> tAsVariable<R>(this IToken<R> token, out VariableIdentifier<R> ident) where R : class, ResObj
         {
             ident = new();
             return new Variable<R>(ident, token);
