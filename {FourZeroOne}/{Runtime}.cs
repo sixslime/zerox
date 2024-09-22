@@ -31,6 +31,7 @@ namespace FourZeroOne.Runtime
             _frameStack = new None<LinkedStack<Frame>>();
             _appliedRuleStack = new None<LinkedStack<PList<Rule.IRule>>>();
             StoreFrame(program, new None<Resolved>());
+            _restartThreadDueToAction = false;
         }
         public async Task<Resolved> Run()
         {
@@ -53,14 +54,13 @@ namespace FourZeroOne.Runtime
             // directly replaces the PerformAction token with it's stored Action token in the operation stack.
             _operationStack = (node with
             {
-                Value = pToken.Arg1
+                Value = action
             }).AsSome();
-            var thisThread = _evalThread;
-            StartEvalThread();
-            thisThread.Cease();
+            _restartThreadDueToAction = true;
+            return ControlledFlow.Resolved(new None<R>());
+
             // This thread should be ceased, as it is part of the eval thread.
 
-            throw new System.Exception("Fuck!");
         }
         public ICeasableFlow<IOption<IEnumerable<R>>> ReadSelection<R>(IEnumerable<R> from, int count) where R : class, ResObj
         {
@@ -172,6 +172,11 @@ namespace FourZeroOne.Runtime
                     }
                     _evalThread = operationNode.Value.ResolveUnsafe(this, argPass);
                     var resolution = await _evalThread;
+                    if (_restartThreadDueToAction)
+                    {
+                        _restartThreadDueToAction = false;
+                        continue;
+                    }
                     RecieveResolution(resolution);
 
                     var poppedStateNode = PopFromStack(ref _stateStack);
@@ -245,5 +250,6 @@ namespace FourZeroOne.Runtime
         private IOption<LinkedStack<Frame>> _frameStack;
         private IOption<LinkedStack<IToken>> _operationStack;
         private IOption<LinkedStack<Resolved>> _resolutionStack;
+        private bool _restartThreadDueToAction;
     }
 }
