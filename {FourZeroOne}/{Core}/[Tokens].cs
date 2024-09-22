@@ -374,6 +374,7 @@ namespace FourZeroOne.Core.Tokens
                 $"{runtime.GetState().Variables.Elements.AccumulateInto("", (msg, x) => msg + $"> '{x.key}' : {x.val}\n")}");
             return ControlledFlow.Resolved(o);
         }
+        protected override IOption<string> CustomToString() => $"&{_toIdentifier}".AsSome();
 
         private readonly VariableIdentifier<R> _toIdentifier;
     }

@@ -9,7 +9,7 @@ namespace FourZeroOne.Token
     using ResObj = Resolution.IResolution;
     using Runtime;
     using r = Core.Resolutions;
-
+    using PROTO_ZeroxFour_1.Util;
     public interface IToken<out R> : Unsafe.IToken where R : class, ResObj
     {
         // "ToNodes(IRuntime runtime)".
@@ -22,7 +22,7 @@ namespace FourZeroOne.Token
         public VariableIdentifier() : base() { }
         public override string ToString()
         {
-            return $"[&{typeof(R).Name}:{_value}]";
+            return $"{_value.ToBase("yfpgcrlaoeuidhtnszqjkxbmwsv".ToUpper())}";
         }
     }
     public abstract record Token<R> : IToken<R> where R : class, ResObj

@@ -153,6 +153,7 @@ namespace FourZeroOne.Core.Resolutions
                 dElements = Q => Q.Also(((Token.Unsafe.VariableIdentifier)Identifier, (IOption<ResObj>)Object).Yield())
             }
         };
+        public override string ToString() => $"{Identifier}<-{Object}";
     }
 
     public sealed record DeclareRule : Operation
