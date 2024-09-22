@@ -31,17 +31,20 @@ namespace FourZeroOne.Token
         public Token(params Unsafe.IToken[] args)
         {
             _argTokens = args;
+            _uniqueId = ++_assigner;
         }
         public Token(IEnumerable<Unsafe.IToken> args) : this(args.AsList().ToArray()) { }
         public abstract ICeasableFlow<IOption<R>> Resolve(IRuntime runtime, IOption<ResObj>[] args);
         public ICeasableFlow<IOption<ResObj>> ResolveUnsafe(IRuntime runtime, IOption<ResObj>[] args) { return Resolve(runtime, args); }
         protected virtual IOption<string> CustomToString() => new None<string>();
 
-        private Unsafe.IToken[] _argTokens;
-
         public sealed override string ToString() => CustomToString().Check(out var custom)
                 ? custom
                 : $"{this.GetType().Name}( {_argTokens.AccumulateInto("", (msg, arg) => $"{msg}{arg} ")})";
+        private static int _assigner = 0;
+        private Unsafe.IToken[] _argTokens;
+        private int _uniqueId;
+        
     }
 
     #region Functions
