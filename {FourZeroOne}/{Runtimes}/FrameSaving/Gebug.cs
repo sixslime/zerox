@@ -49,7 +49,36 @@ namespace FourZeroOne.Runtimes.FrameSaving
 
         protected override ICeasableFlow<IOption<IEnumerable<R>>> SelectionImplementation<R>(IEnumerable<R> from, int count)
         {
-            throw new NotImplementedException();
+            R[] selectables = [.. from];
+            if (selectables.Length < count) return ControlledFlow.Resolved(new None<IEnumerable<R>>());
+            string showString =
+                selectables
+                .Enumerate()
+                .AccumulateInto($">> SELECT {count}", (msg, entry) => $"{msg}\n> [{entry.index}] - {entry.value}");
+            Console.WriteLine(showString);
+
+            while (true)
+            {
+                var inputString = Console.ReadLine();
+                if (inputString is null) continue;
+                int[] selectionIndicies = [.. inputString.Split(" ", StringSplitOptions.RemoveEmptyEntries)
+                    .Map(x => int.TryParse(x, out var value) ? value : -1)
+                    .Where(x => x >= 0)];
+                if (selectionIndicies.Length != count)
+                {
+                    Console.WriteLine($"{count} inputs required, {selectionIndicies.Length} given.");
+                    Console.WriteLine(showString);
+                    continue;
+                }
+                if (selectionIndicies.HasMatch(x => x > selectables.Length - 1))
+                {
+                    Console.WriteLine($"One or more inputs is invalid.");
+                    Console.WriteLine(showString);
+                    continue;
+                }
+                return ControlledFlow.Resolved(selectionIndicies.Map(x => selectables[x]).AsSome());
+            }
+            
         }
 
     }

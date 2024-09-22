@@ -119,12 +119,15 @@ namespace Perfection
                     i++;
                 }
             }
-            init => _enumerator = value.GetEnumerator();
+            init
+            {
+                _enumerator = value.GetEnumerator();
+            }
         }
         public Updater<IEnumerable<T>> dElements { init => Elements = value(Elements); }
         public int Count { get
             {
-                while (_enumerator.MoveNext())
+                while (MoveNext())
                     _ = Consume();
                 return _list.Count;
             } }
@@ -139,24 +142,24 @@ namespace Perfection
                 return _list[i];
             } 
         }
-        public T[] ToArray() { return _list.ToArray(); }
+        public T[] ToArray() => [.. Elements];
         public override string ToString() => Elements.AccumulateInto("PList:\n", (msg, x) => msg + $"- {x}\n");
 
-        private IEnumerable<T> ConsumingIter()
-        {
-            while (_enumerator.MoveNext())
-            {
-                yield return Consume();
-            }
-        }
         private bool ConsumeToIndex(int index)
         {
             while (index > _cachedIndex)
             {
-                if (!_enumerator.MoveNext()) return false;
+                if (!MoveNext()) return false;
                 _ = Consume();
             }
             return true;
+        }
+        private bool MoveNext()
+        {
+            if (_enumerator is null) return false;
+            if (_enumerator.MoveNext()) return true;
+            _enumerator = null;
+            return false;
         }
         private T Consume()
         {
