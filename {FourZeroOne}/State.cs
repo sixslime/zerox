@@ -12,11 +12,11 @@ namespace FourZeroOne
     using rb = Core.Resolutions.Board;
     public record State
     {
-        public PMap<VariableIdentifier, IOption<ResObj>> Variables { get; init; }
+        public required PMap<VariableIdentifier, IOption<ResObj>> Variables { get; init; }
         public Updater<PMap<VariableIdentifier, IOption<ResObj>>> dVariables { init => Variables = value(Variables); }
-        public PList<Rule.IRule> Rules { get; init; }
+        public required PList<Rule.IRule> Rules { get; init; }
         public Updater<PList<Rule.IRule>> dRules { init => Rules = value(Rules); }
-        public BoardState Board { get; init; }
+        public required BoardState Board { get; init; }
         public Updater<BoardState> dBoard { init => Board = value(Board); }
         public State WithResolution(ResObj resolution) { return resolution.ChangeState(this); }
     }
@@ -30,7 +30,7 @@ namespace FourZeroOne
         public BoardState()
         {
             Units = new(unit => unit.UUID, 13);
-            Hexes = new(hex => hex.UUID, 133);
+            Hexes = new(hex => hex.UUID, 367);
             Players = new(player => player.UUID, 7);
         }
     }

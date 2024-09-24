@@ -207,7 +207,7 @@ namespace FourZeroOne.Core.Tokens
             protected override r.Multi<R> EvaluatePure(IEnumerable<Resolution.IMulti<R>> inputs)
             {
                 var iter = inputs.GetEnumerator();
-                if (!iter.MoveNext()) return new();
+                if (!iter.MoveNext()) return new() { Values = [] };
                 var o = iter.Current.Values;
                 while (iter.MoveNext())
                 {

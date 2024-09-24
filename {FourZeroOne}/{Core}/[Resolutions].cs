@@ -13,9 +13,9 @@ namespace FourZeroOne.Core.Resolutions
         using Resolution.Board;
         public sealed record Coordinates : NoOp
         {
-            public int R { get; init; }
-            public int U { get; init; }
-            public int D { get; init; }
+            public required int R { get; init; }
+            public required int U { get; init; }
+            public required int D { get; init; }
             public int this[int i] => i switch
             {
                 0 => R,
@@ -41,7 +41,7 @@ namespace FourZeroOne.Core.Resolutions
         public abstract record Hex : NoOp, IPositioned, IStateTracked
         {
             public int UUID => _uuid;
-            public Coordinates Position { get; init; }
+            public required Coordinates Position { get; init; }
             public Updater<Coordinates> dPosition { init => Position = value(Position); }
             public Hex(int id)
             {
@@ -57,13 +57,13 @@ namespace FourZeroOne.Core.Resolutions
         public sealed record Unit : NoOp, IPositioned, IStateTracked
         {
             public int UUID => _uuid;
-            public Number HP { get; init; }
+            public required Number HP { get; init; }
             public Updater<Number> dHP { init => HP = value(HP); }
-            public Coordinates Position { get; init; }
+            public required Coordinates Position { get; init; }
             public Updater<Coordinates> dPosition { init => Position = value(Position); }
-            public Multi<Effect> Effects { get; init; }
+            public required Multi<Effect> Effects { get; init; }
             public Updater<Multi<Effect>> dEffects { init => Effects = value(Effects); }
-            public Player Owner { get; init; } 
+            public required Player Owner { get; init; } 
             public Updater<Player> dOwner { init => Owner = value(Owner); }
             public Unit(int id)
             {
@@ -96,19 +96,19 @@ namespace FourZeroOne.Core.Resolutions
 
     public sealed record Action<R> : NoOp where R : class, ResObj
     {
-        public IToken<R> Token { get; init; }
+        public required IToken<R> Token { get; init; }
         public override string ToString() => $"{Token}!";
     }
     public sealed record Number : NoOp
     {
-        public int Value { get; init; }
+        public required int Value { get; init; }
         public Updater<int> dValue { init => Value = value(Value); }
         public static implicit operator Number(int value) => new() { Value = value };
         public override string ToString() => $"{Value}";
     }
     public sealed record Bool : NoOp
     {
-        public bool IsTrue { get; init; }
+        public required bool IsTrue { get; init; }
         public Updater<bool> dIsTrue { init => IsTrue = value(IsTrue); }
         public static implicit operator Bool(bool value) => new() { IsTrue = value };
         public override string ToString() => $"{IsTrue}";
@@ -117,12 +117,12 @@ namespace FourZeroOne.Core.Resolutions
     public sealed record Multi<R> : Operation, IMulti<R> where R : class, ResObj
     {
         public int Count => _list.Count;
-        public IEnumerable<R> Values { get => _list.Elements; init => _list = new() { Elements = value }; }
+        public required IEnumerable<R> Values { get => _list.Elements; init => _list = new() { Elements = value }; }
         public Updater<IEnumerable<R>> dValues { init => Values = value(Values); }
         public override bool ResEqual(ResObj? other)
         {
             if (other is not IMulti<R> othermulti) return false;
-            foreach (var (a, b) in Values.ZipLong(othermulti.Values)) if (a is not null && a.ResEqual(b)) return false;
+            foreach (var (a, b) in Values.ZipLong(othermulti.Values)) if (a is null || (a is not null && !a.ResEqual(b))) return false;
             return true;
         }
         protected override State UpdateState(State state)
@@ -141,7 +141,7 @@ namespace FourZeroOne.Core.Resolutions
     public sealed record DeclareVariable<R> : Operation where R : class, ResObj
     {
         public readonly VariableIdentifier<R> Identifier;
-        public IOption<R> Object { get; init; }
+        public required IOption<R> Object { get; init; }
         public Updater<IOption<R>> dObject { init => Object = value(Object); }
         public DeclareVariable(VariableIdentifier<R> identifier)
         {
@@ -159,7 +159,7 @@ namespace FourZeroOne.Core.Resolutions
 
     public sealed record DeclareRule : Operation
     {
-        public Rule.IRule Rule { get; init; } 
+        public required Rule.IRule Rule { get; init; } 
         public Updater<Rule.IRule> dRule { init => Rule = value(Rule); }
 
         protected override State UpdateState(State state) => state with
