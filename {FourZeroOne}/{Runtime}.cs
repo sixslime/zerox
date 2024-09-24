@@ -22,6 +22,7 @@ namespace FourZeroOne.Runtime
 
     public abstract class FrameSaving : Runtime.IRuntime
     {
+        
         public FrameSaving(State startingState, IToken program)
         {
             _stateStack = new LinkedStack<State>(startingState).AsSome();
@@ -64,15 +65,16 @@ namespace FourZeroOne.Runtime
         }
         public ITask<IOption<IEnumerable<R>>> ReadSelection<R>(IEnumerable<R> from, int count) where R : class, ResObj
         {
-            return SelectionImplementation(from, count);
+            var o = SelectionImplementation(from, count, out var frameShiftOpt);
+            if (frameShiftOpt.Check(out var targetFrame)) GoToFrame(targetFrame);
+            return o;
         }
-
         protected abstract void RecieveToken(IToken token);
         protected abstract void RecieveResolution(IOption<ResObj> resolution);
         protected abstract void RecieveFrame(LinkedStack<Frame> frameStackNode);
         protected abstract void RecieveMacroExpansion(IToken macro, IToken expanded);
         protected abstract void RecieveRuleSteps(IEnumerable<(IToken token, Rule.IRule appliedRule)> steps);
-        protected abstract ITask<IOption<IEnumerable<R>>> SelectionImplementation<R>(IEnumerable<R> from, int count) where R : class, ResObj;
+        protected abstract ITask<IOption<IEnumerable<R>>> SelectionImplementation<R>(IEnumerable<R> from, int count, out IOption<LinkedStack<Frame>> orFrameShift) where R : class, ResObj;
 
         protected void GoToFrame(LinkedStack<Frame> frameStack)
         {
@@ -81,7 +83,7 @@ namespace FourZeroOne.Runtime
             _resolutionStack = frame.ResolutionStack;
             _stateStack = frame.StateStack;
             _frameStack = frameStack.AsSome();
-            StartEval();
+            _discontinueEval = true;
         }
 
         protected record Frame
