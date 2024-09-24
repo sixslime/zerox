@@ -66,7 +66,7 @@ public class Tester
         });
         var token_test_1 = token_tutorial_2.tIO_SelectMany(Iter.Over(1, 2, 3, 4).Map(x => x.tConst()).tToMulti().tIO_SelectOne());
         var token_test_2 = token_tutorial_1.tAdd(1.tConst());
-        var token_test = token_test_1;
+        var token_test = token_complicated;
         var rule_test = MakeProxy.AsRuleFor<t.Number.Add, r.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tConst().pDirect(P))));
 
         var startState = new FourZeroOne.State()

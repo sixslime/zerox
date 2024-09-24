@@ -1,4 +1,4 @@
-
+﻿
 using ControlledFlows;
 using FourZeroOne.Resolution;
 using FourZeroOne.Rule;
@@ -9,10 +9,9 @@ namespace FourZeroOne.Runtimes.FrameSaving
 {
     public class Gebug : Runtime.FrameSaving
     {
-        private int depth = 0;
         private IOption<LinkedStack<Frame>> _currentFrame;
-        private string depthPad => "--".Yield(depth).AccumulateInto("", (msg, x) => msg + x);
-        private HashSet<IToken> _seenTokens = [];
+        private int _depth = 0;
+        private string DepthPad(int depth) => "| ".Yield(depth).AccumulateInto("", (msg, x) => msg + x);
         public Gebug(State startingState, IToken program) : base(startingState, program)
         {
             _currentFrame = new None<LinkedStack<Frame>>();
@@ -21,34 +20,38 @@ namespace FourZeroOne.Runtimes.FrameSaving
         protected override void RecieveFrame(LinkedStack<Frame> frameNode)
         {
             _currentFrame = frameNode.AsSome();
-            Console.WriteLine($"=== {frameNode.Value.Token} ===");
+            //Console.WriteLine($"=== {frameNode.Value.Token} ===");
         }
 
         protected override void RecieveMacroExpansion(IToken macro, IToken expanded)
         {
-            Console.WriteLine($"{depthPad}& {macro} -> {expanded}");
+            Console.WriteLine($"{DepthPad(_depth)}& {macro} => {expanded}");
         }
 
-        protected override void RecieveResolution(IOption<IResolution> resolution)
+        protected override void RecieveResolution(IOption<IResolution> resolution, int depth)
         {
-            Console.WriteLine($"{depthPad}: {resolution}");
-            depth--;
+            _depth = depth;
+            Console.WriteLine($"{DepthPad(_depth)}└=> {resolution}");
         }
 
         protected override void RecieveRuleSteps(IEnumerable<(IToken token, IRule appliedRule)> steps)
         {
             if (!steps.Any()) return;
-            Console.WriteLine($"{depthPad}+ {steps.AccumulateInto("", (msg, x) => msg + x.token + $"\n")}");
+            Console.WriteLine($"{DepthPad(_depth)}? {steps.AccumulateInto("", (msg, x) => msg + x.token + $"\n")}");
         }
 
-        protected override void RecieveToken(IToken token)
+        protected override void RecieveToken(IToken token, int depth)
         {
-            if (_seenTokens.Add(token)) {
-                Console.WriteLine($"{depthPad}>> {token}");
-                depth++;
-                return;
+            
+            if (depth >= _depth)
+            {
+                Console.WriteLine($"{DepthPad(depth)}┌-< {token}");
+
+            } else
+            {
+                Console.WriteLine($"{DepthPad(depth)}╞# {token}");
             }
-            Console.WriteLine($"{depthPad}> {token}");
+            _depth = depth;
         }
 
         protected override ITask<IOption<IEnumerable<R>>> SelectionImplementation<R>(IEnumerable<R> from, int count, out IOption<LinkedStack<Frame>> targetFrame)

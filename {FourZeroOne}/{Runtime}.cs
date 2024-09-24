@@ -69,8 +69,8 @@ namespace FourZeroOne.Runtime
             if (frameShiftOpt.Check(out var targetFrame)) GoToFrame(targetFrame);
             return o;
         }
-        protected abstract void RecieveToken(IToken token);
-        protected abstract void RecieveResolution(IOption<ResObj> resolution);
+        protected abstract void RecieveToken(IToken token, int depth);
+        protected abstract void RecieveResolution(IOption<ResObj> resolution, int depth);
         protected abstract void RecieveFrame(LinkedStack<Frame> frameStackNode);
         protected abstract void RecieveMacroExpansion(IToken macro, IToken expanded);
         protected abstract void RecieveRuleSteps(IEnumerable<(IToken token, Rule.IRule appliedRule)> steps);
@@ -139,7 +139,7 @@ namespace FourZeroOne.Runtime
                     {
                         _ = PopFromStack(ref _appliedRuleStack);
                     }
-                    if (_appliedRuleStack.Check(out appliedRuleNode) && appliedRuleNode is not null)
+                    if ( _appliedRuleStack.Check(out appliedRuleNode) && appliedRuleNode is not null)
                     {
                         rulesToApply = rulesToApply.Except(appliedRuleNode.Value.Elements);
                     }
@@ -156,7 +156,7 @@ namespace FourZeroOne.Runtime
                     appliedRules = appliedRules with { dElements = Q => Q.Also(appliedPostMacro.Elements) };
                 }
                 RecieveRuleSteps(appliedRules.Elements);
-                RecieveToken(ruledToken);
+                RecieveToken(ruledToken, operationNode.Depth);
                 operationNode = operationNode with { Value = ruledToken };
                 _operationStack = operationNode.AsSome();
 
@@ -175,7 +175,7 @@ namespace FourZeroOne.Runtime
                         _discontinueEval = false;
                         continue;
                     }
-                    RecieveResolution(resolution);
+                    RecieveResolution(resolution, operationNode.Depth);
 
                     var poppedStateNode = PopFromStack(ref _stateStack);
                     if (_stateStack.Check(out var linkedStateNode) && linkedStateNode.Depth == poppedStateNode.Depth)
