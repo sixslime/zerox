@@ -107,12 +107,10 @@ namespace FourZeroOne.Runtime
             }
             public IEnumerable<LinkedStack<T>> ThroughStack()
             {
-                var link = this;
-                do
-                {
-                    yield return link;
-                } while (link.Link.Check(out link) && link is not null);
-
+                return (this.AsSome() as IOption<LinkedStack<T>>)
+                    .Sequence(x => x.RemapAs(y => y.Link).Press())
+                    .TakeWhile(x => x.IsSome())
+                    .Map(x => x.Unwrap());
             }
             public static IOption<LinkedStack<T>> Linked(IOption<LinkedStack<T>> parent, int depth, IEnumerable<T> values)
             {
