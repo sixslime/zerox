@@ -65,6 +65,13 @@ namespace FourZeroOne.Runtimes.FrameSaving
 
         protected override ITask<IOption<IEnumerable<R>>> SelectionImplementation<R>(IEnumerable<R> from, int count, out IOption<LinkedStack<Frame>> targetFrame)
         {
+            Console.ForegroundColor = ConsoleColor.White;
+            var o = SelectionPrompt(from, count, out targetFrame);
+            Console.ResetColor();
+            return o;
+        }
+        private ITask<IOption<IEnumerable<R>>> SelectionPrompt<R>(IEnumerable<R> from, int count, out IOption<LinkedStack<Frame>> targetFrame)
+        {
             targetFrame = new None<LinkedStack<Frame>>();
             R[] selectables = [.. from];
             if (selectables.Length < count) return Task.FromResult(new None<IEnumerable<R>>()).AsITask();
@@ -83,6 +90,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
                     if (!int.TryParse(inputString[1..], out var framesBack))
                         continue;
                     targetFrame = _currentFrame.Sequence(x => x.Unwrap().Link).ElementAt(framesBack);
+                    _currentFrame = targetFrame;
                     return Task.FromResult(new None<IEnumerable<R>>()).AsITask();
                 }
                 int[] selectionIndicies = [.. inputString.Split(" ", StringSplitOptions.RemoveEmptyEntries)
@@ -102,8 +110,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
                 }
                 return Task.FromResult(selectionIndicies.Map(x => selectables[x]).AsSome()).AsITask();
             }
-            
-        }
 
+        }
     }
 }
