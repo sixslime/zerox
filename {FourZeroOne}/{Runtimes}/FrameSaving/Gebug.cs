@@ -31,7 +31,10 @@ namespace FourZeroOne.Runtimes.FrameSaving
         protected override void RecieveResolution(IOption<IResolution> resolution, int depth)
         {
             _depth = depth;
-            Console.WriteLine($"{DepthPad(_depth - 1)}├<┴=) {resolution}");
+            Console.Write($"{DepthPad(depth - 1)}├<┴");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($" = {resolution}");
+            Console.ResetColor();
         }
 
         protected override void RecieveRuleSteps(IEnumerable<(IToken token, IRule appliedRule)> steps)
@@ -45,11 +48,17 @@ namespace FourZeroOne.Runtimes.FrameSaving
             
             if (depth >= _depth)
             {
-                Console.WriteLine($"{DepthPad(depth)}┌-> {token}");
+                Console.Write($"{DepthPad(depth - 1)}|-┌");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine($" {token}");
+                Console.ResetColor();
 
             } else
             {
-                Console.WriteLine($"{DepthPad(depth)}╞: {token}");
+                Console.Write($"{DepthPad(depth)}|");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine($" {token}");
+                Console.ResetColor();
             }
             _depth = depth;
         }
