@@ -37,7 +37,6 @@ namespace FourZeroOne.Core.Resolutions
                 D = scalarFunction(D)
             };
         }
-
         public abstract record Hex : NoOp, IPositioned, IStateTracked
         {
             public int UUID => _uuid;
@@ -53,7 +52,6 @@ namespace FourZeroOne.Core.Resolutions
             }
             private readonly int _uuid;
         }
-
         public sealed record Unit : NoOp, IPositioned, IStateTracked
         {
             public int UUID => _uuid;
@@ -113,7 +111,6 @@ namespace FourZeroOne.Core.Resolutions
         public static implicit operator Bool(bool value) => new() { IsTrue = value };
         public override string ToString() => $"{IsTrue}";
     }
-
     public sealed record Multi<R> : Operation, IMulti<R> where R : class, ResObj
     {
         public int Count => _list.Count;
@@ -137,7 +134,6 @@ namespace FourZeroOne.Core.Resolutions
             return $"[{argList[0]}{argList[1..].AccumulateInto("", (msg, v) => $"{msg}, {v}")}]";
         }
     }
-
     public sealed record DeclareVariable<R> : Operation where R : class, ResObj
     {
         public readonly VariableIdentifier<R> Identifier;
@@ -156,7 +152,6 @@ namespace FourZeroOne.Core.Resolutions
         };
         public override string ToString() => $"{Identifier}<-{Object}";
     }
-
     public sealed record DeclareRule : Operation
     {
         public required Rule.IRule Rule { get; init; } 
