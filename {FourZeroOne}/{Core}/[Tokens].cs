@@ -79,10 +79,10 @@ namespace FourZeroOne.Core.Tokens
                     public HP(IToken<rb.Unit> of) : base(of) { }
                     protected override ro.Number EvaluatePure(rb.Unit in1) { return in1.HP; }
                 }
-                public sealed record Effects : PureFunction<rb.Unit, r.Multi<rb.Unit.Effect>>
+                public sealed record Effects : PureFunction<rb.Unit, r.Multi<rb.UnitEffect>>
                 {
                     public Effects(IToken<rb.Unit> of) : base(of) { }
-                    protected override r.Multi<rb.Unit.Effect> EvaluatePure(rb.Unit in1) { return in1.Effects; }
+                    protected override r.Multi<rb.UnitEffect> EvaluatePure(rb.Unit in1) { return in1.Effects; }
 
                 }
                 public sealed record Owner : PureFunction<rb.Unit, rb.Player>

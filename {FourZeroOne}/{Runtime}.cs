@@ -72,7 +72,7 @@ namespace FourZeroOne.Runtime
         protected abstract void RecieveToken(IToken token, int depth);
         protected abstract void RecieveResolution(IOption<ResObj> resolution, int depth);
         protected abstract void RecieveFrame(LinkedStack<Frame> frameStackNode);
-        protected abstract void RecieveMacroExpansion(IToken macro, IToken expanded);
+        protected abstract void RecieveMacroExpansion(IToken macro, IToken expanded, int depth);
         protected abstract void RecieveRuleSteps(IEnumerable<(IToken token, Rule.IRule appliedRule)> steps);
         protected abstract ITask<IOption<IEnumerable<R>>> SelectionImplementation<R>(IEnumerable<R> from, int count, out IOption<LinkedStack<Frame>> orFrameShift) where R : class, ResObj;
 
@@ -150,7 +150,7 @@ namespace FourZeroOne.Runtime
                 if (ruledToken is Macro.Unsafe.IMacro macro)
                 {
                     var expanded = macro.ExpandUnsafe();
-                    RecieveMacroExpansion(macro, expanded);
+                    RecieveMacroExpansion(macro, expanded, operationNode.Depth);
                     ruledToken = ApplyRules(expanded, rulesToApply, out var appliedPostMacro);
                     // Assert(appliedRules.Count = 0 || appliedPostMacro.Count = 0); logically right?
                     appliedRules = appliedRules with { dElements = Q => Q.Also(appliedPostMacro.Elements) };

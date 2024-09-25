@@ -11,6 +11,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
     {
         private IOption<LinkedStack<Frame>> _currentFrame;
         private int _depth = 0;
+        private bool _macroExpanding = false;
         private string DepthPad(int depth) => "| ".Yield(depth).AccumulateInto("", (msg, x) => msg + x);
         public Gebug(State startingState, IToken program) : base(startingState, program)
         {
@@ -23,9 +24,13 @@ namespace FourZeroOne.Runtimes.FrameSaving
             //Console.WriteLine($"=== {frameNode.Value.Token} ===");
         }
 
-        protected override void RecieveMacroExpansion(IToken macro, IToken expanded)
+        protected override void RecieveMacroExpansion(IToken macro, IToken expanded, int depth)
         {
-            Console.WriteLine($"{DepthPad(_depth)}& {macro} => {expanded}");
+            _macroExpanding = true;
+            Console.Write($"{DepthPad(depth)}|-┌");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine($" {macro}");
+            Console.ResetColor();
         }
 
         protected override void RecieveResolution(IOption<IResolution> resolution, int depth)
@@ -48,9 +53,19 @@ namespace FourZeroOne.Runtimes.FrameSaving
             
             if (depth >= _depth)
             {
-                Console.Write($"{DepthPad(depth)}|-┌");
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine($" {token}");
+                if (_macroExpanding)
+                {
+                    Console.Write($"{DepthPad(depth + 1)}|");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.Write($" ╚>");
+                    _macroExpanding = false;
+                }
+                else
+                {
+                    Console.Write($"{DepthPad(depth)}|-┌ ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                }
+                Console.WriteLine($"{token}");
                 Console.ResetColor();
 
             } else
