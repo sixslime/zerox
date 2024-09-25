@@ -1,13 +1,12 @@
-using System.Collections.Generic;
 using Perfection;
 
 namespace FourZeroOne.Core.ProxySyntax
 {
+    using Proxies;
+    using Proxy;
     using IToken = Token.Unsafe.IToken;
     using r = Resolutions;
     using ResObj = Resolution.IResolution;
-    using Proxies;
-    using Proxy;
     public interface IOriginalHint<TOrig, out TOrig_> where TOrig : IToken where TOrig_ : IToken { }
     public sealed record RHint<R> where R : class, ResObj
     {
@@ -18,8 +17,8 @@ namespace FourZeroOne.Core.ProxySyntax
     {
         public sealed record IfElse<TOrig, R> where TOrig : IToken where R : class, ResObj
         {
-            public IProxy<TOrig, r.Action<R>> Then { get; init; }
-            public IProxy<TOrig, r.Action<R>> Else { get; init; }
+            public IProxy<TOrig, r.BoxedToken<R>> Then { get; init; }
+            public IProxy<TOrig, r.BoxedToken<R>> Else { get; init; }
         }
         public sealed record RecursiveCall<RArg1, RArg2, RArg3, ROut>
             where RArg1 : class, ResObj
@@ -102,7 +101,7 @@ namespace FourZeroOne.Core.ProxySyntax
             identifier = new();
             return new(identifier, value);
         }
-        public static ToAction<TOrig, R> pAsAction<TOrig, R>(this IProxy<TOrig, R> proxy) where TOrig : IToken where R : class, ResObj
+        public static ToBoxed<TOrig, R> pBoxed<TOrig, R>(this IProxy<TOrig, R> proxy) where TOrig : IToken where R : class, ResObj
         {
             return new(proxy);
         }
@@ -142,7 +141,7 @@ namespace FourZeroOne.Core.ProxySyntax
         public static Function<Tokens.IO.Select.Multiple<R>, TOrig, Resolution.IMulti<R>, r.Number, r.Multi<R>> pIO_SelectMany<TOrig, R>(this IProxy<TOrig, Resolution.IMulti<R>> source, IProxy<TOrig, r.Number> count) where TOrig : IToken where R : class, ResObj
         { return new(source, count); }
 
-        public static Function<Tokens.PerformAction<R>, TOrig, r.Action<R>, R> pPerform<TOrig, R>(this IProxy<TOrig, r.Action<R>> action) where TOrig : IToken where R : class, ResObj
+        public static Function<Tokens.Unbox<R>, TOrig, r.BoxedToken<R>, R> pUnbox<TOrig, R>(this IProxy<TOrig, r.BoxedToken<R>> action) where TOrig : IToken where R : class, ResObj
         { return new(action); }
     }
 }

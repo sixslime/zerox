@@ -253,11 +253,11 @@ namespace FourZeroOne.Core.Tokens
         }
     }
 
-    public record PerformAction<R> : Function<r.Action<R>, R> where R : class, ResObj
+    public record Unbox<R> : Function<r.BoxedToken<R>, R> where R : class, ResObj
     {
-        public PerformAction(IToken<r.Action<R>> a) : base(a) { }
+        public Unbox(IToken<r.BoxedToken<R>> a) : base(a) { }
 
-        protected override ITask<IOption<R>> Evaluate(IRuntime runtime, IOption<r.Action<R>> in1)
+        protected override ITask<IOption<R>> Evaluate(IRuntime runtime, IOption<r.BoxedToken<R>> in1)
         {
             return in1.Check(out var action) ? runtime.PerformAction(action.Token) : Task.FromResult(new None<R>()).AsITask();
         }
@@ -274,7 +274,6 @@ namespace FourZeroOne.Core.Tokens
         protected override IOption<string> CustomToString() => $"let {Arg1} in {{{Arg2}}}".AsSome();
 
     }
-
     public record Recursive<RArg1, ROut> : Macro.OneArg<RArg1, ROut>
         where RArg1 : class, ResObj
         where ROut : class, ResObj
@@ -314,12 +313,10 @@ namespace FourZeroOne.Core.Tokens
         protected override IOption<string> CustomToString() => $"@\"{(RecursiveProxy.GetHashCode() % 7777).ToBase("vwmbkjqzsnthdiueoalrcgpfy", "")}\"({Arg1}, {Arg2}, {Arg3})".AsSome();
 
     }
-
-    // there should only be 1 token that returns an action and it should be fixed
-    public record IfElse<R> : Function<r.Bool, r.Action<R>, r.Action<R>, r.Action<R>> where R : class, ResObj
+    public record IfElse<R> : Function<r.Bool, r.BoxedToken<R>, r.BoxedToken<R>, r.BoxedToken<R>> where R : class, ResObj
     {
-        public IfElse(IToken<r.Bool> condition, IToken<r.Action<R>> positive, IToken<r.Action<R>> negative) : base(condition, positive, negative) { }
-        protected override ITask<IOption<r.Action<R>>> Evaluate(IRuntime runtime, IOption<r.Bool> in1, IOption<r.Action<R>> in2, IOption<r.Action<R>> in3)
+        public IfElse(IToken<r.Bool> condition, IToken<r.BoxedToken<R>> positive, IToken<r.BoxedToken<R>> negative) : base(condition, positive, negative) { }
+        protected override ITask<IOption<r.BoxedToken<R>>> Evaluate(IRuntime runtime, IOption<r.Bool> in1, IOption<r.BoxedToken<R>> in2, IOption<r.BoxedToken<R>> in3)
         {
             return Task.FromResult( in1.RemapAs(x => x.IsTrue ? in2 : in3).Press() ).AsITask();
         }
@@ -340,7 +337,6 @@ namespace FourZeroOne.Core.Tokens
 
         private readonly VariableIdentifier<R> _identifier;
     }
-
     public sealed record Rule<R> : PureValue<r.DeclareRule> where R : class, ResObj
     {
         public Rule(Rule.IRule rule)

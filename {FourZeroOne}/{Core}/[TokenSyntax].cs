@@ -13,8 +13,8 @@ namespace FourZeroOne.Core.TokenSyntax
     {
         public sealed record IfElse<R> where R : class, ResObj
         {
-            public IToken<r.Action<R>> Then { get; init; }
-            public IToken<r.Action<R>> Else { get; init; }
+            public IToken<r.BoxedToken<R>> Then { get; init; }
+            public IToken<r.BoxedToken<R>> Else { get; init; }
         }
         public sealed record SubEnvironment<R> where R : class, ResObj
         {
@@ -89,7 +89,7 @@ namespace FourZeroOne.Core.TokenSyntax
     {
         public static Tokens.IO.Select.One<R> tIO_SelectOne<R>(this IToken<Multi<R>> source) where R : class, ResObj
         { return new(source); }
-        public static Tokens.PerformAction<R> tPerform<R>(this IToken<Action<R>> source) where R : class, ResObj
+        public static Tokens.Unbox<R> tUnbox<R>(this IToken<BoxedToken<R>> source) where R : class, ResObj
         { return new(source); }
         public static Tokens.IO.Select.Multiple<R> tIO_SelectMany<R>(this IToken<Multi<R>> source, IToken<Number> count) where R : class, ResObj
         { return new(source, count); }
@@ -106,7 +106,7 @@ namespace FourZeroOne.Core.TokenSyntax
         {
             return new(condition, block.Then, block.Else);
         }
-        public static Fixed<r.Action<R>> tAsAction<R>(this IToken<R> token) where R : class, ResObj
+        public static Fixed<r.BoxedToken<R>> tBoxed<R>(this IToken<R> token) where R : class, ResObj
         {
             return new(new() { Token = token });
         }

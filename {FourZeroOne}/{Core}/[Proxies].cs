@@ -25,15 +25,15 @@ namespace FourZeroOne.Core.Proxies
         private readonly IToken<R> _token;
     }
 
-    public sealed record ToAction<TOrig, R> : Proxy<TOrig, r.Action<R>> where TOrig : IToken where R : class, ResObj
+    public sealed record ToBoxed<TOrig, R> : Proxy<TOrig, r.BoxedToken<R>> where TOrig : IToken where R : class, ResObj
     {
-        public ToAction(IProxy<TOrig, R> proxy)
+        public ToBoxed(IProxy<TOrig, R> proxy)
         {
             _actionProxy = proxy;
         }
-        public override IToken<r.Action<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        public override IToken<r.BoxedToken<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
         {
-            return new Tokens.Fixed<r.Action<R>>(new() { Token = _actionProxy.Realize(original, rule) });
+            return new Tokens.Fixed<r.BoxedToken<R>>(new() { Token = _actionProxy.Realize(original, rule) });
         }
 
         private readonly IProxy<TOrig, R> _actionProxy;
@@ -99,16 +99,16 @@ namespace FourZeroOne.Core.Proxies
         private readonly IProxy<TOrig, R> _objectProxy;
     }
 
-    public sealed record IfElse<TOrig, R> : Proxy<TOrig, Resolutions.Action<R>> where TOrig : IToken where R : class, ResObj
+    public sealed record IfElse<TOrig, R> : Proxy<TOrig, Resolutions.BoxedToken<R>> where TOrig : IToken where R : class, ResObj
     {
         public readonly IProxy<TOrig, Resolutions.Bool> Condition;
-        public IProxy<TOrig, Resolutions.Action<R>> PassProxy { get; init; }
-        public IProxy<TOrig, Resolutions.Action<R>> FailProxy { get; init; }
+        public IProxy<TOrig, Resolutions.BoxedToken<R>> PassProxy { get; init; }
+        public IProxy<TOrig, Resolutions.BoxedToken<R>> FailProxy { get; init; }
         public IfElse(IProxy<TOrig, Resolutions.Bool> condition)
         {
             Condition = condition;
         }
-        public override IToken<Resolutions.Action<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        public override IToken<Resolutions.BoxedToken<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
         {
             return new Tokens.IfElse<R>(Condition.Realize(original, rule), PassProxy.Realize(original, rule), FailProxy.Realize(original, rule));
         }

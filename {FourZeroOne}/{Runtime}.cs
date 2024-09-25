@@ -48,7 +48,7 @@ namespace FourZeroOne.Runtime
         public ITask<IOption<R>> PerformAction<R>(IToken<R> action) where R : class, ResObj
         {
             var node = _operationStack.Unwrap();
-            if (node.Value is not Core.Tokens.PerformAction<R> pToken)
+            if (node.Value is not Core.Tokens.Unbox<R> pToken)
             {
                 throw new System.Exception("[FrameSaving Runtime] PerformAction() called when a PerformAction token was not at the top of the operation stack.");
             }

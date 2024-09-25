@@ -55,13 +55,13 @@ public class Tester
                     }),
                     SubProxy = P.pOriginalA().pIsGreaterThan(2.tConst().pDirect(P)).pIfTrue(RHint<r.Number>.Hint(), new()
                     {
-                        Then = selection.tRef().pDirect(P).pAsAction(),
+                        Then = selection.tRef().pDirect(P).pBoxed(),
                         Else = P.pRecurseWith(new()
                         {
                             A = counter.tRef().tAdd(1.tConst()).pDirect(P),
                             B = pool.tRef().tWithout(selection.tRef().tYield()).pDirect(P)
-                        }).pAdd(selection.tRef().pDirect(P)).pAsAction()
-                    }).pPerform()
+                        }).pAdd(selection.tRef().pDirect(P)).pBoxed()
+                    }).pUnbox()
                 })
         });
         var token_test_1 = token_tutorial_2.tIO_SelectMany(Iter.Over(1, 2, 3, 4).Map(x => x.tConst()).tToMulti().tIO_SelectOne());

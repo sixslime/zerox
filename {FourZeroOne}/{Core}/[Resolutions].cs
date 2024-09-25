@@ -92,7 +92,7 @@ namespace FourZeroOne.Core.Resolutions
         }
     }
 
-    public sealed record Action<R> : NoOp where R : class, ResObj
+    public sealed record BoxedToken<R> : NoOp where R : class, ResObj
     {
         public required IToken<R> Token { get; init; }
         public override string ToString() => $"{Token}!";
