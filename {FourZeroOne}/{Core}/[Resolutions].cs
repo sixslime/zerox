@@ -117,11 +117,75 @@ namespace FourZeroOne.Core.Resolutions
     }
     namespace Actions
     {
+        using Objects;
         namespace Board
         {
+            using b = Objects.Board;
             namespace Unit
             {
-                //HPChange...
+                public sealed record HPChange : Operation
+                {
+                    public required b.Unit Subject { get; init; }
+                    public Updater<b.Unit> dSubject { init => Subject = value(Subject); }
+                    public required Number SetTo { get; init; }
+                    public Updater<Number> dSetTo { init => SetTo = value(SetTo); }
+                    public HPChange() { }
+                    protected override State UpdateState(State state) => state with
+                    {
+                        dBoard = Q => Q with
+                        {
+                            dUnits = U => U with
+                            {
+                                dElements = E => E.Also((U[Subject.UUID] with
+                                {
+                                    HP = SetTo
+                                }).Yield())
+                            }
+                        }
+                    };
+                }
+                public sealed record PositionChange : Operation
+                {
+                    public required b.Unit Subject { get; init; }
+                    public Updater<b.Unit> dSubject { init => Subject = value(Subject); }
+                    public required b.Coordinates SetTo { get; init; }
+                    public Updater<b.Coordinates> dSetTo { init => SetTo = value(SetTo); }
+                    public PositionChange() { }
+                    protected override State UpdateState(State state) => state with
+                    {
+                        dBoard = Q => Q with
+                        {
+                            dUnits = U => U with
+                            {
+                                dElements = E => E.Also((U[Subject.UUID] with
+                                {
+                                    Position = SetTo
+                                }).Yield())
+                            }
+                        }
+                    };
+                }
+                public sealed record OwnerChange : Operation
+                {
+                    public required b.Unit Subject { get; init; }
+                    public Updater<b.Unit> dSubject { init => Subject = value(Subject); }
+                    public required b.Player SetTo { get; init; }
+                    public Updater<b.Player> dSetTo { init => SetTo = value(SetTo); }
+                    public OwnerChange() { }
+                    protected override State UpdateState(State state) => state with
+                    {
+                        dBoard = Q => Q with
+                        {
+                            dUnits = U => U with
+                            {
+                                dElements = E => E.Also((U[Subject.UUID] with
+                                {
+                                    Owner = SetTo
+                                }).Yield())
+                            }
+                        }
+                    };
+                }
             }
         }
         public sealed record VariableAssign<R> : Operation where R : class, ResObj
