@@ -56,7 +56,7 @@ namespace FourZeroOne.Core.Resolutions
                 }
                 private readonly int _uuid;
             }
-            public record CoordinateArea : NoOp, IMulti<Coordinates>
+            public sealed record CoordinateArea : NoOp, IMulti<Coordinates>
             {
                 public IEnumerable<Coordinates> Values => Offsets.Map(x => x.Add(Center));
                 public int Count => _offsets.Count;
