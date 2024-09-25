@@ -41,21 +41,6 @@ namespace FourZeroOne.Core.Resolutions
                     D = scalarFunction(D)
                 };
             }
-            public abstract record Hex : NoOp, IPositioned, IStateTracked
-            {
-                public int UUID => _uuid;
-                public required Coordinates Position { get; init; }
-                public Updater<Coordinates> dPosition { init => Position = value(Position); }
-                public Hex(int id)
-                {
-                    _uuid = id;
-                }
-                public override bool ResEqual(IResolution? other)
-                {
-                    return (other is Hex h && Position.ResEqual(h.Position));
-                }
-                private readonly int _uuid;
-            }
             public sealed record CoordinateArea : NoOp, IMulti<Coordinates>
             {
                 public IEnumerable<Coordinates> Values => Offsets.Map(x => x.Add(Center));
@@ -70,6 +55,21 @@ namespace FourZeroOne.Core.Resolutions
                 }
 
                 private PList<Coordinates> _offsets;
+            }
+            public abstract record Hex : NoOp, IPositioned, IStateTracked
+            {
+                public int UUID => _uuid;
+                public required Coordinates Position { get; init; }
+                public Updater<Coordinates> dPosition { init => Position = value(Position); }
+                public Hex(int id)
+                {
+                    _uuid = id;
+                }
+                public override bool ResEqual(IResolution? other)
+                {
+                    return (other is Hex h && Position.ResEqual(h.Position));
+                }
+                private readonly int _uuid;
             }
             public sealed record Unit : NoOp, IPositioned, IStateTracked
             {
