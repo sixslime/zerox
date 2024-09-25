@@ -56,6 +56,21 @@ namespace FourZeroOne.Core.Resolutions
                 }
                 private readonly int _uuid;
             }
+            public record CoordinateArea : NoOp, IMulti<Coordinates>
+            {
+                public IEnumerable<Coordinates> Values => Offsets.Map(x => x.Add(Center));
+                public int Count => _offsets.Count;
+                public required IEnumerable<Coordinates> Offsets { get => _offsets.Elements; init => _offsets = new() { Elements = value }; }
+                public Updater<IEnumerable<Coordinates>> dOffsets { init => Offsets = value(Offsets); }
+                public required Coordinates Center { get; init; }
+                public Updater<Coordinates> dCenter { init => Center = value(Center); }
+                public CoordinateArea()
+                {
+                    _offsets = new() { Elements = [] };
+                }
+
+                private PList<Coordinates> _offsets;
+            }
             public sealed record Unit : NoOp, IPositioned, IStateTracked
             {
                 public int UUID => _uuid;
