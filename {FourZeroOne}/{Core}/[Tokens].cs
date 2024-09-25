@@ -14,11 +14,12 @@ namespace FourZeroOne.Core.Tokens
     using Token;
     using ResObj = Resolution.IResolution;
     using r = Resolutions;
+    using ro = Resolutions.Objects;
     using Runtime;
 
     namespace Board
     {
-        using rb = r.Board;
+        using rb = r.Objects.Board;
         namespace Coordinates
         {
             public sealed record Of : PureFunction<Resolution.Board.IPositioned, rb.Coordinates>
@@ -73,10 +74,10 @@ namespace FourZeroOne.Core.Tokens
             }
             namespace Get
             {
-                public sealed record HP : PureFunction<rb.Unit, r.Number>
+                public sealed record HP : PureFunction<rb.Unit, ro.Number>
                 {
                     public HP(IToken<rb.Unit> of) : base(of) { }
-                    protected override r.Number EvaluatePure(rb.Unit in1) { return in1.HP; }
+                    protected override ro.Number EvaluatePure(rb.Unit in1) { return in1.HP; }
                 }
                 public sealed record Effects : PureFunction<rb.Unit, r.Multi<rb.Unit.Effect>>
                 {
@@ -125,11 +126,11 @@ namespace FourZeroOne.Core.Tokens
             }
 
             //make range instead of single int count
-            public sealed record Multiple<R> : Function<Resolution.IMulti<R>, r.Number, r.Multi<R>> where R : class, ResObj
+            public sealed record Multiple<R> : Function<Resolution.IMulti<R>, ro.Number, r.Multi<R>> where R : class, ResObj
             {
-                public Multiple(IToken<Resolution.IMulti<R>> from, IToken<r.Number> count) : base(from, count) { }
+                public Multiple(IToken<Resolution.IMulti<R>> from, IToken<ro.Number> count) : base(from, count) { }
 
-                protected override async ITask<IOption<r.Multi<R>>> Evaluate(IRuntime runtime, IOption<Resolution.IMulti<R>> fromOpt, IOption<r.Number> countOpt)
+                protected override async ITask<IOption<r.Multi<R>>> Evaluate(IRuntime runtime, IOption<Resolution.IMulti<R>> fromOpt, IOption<ro.Number> countOpt)
                 {
                     return (fromOpt.Check(out var from) && countOpt.Check(out var count))
                         ? (await runtime.ReadSelection(from.Values, count.Value)).RemapAs(v => new r.Multi<R>() { Values = v })
@@ -142,39 +143,39 @@ namespace FourZeroOne.Core.Tokens
     }
     namespace Number
     {
-        public sealed record Add : PureFunction<r.Number, r.Number, r.Number>
+        public sealed record Add : PureFunction<ro.Number, ro.Number, ro.Number>
         {
-            public Add(IToken<r.Number> operand1, IToken<r.Number> operand2) : base(operand1, operand2) { }
-            protected override r.Number EvaluatePure(r.Number a, r.Number b) { return new() { Value = a.Value + b.Value }; }
+            public Add(IToken<ro.Number> operand1, IToken<ro.Number> operand2) : base(operand1, operand2) { }
+            protected override ro.Number EvaluatePure(ro.Number a, ro.Number b) { return new() { Value = a.Value + b.Value }; }
             protected override IOption<string> CustomToString() => $"({Arg1} + {Arg2})".AsSome();
         }
 
-        public sealed record Subtract : PureFunction<r.Number, r.Number, r.Number>
+        public sealed record Subtract : PureFunction<ro.Number, ro.Number, ro.Number>
         {
-            public Subtract(IToken<r.Number> operand1, IToken<r.Number> operand2) : base(operand1, operand2) { }
-            protected override r.Number EvaluatePure(r.Number a, r.Number b) { return new() { Value = a.Value - b.Value }; }
+            public Subtract(IToken<ro.Number> operand1, IToken<ro.Number> operand2) : base(operand1, operand2) { }
+            protected override ro.Number EvaluatePure(ro.Number a, ro.Number b) { return new() { Value = a.Value - b.Value }; }
             protected override IOption<string> CustomToString() => $"({Arg1} - {Arg2})".AsSome();
         }
 
-        public sealed record Multiply : PureFunction<r.Number, r.Number, r.Number>
+        public sealed record Multiply : PureFunction<ro.Number, ro.Number, ro.Number>
         {
-            public Multiply(IToken<r.Number> operand1, IToken<r.Number> operand2) : base(operand1, operand2) { }
-            protected override r.Number EvaluatePure(r.Number a, r.Number b) { return new() { Value = a.Value * b.Value }; }
+            public Multiply(IToken<ro.Number> operand1, IToken<ro.Number> operand2) : base(operand1, operand2) { }
+            protected override ro.Number EvaluatePure(ro.Number a, ro.Number b) { return new() { Value = a.Value * b.Value }; }
             protected override IOption<string> CustomToString() => $"({Arg1} * {Arg2})".AsSome();
         }
 
-        public sealed record Negate : PureFunction<r.Number, r.Number>
+        public sealed record Negate : PureFunction<ro.Number, ro.Number>
         {
-            public Negate(IToken<r.Number> operand) : base(operand) { }
-            protected override r.Number EvaluatePure(r.Number operand) { return new() { Value = -operand.Value }; }
+            public Negate(IToken<ro.Number> operand) : base(operand) { }
+            protected override ro.Number EvaluatePure(ro.Number operand) { return new() { Value = -operand.Value }; }
             protected override IOption<string> CustomToString() => $"(-{Arg1})".AsSome();
         }
         namespace Compare
         {
-            public sealed record GreaterThan : PureFunction<r.Number, r.Number, r.Bool>
+            public sealed record GreaterThan : PureFunction<ro.Number, ro.Number, ro.Bool>
             {
-                public GreaterThan(IToken<r.Number> a, IToken<r.Number> b) : base(a, b) { }
-                protected override r.Bool EvaluatePure(r.Number in1, r.Number in2)
+                public GreaterThan(IToken<ro.Number> a, IToken<ro.Number> b) : base(a, b) { }
+                protected override ro.Bool EvaluatePure(ro.Number in1, ro.Number in2)
                 {
                     return new() { IsTrue = in1.Value > in2.Value };
                 }
@@ -243,21 +244,21 @@ namespace FourZeroOne.Core.Tokens
             protected override IOption<string> CustomToString() => $"^{Arg1}".AsSome();
         }
 
-        public sealed record Count : PureFunction<Resolution.IMulti<ResObj>, r.Number>
+        public sealed record Count : PureFunction<Resolution.IMulti<ResObj>, ro.Number>
         {
             public Count(IToken<Resolution.IMulti<ResObj>> of) : base(of) { }
-            protected override r.Number EvaluatePure(Resolution.IMulti<ResObj> in1)
+            protected override ro.Number EvaluatePure(Resolution.IMulti<ResObj> in1)
             {
                 return new() { Value = in1.Count };
             }
         }
     }
 
-    public record Unbox<R> : Function<r.BoxedToken<R>, R> where R : class, ResObj
+    public record Unbox<R> : Function<ro.BoxedToken<R>, R> where R : class, ResObj
     {
-        public Unbox(IToken<r.BoxedToken<R>> a) : base(a) { }
+        public Unbox(IToken<ro.BoxedToken<R>> a) : base(a) { }
 
-        protected override ITask<IOption<R>> Evaluate(IRuntime runtime, IOption<r.BoxedToken<R>> in1)
+        protected override ITask<IOption<R>> Evaluate(IRuntime runtime, IOption<ro.BoxedToken<R>> in1)
         {
             return in1.Check(out var action) ? runtime.PerformAction(action.Token) : Task.FromResult(new None<R>()).AsITask();
         }
@@ -313,40 +314,40 @@ namespace FourZeroOne.Core.Tokens
         protected override IOption<string> CustomToString() => $"@\"{(RecursiveProxy.GetHashCode() % 7777).ToBase("vwmbkjqzsnthdiueoalrcgpfy", "")}\"({Arg1}, {Arg2}, {Arg3})".AsSome();
 
     }
-    public record IfElse<R> : Function<r.Bool, r.BoxedToken<R>, r.BoxedToken<R>, r.BoxedToken<R>> where R : class, ResObj
+    public record IfElse<R> : Function<ro.Bool, ro.BoxedToken<R>, ro.BoxedToken<R>, ro.BoxedToken<R>> where R : class, ResObj
     {
-        public IfElse(IToken<r.Bool> condition, IToken<r.BoxedToken<R>> positive, IToken<r.BoxedToken<R>> negative) : base(condition, positive, negative) { }
-        protected override ITask<IOption<r.BoxedToken<R>>> Evaluate(IRuntime runtime, IOption<r.Bool> in1, IOption<r.BoxedToken<R>> in2, IOption<r.BoxedToken<R>> in3)
+        public IfElse(IToken<ro.Bool> condition, IToken<ro.BoxedToken<R>> positive, IToken<ro.BoxedToken<R>> negative) : base(condition, positive, negative) { }
+        protected override ITask<IOption<ro.BoxedToken<R>>> Evaluate(IRuntime runtime, IOption<ro.Bool> in1, IOption<ro.BoxedToken<R>> in2, IOption<ro.BoxedToken<R>> in3)
         {
             return Task.FromResult( in1.RemapAs(x => x.IsTrue ? in2 : in3).Press() ).AsITask();
         }
         protected override IOption<string> CustomToString() => $"if {Arg1} then {Arg2} else {Arg3}".AsSome();
     }
-    public sealed record Variable<R> : Token<r.DeclareVariable<R>> where R : class, ResObj
+    public sealed record Variable<R> : Token<r.Actions.VariableAssign<R>> where R : class, ResObj
     {
         public Variable(VariableIdentifier<R> identifier, IToken<R> token) : base(token)
         {
             _identifier = identifier;
         }
-        public override ITask<IOption<r.DeclareVariable<R>>> Resolve(IRuntime runtime, IOption<ResObj>[] args)
+        public override ITask<IOption<r.Actions.VariableAssign<R>>> Resolve(IRuntime runtime, IOption<ResObj>[] args)
         {
             var refObject = (IOption<R>)args[0];
-            return Task.FromResult(refObject.RemapAs(x => new r.DeclareVariable<R>(_identifier) { Object = refObject })).AsITask();
+            return Task.FromResult(refObject.RemapAs(x => new r.Actions.VariableAssign<R>(_identifier) { Object = refObject })).AsITask();
         }
         protected override IOption<string> CustomToString() => $"{_identifier}={ArgTokens[0]}".AsSome();
 
         private readonly VariableIdentifier<R> _identifier;
     }
-    public sealed record Rule<R> : PureValue<r.DeclareRule> where R : class, ResObj
+    public sealed record Rule<R> : PureValue<r.Actions.RuleAdd> where R : class, ResObj
     {
         public Rule(Rule.IRule rule)
         {
             _rule = rule;
         }
 
-        protected override r.DeclareRule EvaluatePure()
+        protected override r.Actions.RuleAdd EvaluatePure()
         {
-            return new r.DeclareRule() { Rule = _rule };
+            return new r.Actions.RuleAdd() { Rule = _rule };
         }
 
         private readonly Rule.IRule _rule;

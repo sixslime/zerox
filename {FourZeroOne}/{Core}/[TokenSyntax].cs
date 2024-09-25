@@ -5,16 +5,19 @@ namespace FourZeroOne.Core.TokenSyntax
 {
     using Tokens;
     using FourZeroOne.Token;
+    using Resolutions.Objects;
+    using Resolutions.Actions;
     using Resolutions;
     using r = Resolutions;
     using ResObj = Resolution.IResolution;
     using IToken = Token.Unsafe.IToken;
+
     namespace TokenStructure
     {
         public sealed record IfElse<R> where R : class, ResObj
         {
-            public IToken<r.BoxedToken<R>> Then { get; init; }
-            public IToken<r.BoxedToken<R>> Else { get; init; }
+            public IToken<BoxedToken<R>> Then { get; init; }
+            public IToken<BoxedToken<R>> Else { get; init; }
         }
         public sealed record SubEnvironment<R> where R : class, ResObj
         {
@@ -106,7 +109,7 @@ namespace FourZeroOne.Core.TokenSyntax
         {
             return new(condition, block.Then, block.Else);
         }
-        public static Fixed<r.BoxedToken<R>> tBoxed<R>(this IToken<R> token) where R : class, ResObj
+        public static Fixed<BoxedToken<R>> tBoxed<R>(this IToken<R> token) where R : class, ResObj
         {
             return new(new() { Token = token });
         }
@@ -134,7 +137,7 @@ namespace FourZeroOne.Core.TokenSyntax
         public static Fixed<Number> tConst(this int value)
         { return new(value); }
 
-        public static Tokens.Board.Unit.Get.HP tGetHP(this IToken<r.Board.Unit> unit)
+        public static Tokens.Board.Unit.Get.HP tGetHP(this IToken<r.Objects.Board.Unit> unit)
         { return new(unit); }
         
         

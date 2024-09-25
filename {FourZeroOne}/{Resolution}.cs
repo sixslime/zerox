@@ -38,7 +38,7 @@ namespace FourZeroOne.Resolution
     {
         public interface IPositioned : IResolution
         {
-            public Core.Resolutions.Board.Coordinates Position { get; }
+            public Core.Resolutions.Objects.Board.Coordinates Position { get; }
         }
         
     }

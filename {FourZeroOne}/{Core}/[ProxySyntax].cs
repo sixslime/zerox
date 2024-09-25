@@ -6,6 +6,7 @@ namespace FourZeroOne.Core.ProxySyntax
     using Proxy;
     using IToken = Token.Unsafe.IToken;
     using r = Resolutions;
+    using ro = Resolutions.Objects;
     using ResObj = Resolution.IResolution;
     public interface IOriginalHint<TOrig, out TOrig_> where TOrig : IToken where TOrig_ : IToken { }
     public sealed record RHint<R> where R : class, ResObj
@@ -17,8 +18,8 @@ namespace FourZeroOne.Core.ProxySyntax
     {
         public sealed record IfElse<TOrig, R> where TOrig : IToken where R : class, ResObj
         {
-            public IProxy<TOrig, r.BoxedToken<R>> Then { get; init; }
-            public IProxy<TOrig, r.BoxedToken<R>> Else { get; init; }
+            public IProxy<TOrig, ro.BoxedToken<R>> Then { get; init; }
+            public IProxy<TOrig, ro.BoxedToken<R>> Else { get; init; }
         }
         public sealed record RecursiveCall<RArg1, RArg2, RArg3, ROut>
             where RArg1 : class, ResObj
@@ -105,7 +106,7 @@ namespace FourZeroOne.Core.ProxySyntax
         {
             return new(proxy);
         }
-        public static IfElse<TOrig, R> pIfTrue<TOrig, R>(this IProxy<TOrig, r.Bool> condition, RHint<R> _, ProxyStructure.IfElse<TOrig, R> block) where TOrig : IToken where R : class, ResObj
+        public static IfElse<TOrig, R> pIfTrue<TOrig, R>(this IProxy<TOrig, ro.Bool> condition, RHint<R> _, ProxyStructure.IfElse<TOrig, R> block) where TOrig : IToken where R : class, ResObj
         {
             return new(condition)
             {
@@ -116,7 +117,7 @@ namespace FourZeroOne.Core.ProxySyntax
 
         public static Function<Tokens.Multi.Exclusion<R>, TOrig, Resolution.IMulti<R>, Resolution.IMulti<R>, r.Multi<R>> pWithout<TOrig, R>(this IProxy<TOrig, Resolution.IMulti<R>> source, IProxy<TOrig, Resolution.IMulti<R>> values) where TOrig : IToken where R : class, ResObj
         { return new(source, values); }
-        public static Function<Tokens.Multi.Count, TOrig, Resolution.IMulti<ResObj>, r.Number> pCount<TOrig>(this IProxy<TOrig, Resolution.IMulti<ResObj>> source) where TOrig : IToken
+        public static Function<Tokens.Multi.Count, TOrig, Resolution.IMulti<ResObj>, ro.Number> pCount<TOrig>(this IProxy<TOrig, Resolution.IMulti<ResObj>> source) where TOrig : IToken
         { return new(source); }
         public static Function<Tokens.Multi.Yield<R>, TOrig, R, r.Multi<R>> pYield<TOrig, R>(this IProxy<TOrig, R> source) where TOrig : IToken where R : class, ResObj
         { return new(source); }
@@ -125,23 +126,23 @@ namespace FourZeroOne.Core.ProxySyntax
         public static Combiner<Tokens.Multi.Union<R>, TOrig, Resolution.IMulti<R>, r.Multi<R>> pUnioned<TOrig, R>(this IEnumerable<IProxy<TOrig, Resolution.IMulti<R>>> values) where TOrig : IToken where R : class, ResObj
         { return new(values); }
 
-        public static Function<Tokens.Number.Add, TOrig, r.Number, r.Number, r.Number> pAdd<TOrig>(this IProxy<TOrig, r.Number> a, IProxy<TOrig, r.Number> b) where TOrig : IToken
+        public static Function<Tokens.Number.Add, TOrig, ro.Number, ro.Number, ro.Number> pAdd<TOrig>(this IProxy<TOrig, ro.Number> a, IProxy<TOrig, ro.Number> b) where TOrig : IToken
         { return new(a, b); }
-        public static Function<Tokens.Number.Subtract, TOrig, r.Number, r.Number, r.Number> pSubtract<TOrig>(this IProxy<TOrig, r.Number> a, IProxy<TOrig, r.Number> b) where TOrig : IToken
+        public static Function<Tokens.Number.Subtract, TOrig, ro.Number, ro.Number, ro.Number> pSubtract<TOrig>(this IProxy<TOrig, ro.Number> a, IProxy<TOrig, ro.Number> b) where TOrig : IToken
         { return new(a, b); }
-        public static Function<Tokens.Number.Multiply, TOrig, r.Number, r.Number, r.Number> pMultiply<TOrig>(this IProxy<TOrig, r.Number> a, IProxy<TOrig, r.Number> b) where TOrig : IToken
+        public static Function<Tokens.Number.Multiply, TOrig, ro.Number, ro.Number, ro.Number> pMultiply<TOrig>(this IProxy<TOrig, ro.Number> a, IProxy<TOrig, ro.Number> b) where TOrig : IToken
         { return new(a, b); }
-        public static Function<Tokens.Number.Negate, TOrig, r.Number, r.Number> pNegative<TOrig>(this IProxy<TOrig, r.Number> a) where TOrig : IToken
+        public static Function<Tokens.Number.Negate, TOrig, ro.Number, ro.Number> pNegative<TOrig>(this IProxy<TOrig, ro.Number> a) where TOrig : IToken
         { return new(a); }
-        public static Function<Tokens.Number.Compare.GreaterThan, TOrig, r.Number, r.Number, r.Bool> pIsGreaterThan<TOrig>(this IProxy<TOrig, r.Number> a, IProxy<TOrig, r.Number> b) where TOrig : IToken
+        public static Function<Tokens.Number.Compare.GreaterThan, TOrig, ro.Number, ro.Number, ro.Bool> pIsGreaterThan<TOrig>(this IProxy<TOrig, ro.Number> a, IProxy<TOrig, ro.Number> b) where TOrig : IToken
         { return new(a, b); }
 
         public static Function<Tokens.IO.Select.One<R>, TOrig, Resolution.IMulti<R>, R> pIO_SelectOne<TOrig, R>(this IProxy<TOrig, Resolution.IMulti<R>> source) where TOrig : IToken where R : class, ResObj
         { return new(source); }
-        public static Function<Tokens.IO.Select.Multiple<R>, TOrig, Resolution.IMulti<R>, r.Number, r.Multi<R>> pIO_SelectMany<TOrig, R>(this IProxy<TOrig, Resolution.IMulti<R>> source, IProxy<TOrig, r.Number> count) where TOrig : IToken where R : class, ResObj
+        public static Function<Tokens.IO.Select.Multiple<R>, TOrig, Resolution.IMulti<R>, ro.Number, r.Multi<R>> pIO_SelectMany<TOrig, R>(this IProxy<TOrig, Resolution.IMulti<R>> source, IProxy<TOrig, ro.Number> count) where TOrig : IToken where R : class, ResObj
         { return new(source, count); }
 
-        public static Function<Tokens.Unbox<R>, TOrig, r.BoxedToken<R>, R> pUnbox<TOrig, R>(this IProxy<TOrig, r.BoxedToken<R>> action) where TOrig : IToken where R : class, ResObj
+        public static Function<Tokens.Unbox<R>, TOrig, ro.BoxedToken<R>, R> pUnbox<TOrig, R>(this IProxy<TOrig, ro.BoxedToken<R>> action) where TOrig : IToken where R : class, ResObj
         { return new(action); }
     }
 }

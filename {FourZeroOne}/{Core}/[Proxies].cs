@@ -12,6 +12,7 @@ namespace FourZeroOne.Core.Proxies
     using Proxy.Unsafe;
     using Token;
     using r = Resolutions;
+    using ro = Resolutions.Objects;
     using ResObj = Resolution.IResolution;
     public sealed record Direct<TOrig, R> : Proxy<TOrig, R> where TOrig : IToken where R : class, ResObj
     {
@@ -25,15 +26,15 @@ namespace FourZeroOne.Core.Proxies
         private readonly IToken<R> _token;
     }
 
-    public sealed record ToBoxed<TOrig, R> : Proxy<TOrig, r.BoxedToken<R>> where TOrig : IToken where R : class, ResObj
+    public sealed record ToBoxed<TOrig, R> : Proxy<TOrig, ro.BoxedToken<R>> where TOrig : IToken where R : class, ResObj
     {
         public ToBoxed(IProxy<TOrig, R> proxy)
         {
             _actionProxy = proxy;
         }
-        public override IToken<r.BoxedToken<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        public override IToken<ro.BoxedToken<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
         {
-            return new Tokens.Fixed<r.BoxedToken<R>>(new() { Token = _actionProxy.Realize(original, rule) });
+            return new Tokens.Fixed<ro.BoxedToken<R>>(new() { Token = _actionProxy.Realize(original, rule) });
         }
 
         private readonly IProxy<TOrig, R> _actionProxy;
@@ -81,7 +82,7 @@ namespace FourZeroOne.Core.Proxies
         }
         private readonly IProxy<TOrig, Resolution.IMulti<ResObj>> _envModifiers;
     }
-    public sealed record Variable<TOrig, R> : Proxy<TOrig, Resolutions.DeclareVariable<R>>
+    public sealed record Variable<TOrig, R> : Proxy<TOrig, r.Actions.VariableAssign<R>>
         where TOrig : IToken
         where R : class, ResObj
     {
@@ -90,7 +91,7 @@ namespace FourZeroOne.Core.Proxies
             _identifier = identifier;
             _objectProxy = proxy;
         }
-        public override IToken<Resolutions.DeclareVariable<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        public override IToken<r.Actions.VariableAssign<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
         {
             return new Tokens.Variable<R>(_identifier, _objectProxy.Realize(original, rule));
         }
@@ -99,16 +100,16 @@ namespace FourZeroOne.Core.Proxies
         private readonly IProxy<TOrig, R> _objectProxy;
     }
 
-    public sealed record IfElse<TOrig, R> : Proxy<TOrig, Resolutions.BoxedToken<R>> where TOrig : IToken where R : class, ResObj
+    public sealed record IfElse<TOrig, R> : Proxy<TOrig, ro.BoxedToken<R>> where TOrig : IToken where R : class, ResObj
     {
-        public readonly IProxy<TOrig, Resolutions.Bool> Condition;
-        public IProxy<TOrig, Resolutions.BoxedToken<R>> PassProxy { get; init; }
-        public IProxy<TOrig, Resolutions.BoxedToken<R>> FailProxy { get; init; }
-        public IfElse(IProxy<TOrig, Resolutions.Bool> condition)
+        public readonly IProxy<TOrig, ro.Bool> Condition;
+        public IProxy<TOrig, ro.BoxedToken<R>> PassProxy { get; init; }
+        public IProxy<TOrig, ro.BoxedToken<R>> FailProxy { get; init; }
+        public IfElse(IProxy<TOrig, ro.Bool> condition)
         {
             Condition = condition;
         }
-        public override IToken<Resolutions.BoxedToken<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        public override IToken<ro.BoxedToken<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
         {
             return new Tokens.IfElse<R>(Condition.Realize(original, rule), PassProxy.Realize(original, rule), FailProxy.Realize(original, rule));
         }
