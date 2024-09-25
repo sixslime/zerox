@@ -354,16 +354,16 @@ namespace FourZeroOne.Core.Tokens
     }
     public sealed record Fixed<R> : PureValue<R> where R : class, ResObj
     {
+        public readonly R Resolution;
         public Fixed(R resolution)
         {
-            _resolution = resolution;
+            Resolution = resolution;
         }
         protected override R EvaluatePure()
         {
-            return _resolution;
+            return Resolution;
         }
-        private readonly R _resolution;
-        protected override IOption<string> CustomToString() => $"|{_resolution}|".AsSome();
+        protected override IOption<string> CustomToString() => $"|{Resolution}|".AsSome();
     }
     public sealed record Nolla<R> : Value<R> where R : class, ResObj
     {

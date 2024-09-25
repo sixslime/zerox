@@ -25,7 +25,7 @@ public class Tester
         // tutorial on how to make tokens to get you up to speed:
         // (tokens for in-game usage will include resolutions of actual objects/actions, but work exactly the same)
         var token_tutorial_1 = 5.tConst().tAdd(10.tConst()); // 5 + 10 
-        var token_tutorial_2 = Iter.Over(1, 2, 3, 4).Map(x => x.tConst()).tToMulti(); // [1, 2, 3, 4]
+        var token_tutorial_2 = Iter.Over(1, 2, 3, 4).Map(x => x.tConst()).tToConstMulti(); // [1, 2, 3, 4]
         var token_tutorial_3 = token_tutorial_2.tIO_SelectOne(); //prompt user to select one from [1, 2, 3, 4], and return it
         var token_tutorial_4 = MakeToken.tSubEnvironment<ro.Number>(new()
         {
@@ -65,7 +65,7 @@ public class Tester
                     }).pUnbox()
                 })
         });
-        var token_test_1 = token_tutorial_2.tIO_SelectMany(Iter.Over(1, 2, 3, 4).Map(x => x.tConst()).tToMulti().tIO_SelectOne());
+        var token_test_1 = token_tutorial_2.tIO_SelectMany(Iter.Over(1, 2, 3, 4).Map(x => x.tConst()).tToConstMulti().tIO_SelectOne());
         var token_test_2 = token_tutorial_1.tAdd(1.tConst());
         var token_test = token_tutorial_4;
         var rule_test = MakeProxy.AsRuleFor<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tConst().pDirect(P))));
@@ -77,7 +77,6 @@ public class Tester
             Board = new() { }
         };
         _runtime = new FourZeroOne.Runtimes.FrameSaving.Gebug(startState, token_test);
-        //DEV - Consider reworking how RecieveToken/RecieveResolution work, they are not called in the same order they used to be.
         var o = await _runtime.Run();
         Console.WriteLine($"FINAL: {o}");
     }
