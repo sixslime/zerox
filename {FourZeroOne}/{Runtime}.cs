@@ -69,6 +69,9 @@ namespace FourZeroOne.Runtime
             if (frameShiftOpt.Check(out var targetFrame)) GoToFrame(targetFrame);
             return o;
         }
+
+        protected const int MAX_MACRO_EXPANSION_DEPTH = 24;
+
         protected abstract void RecieveToken(IToken token, int depth);
         protected abstract void RecieveResolution(IOption<ResObj> resolution, int depth);
         protected abstract void RecieveFrame(LinkedStack<Frame> frameStackNode);
@@ -147,7 +150,8 @@ namespace FourZeroOne.Runtime
                 
                 var ruledToken = ApplyRules(operationNode.Value, rulesToApply, out var appliedRules);
                 rulesToApply = rulesToApply.Except(appliedRules.Elements.Map(x => x.rule));
-                if (ruledToken is Macro.Unsafe.IMacro macro)
+
+                for (int macroExpansions = 0; ruledToken is Macro.Unsafe.IMacro macro && macroExpansions < MAX_MACRO_EXPANSION_DEPTH; macroExpansions++)
                 {
                     var expanded = macro.ExpandUnsafe();
                     RecieveMacroExpansion(macro, expanded, operationNode.Depth);
