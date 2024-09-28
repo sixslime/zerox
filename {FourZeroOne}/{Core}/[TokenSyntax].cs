@@ -141,9 +141,23 @@ namespace FourZeroOne.Core.TokenSyntax
             return new(new() { Values = values.Map(x => x.Resolution) });
         }
 
+        public static Tokens.Board.Coordinates.Of tGetPosition(this IToken<Resolution.Board.IPositioned> subject)
+        { return new(subject); }
+
         public static Tokens.Board.Unit.Get.HP tGetHP(this IToken<r.Objects.Board.Unit> unit)
         { return new(unit); }
-        
-        
+        public static Tokens.Board.Unit.Get.Effects tGetEffects(this IToken<r.Objects.Board.Unit> unit)
+        { return new(unit); }
+        public static Tokens.Board.Unit.Get.Owner tGetOwner(this IToken<r.Objects.Board.Unit> unit)
+        { return new(unit); }
+
+        public static Tokens.Board.Unit.Set.Position tSetPosition(this IToken<r.Objects.Board.Unit> unit, IToken<r.Objects.Board.Coordinates> setTo)
+        { return new(unit, setTo); }
+        public static Tokens.Board.Unit.Set.HP tSetHP(this IToken<r.Objects.Board.Unit> unit, IToken<r.Objects.Number> setTo)
+        { return new(unit, setTo); }
+        public static Tokens.Board.Unit.Set.Effects tSetEffects(this IToken<r.Objects.Board.Unit> unit, IToken<r.Multi<r.Objects.Board.UnitEffect>> setTo)
+        { return new(unit, setTo); }
+        public static Tokens.Board.Unit.Set.Owner tSetOwner(this IToken<r.Objects.Board.Unit> unit, IToken<r.Objects.Board.Player> setTo)
+        { return new(unit, setTo); }
     }
 }
