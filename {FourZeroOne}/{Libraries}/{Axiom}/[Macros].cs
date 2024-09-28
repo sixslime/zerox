@@ -6,5 +6,9 @@ using System.Threading.Tasks;
 
 namespace FourZeroOne.Libraries.Axiom.Macros
 {
+    using Token;
+    using Macro;
+    using Core.Tokens;
+    using Core.Resolutions;
 
 }

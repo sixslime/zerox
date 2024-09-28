@@ -60,18 +60,6 @@ namespace FourZeroOne.Core.Tokens
         }
         namespace Unit
         {
-            public sealed record AllUnits : Value<r.Multi<rb.Unit>>
-            {
-                protected override ITask<IOption<r.Multi<rb.Unit>>> Evaluate(IRuntime runtime)
-                {
-                    return Task.FromResult(new r.Multi<rb.Unit>() { Values = runtime.GetState().Board.Units }.AsSome()).AsITask();
-                }
-            }
-            public sealed record AtPresent : PresentStateGetter<rb.Unit>
-            {
-                public AtPresent(IToken<rb.Unit> source) : base(source) { }
-                protected override PIndexedSet<int, rb.Unit> GetStatePSet(IRuntime runtime) { return runtime.GetState().Board.Units; }
-            }
             namespace Get
             {
                 public sealed record HP : PureFunction<rb.Unit, ro.Number>
@@ -90,6 +78,62 @@ namespace FourZeroOne.Core.Tokens
                     public Owner(IToken<rb.Unit> source) : base(source) { }
                     protected override rb.Player EvaluatePure(rb.Unit in1) { return in1.Owner; }
                 }
+            }
+            namespace Set
+            {
+                using Resolutions.Actions.Board.Unit;
+                public sealed record Position : PureFunction<rb.Unit, rb.Coordinates, PositionChange>
+                {
+
+                    public Position(IToken<rb.Unit> in1, IToken<rb.Coordinates> in2) : base(in1, in2) { }
+
+                    protected override PositionChange EvaluatePure(rb.Unit in1, rb.Coordinates in2)
+                    {
+                        return new() { Subject = in1, SetTo = in2 };
+                    }
+                }
+                public sealed record HP : PureFunction<rb.Unit, ro.Number, HPChange>
+                {
+
+                    public HP(IToken<rb.Unit> in1, IToken<ro.Number> in2) : base(in1, in2) { }
+
+                    protected override HPChange EvaluatePure(rb.Unit in1, ro.Number in2)
+                    {
+                        return new() { Subject = in1, SetTo = in2 };
+                    }
+                }
+                public sealed record Owner : PureFunction<rb.Unit, rb.Player, OwnerChange>
+                {
+
+                    public Owner(IToken<rb.Unit> in1, IToken<ro.Number> in2) : base(in1, in2) { }
+
+                    protected override OwnerChange EvaluatePure(rb.Unit in1, rb.Player in2)
+                    {
+                        return new() { Subject = in1, SetTo = in2 };
+                    }
+                }
+                public sealed record Effects : PureFunction<rb.Unit, r.Multi<rb.UnitEffect>, EffectsChange>
+                {
+
+                    public Effects(IToken<rb.Unit> in1, IToken<r.Multi<rb.UnitEffect>> in2) : base(in1, in2) { }
+
+                    protected override EffectsChange EvaluatePure(rb.Unit in1, r.Multi<rb.UnitEffect> in2)
+                    {
+                        return new() { Subject = in1, SetTo = in2 };
+                    }
+                }
+            }
+            public sealed record AllUnits : Value<r.Multi<rb.Unit>>
+            {
+                protected override ITask<IOption<r.Multi<rb.Unit>>> Evaluate(IRuntime runtime)
+                {
+                    return Task.FromResult(new r.Multi<rb.Unit>() { Values = runtime.GetState().Board.Units }.AsSome()).AsITask();
+                }
+            }
+            public sealed record AtPresent : PresentStateGetter<rb.Unit>
+            {
+                public AtPresent(IToken<rb.Unit> source) : base(source) { }
+                protected override PIndexedSet<int, rb.Unit> GetStatePSet(IRuntime runtime) { return runtime.GetState().Board.Units; }
             }
         }
         namespace Player

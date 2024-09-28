@@ -8,7 +8,11 @@ namespace FourZeroOne.Programs
 {
     public static class Axiom
     {
-        
+        public static ProgramSource Create()
+        {
+
+            throw new NotImplementedException();
+        }
     }
 
 }
