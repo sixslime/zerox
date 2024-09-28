@@ -30,12 +30,12 @@ namespace FourZeroOne.Core.Tokens
                     return in1.Position;
                 }
             }
-            public sealed record OffsetArea : PureFunction<rb.Coordinates, Resolution.IMulti<rb.Coordinates>, r.Multi<rb.Coordinates>>
+            public sealed record OffsetArea : PureFunction<rb.Coordinates, Resolution.IMulti<rb.Coordinates>, rb.CoordinateArea>
             {
                 public OffsetArea(IToken<rb.Coordinates> offset, IToken<Resolution.IMulti<rb.Coordinates>> area) : base(offset, area) { }
-                protected override r.Multi<rb.Coordinates> EvaluatePure(rb.Coordinates in1, Resolution.IMulti<rb.Coordinates> in2)
+                protected override rb.CoordinateArea EvaluatePure(rb.Coordinates in1, Resolution.IMulti<rb.Coordinates> in2)
                 {
-                    return new() { Values = in2.Values.Map(x => x.Add(in1)) };
+                    return new() { Center = in1, Offsets = in2.Values };
                 }
             }
         }
