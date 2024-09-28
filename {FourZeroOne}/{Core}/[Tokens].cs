@@ -105,7 +105,7 @@ namespace FourZeroOne.Core.Tokens
                 public sealed record Owner : PureFunction<rb.Unit, rb.Player, OwnerChange>
                 {
 
-                    public Owner(IToken<rb.Unit> in1, IToken<ro.Number> in2) : base(in1, in2) { }
+                    public Owner(IToken<rb.Unit> in1, IToken<rb.Player> in2) : base(in1, in2) { }
 
                     protected override OwnerChange EvaluatePure(rb.Unit in1, rb.Player in2)
                     {
