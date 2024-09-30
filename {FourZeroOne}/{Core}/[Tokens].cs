@@ -48,11 +48,6 @@ namespace FourZeroOne.Core.Tokens
                     return Task.FromResult(new r.Multi<rb.Hex>() { Values = runtime.GetState().Board.Hexes }.AsSome()).AsITask();
                 }
             }
-            public sealed record AtPresent : PresentStateGetter<rb.Hex>
-            {
-                public AtPresent(IToken<rb.Hex> source) : base(source) { }
-                protected override PIndexedSet<int, rb.Hex> GetStatePSet(IRuntime runtime) { return runtime.GetState().Board.Hexes; }
-            }
             namespace Get
             {
 
@@ -130,11 +125,6 @@ namespace FourZeroOne.Core.Tokens
                     return Task.FromResult(new r.Multi<rb.Unit>() { Values = runtime.GetState().Board.Units }.AsSome()).AsITask();
                 }
             }
-            public sealed record AtPresent : PresentStateGetter<rb.Unit>
-            {
-                public AtPresent(IToken<rb.Unit> source) : base(source) { }
-                protected override PIndexedSet<int, rb.Unit> GetStatePSet(IRuntime runtime) { return runtime.GetState().Board.Units; }
-            }
         }
         namespace Player
         {
@@ -144,11 +134,6 @@ namespace FourZeroOne.Core.Tokens
                 {
                     return Task.FromResult(new r.Multi<rb.Player>() { Values = runtime.GetState().Board.Players }.AsSome()).AsITask();
                 }
-            }
-            public sealed record AtPresent : PresentStateGetter<rb.Player>
-            {
-                public AtPresent(IToken<rb.Player> source) : base(source) { }
-                protected override PIndexedSet<int, rb.Player> GetStatePSet(IRuntime runtime) { return runtime.GetState().Board.Players; }
             }
         }
     }
@@ -298,6 +283,14 @@ namespace FourZeroOne.Core.Tokens
         }
     }
 
+    public record AtPresent<S> : Function<Resolution.IStateTracked<S>, S> where S : class, Resolution.IStateTracked<S>
+    {
+        public AtPresent(IToken<S> source) : base(source) { }
+        protected override ITask<IOption<S>> Evaluate(IRuntime runtime, IOption<Resolution.IStateTracked<S>> in1)
+        {
+            return Task.FromResult(in1.RemapAs(x => x.GetAtState(runtime.GetState()))).AsITask();
+        }
+    }
     public record Unbox<R> : Function<ro.BoxedToken<R>, R> where R : class, ResObj
     {
         public Unbox(IToken<ro.BoxedToken<R>> a) : base(a) { }

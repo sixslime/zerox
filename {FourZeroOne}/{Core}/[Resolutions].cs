@@ -56,7 +56,7 @@ namespace FourZeroOne.Core.Resolutions
 
                 private PList<Coordinates> _offsets;
             }
-            public abstract record Hex : NoOp, IPositioned, IStateTracked
+            public sealed record Hex : NoOp, IPositioned, IStateTracked<Hex>
             {
                 public int UUID => _uuid;
                 public required Coordinates Position { get; init; }
@@ -65,13 +65,32 @@ namespace FourZeroOne.Core.Resolutions
                 {
                     _uuid = id;
                 }
+                public Hex GetAtState(State state)
+                {
+                    return state.Board.Hexes[UUID];
+                }
+
+                public State SetAtState(State state)
+                {
+                    return state with
+                    {
+                        dBoard = Q => Q with
+                        {
+                            dHexes = Q => Q with
+                            {
+                                dElements = E => E.Also(this.Yield())
+                            }
+                        }
+                    };
+                }
+
                 public override bool ResEqual(IResolution? other)
                 {
                     return (other is Hex h && Position.ResEqual(h.Position));
                 }
                 private readonly int _uuid;
             }
-            public sealed record Unit : NoOp, IPositioned, IStateTracked
+            public sealed record Unit : NoOp, IPositioned, IStateTracked<Unit>
             {
                 public int UUID => _uuid;
                 public required Number HP { get; init; }
@@ -90,7 +109,26 @@ namespace FourZeroOne.Core.Resolutions
                 {
                     return (other is Unit u && UUID == u.UUID);
                 }
-                
+
+                public Unit GetAtState(State state)
+                {
+                    return state.Board.Units[UUID];
+                }
+
+                public State SetAtState(State state)
+                {
+                    return state with
+                    {
+                        dBoard = Q => Q with
+                        {
+                            dUnits = Q => Q with
+                            {
+                                dElements = E => E.Also(this.Yield())
+                            }
+                        }
+                    };
+                }
+
                 private readonly int _uuid;
             }
             public sealed record UnitEffect : NoOp
@@ -101,13 +139,33 @@ namespace FourZeroOne.Core.Resolutions
                     Identity = identity;
                 }
             }
-            public sealed record Player : NoOp, IStateTracked
+            public sealed record Player : NoOp, IStateTracked<Player>
             {
                 public int UUID => _uuid;
                 public Player(int id)
                 {
                     _uuid = id;
                 }
+
+                public Player GetAtState(State state)
+                {
+                    return state.Board.Players[UUID];
+                }
+
+                public State SetAtState(State state)
+                {
+                    return state with
+                    {
+                        dBoard = Q => Q with
+                        {
+                            dPlayers = Q => Q with
+                            {
+                                dElements = E => E.Also(this.Yield())
+                            }
+                        }
+                    };
+                }
+
                 private readonly int _uuid;
             }
         }

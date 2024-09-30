@@ -27,6 +27,7 @@ namespace FourZeroOne
         public readonly PIndexedSet<int, rb.Player> Players;
         public Updater<PIndexedSet<int, rb.Unit>> dUnits { init => Units = value(Units); }
         public Updater<PIndexedSet<int, rb.Hex>> dHexes { init => Hexes = value(Hexes); }
+        public Updater<PIndexedSet<int, rb.Player>> dPlayers { init => Players = value(Players); }
         public BoardState()
         {
             Units = new(unit => unit.UUID, 13);

@@ -14,14 +14,20 @@ namespace FourZeroOne.Resolution
         public State ChangeState(State context);
         public bool ResEqual(IResolution? other);
     }
+    public interface IComponent<in R> : Unsafe.IComponent where R : IResolution
+    {
+
+    }
     public interface IMulti<out R> : IResolution where R : IResolution
     {
         public IEnumerable<R> Values { get; }
         public int Count { get; }
     }
-    public interface IStateTracked : IResolution
+    public interface IStateTracked<S> : IResolution where S : IStateTracked<S>
     {
         public int UUID { get; }
+        public S GetAtState(State state);
+        public State SetAtState(State state);
     }
     public abstract record Operation : Unsafe.Resolution
     {
@@ -51,5 +57,9 @@ namespace FourZeroOne.Resolution.Unsafe
         public virtual bool ResEqual(IResolution? other) => Equals(other);
         public State ChangeState(State before) => ChangeStateInternal(before);
         protected abstract State ChangeStateInternal(State context);
+    }
+    public interface IComponent : IResolution
+    {
+
     }
 }

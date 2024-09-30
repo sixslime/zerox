@@ -238,13 +238,6 @@ namespace FourZeroOne.Token
     // --------
     #endregion
 
-    public abstract record PresentStateGetter<RSource> : Function<RSource, RSource>
-        where RSource : class, Resolution.IStateTracked
-    {
-        public PresentStateGetter(IToken<RSource> source) : base(source) { }
-        protected abstract PIndexedSet<int, RSource> GetStatePSet(IRuntime runtime);
-        protected sealed override ITask<IOption<RSource>> Evaluate(IRuntime runtime, IOption<RSource> in1) { return Task.FromResult(in1.RemapAs(x => GetStatePSet(runtime)[x.UUID])).AsITask(); }
-    }
 }
 namespace FourZeroOne.Token.Unsafe
 {
