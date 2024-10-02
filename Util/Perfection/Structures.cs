@@ -107,6 +107,12 @@ namespace Perfection
         private List<(K key, T val)> GetBucket(K element) => _storage[element.GetHashCode().Abs() % Modulo];
         public override string ToString() => Elements.AccumulateInto("PMap:\n", (msg, x) => msg + $"- [{x.key} : {x.val}]\n");
     }
+    /// <summary>
+    /// This implementation is fucking stupid because it assumes all PLists are never dropped. <br></br>
+    /// Just make it save a evaluate and save a list on creation. <br></br>
+    /// <i>The type of shit that makes me want to quit.</i>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public record PList<T>
     {
         public required IEnumerable<T> Elements {
