@@ -266,7 +266,27 @@ namespace FourZeroOne.Core.Tokens
             }
         }
     }
-
+    namespace Component
+    {
+        using Resolution;
+        public record Get<H, I, C> : Function<H, I, C>
+            where I : class, IComponentIdentifier<C>
+            where C : class, IComponent<C, H>
+            where H : class, IHasComponents<H>
+        {
+            public Get(IToken<H> holder, IToken<I> identifier) : base(holder, identifier) { }
+            protected override ITask<IOption<C>> Evaluate(IRuntime runtime, IOption<H> in1, IOption<I> in2)
+            {
+                return Task.FromResult(
+                    (in1.Check(out var holder) && in2.Check(out var identifier))
+                    ? (holder.Components[identifier] as C).NullToNone()
+                    : new None<C>()
+                    ).AsITask();
+            }
+        }
+        // make action resolution for
+        public record Insert<H, C> : Function<H, IMulti<Resolution.Unsafe.IComponentFor<H>>>
+    }
     public record AtPresent<S> : Function<Resolution.IStateTracked<S>, S> where S : class, Resolution.IStateTracked<S>
     {
         public AtPresent(IToken<S> source) : base(source) { }
