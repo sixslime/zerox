@@ -14,10 +14,8 @@ namespace FourZeroOne.Resolution
         public State ChangeState(State context);
         public bool ResEqual(IResolution? other);
     }
-    public interface IComponent<in R> : Unsafe.IComponent where R : IResolution
-    {
-
-    }
+    public interface IComponent<C, R> : Unsafe.IComponent<C>, Unsafe.IComponentFor<R> where C : IComponent<C, R> where R : IResolution { }
+    public interface IComponentIdentifier<C> : Unsafe.IComponentIdentifier where C : Unsafe.IComponent<C> { }
     public interface IMulti<out R> : IResolution where R : IResolution
     {
         public IEnumerable<R> Values { get; }
@@ -26,10 +24,12 @@ namespace FourZeroOne.Resolution
     public interface IStateTracked<S> : IResolution where S : IStateTracked<S>
     {
         public int UUID { get; }
-        public PIndexedSet<string, IComponent<S>> Components { get; }
+        public PIndexedSet<Unsafe.IComponentIdentifier, Unsafe.IComponentFor<S>> Components { get; }
         public S GetAtState(State state);
         public State SetAtState(State state);
     }
+
+
     public abstract record Operation : Unsafe.Resolution
     {
         protected abstract State UpdateState(State context);
@@ -40,17 +40,35 @@ namespace FourZeroOne.Resolution
     {
         protected override sealed State ChangeStateInternal(State context) => context;
     }
+
+    public abstract record ComponentIdentifier<C> : NoOp, IComponentIdentifier<C> where C : Unsafe.IComponent<C>
+    {
+        public abstract string Identity { get; }
+        public virtual bool Equals(ComponentIdentifier<C>? other)
+        {
+            return other is not null && other.Identity == Identity;
+        }
+        public override int GetHashCode()
+        {
+            return Identity.GetHashCode();
+        }
+    }
+    public abstract record Component<C, R> : NoOp, IComponent<C, R> where C : Component<C, R> where R : IResolution
+    {
+        public abstract IComponentIdentifier<C> Identifier { get; }
+        public Unsafe.IComponentIdentifier UnsafeIdentifier => Identifier;
+    }
     public abstract record StateObject<S> : NoOp, IStateTracked<S> where S : StateObject<S>
     {
         public abstract S GetAtState(State state);
         public abstract State SetAtState(State state);
         public int UUID => _uuid;
-        public PIndexedSet<string, IComponent<S>> Components { get; init; }
-        public Updater<PIndexedSet<string, IComponent<S>>> dComponents { init => Components = value(Components); }
+        public PIndexedSet<Unsafe.IComponentIdentifier, Unsafe.IComponentFor<S>> Components { get; init; }
+        public Updater<PIndexedSet<Unsafe.IComponentIdentifier, Unsafe.IComponentFor<S>>> dComponents { init => Components = value(Components); }
 
         public StateObject(int id)
         {
-            Components = new(x => x.Identifier);
+            Components = new(x => x.UnsafeIdentifier);
             _uuid = id;
         }
         private readonly int _uuid;
@@ -73,8 +91,16 @@ namespace FourZeroOne.Resolution.Unsafe
         public State ChangeState(State before) => ChangeStateInternal(before);
         protected abstract State ChangeStateInternal(State context);
     }
-    public interface IComponent : IResolution
+    public interface IComponentFor<R> : IResolution where R : IResolution
     {
-        public string Identifier { get; }
+        public IComponentIdentifier UnsafeIdentifier { get; }
+    }
+    public interface IComponent<C> : IResolution where C : IComponent<C>
+    {
+        public IComponentIdentifier<C> Identifier { get; }
+    }
+    public interface IComponentIdentifier : IResolution
+    {
+        public string Identity { get; }
     }
 }
