@@ -60,6 +60,6 @@ namespace FourZeroOne.Resolution.Unsafe
     }
     public interface IComponent : IResolution
     {
-
+        public string Identifier { get; }
     }
 }
