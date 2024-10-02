@@ -43,10 +43,12 @@ namespace Perfection
         {
             get => _storage.Flatten(); init
             {
-                Count = 0;
+                var elementList = new List<T>(value);
+                Count = elementList.Count;
+                Modulo = (int)(Count * _storageRatio);
                 _storage = new List<List<T>>(Modulo);
                 _storage.AddRange(new List<T>(2).Sequence((_) => new(2)).Take(Modulo));
-                foreach (var v in value)
+                foreach (var v in elementList)
                 {
                     var bindex = IndexGenerator(v).GetHashCode().Abs() % Modulo;
                     var foundAt = _storage[bindex].FindIndex(x => IndexGenerator(v).Equals(IndexGenerator(x)));
@@ -59,9 +61,10 @@ namespace Perfection
         public readonly int Modulo;
         public readonly int Count;
         public readonly Func<T, I> IndexGenerator;
-        public PIndexedSet(Func<T, I> indexGenerator, int modulo)
+        public PIndexedSet(Func<T, I> indexGenerator, float storageRatio = 1.3f)
         {
-            Modulo = modulo;
+            _storageRatio = storageRatio;
+            Modulo = 0;
             IndexGenerator = indexGenerator;
             Count = 0;
             _storage = new(0);
@@ -73,6 +76,8 @@ namespace Perfection
         IEnumerator IEnumerable.GetEnumerator() => _storage.Flatten().GetEnumerator();
         public override string ToString() => _storage.AccumulateInto("PIndexedSet:\n", (msg1, x) => msg1 +
         $"{x.AccumulateInto(">", (msg2, y) => msg2 + $" [{IndexGenerator(y)} : {y}]\n  ")}\n");
+
+        private readonly float _storageRatio;
     }
     // Shitty ass Dictionary
     public record PMap<K, T>
