@@ -26,6 +26,7 @@ namespace FourZeroOne.Resolution
     public interface IStateTracked<S> : IResolution where S : IStateTracked<S>
     {
         public int UUID { get; }
+        public PIndexedSet<string, IComponent<S>> Components { get; }
         public S GetAtState(State state);
         public State SetAtState(State state);
     }
@@ -39,7 +40,21 @@ namespace FourZeroOne.Resolution
     {
         protected override sealed State ChangeStateInternal(State context) => context;
     }
+    public abstract record StateObject<S> : NoOp, IStateTracked<S> where S : StateObject<S>
+    {
+        public abstract S GetAtState(State state);
+        public abstract State SetAtState(State state);
+        public int UUID => _uuid;
+        public PIndexedSet<string, IComponent<S>> Components { get; init; }
+        public Updater<PIndexedSet<string, IComponent<S>>> dComponents { init => Components = value(Components); }
 
+        public StateObject(int id)
+        {
+            Components = new(x => x.Identifier);
+            _uuid = id;
+        }
+        private readonly int _uuid;
+    }
     namespace Board
     {
         public interface IPositioned : IResolution

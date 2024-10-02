@@ -150,16 +150,12 @@ namespace FourZeroOne.Core.ProxySyntax
 
         public static Function<Tokens.Board.Unit.Get.HP, TOrig, ro.Board.Unit, ro.Number> pGetHP<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject) where TOrig : IToken
         { return new(subject); }
-        public static Function<Tokens.Board.Unit.Get.Effects, TOrig, ro.Board.Unit, r.Multi<ro.Board.UnitEffect>> pGetEffects<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject) where TOrig : IToken
-        { return new(subject); }
         public static Function<Tokens.Board.Unit.Get.Owner, TOrig, ro.Board.Unit, ro.Board.Player> pGetOwner<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject) where TOrig : IToken
         { return new(subject); }
 
         public static Function<Tokens.Board.Unit.Set.Position, TOrig, ro.Board.Unit, ro.Board.Coordinates, r.Actions.Board.Unit.PositionChange> pSetPosition<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject, IProxy<TOrig, ro.Board.Coordinates> setTo) where TOrig : IToken
         { return new(subject, setTo); }
         public static Function<Tokens.Board.Unit.Set.HP, TOrig, ro.Board.Unit, ro.Number, r.Actions.Board.Unit.HPChange> pSetHP<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject, IProxy<TOrig, ro.Number> setTo) where TOrig : IToken
-        { return new(subject, setTo); }
-        public static Function<Tokens.Board.Unit.Set.Effects, TOrig, ro.Board.Unit, r.Multi<ro.Board.UnitEffect>, r.Actions.Board.Unit.EffectsChange> pSetEffects<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject, IProxy<TOrig, r.Multi<ro.Board.UnitEffect>> setTo) where TOrig : IToken
         { return new(subject, setTo); }
         public static Function<Tokens.Board.Unit.Set.Owner, TOrig, ro.Board.Unit, ro.Board.Player, r.Actions.Board.Unit.OwnerChange> pSetOwner<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject, IProxy<TOrig, ro.Board.Player> setTo) where TOrig : IToken
         { return new(subject, setTo); }

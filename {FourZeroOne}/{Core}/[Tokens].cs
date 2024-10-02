@@ -62,12 +62,6 @@ namespace FourZeroOne.Core.Tokens
                     public HP(IToken<rb.Unit> of) : base(of) { }
                     protected override ro.Number EvaluatePure(rb.Unit in1) { return in1.HP; }
                 }
-                public sealed record Effects : PureFunction<rb.Unit, r.Multi<rb.UnitEffect>>
-                {
-                    public Effects(IToken<rb.Unit> of) : base(of) { }
-                    protected override r.Multi<rb.UnitEffect> EvaluatePure(rb.Unit in1) { return in1.Effects; }
-
-                }
                 public sealed record Owner : PureFunction<rb.Unit, rb.Player>
                 {
                     public Owner(IToken<rb.Unit> source) : base(source) { }
@@ -103,16 +97,6 @@ namespace FourZeroOne.Core.Tokens
                     public Owner(IToken<rb.Unit> in1, IToken<rb.Player> in2) : base(in1, in2) { }
 
                     protected override OwnerChange EvaluatePure(rb.Unit in1, rb.Player in2)
-                    {
-                        return new() { Subject = in1, SetTo = in2 };
-                    }
-                }
-                public sealed record Effects : PureFunction<rb.Unit, r.Multi<rb.UnitEffect>, EffectsChange>
-                {
-
-                    public Effects(IToken<rb.Unit> in1, IToken<r.Multi<rb.UnitEffect>> in2) : base(in1, in2) { }
-
-                    protected override EffectsChange EvaluatePure(rb.Unit in1, r.Multi<rb.UnitEffect> in2)
                     {
                         return new() { Subject = in1, SetTo = in2 };
                     }

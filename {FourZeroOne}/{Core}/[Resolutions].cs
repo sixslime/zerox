@@ -56,21 +56,17 @@ namespace FourZeroOne.Core.Resolutions
 
                 private PList<Coordinates> _offsets;
             }
-            public sealed record Hex : NoOp, IPositioned, IStateTracked<Hex>
+            public sealed record Hex : StateObject<Hex>, IPositioned
             {
-                public int UUID => _uuid;
                 public required Coordinates Position { get; init; }
                 public Updater<Coordinates> dPosition { init => Position = value(Position); }
-                public Hex(int id)
-                {
-                    _uuid = id;
-                }
-                public Hex GetAtState(State state)
+                
+                public Hex(int id) : base(id) { }
+                public override Hex GetAtState(State state)
                 {
                     return state.Board.Hexes[UUID];
                 }
-
-                public State SetAtState(State state)
+                public override State SetAtState(State state)
                 {
                     return state with
                     {
@@ -88,34 +84,27 @@ namespace FourZeroOne.Core.Resolutions
                 {
                     return (other is Hex h && Position.ResEqual(h.Position));
                 }
-                private readonly int _uuid;
             }
-            public sealed record Unit : NoOp, IPositioned, IStateTracked<Unit>
+            public sealed record Unit : StateObject<Unit>, IPositioned
             {
-                public int UUID => _uuid;
                 public required Number HP { get; init; }
                 public Updater<Number> dHP { init => HP = value(HP); }
                 public required Coordinates Position { get; init; }
                 public Updater<Coordinates> dPosition { init => Position = value(Position); }
-                public required Multi<UnitEffect> Effects { get; init; }
-                public Updater<Multi<UnitEffect>> dEffects { init => Effects = value(Effects); }
                 public required Player Owner { get; init; }
                 public Updater<Player> dOwner { init => Owner = value(Owner); }
-                public Unit(int id)
-                {
-                    _uuid = id;
-                }
+                public Unit(int id) : base(id) { }
                 public override bool ResEqual(IResolution? other)
                 {
                     return (other is Unit u && UUID == u.UUID);
                 }
 
-                public Unit GetAtState(State state)
+                public override Unit GetAtState(State state)
                 {
                     return state.Board.Units[UUID];
                 }
 
-                public State SetAtState(State state)
+                public override State SetAtState(State state)
                 {
                     return state with
                     {
@@ -129,30 +118,17 @@ namespace FourZeroOne.Core.Resolutions
                     };
                 }
 
-                private readonly int _uuid;
             }
-            public sealed record UnitEffect : NoOp
+            public sealed record Player : StateObject<Player>
             {
-                public readonly string Identity;
-                public UnitEffect(string identity)
-                {
-                    Identity = identity;
-                }
-            }
-            public sealed record Player : NoOp, IStateTracked<Player>
-            {
-                public int UUID => _uuid;
-                public Player(int id)
-                {
-                    _uuid = id;
-                }
+                public Player(int id) : base(id) { }
 
-                public Player GetAtState(State state)
+                public override Player GetAtState(State state)
                 {
                     return state.Board.Players[UUID];
                 }
 
-                public State SetAtState(State state)
+                public override State SetAtState(State state)
                 {
                     return state with
                     {
@@ -166,7 +142,6 @@ namespace FourZeroOne.Core.Resolutions
                     };
                 }
 
-                private readonly int _uuid;
             }
         }
         public sealed record BoxedToken<R> : NoOp where R : class, ResObj
@@ -217,15 +192,6 @@ namespace FourZeroOne.Core.Resolutions
                     public Updater<b.Coordinates> dSetTo { init => SetTo = value(SetTo); }
                     public PositionChange() { }
                     protected override State UpdateState(State state) => ChangeUnit(state, Subject, x => x with { Position = SetTo });
-                }
-                public sealed record EffectsChange : Operation
-                {
-                    public required b.Unit Subject { get; init; }
-                    public Updater<b.Unit> dSubject { init => Subject = value(Subject); }
-                    public required Multi<b.UnitEffect> SetTo { get; init; }
-                    public Updater<Multi<b.UnitEffect>> dSetTo { init => SetTo = value(SetTo); }
-                    public EffectsChange() { }
-                    protected override State UpdateState(State state) => ChangeUnit(state, Subject, x => x with { Effects = SetTo });
                 }
                 public sealed record OwnerChange : Operation
                 {
