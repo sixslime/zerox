@@ -82,10 +82,12 @@ namespace Perfection
         {
             get => _storage.Flatten(); init
             {
-                Count = 0;
+                var elementList = new List<(K key, T val)>(value);
+                Count = elementList.Count;
+                Modulo = (int)(Count * _storageRatio);
                 _storage = new List<List<(K key, T val)>>(Modulo);
                 _storage.AddRange(new List<(K key, T val)>(2).Sequence((_) => new(2)).Take(Modulo));
-                foreach (var v in value)
+                foreach (var v in elementList)
                 {
                     var bindex = v.key.GetHashCode().Abs() % Modulo;
                     var foundAt = _storage[bindex].FindIndex(x => v.key.Equals(x.key));
@@ -97,15 +99,18 @@ namespace Perfection
         public Updater<IEnumerable<(K key, T val)>> dElements { init => Elements = value(Elements); }
         public readonly int Modulo;
         public readonly int Count;
-        public PMap(int modulo)
+        public PMap(float storageRatio = 1.3f)
         {
-            Modulo = modulo;
+            _storageRatio = storageRatio;
+            Modulo = 0;
             Count = 0;
             _storage = new(0);
         }
         public T this[K indexer] => GetBucket(indexer).Find(x => indexer.Equals(x.key)).val;
         private List<(K key, T val)> GetBucket(K element) => _storage[element.GetHashCode().Abs() % Modulo];
         public override string ToString() => Elements.AccumulateInto("PMap:\n", (msg, x) => msg + $"- [{x.key} : {x.val}]\n");
+
+        private readonly float _storageRatio;
     }
     /// <summary>
     /// This implementation is fucking stupid because it assumes all PLists are never dropped. <br></br>
