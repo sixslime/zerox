@@ -216,18 +216,34 @@ namespace FourZeroOne.Core.Resolutions
             }
         }
 
-        public sealed record InsertComponents<H> : Operation where H : IHasComponents<H>, IStateTracked<H>
+        namespace Component
         {
-            public required H ComponentHolder { get; init; }
-            public required Multi<Resolution.Unsafe.IComponentFor<H>> Components { get; init; }
-
-            protected override State UpdateState(State context)
+            public sealed record Insert<H> : Operation where H : IHasComponents<H>, IStateTracked<H>
             {
-                return ComponentHolder
-                    .WithComponents(Components.Values)
-                    .SetAtState(context);
+                public required H ComponentHolder { get; init; }
+                public required Multi<Resolution.Unsafe.IComponentFor<H>> Components { get; init; }
+
+                protected override State UpdateState(State context)
+                {
+                    return ComponentHolder
+                        .WithComponents(Components.Values)
+                        .SetAtState(context);
+                }
+            }
+            public sealed record Remove<H> : Operation where H : IHasComponents<H>, IStateTracked<H>
+            {
+                public required H ComponentHolder { get; init; }
+                public required Multi<Resolution.Unsafe.IComponentIdentifier> Identifiers { get; init; }
+
+                protected override State UpdateState(State context)
+                {
+                    return ComponentHolder
+                        .WithoutComponents(Identifiers.Values)
+                        .SetAtState(context);
+                }
             }
         }
+        
         public sealed record VariableAssign<R> : Operation where R : class, ResObj
         {
             public readonly VariableIdentifier<R> Identifier;

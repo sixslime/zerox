@@ -285,15 +285,16 @@ namespace FourZeroOne.Core.Tokens
             }
         }
         
-        public record Insert<H> : PureFunction<H, IMulti<Resolution.Unsafe.IComponentFor<H>>, r.Actions.InsertComponents<H>> where H : class, IHasComponents<H>
+        public record Insert<H> : PureFunction<H, IMulti<Resolution.Unsafe.IComponentFor<H>>, r.Actions.Component.Insert<H>> where H : class, IHasComponents<H>
         {
             public Insert(IToken<H> holder, IToken<IMulti<Resolution.Unsafe.IComponentFor<H>>> components) : base(holder, components) { }
 
-            protected override r.Actions.InsertComponents<H> EvaluatePure(H holder, IMulti<Resolution.Unsafe.IComponentFor<H>> components)
+            protected override r.Actions.Component.Insert<H> EvaluatePure(H holder, IMulti<Resolution.Unsafe.IComponentFor<H>> components)
             {
                 return new() { ComponentHolder = holder, Components = new() { Values = components.Values } };
             }
         }
+        
         
     }
     public record AtPresent<S> : Function<Resolution.IStateTracked<S>, S> where S : class, Resolution.IStateTracked<S>
