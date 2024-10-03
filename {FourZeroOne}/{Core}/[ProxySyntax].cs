@@ -9,10 +9,7 @@ namespace FourZeroOne.Core.ProxySyntax
     using ro = Resolutions.Objects;
     using ResObj = Resolution.IResolution;
     public interface IOriginalHint<TOrig, out TOrig_> where TOrig : IToken where TOrig_ : IToken { }
-    public sealed record RHint<R> where R : class, ResObj
-    {
-        public static RHint<R> Hint() => new();
-    }
+    
     public sealed record OriginalHint<TOrig> : IOriginalHint<TOrig, TOrig> where TOrig : IToken { }
     namespace ProxyStructure
     {
@@ -69,14 +66,14 @@ namespace FourZeroOne.Core.ProxySyntax
         public static OriginalArg3<TOrig, R> pOriginalC<TOrig, R>(this IOriginalHint<TOrig, Token.Unsafe.IHasArg3<R>> _) where TOrig : Token.Unsafe.IHasArg3<R> where R : class, ResObj
         { return new(); }
 
-        public static SubEnvironment<TOrig, R> pSubEnvironment<TOrig, R>(this OriginalHint<TOrig> _, RHint<R> __, ProxyStructure.SubEnvironment<TOrig, R> block) where TOrig : IToken where R : class, ResObj
+        public static SubEnvironment<TOrig, R> pSubEnvironment<TOrig, R>(this OriginalHint<TOrig> _, TokenSyntax.RHint<R> __, ProxyStructure.SubEnvironment<TOrig, R> block) where TOrig : IToken where R : class, ResObj
         {
             return new(block.EnvironmentProxy)
             {
                 SubTokenProxy = block.SubProxy
             };
         }
-        public static Combiner<Tokens.Multi.Union<R>, TOrig, Resolution.IMulti<R>, r.Multi<R>> pArrayOf<TOrig, R>(this OriginalHint<TOrig> _, RHint<R> __, List<IProxy<TOrig, R>> array) where TOrig : IToken where R : class, ResObj
+        public static Combiner<Tokens.Multi.Union<R>, TOrig, Resolution.IMulti<R>, r.Multi<R>> pArrayOf<TOrig, R>(this OriginalHint<TOrig> _, TokenSyntax.RHint<R> __, List<IProxy<TOrig, R>> array) where TOrig : IToken where R : class, ResObj
         {
             return array.pToMulti();
         }
@@ -106,7 +103,7 @@ namespace FourZeroOne.Core.ProxySyntax
         {
             return new(proxy);
         }
-        public static IfElse<TOrig, R> pIfTrue<TOrig, R>(this IProxy<TOrig, ro.Bool> condition, RHint<R> _, ProxyStructure.IfElse<TOrig, R> block) where TOrig : IToken where R : class, ResObj
+        public static IfElse<TOrig, R> pIfTrue<TOrig, R>(this IProxy<TOrig, ro.Bool> condition, TokenSyntax.RHint<R> _, ProxyStructure.IfElse<TOrig, R> block) where TOrig : IToken where R : class, ResObj
         {
             return new(condition)
             {

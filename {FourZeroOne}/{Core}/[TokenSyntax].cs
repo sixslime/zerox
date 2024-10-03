@@ -12,6 +12,10 @@ namespace FourZeroOne.Core.TokenSyntax
     using ResObj = Resolution.IResolution;
     using IToken = Token.Unsafe.IToken;
 
+    public sealed record RHint<R> where R : class, ResObj
+    {
+        public static RHint<R> Hint() => new();
+    }
     namespace TokenStructure
     {
         public sealed record IfElse<R> where R : class, ResObj
@@ -137,9 +141,13 @@ namespace FourZeroOne.Core.TokenSyntax
         public static Fixed<Number> tConst(this int value)
         { return new(value); }
         public static Fixed<r.Multi<R>> tToConstMulti<R>(this IEnumerable<Tokens.Fixed<R>> values) where R : class, ResObj
-        {
-            return new(new() { Values = values.Map(x => x.Resolution) });
-        }
+        { return new(new() { Values = values.Map(x => x.Resolution) }); }
+
+        public static Tokens.Component.Get<H, I, C> tGetComponent<H, I, C>(this IToken<H> holder, RHint<C> _hint, IToken<I> componentIdentifier)
+            where H : class, Resolution.IHasComponents<H>
+            where I : class, Resolution.IComponentIdentifier<C>
+            where C : class, Resolution.IComponent<C, H>
+        { return new(holder, componentIdentifier); }
 
         public static Tokens.Board.Coordinates.Of tGetPosition(this IToken<Resolution.Board.IPositioned> subject)
         { return new(subject); }
