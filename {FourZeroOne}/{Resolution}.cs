@@ -19,6 +19,7 @@ namespace FourZeroOne.Resolution
     public interface IHasComponents<Self> : IStateTracked<Self> where Self : IHasComponents<Self>
     {
         public Self WithComponents(IEnumerable<Unsafe.IComponentFor<Self>> component);
+        public Self WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier> identifiers);
         public IOption<C> GetComponent<C>(IComponentIdentifier<C> identifier) where C : class, IComponent<C, Self>;
         public IOption<Unsafe.IComponentFor<Self>> GetComponentUnsafe(Unsafe.IComponentIdentifier identifier);
     }
@@ -72,6 +73,11 @@ namespace FourZeroOne.Resolution
         public Self WithComponents(IEnumerable<Unsafe.IComponentFor<Self>> components)
         {
             return (Self)(this with { _components = _components with { dElements = Q => Q.Also(components) } });
+        }
+        public Self WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier> identifiers)
+        {
+            //works ig?
+            return (Self)(this with { _components = _components with { dElements = Q => Q.ExceptBy(identifiers, _components.IndexGenerator) } });
         }
         public IOption<C> GetComponent<C>(IComponentIdentifier<C> identifier) where C : class, IComponent<C, Self>
         {
