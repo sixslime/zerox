@@ -210,21 +210,24 @@ namespace FourZeroOne.Core.Resolutions
                 {
                     public static State ChangeUnit(State state, b.Unit unit, Func<b.Unit, b.Unit> change)
                     {
-                        return state with
-                        {
-                            dBoard = Q => Q with
-                            {
-                                dUnits = U => U with
-                                {
-                                    dElements = E => E.Also(change(U[unit.UUID]).Yield())
-                                }
-                            }
-                        };
+                        return change(unit).SetAtState(state);
                     }
                 }
             }
         }
 
+        public sealed record InsertComponents<H> : Operation where H : IHasComponents<H>, IStateTracked<H>
+        {
+            public required H ComponentHolder { get; init; }
+            public required Multi<Resolution.Unsafe.IComponentFor<H>> Components { get; init; }
+
+            protected override State UpdateState(State context)
+            {
+                return ComponentHolder
+                    .WithComponents(Components.Values)
+                    .SetAtState(context);
+            }
+        }
         public sealed record VariableAssign<R> : Operation where R : class, ResObj
         {
             public readonly VariableIdentifier<R> Identifier;

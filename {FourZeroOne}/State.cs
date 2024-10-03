@@ -30,9 +30,9 @@ namespace FourZeroOne
         public Updater<PIndexedSet<int, rb.Player>> dPlayers { init => Players = value(Players); }
         public BoardState()
         {
-            Units = new(unit => unit.UUID, 13);
-            Hexes = new(hex => hex.UUID, 367);
-            Players = new(player => player.UUID, 7);
+            Units = new(unit => unit.UUID);
+            Hexes = new(hex => hex.UUID);
+            Players = new(player => player.UUID);
         }
     }
 }

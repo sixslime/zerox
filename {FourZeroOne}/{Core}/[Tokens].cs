@@ -279,13 +279,22 @@ namespace FourZeroOne.Core.Tokens
             {
                 return Task.FromResult(
                     (in1.Check(out var holder) && in2.Check(out var identifier))
-                    ? (holder.Components[identifier] as C).NullToNone()
+                    ? holder.GetComponent(identifier)
                     : new None<C>()
                     ).AsITask();
             }
         }
-        // make action resolution for
-        public record Insert<H, C> : Function<H, IMulti<Resolution.Unsafe.IComponentFor<H>>>
+        
+        public record Insert<H> : PureFunction<H, IMulti<Resolution.Unsafe.IComponentFor<H>>, r.Actions.InsertComponents<H>> where H : class, IHasComponents<H>
+        {
+            public Insert(IToken<H> holder, IToken<IMulti<Resolution.Unsafe.IComponentFor<H>>> components) : base(holder, components) { }
+
+            protected override r.Actions.InsertComponents<H> EvaluatePure(H holder, IMulti<Resolution.Unsafe.IComponentFor<H>> components)
+            {
+                return new() { ComponentHolder = holder, Components = new() { Values = components.Values } };
+            }
+        }
+        
     }
     public record AtPresent<S> : Function<Resolution.IStateTracked<S>, S> where S : class, Resolution.IStateTracked<S>
     {
