@@ -39,7 +39,7 @@ namespace Perfection
     public record PIndexedSet<I, T> : IEnumerable<T>
     {
         protected readonly List<List<T>> _storage;
-        public IEnumerable<T> Elements
+        public required IEnumerable<T> Elements
         {
             get => _storage.Flatten(); init
             {
@@ -83,7 +83,7 @@ namespace Perfection
     public record PMap<K, T>
     {
         private readonly List<List<(K key, T val)>> _storage;
-        public IEnumerable<(K key, T val)> Elements
+        public required IEnumerable<(K key, T val)> Elements
         {
             get => _storage.Flatten(); init
             {

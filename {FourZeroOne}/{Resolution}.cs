@@ -91,7 +91,7 @@ namespace FourZeroOne.Resolution
 
         public StateObject(int id)
         {
-            _components = new(x => x.UnsafeIdentifier);
+            _components = new(x => x.UnsafeIdentifier) { Elements = [] };
             _uuid = id;
         }
         private readonly int _uuid;
