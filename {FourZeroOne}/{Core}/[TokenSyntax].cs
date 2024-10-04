@@ -140,6 +140,8 @@ namespace FourZeroOne.Core.TokenSyntax
         { return new(a, b); }
         public static Fixed<Number> tConst(this int value)
         { return new(value); }
+        public static Fixed<R> tConst<R>(this R value) where R : class, ResObj
+        { return new(value); }
         public static Fixed<r.Multi<R>> tToConstMulti<R>(this IEnumerable<Tokens.Fixed<R>> values) where R : class, ResObj
         { return new(new() { Values = values.Map(x => x.Resolution) }); }
 
