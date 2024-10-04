@@ -148,6 +148,14 @@ namespace FourZeroOne.Core.ProxySyntax
             where H : class, Resolution.IHasComponents<H>
             where C : class, Resolution.IComponent<C, H>
         { return new(holder, identifier); }
+        public static Function<Tokens.Component.Insert<H>, TOrig, H, Resolution.IMulti<Resolution.Unsafe.IComponentFor<H>>, r.Actions.Component.Insert<H>> pInsertComponents<TOrig, H, C>(this IProxy<TOrig, H> holder, IProxy<TOrig, Resolution.IMulti<Resolution.Unsafe.IComponentFor<H>>> components)
+            where TOrig : IToken
+            where H : class, Resolution.IHasComponents<H>
+        { return new(holder, components); }
+        public static Function<Tokens.Component.Remove<H>, TOrig, H, Resolution.IMulti<Resolution.Unsafe.IComponentIdentifier>, r.Actions.Component.Remove<H>> pRemoveComponents<TOrig, H, C>(this IProxy<TOrig, H> holder, IProxy<TOrig, Resolution.IMulti<Resolution.Unsafe.IComponentIdentifier>> identifier)
+            where TOrig : IToken
+            where H : class, Resolution.IHasComponents<H>
+        { return new(holder, identifier); }
 
         public static Function<Tokens.Board.Coordinates.Of, TOrig, Resolution.Board.IPositioned, ro.Board.Coordinates> pGetPosition<TOrig>(this IProxy<TOrig, Resolution.Board.IPositioned> subject) where TOrig : IToken
         { return new(subject); }
