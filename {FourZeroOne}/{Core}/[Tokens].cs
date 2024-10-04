@@ -284,7 +284,6 @@ namespace FourZeroOne.Core.Tokens
                     ).AsITask();
             }
         }
-        
         public record Insert<H> : PureFunction<H, IMulti<Resolution.Unsafe.IComponentFor<H>>, r.Actions.Component.Insert<H>> where H : class, IHasComponents<H>
         {
             public Insert(IToken<H> holder, IToken<IMulti<Resolution.Unsafe.IComponentFor<H>>> components) : base(holder, components) { }
