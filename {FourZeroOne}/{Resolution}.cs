@@ -67,6 +67,7 @@ namespace FourZeroOne.Resolution
     {
         public abstract Self GetAtState(State state);
         public abstract State SetAtState(State state);
+        public abstract State RemoveAtState(State state);
         public Unsafe.IStateTracked GetAtStateUnsafe(State state) => GetAtState(state);
         public int UUID => _uuid;
 
@@ -131,5 +132,6 @@ namespace FourZeroOne.Resolution.Unsafe
         public int UUID { get; }
         public IStateTracked GetAtStateUnsafe(State state);
         public State SetAtState(State state);
+        public State RemoveAtState(State state);
     }
 }

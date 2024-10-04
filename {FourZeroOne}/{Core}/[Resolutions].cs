@@ -79,6 +79,19 @@ namespace FourZeroOne.Core.Resolutions
                         }
                     };
                 }
+                public override State RemoveAtState(State state)
+                {
+                    return state with
+                    {
+                        dBoard = Q => Q with
+                        {
+                            dHexes = Q => Q with
+                            {
+                                dElements = E => E.ExceptBy(UUID.Yield(), x => x.UUID)
+                            }
+                        }
+                    };
+                }
 
                 public override bool ResEqual(IResolution? other)
                 {
@@ -103,7 +116,6 @@ namespace FourZeroOne.Core.Resolutions
                 {
                     return state.Board.Units[UUID].Unwrap();
                 }
-
                 public override State SetAtState(State state)
                 {
                     return state with
@@ -113,6 +125,19 @@ namespace FourZeroOne.Core.Resolutions
                             dUnits = Q => Q with
                             {
                                 dElements = E => E.Also(this.Yield())
+                            }
+                        }
+                    };
+                }
+                public override State RemoveAtState(State state)
+                {
+                    return state with
+                    {
+                        dBoard = Q => Q with
+                        {
+                            dUnits = Q => Q with
+                            {
+                                dElements = E => E.ExceptBy(UUID.Yield(), x => x.UUID)
                             }
                         }
                     };
@@ -141,7 +166,19 @@ namespace FourZeroOne.Core.Resolutions
                         }
                     };
                 }
-
+                public override State RemoveAtState(State state)
+                {
+                    return state with
+                    {
+                        dBoard = Q => Q with
+                        {
+                            dPlayers = Q => Q with
+                            {
+                                dElements = E => E.ExceptBy(UUID.Yield(), x => x.UUID)
+                            }
+                        }
+                    };
+                }
             }
         }
         public sealed record BoxedToken<R> : NoOp where R : class, ResObj
@@ -250,6 +287,14 @@ namespace FourZeroOne.Core.Resolutions
             protected override State UpdateState(State context)
             {
                 return Subject.SetAtState(context);
+            }
+        }
+        public sealed record Undeclare : Operation
+        {
+            public required Resolution.Unsafe.IStateTracked Subject { get; init; }
+            protected override State UpdateState(State context)
+            {
+                return Subject.RemoveAtState(context);
             }
         }
         public sealed record VariableAssign<R> : Operation where R : class, ResObj

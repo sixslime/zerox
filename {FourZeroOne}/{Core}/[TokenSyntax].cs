@@ -148,10 +148,17 @@ namespace FourZeroOne.Core.TokenSyntax
             where I : class, Resolution.IComponentIdentifier<C>
             where C : class, Resolution.IComponent<C, H>
         { return new(holder, componentIdentifier); }
-
         public static Tokens.Component.Insert<H> tInsertComponents<H>(this IToken<H> holder, IToken<r.Multi<Resolution.Unsafe.IComponentFor<H>>> components)
             where H : class, Resolution.IHasComponents<H>
         { return new(holder, components); }
+        public static Tokens.Component.Remove<H> tRemoveComponents<H>(this IToken<H> holder, IToken<r.Multi<Resolution.Unsafe.IComponentIdentifier>> components)
+            where H : class, Resolution.IHasComponents<H>
+        { return new(holder, components); }
+
+        public static Tokens.Declare tDeclare(this IToken<Resolution.Unsafe.IStateTracked> subject)
+        { return new(subject); }
+        public static Tokens.Undeclare tUndeclare(this IToken<Resolution.Unsafe.IStateTracked> subject)
+        { return new(subject); }
 
         public static Tokens.Board.Coordinates.Of tGetPosition(this IToken<Resolution.Board.IPositioned> subject)
         { return new(subject); }

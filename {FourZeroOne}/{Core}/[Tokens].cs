@@ -382,6 +382,22 @@ namespace FourZeroOne.Core.Tokens
         }
         protected override IOption<string> CustomToString() => $"if {Arg1} then {Arg2} else {Arg3}".AsSome();
     }
+    public sealed record Declare : PureFunction<Resolution.Unsafe.IStateTracked, r.Actions.Declare>
+    {
+        public Declare(IToken<Resolution.Unsafe.IStateTracked> subject) : base(subject) { }
+        protected override r.Actions.Declare EvaluatePure(Resolution.Unsafe.IStateTracked in1)
+        {
+            return new() { Subject = in1 };
+        }
+    }
+    public sealed record Undeclare : PureFunction<Resolution.Unsafe.IStateTracked, r.Actions.Undeclare>
+    {
+        public Undeclare(IToken<Resolution.Unsafe.IStateTracked> subject) : base(subject) { }
+        protected override r.Actions.Undeclare EvaluatePure(Resolution.Unsafe.IStateTracked in1)
+        {
+            return new() { Subject = in1 };
+        }
+    }
     public sealed record Variable<R> : Token<r.Actions.VariableAssign<R>> where R : class, ResObj
     {
         public Variable(VariableIdentifier<R> identifier, IToken<R> token) : base(token)
