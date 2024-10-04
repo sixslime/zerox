@@ -8,6 +8,7 @@ namespace FourZeroOne.Core.ProxySyntax
     using r = Resolutions;
     using ro = Resolutions.Objects;
     using ResObj = Resolution.IResolution;
+    using TokenSyntax;
     public interface IOriginalHint<TOrig, out TOrig_> where TOrig : IToken where TOrig_ : IToken { }
     
     public sealed record OriginalHint<TOrig> : IOriginalHint<TOrig, TOrig> where TOrig : IToken { }
@@ -142,6 +143,12 @@ namespace FourZeroOne.Core.ProxySyntax
         public static Function<Tokens.Unbox<R>, TOrig, ro.BoxedToken<R>, R> pUnbox<TOrig, R>(this IProxy<TOrig, ro.BoxedToken<R>> action) where TOrig : IToken where R : class, ResObj
         { return new(action); }
 
+        public static Function<Tokens.Component.Get<H, C>, TOrig, H, Resolution.IComponentIdentifier<C>, C> pGetComponent<TOrig, H, C>(this IProxy<TOrig, H> holder, IProxy<TOrig, Resolution.IComponentIdentifier<C>> identifier)
+            where TOrig : IToken
+            where H : class, Resolution.IHasComponents<H>
+            where C : class, Resolution.IComponent<C, H>
+        { return new(holder, identifier); }
+
         public static Function<Tokens.Board.Coordinates.Of, TOrig, Resolution.Board.IPositioned, ro.Board.Coordinates> pGetPosition<TOrig>(this IProxy<TOrig, Resolution.Board.IPositioned> subject) where TOrig : IToken
         { return new(subject); }
 
@@ -149,6 +156,7 @@ namespace FourZeroOne.Core.ProxySyntax
         { return new(subject); }
         public static Function<Tokens.Board.Unit.Get.Owner, TOrig, ro.Board.Unit, ro.Board.Player> pGetOwner<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject) where TOrig : IToken
         { return new(subject); }
+
 
         public static Function<Tokens.Board.Unit.Set.Position, TOrig, ro.Board.Unit, ro.Board.Coordinates, r.Actions.Board.Unit.PositionChange> pSetPosition<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject, IProxy<TOrig, ro.Board.Coordinates> setTo) where TOrig : IToken
         { return new(subject, setTo); }

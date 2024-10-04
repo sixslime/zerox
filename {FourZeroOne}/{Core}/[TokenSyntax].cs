@@ -145,7 +145,7 @@ namespace FourZeroOne.Core.TokenSyntax
         public static Fixed<r.Multi<R>> tToConstMulti<R>(this IEnumerable<Tokens.Fixed<R>> values) where R : class, ResObj
         { return new(new() { Values = values.Map(x => x.Resolution) }); }
 
-        public static Tokens.Component.Get<H, C> tGetComponent<H, C>(this IToken<H> holder, RHint<C> _hint, IToken<Resolution.IComponentIdentifier<C>> componentIdentifier)
+        public static Tokens.Component.Get<H, C> tGetComponent<H, C>(this IToken<H> holder, IToken<Resolution.IComponentIdentifier<C>> componentIdentifier)
             where H : class, Resolution.IHasComponents<H>
             where C : class, Resolution.IComponent<C, H>
         { return new(holder, componentIdentifier); }
