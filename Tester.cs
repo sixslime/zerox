@@ -7,7 +7,9 @@ using FourZeroOne.Core.TokenSyntax;
 using t = FourZeroOne.Core.Tokens;
 using p = FourZeroOne.Core.Proxies;
 using r = FourZeroOne.Core.Resolutions;
+using a = FourZeroOne.Libraries.Axiom;
 using ro = FourZeroOne.Core.Resolutions.Objects;
+using FourZeroOne.Libraries.Axiom.TokenSyntax;
 using System.Threading.Tasks;
 using Perfection;
 using ControlledFlows;
@@ -27,7 +29,7 @@ public class Tester
         var token_tutorial_1 = 5.tConst().tAdd(10.tConst()); // 5 + 10 
         var token_tutorial_2 = Iter.Over(1, 2, 3, 4).Map(x => x.tConst()).tToConstMulti(); // [1, 2, 3, 4]
         var token_tutorial_3 = token_tutorial_2.tIO_SelectOne(); //prompt user to select one from [1, 2, 3, 4], and return it
-        var token_tutorial_4 = MakeToken.tSubEnvironment<ro.Number>(new()
+        var token_tutorial_4 = CoreT.tSubEnvironment<ro.Number>(new()
         {
             Environment = token_tutorial_2.tIO_SelectOne().tAsVariable(out var mySelection).tYield(),
             SubToken = mySelection.tRef().tMultiply(mySelection.tRef())
@@ -37,11 +39,11 @@ public class Tester
         // Rules are expressed by 'Proxies', which are basically just tokens, but have the ability to reference information about the token they are meant to replace (such as arguements).
         // logically, the replaced token and replacing token must both have the same resolution type.
         // MakeProxy.AsRuleFor<{token type to replace}, {resolution type}>({proxy statement specifying the replacement})
-        var rule_tutorial_1 = MakeProxy.AsRuleFor<t.Fixed<ro.Number>, ro.Number>(P => 4.tConst().pDirect(P)); // makes ALL constant number tokens ('t.Fixed<ro.Number>') turn into 4 (as a constant number token).
-        var rule_tutorial_2 = MakeProxy.AsRuleFor<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalA()).pSubtract(P.pOriginalB())); // makes ALL add(A, B) tokens ('t.Number.Add') turn into subtract(add(A, A), B).
+        var rule_tutorial_1 = CoreP.AsRuleFor<t.Fixed<ro.Number>, ro.Number>(P => 4.tConst().pDirect(P)); // makes ALL constant number tokens ('t.Fixed<ro.Number>') turn into 4 (as a constant number token).
+        var rule_tutorial_2 = CoreP.AsRuleFor<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalA()).pSubtract(P.pOriginalB())); // makes ALL add(A, B) tokens ('t.Number.Add') turn into subtract(add(A, A), B).
         //var rule_illogical = MakeProxy.AsRuleFor<t.Number.Add, ro.Bool>(P => P.pOriginalA().pIsGreaterThan(P.pOriginalB()) -- consider applying this rule to subtract(add(<number>, <number>), <number>), it would become subtract(<bool>, <number>), which does not make sense.
 
-        var token_complicated = MakeToken.tRecursive<ro.Number, r.Multi<ro.Number>, ro.Number>(new() // if you can figure out what this does, then you understand the language; yes its recursive (recursion is not planned to be common, but it will exist sometimes)
+        var token_complicated = CoreT.tRecursive<ro.Number, r.Multi<ro.Number>, ro.Number>(new() // if you can figure out what this does, then you understand the language; yes its recursive (recursion is not planned to be common, but it will exist sometimes)
         {
             A = 0.tConst(),
             B = 1.Sequence(x => x + 1).Take(5).Map(x => x.tConst()).tToMulti(),
@@ -67,13 +69,14 @@ public class Tester
         });
         var token_test_1 = token_tutorial_2.tIO_SelectMany(Iter.Over(1, 2, 3, 4).Map(x => x.tConst()).tToConstMulti().tIO_SelectOne());
         var token_test_2 = token_tutorial_1.tAdd(1.tConst());
-        var token_test = token_complicated;
-        var rule_test = MakeProxy.AsRuleFor<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tConst().pDirect(P))));
+        var token_test_3 = new t.Fixed<ro.Board.Unit>(new(0) { HP = 3, Owner = new(1), Position = new() { R = 1, U = 2, D = 3 } }).tGetComponent(RHint<a.Components.Unit.Effects.Slow.Component>.Hint(), AxiomT.tEffectSlowCI());
+        var token_test = token_test_3;
+        var rule_test = CoreP.AsRuleFor<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tConst().pDirect(P))));
 
         var startState = new FourZeroOne.State()
         {
             Rules = new() { Elements = [] },
-            Variables = new(7),
+            Variables = new(),
             Board = new() { }
         };
         _runtime = new FourZeroOne.Runtimes.FrameSaving.Gebug(startState, token_test);

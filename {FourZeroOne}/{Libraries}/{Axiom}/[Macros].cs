@@ -20,7 +20,7 @@ namespace FourZeroOne.Libraries.Axiom.Macros
         using Core.Resolutions.Objects.Board;
         public sealed record Move : TwoArg<Unit, Coordinates, PositionChange>
         {
-            public static readonly IProxy<Move, PositionChange> PROXY = MakeProxy.Statement<Move, PositionChange>(P =>
+            public static readonly IProxy<Move, PositionChange> PROXY = CoreP.Statement<Move, PositionChange>(P =>
             {
                 return P.pOriginalA().pSetPosition(P.pOriginalB());
             });

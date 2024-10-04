@@ -294,8 +294,17 @@ namespace FourZeroOne.Core.Tokens
                 return new() { ComponentHolder = holder, Components = new() { Values = components.Values } };
             }
         }
-        
-        
+        public record Remove<H> : PureFunction<H, IMulti<Resolution.Unsafe.IComponentIdentifier>, r.Actions.Component.Remove<H>> where H : class, IHasComponents<H>
+        {
+            public Remove(IToken<H> holder, IToken<IMulti<Resolution.Unsafe.IComponentIdentifier>> identifiers) : base(holder, identifiers) { }
+
+            protected override r.Actions.Component.Remove<H> EvaluatePure(H holder, IMulti<Resolution.Unsafe.IComponentIdentifier> identifiers)
+            {
+                return new() { ComponentHolder = holder, Identifiers = new() { Values = identifiers.Values } };
+            }
+        }
+
+
     }
     public record AtPresent<S> : Function<Resolution.IStateTracked<S>, S> where S : class, Resolution.IStateTracked<S>
     {

@@ -56,11 +56,11 @@ namespace FourZeroOne.Core.TokenSyntax
             public System.Func<ProxySyntax.OriginalHint<Tokens.Recursive<RArg1, RArg2, RArg3, ROut>>, Proxy.IProxy<Tokens.Recursive<RArg1, RArg2, RArg3, ROut>, ROut>> RecursiveProxyStatement { get; init; }
         }
     }
-    public static class MakeToken
+    public static class CoreT
     {
-        public static Tokens.Board.Unit.AllUnits AllUnits()
+        public static Tokens.Board.Unit.AllUnits tAllUnits()
         { return new(); }
-        public static Tokens.Board.Hex.AllHexes AllHexes()
+        public static Tokens.Board.Hex.AllHexes tAllHexes()
         { return new(); }
 
         public static SubEnvironment<R> tSubEnvironment<R>(TokenStructure.SubEnvironment<R> block) where R : class, ResObj
@@ -148,6 +148,10 @@ namespace FourZeroOne.Core.TokenSyntax
             where I : class, Resolution.IComponentIdentifier<C>
             where C : class, Resolution.IComponent<C, H>
         { return new(holder, componentIdentifier); }
+
+        public static Tokens.Component.Insert<H> tInsertComponents<H>(this IToken<H> holder, IToken<r.Multi<Resolution.Unsafe.IComponentFor<H>>> components)
+            where H : class, Resolution.IHasComponents<H>
+        { return new(holder, components); }
 
         public static Tokens.Board.Coordinates.Of tGetPosition(this IToken<Resolution.Board.IPositioned> subject)
         { return new(subject); }

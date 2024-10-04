@@ -64,7 +64,7 @@ namespace FourZeroOne.Core.Resolutions
                 public Hex(int id) : base(id) { }
                 public override Hex GetAtState(State state)
                 {
-                    return state.Board.Hexes[UUID];
+                    return state.Board.Hexes[UUID].Unwrap();
                 }
                 public override State SetAtState(State state)
                 {
@@ -101,7 +101,7 @@ namespace FourZeroOne.Core.Resolutions
 
                 public override Unit GetAtState(State state)
                 {
-                    return state.Board.Units[UUID];
+                    return state.Board.Units[UUID].Unwrap();
                 }
 
                 public override State SetAtState(State state)
@@ -125,7 +125,7 @@ namespace FourZeroOne.Core.Resolutions
 
                 public override Player GetAtState(State state)
                 {
-                    return state.Board.Players[UUID];
+                    return state.Board.Players[UUID].Unwrap();
                 }
 
                 public override State SetAtState(State state)
@@ -218,7 +218,7 @@ namespace FourZeroOne.Core.Resolutions
 
         namespace Component
         {
-            public sealed record Insert<H> : Operation where H : IHasComponents<H>, IStateTracked<H>
+            public sealed record Insert<H> : Operation where H : IHasComponents<H>
             {
                 public required H ComponentHolder { get; init; }
                 public required Multi<Resolution.Unsafe.IComponentFor<H>> Components { get; init; }
@@ -230,7 +230,7 @@ namespace FourZeroOne.Core.Resolutions
                         .SetAtState(context);
                 }
             }
-            public sealed record Remove<H> : Operation where H : IHasComponents<H>, IStateTracked<H>
+            public sealed record Remove<H> : Operation where H : IHasComponents<H>
             {
                 public required H ComponentHolder { get; init; }
                 public required Multi<Resolution.Unsafe.IComponentIdentifier> Identifiers { get; init; }

@@ -48,7 +48,7 @@ namespace FourZeroOne.Core.ProxySyntax
             public IProxy<TOrig, R> SubProxy { get; init; }
         }
     }
-    public static class MakeProxy
+    public static class CoreP
     {
         public static IProxy<TOrig, ROut> Statement<TOrig, ROut>(System.Func<OriginalHint<TOrig>, IProxy<TOrig, ROut>> statement) where TOrig : Token.IToken<ROut> where ROut : class, ResObj
         { return statement(new()); }

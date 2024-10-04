@@ -45,7 +45,7 @@ namespace Perfection
             {
                 var elementList = new List<T>(value);
                 Count = elementList.Count;
-                Modulo = (int)(Count * _storageRatio);
+                Modulo = Math.Max((int)(Count * _storageRatio), 1);
                 _storage = new List<List<T>>(Modulo);
                 _storage.AddRange(new List<T>(2).Sequence((_) => new(2)).Take(Modulo));
                 foreach (var v in elementList)
@@ -64,13 +64,13 @@ namespace Perfection
         public PIndexedSet(Func<T, I> indexGenerator, float storageRatio = 1.3f)
         {
             _storageRatio = storageRatio;
-            Modulo = 0;
+            Modulo = 1;
             IndexGenerator = indexGenerator;
             Count = 0;
             _storage = new(0);
         }
         public bool Contains(I index) => GetBucket(index).HasMatch(x => IndexGenerator(x).Equals(index));
-        public T this[I index] => GetBucket(index).Find(x => IndexGenerator(x).Equals(index));
+        public IOption<T> this[I index] => Count > 0 ? GetBucket(index).Find(x => IndexGenerator(x).Equals(index)).NullToNone() : new None<T>();
         private List<T> GetBucket(I index) => _storage[index.GetHashCode().Abs() % Modulo];
         public IEnumerator<T> GetEnumerator() => _storage.Flatten().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _storage.Flatten().GetEnumerator();

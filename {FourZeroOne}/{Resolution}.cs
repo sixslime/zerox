@@ -85,7 +85,7 @@ namespace FourZeroOne.Resolution
         }
         public IOption<Unsafe.IComponentFor<Self>> GetComponentUnsafe(Unsafe.IComponentIdentifier identifier)
         {
-            return _components[identifier].NullToNone();
+            return _components[identifier];
         }
 
         public StateObject(int id)
