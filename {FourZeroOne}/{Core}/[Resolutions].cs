@@ -244,6 +244,14 @@ namespace FourZeroOne.Core.Resolutions
             }
         }
         
+        public sealed record Declare : Operation
+        {
+            public required Resolution.Unsafe.IStateTracked Subject { get; init; }
+            protected override State UpdateState(State context)
+            {
+                return Subject.SetAtState(context);
+            }
+        }
         public sealed record VariableAssign<R> : Operation where R : class, ResObj
         {
             public readonly VariableIdentifier<R> Identifier;

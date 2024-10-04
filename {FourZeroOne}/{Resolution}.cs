@@ -28,9 +28,8 @@ namespace FourZeroOne.Resolution
         public IEnumerable<R> Values { get; }
         public int Count { get; }
     }
-    public interface IStateTracked<Self> : IResolution where Self : IStateTracked<Self>
+    public interface IStateTracked<Self> : Unsafe.IStateTracked where Self : IStateTracked<Self>
     {
-        public int UUID { get; }
         public Self GetAtState(State state);
         public State SetAtState(State state);
     }
@@ -68,6 +67,7 @@ namespace FourZeroOne.Resolution
     {
         public abstract Self GetAtState(State state);
         public abstract State SetAtState(State state);
+        public Unsafe.IStateTracked GetAtStateUnsafe(State state) => GetAtState(state);
         public int UUID => _uuid;
 
         public Self WithComponents(IEnumerable<Unsafe.IComponentFor<Self>> components)
@@ -125,5 +125,11 @@ namespace FourZeroOne.Resolution.Unsafe
     public interface IComponentIdentifier : IResolution
     {
         public string Identity { get; }
+    }
+    public interface IStateTracked : IResolution
+    {
+        public int UUID { get; }
+        public IStateTracked GetAtStateUnsafe(State state);
+        public State SetAtState(State state);
     }
 }
