@@ -143,6 +143,11 @@ namespace FourZeroOne.Core.ProxySyntax
         public static Function<Tokens.Unbox<R>, TOrig, ro.BoxedToken<R>, R> pUnbox<TOrig, R>(this IProxy<TOrig, ro.BoxedToken<R>> action) where TOrig : IToken where R : class, ResObj
         { return new(action); }
 
+        public static Function<Tokens.Declare, TOrig, Resolution.Unsafe.IStateTracked, r.Actions.Declare> pDeclare<TOrig>(this IProxy<TOrig, Resolution.Unsafe.IStateTracked> subject) where TOrig : IToken
+        { return new(subject); }
+        public static Function<Tokens.Undeclare, TOrig, Resolution.Unsafe.IStateTracked, r.Actions.Undeclare> pUndeclare<TOrig>(this IProxy<TOrig, Resolution.Unsafe.IStateTracked> subject) where TOrig : IToken
+        { return new(subject); }
+
         public static Function<Tokens.Component.Get<H, C>, TOrig, H, Resolution.IComponentIdentifier<C>, C> pGetComponent<TOrig, H, C>(this IProxy<TOrig, H> holder, IProxy<TOrig, Resolution.IComponentIdentifier<C>> identifier)
             where TOrig : IToken
             where H : class, Resolution.IHasComponents<H>
