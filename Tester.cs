@@ -69,8 +69,12 @@ public class Tester
         });
         var token_test_1 = token_tutorial_2.tIO_SelectMany(Iter.Over(1, 2, 3, 4).Map(x => x.tConst()).tToConstMulti().tIO_SelectOne());
         var token_test_2 = token_tutorial_1.tAdd(1.tConst());
-        var token_test_3 = new t.Fixed<ro.Board.Unit>(new(0) { HP = 3, Owner = new(1), Position = new() { R = 1, U = 2, D = 3 } }).tGetEffectSlow();
-        var token_test = token_test_3;
+        var token_test_3 = new t.Fixed<ro.Board.Unit>((new(0) { HP = 3, Owner = new(1), Position = new() { R = 1, U = 2, D = 3 } })).tGetEffectSlow();
+        var token_test_4 = (new ro.Board.Unit(0) { HP = 3, Owner = new(1), Position = new() { R = 1, U = 2, D = 3 } })
+        .WithComponents(new a.Components.Unit.Effects.Slow.Component().Yield())
+        .tConst()
+        .tGetEffectSlow();
+        var token_test = token_test_4;
         var rule_test = CoreP.RuleFor<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tConst().pDirect(P))));
 
         var startState = new FourZeroOne.State()

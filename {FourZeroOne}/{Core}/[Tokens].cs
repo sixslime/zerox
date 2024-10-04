@@ -269,13 +269,12 @@ namespace FourZeroOne.Core.Tokens
     namespace Component
     {
         using Resolution;
-        public record Get<H, I, C> : Function<H, I, C>
-            where I : class, IComponentIdentifier<C>
+        public record Get<H, C> : Function<H, IComponentIdentifier<C>, C>
             where C : class, IComponent<C, H>
             where H : class, IHasComponents<H>
         {
-            public Get(IToken<H> holder, IToken<I> identifier) : base(holder, identifier) { }
-            protected override ITask<IOption<C>> Evaluate(IRuntime runtime, IOption<H> in1, IOption<I> in2)
+            public Get(IToken<H> holder, IToken<IComponentIdentifier<C>> identifier) : base(holder, identifier) { }
+            protected override ITask<IOption<C>> Evaluate(IRuntime runtime, IOption<H> in1, IOption<IComponentIdentifier<C>> in2)
             {
                 return Task.FromResult(
                     (in1.Check(out var holder) && in2.Check(out var identifier))

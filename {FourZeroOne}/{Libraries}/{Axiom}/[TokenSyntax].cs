@@ -20,7 +20,7 @@ namespace FourZeroOne.Libraries.Axiom.TokenSyntax
     }
     public static class _Extensions
     {
-        public static t.Component.Get<ro.Board.Unit, aEffects.Slow.Identifier, aEffects.Slow.Component> tGetEffectSlow(this IToken<ro.Board.Unit> unit)
+        public static t.Component.Get<ro.Board.Unit, aEffects.Slow.Component> tGetEffectSlow(this IToken<ro.Board.Unit> unit)
         {
             return new(unit, AxiomT.tEffectSlowCI());
         }
