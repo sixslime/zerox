@@ -13,6 +13,7 @@ namespace FourZeroOne.Libraries.Axiom.Macros
     using FourZeroOne.Proxy;
     using FourZeroOne.Core.Resolutions.Actions.Board.Unit;
     using Core.ProxySyntax;
+    using ProxySyntax;
 
     namespace GameActions
     {

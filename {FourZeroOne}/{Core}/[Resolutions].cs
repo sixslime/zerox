@@ -61,10 +61,10 @@ namespace FourZeroOne.Core.Resolutions
                 public required Coordinates Position { get; init; }
                 public Updater<Coordinates> dPosition { init => Position = value(Position); }
                 
-                public Hex(int id) : base(id) { }
+                public Hex() : base() { }
                 public override Hex GetAtState(State state)
                 {
-                    return state.Board.Hexes[UUID].Unwrap();
+                    return state.Board.Hexes[Position].Unwrap();
                 }
                 public override State SetAtState(State state)
                 {
@@ -85,9 +85,9 @@ namespace FourZeroOne.Core.Resolutions
                     {
                         dBoard = Q => Q with
                         {
-                            dHexes = Q => Q with
+                            dHexes = D => D with
                             {
-                                dElements = E => E.ExceptBy(UUID.Yield(), x => x.UUID)
+                                dElements = E => E.ExceptBy(D.IndexGenerator(this).Yield(), D.IndexGenerator)
                             }
                         }
                     };
@@ -95,18 +95,22 @@ namespace FourZeroOne.Core.Resolutions
 
                 public override bool ResEqual(IResolution? other)
                 {
-                    return (other is Hex h && Position.ResEqual(h.Position));
+                    return (other is Hex h && h.Position.ResEqual(Position));
                 }
             }
             public sealed record Unit : StateObject<Unit>, IPositioned
             {
+                public readonly int UUID;
                 public required Number HP { get; init; }
                 public Updater<Number> dHP { init => HP = value(HP); }
                 public required Coordinates Position { get; init; }
                 public Updater<Coordinates> dPosition { init => Position = value(Position); }
                 public required Player Owner { get; init; }
                 public Updater<Player> dOwner { init => Owner = value(Owner); }
-                public Unit(int id) : base(id) { }
+                public Unit(int id) : base()
+                {
+                    UUID = id;
+                }
                 public override bool ResEqual(IResolution? other)
                 {
                     return (other is Unit u && UUID == u.UUID);
@@ -146,7 +150,11 @@ namespace FourZeroOne.Core.Resolutions
             }
             public sealed record Player : StateObject<Player>
             {
-                public Player(int id) : base(id) { }
+                public readonly int UUID;
+                public Player(int id) : base()
+                {
+                    UUID = id;
+                }
 
                 public override Player GetAtState(State state)
                 {

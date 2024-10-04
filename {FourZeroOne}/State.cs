@@ -23,15 +23,15 @@ namespace FourZeroOne
     public record BoardState
     {
         public readonly PIndexedSet<int, rb.Unit> Units;
-        public readonly PIndexedSet<int, rb.Hex> Hexes;
+        public readonly PIndexedSet<rb.Coordinates, rb.Hex> Hexes;
         public readonly PIndexedSet<int, rb.Player> Players;
         public Updater<PIndexedSet<int, rb.Unit>> dUnits { init => Units = value(Units); }
-        public Updater<PIndexedSet<int, rb.Hex>> dHexes { init => Hexes = value(Hexes); }
+        public Updater<PIndexedSet<rb.Coordinates, rb.Hex>> dHexes { init => Hexes = value(Hexes); }
         public Updater<PIndexedSet<int, rb.Player>> dPlayers { init => Players = value(Players); }
         public BoardState()
         {
             Units = new(unit => unit.UUID) { Elements = [] };
-            Hexes = new(hex => hex.UUID) { Elements = [] };
+            Hexes = new(hex => hex.Position) { Elements = [] };
             Players = new(player => player.UUID) { Elements = [] };
         }
     }

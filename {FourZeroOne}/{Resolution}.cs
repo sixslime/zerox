@@ -69,7 +69,6 @@ namespace FourZeroOne.Resolution
         public abstract State SetAtState(State state);
         public abstract State RemoveAtState(State state);
         public Unsafe.IStateTracked GetAtStateUnsafe(State state) => GetAtState(state);
-        public int UUID => _uuid;
 
         public Self WithComponents(IEnumerable<Unsafe.IComponentFor<Self>> components)
         {
@@ -89,12 +88,10 @@ namespace FourZeroOne.Resolution
             return _components[identifier];
         }
 
-        public StateObject(int id)
+        public StateObject()
         {
             _components = new(x => x.UnsafeIdentifier) { Elements = [] };
-            _uuid = id;
         }
-        private readonly int _uuid;
         private PIndexedSet<Unsafe.IComponentIdentifier, Unsafe.IComponentFor<Self>> _components { get; init; }
     }
     namespace Board
@@ -129,7 +126,6 @@ namespace FourZeroOne.Resolution.Unsafe
     }
     public interface IStateTracked : IResolution
     {
-        public int UUID { get; }
         public IStateTracked GetAtStateUnsafe(State state);
         public State SetAtState(State state);
         public State RemoveAtState(State state);
