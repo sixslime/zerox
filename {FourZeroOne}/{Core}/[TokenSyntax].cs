@@ -164,6 +164,11 @@ namespace FourZeroOne.Core.TokenSyntax
         public static Tokens.Board.Coordinates.Of tGetPosition(this IToken<Resolution.Board.IPositioned> subject)
         { return new(subject); }
 
+        public static Tokens.Board.Hex.At tHexAt(this IToken<r.Objects.Board.Coordinates> coordinates)
+        { return new(coordinates); }
+        public static Tokens.Board.Hex.InArea tHexesAt(this IToken<Resolution.IMulti<r.Objects.Board.Coordinates>> coordinates)
+        { return new(coordinates); }
+
         public static Tokens.Board.Unit.Get.HP tGetHP(this IToken<r.Objects.Board.Unit> unit)
         { return new(unit); }
         public static Tokens.Board.Unit.Get.Owner tGetOwner(this IToken<r.Objects.Board.Unit> unit)
