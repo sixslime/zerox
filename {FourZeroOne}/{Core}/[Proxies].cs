@@ -194,9 +194,7 @@ namespace FourZeroOne.Core.Proxies
         public RecursiveCall(IProxy<Tokens.Recursive<RArg1, ROut>, RArg1> in1) : base(in1) { }
         protected override IToken<ROut> ConstructFromArgs(Tokens.Recursive<RArg1, ROut> original, List<IToken> tokens)
         {
-            return new Tokens.Recursive<RArg1, ROut>(
-                (IToken<RArg1>)tokens[0],
-                original.RecursiveProxy);
+            return new Tokens.Recursive<RArg1, ROut>((IToken<RArg1>)tokens[0]) { RecursiveProxy = original.RecursiveProxy };
         }
     }
     public record RecursiveCall<RArg1, RArg2, ROut> : FunctionProxy<Tokens.Recursive<RArg1, RArg2, ROut>, ROut>
@@ -209,8 +207,8 @@ namespace FourZeroOne.Core.Proxies
         {
             return new Tokens.Recursive<RArg1, RArg2, ROut>(
                 (IToken<RArg1>)tokens[0],
-                (IToken<RArg2>)tokens[1],
-                original.RecursiveProxy);
+                (IToken<RArg2>)tokens[1])
+            { RecursiveProxy = original.RecursiveProxy };
         }
     }
     public record RecursiveCall<RArg1, RArg2, RArg3, ROut> : FunctionProxy<Tokens.Recursive<RArg1, RArg2, RArg3, ROut>, ROut>
@@ -225,8 +223,8 @@ namespace FourZeroOne.Core.Proxies
             return new Tokens.Recursive<RArg1, RArg2, RArg3, ROut>(
                 (IToken<RArg1>)tokens[0],
                 (IToken<RArg2>)tokens[1],
-                (IToken<RArg3>)tokens[2],
-                original.RecursiveProxy);
+                (IToken<RArg3>)tokens[2])
+            { RecursiveProxy = original.RecursiveProxy };
         }
     }
 

@@ -18,23 +18,22 @@ namespace FourZeroOne.Macro
     }
     public abstract record Macro<R> : Token<R>, IMacro<R> where R : class, ResObj
     {
+        protected abstract Proxy.Unsafe.IProxy<R> InternalProxy { get; }
         public override ITask<IOption<R>> Resolve(IRuntime _, IOption<ResObj>[] __)
         {
             throw new System.Exception("Macro directly resolved without expansion.");
         }
-        protected Macro(Proxy.Unsafe.IProxy<R> proxy)
+        protected Macro()
         {
-            _proxy = proxy;
             _cachedRealization = null;
         }
         public IToken<R> Expand()
         {
-            _cachedRealization ??= _proxy.UnsafeTypedRealize(this, new None<Rule.IRule>());
+            _cachedRealization ??= InternalProxy.UnsafeTypedRealize(this, new None<Rule.IRule>());
             return _cachedRealization;
         }
         public Token.Unsafe.IToken ExpandUnsafe() => Expand();
 
-        private readonly Proxy.Unsafe.IProxy<R> _proxy;
         //NOTE: this only works under the assumption that proxies are perfect pure (stateless immutable).
         private IToken<R>? _cachedRealization;
         
@@ -50,7 +49,7 @@ namespace FourZeroOne.Macro
         where ROut : class, ResObj
     {
         public IToken<RArg1> Arg1 => _arg1;
-        protected OneArg(IToken<RArg1> in1, Proxy.Unsafe.IProxy<ROut> proxy) : base(proxy)
+        protected OneArg(IToken<RArg1> in1)
         {
             _arg1 = in1;
         }
@@ -69,7 +68,7 @@ namespace FourZeroOne.Macro
     {
         public IToken<RArg1> Arg1 => _arg1;
         public IToken<RArg2> Arg2 => _arg2;
-        protected TwoArg(IToken<RArg1> in1, IToken<RArg2> in2, Proxy.Unsafe.IProxy<ROut> proxy) : base(proxy)
+        protected TwoArg(IToken<RArg1> in1, IToken<RArg2> in2)
         {
             _arg1 = in1;
             _arg2 = in2;
@@ -93,7 +92,7 @@ namespace FourZeroOne.Macro
         public IToken<RArg1> Arg1 => _arg1;
         public IToken<RArg2> Arg2 => _arg2;
         public IToken<RArg3> Arg3 => _arg3;
-        protected ThreeArg(IToken<RArg1> in1, IToken<RArg2> in2, IToken<RArg3> in3, Proxy.Unsafe.IProxy<ROut> proxy) : base(proxy)
+        protected ThreeArg(IToken<RArg1> in1, IToken<RArg2> in2, IToken<RArg3> in3)
         {
             _arg1 = in1;
             _arg2 = in2;

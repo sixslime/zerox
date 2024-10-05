@@ -355,11 +355,9 @@ namespace FourZeroOne.Core.Tokens
         where RArg1 : class, ResObj
         where ROut : class, ResObj
     {
-        public readonly Proxy.IProxy<Recursive<RArg1, ROut>, ROut> RecursiveProxy;
-        public Recursive(IToken<RArg1> arg1, Proxy.IProxy<Recursive<RArg1, ROut>, ROut> recursiveProxy) : base(arg1, recursiveProxy)
-        {
-            RecursiveProxy = recursiveProxy;
-        }
+        public required Proxy.IProxy<Recursive<RArg1, ROut>, ROut> RecursiveProxy { get; init; }
+        protected override Proxy.Unsafe.IProxy<ROut> InternalProxy => RecursiveProxy;
+        public Recursive(IToken<RArg1> arg1) : base(arg1) { }
         protected override IOption<string> CustomToString() => $"@\"{(RecursiveProxy.GetHashCode()%7777).ToBase("vwmbkjqzsnthdiueoalrcgpfy", "")}\"({Arg1})".AsSome();
 
     }
@@ -368,11 +366,9 @@ namespace FourZeroOne.Core.Tokens
         where RArg2 : class, ResObj
         where ROut : class, ResObj
     {
-        public readonly Proxy.IProxy<Recursive<RArg1, RArg2, ROut>, ROut> RecursiveProxy;
-        public Recursive(IToken<RArg1> arg1, IToken<RArg2> arg2, Proxy.IProxy<Recursive<RArg1, RArg2, ROut>, ROut> recursiveProxy) : base(arg1, arg2, recursiveProxy)
-        {
-            RecursiveProxy = recursiveProxy;
-        }
+        public required Proxy.IProxy<Recursive<RArg1, RArg2, ROut>, ROut> RecursiveProxy { get; init; }
+        protected override Proxy.Unsafe.IProxy<ROut> InternalProxy => RecursiveProxy;
+        public Recursive(IToken<RArg1> arg1, IToken<RArg2> arg2) : base(arg1, arg2) { }
         protected override IOption<string> CustomToString() => $"@\"{(RecursiveProxy.GetHashCode() % 7777).ToBase("vwmbkjqzsnthdiueoalrcgpfy", "")}\"({Arg1}, {Arg2})".AsSome();
 
     }
@@ -382,11 +378,9 @@ namespace FourZeroOne.Core.Tokens
         where RArg3 : class, ResObj
         where ROut : class, ResObj
     {
-        public readonly Proxy.IProxy<Recursive<RArg1, RArg2, RArg3, ROut>, ROut> RecursiveProxy;
-        public Recursive(IToken<RArg1> arg1, IToken<RArg2> arg2, IToken<RArg3> arg3, Proxy.IProxy<Recursive<RArg1, RArg2, RArg3, ROut>, ROut> recursiveProxy) : base(arg1, arg2, arg3, recursiveProxy)
-        {
-            RecursiveProxy = recursiveProxy;
-        }
+        public required Proxy.IProxy<Recursive<RArg1, RArg2, RArg3, ROut>, ROut> RecursiveProxy { get; init; }
+        protected override Proxy.Unsafe.IProxy<ROut> InternalProxy => RecursiveProxy;
+        public Recursive(IToken<RArg1> arg1, IToken<RArg2> arg2, IToken<RArg3> arg3) : base(arg1, arg2, arg3) { }
         protected override IOption<string> CustomToString() => $"@\"{(RecursiveProxy.GetHashCode() % 7777).ToBase("vwmbkjqzsnthdiueoalrcgpfy", "")}\"({Arg1}, {Arg2}, {Arg3})".AsSome();
 
     }

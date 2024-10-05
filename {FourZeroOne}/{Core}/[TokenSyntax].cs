@@ -69,18 +69,18 @@ namespace FourZeroOne.Core.TokenSyntax
         public static Recursive<RArg1, ROut> tRecursive<RArg1, ROut>(TokenStructure.Recursive<RArg1, ROut> block)
             where RArg1 : class, ResObj
             where ROut : class, ResObj
-        { return new(block.A, block.RecursiveProxyStatement(new())); }
+        { return new(block.A) { RecursiveProxy = block.RecursiveProxyStatement(new()) }; }
         public static Recursive<RArg1, RArg2, ROut> tRecursive<RArg1, RArg2, ROut>(TokenStructure.Recursive<RArg1, RArg2, ROut> block)
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where ROut : class, ResObj
-        { return new(block.A, block.B, block.RecursiveProxyStatement(new())); }
+        { return new(block.A, block.B) { RecursiveProxy = block.RecursiveProxyStatement(new()) }; }
         public static Recursive<RArg1, RArg2, RArg3, ROut> tRecursive<RArg1, RArg2, RArg3, ROut>(TokenStructure.Recursive<RArg1, RArg2, RArg3, ROut> block)
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where RArg3 : class, ResObj
             where ROut : class, ResObj
-        { return new(block.A, block.B, block.C, block.RecursiveProxyStatement(new())); }
+        { return new(block.A, block.B, block.C) { RecursiveProxy = block.RecursiveProxyStatement(new()) }; }
 
         public static Nolla<R> tNolla<R>() where R : class, ResObj
         { return new(); }

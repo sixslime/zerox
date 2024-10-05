@@ -19,13 +19,16 @@ namespace FourZeroOne.Libraries.Axiom.Macros
     {
         using Core.Resolutions.Actions.Board.Unit;
         using Core.Resolutions.Objects.Board;
+        using FourZeroOne.Proxy.Unsafe;
+
         public sealed record Move : TwoArg<Unit, Coordinates, PositionChange>
         {
             public static readonly IProxy<Move, PositionChange> PROXY = CoreP.Statement<Move, PositionChange>(P =>
             {
                 return P.pOriginalA().pSetPosition(P.pOriginalB());
             });
-            public Move(IToken<Unit> in1, IToken<Coordinates> in2) : base(in1, in2, PROXY) { }
+            protected override IProxy<PositionChange> InternalProxy => PROXY;
+            public Move(IToken<Unit> in1, IToken<Coordinates> in2) : base(in1, in2) { }
         }
     }
 }
