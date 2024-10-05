@@ -64,7 +64,7 @@ namespace FourZeroOne.Core.Resolutions
                 public Hex() : base() { }
                 public override Hex GetAtState(State state)
                 {
-                    return state.Board.Hexes[Position].Unwrap();
+                    return state.Board.Hexes[this].Unwrap();
                 }
                 public override State SetAtState(State state)
                 {
@@ -118,7 +118,7 @@ namespace FourZeroOne.Core.Resolutions
 
                 public override Unit GetAtState(State state)
                 {
-                    return state.Board.Units[UUID].Unwrap();
+                    return state.Board.Units[this].Unwrap();
                 }
                 public override State SetAtState(State state)
                 {
@@ -139,9 +139,11 @@ namespace FourZeroOne.Core.Resolutions
                     {
                         dBoard = Q => Q with
                         {
-                            dUnits = Q => Q with
+                            dUnits = D => D with
                             {
-                                dElements = E => E.ExceptBy(UUID.Yield(), x => x.UUID)
+                                //REFACTOR: A new IndexedSet or something so this doesnt have to happen.
+                                // Also PIndexedSet<I, T> should map to a PSet<T>,
+                                dElements = E => E.ExceptBy(D.IndexGenerator(this).Yield(), D.IndexGenerator)
                             }
                         }
                     };
@@ -158,7 +160,7 @@ namespace FourZeroOne.Core.Resolutions
 
                 public override Player GetAtState(State state)
                 {
-                    return state.Board.Players[UUID].Unwrap();
+                    return state.Board.Players[this].Unwrap();
                 }
 
                 public override State SetAtState(State state)
@@ -180,9 +182,9 @@ namespace FourZeroOne.Core.Resolutions
                     {
                         dBoard = Q => Q with
                         {
-                            dPlayers = Q => Q with
+                            dPlayers = D => D with
                             {
-                                dElements = E => E.ExceptBy(UUID.Yield(), x => x.UUID)
+                                dElements = E => E.ExceptBy(D.IndexGenerator(this).Yield(), D.IndexGenerator)
                             }
                         }
                     };

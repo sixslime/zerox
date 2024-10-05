@@ -48,6 +48,24 @@ namespace FourZeroOne.Core.Tokens
                     return Task.FromResult(new r.Multi<rb.Hex>() { Values = runtime.GetState().Board.Hexes }.AsSome()).AsITask();
                 }
             }
+
+            public sealed record At : Function<rb.Coordinates, rb.Hex>
+            {
+                public At(IToken<rb.Coordinates> position) : base(position) { }
+                protected override ITask<IOption<rb.Hex>> Evaluate(IRuntime runtime, IOption<rb.Coordinates> in1)
+                {
+                    return Task.FromResult(in1.RemapAs(pos => runtime.GetState().Board.Hexes[pos]).Press()).AsITask();
+                }
+            }
+
+            public sealed record InArea : Function<Resolution.IMulti<rb.Coordinates>, r.Multi<rb.Hex>>
+            {
+                public InArea(IToken<Resolution.IMulti<rb.Coordinates>> positions) : base(positions) { }
+                protected override ITask<IOption<r.Multi<rb.Hex>>> Evaluate(IRuntime runtime, IOption<Resolution.IMulti<rb.Coordinates>> in1)
+                {
+                    return Task.FromResult(in1.RemapAs(positions => new r.Multi<rb.Hex>() { Values = positions.Values.FilterMap(x => runtime.GetState().Board.Hexes[x]) })).AsITask();
+                }
+            }
             namespace Get
             {
 

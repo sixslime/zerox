@@ -71,6 +71,7 @@ namespace Perfection
         }
         public bool Contains(I index) => GetBucket(index).HasMatch(x => IndexGenerator(x).Equals(index));
         public IOption<T> this[I index] => Count > 0 ? GetBucket(index).Find(x => IndexGenerator(x).Equals(index)).NullToNone() : new None<T>();
+        public IOption<T> this[T obj] => this[IndexGenerator(obj)];
         private List<T> GetBucket(I index) => _storage[index.GetHashCode().Abs() % Modulo];
         public IEnumerator<T> GetEnumerator() => _storage.Flatten().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _storage.Flatten().GetEnumerator();

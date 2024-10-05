@@ -10,6 +10,10 @@ namespace Perfection
         {
             foreach (var e in enumerable) yield return mapFunction(e);
         }
+        public static IEnumerable<TResult> FilterMap<TIn, TResult>(this IEnumerable<TIn> enumerable, Func<TIn, IOption<TResult>> mapFunction)
+        {
+            foreach (var e in enumerable) if (mapFunction(e).Check(out var some)) yield return some;
+        }
         public static IEnumerable<T> Also<T>(this IEnumerable<T> enumerable, IEnumerable<T> also)
         {
             foreach (var v in enumerable) yield return v;
