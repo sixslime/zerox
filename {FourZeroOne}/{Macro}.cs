@@ -16,7 +16,7 @@ namespace FourZeroOne.Macro
     {
         public IToken<R> Expand();
     }
-    public record Macro<R> : Token<R>, IMacro<R> where R : class, ResObj
+    public abstract record Macro<R> : Token<R>, IMacro<R> where R : class, ResObj
     {
         public override ITask<IOption<R>> Resolve(IRuntime _, IOption<ResObj>[] __)
         {
