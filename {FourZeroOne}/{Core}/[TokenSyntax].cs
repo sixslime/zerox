@@ -18,6 +18,27 @@ namespace FourZeroOne.Core.TokenSyntax
     }
     namespace TokenStructure
     {
+        public sealed record Args<RArg1>
+            where RArg1 : class, ResObj
+        {
+            public required IToken<RArg1> A { get; init; }
+        }
+        public sealed record Args<RArg1, RArg2>
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+        {
+            public required IToken<RArg1> A { get; init; }
+            public required IToken<RArg2> B { get; init; }
+        }
+        public sealed record Args<RArg1, RArg2, RArg3>
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where RArg3 : class, ResObj
+        {
+            public required IToken<RArg1> A { get; init; }
+            public required IToken<RArg2> B { get; init; }
+            public required IToken<RArg3> C { get; init; }
+        }
         public sealed record IfElse<R> where R : class, ResObj
         {
             public IToken<MetaFunction<R>> Then { get; init; }
@@ -96,10 +117,26 @@ namespace FourZeroOne.Core.TokenSyntax
     {
         public static Tokens.IO.Select.One<R> tIO_SelectOne<R>(this IToken<Multi<R>> source) where R : class, ResObj
         { return new(source); }
-        public static Tokens.Unbox<R> tUnbox<R>(this IToken<MetaFunction<R>> source) where R : class, ResObj
-        { return new(source); }
         public static Tokens.IO.Select.Multiple<R> tIO_SelectMany<R>(this IToken<Multi<R>> source, IToken<Number> count) where R : class, ResObj
         { return new(source, count); }
+
+        public static Tokens.Execute<R> tExecute<R>(this IToken<MetaFunction<R>> source) where R : class, ResObj
+        { return new(source); }
+        public static Tokens.Execute<RArg1, ROut> tExecuteWith<RArg1, ROut>(this IToken<MetaFunction<RArg1, ROut>> source, TokenStructure.Args<RArg1> args)
+            where RArg1 : class, ResObj
+            where ROut : class, ResObj
+        { return new(source, new ToBoxedArgs<RArg1>(args.A)); }
+        public static Tokens.Execute<RArg1, RArg2, ROut> tExecuteWith<RArg1, RArg2, ROut>(this IToken<MetaFunction<RArg1, RArg2, ROut>> source, TokenStructure.Args<RArg1, RArg2> args)
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where ROut : class, ResObj
+        { return new(source, new ToBoxedArgs<RArg1, RArg2>(args.A, args.B)); }
+        public static Tokens.Execute<RArg1, RArg2, RArg3, ROut> tExecuteWith<RArg1, RArg2, RArg3, ROut>(this IToken<MetaFunction<RArg1, RArg2, RArg3, ROut>> source, TokenStructure.Args<RArg1, RArg2, RArg3> args)
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where RArg3 : class, ResObj
+            where ROut : class, ResObj
+        { return new(source, new ToBoxedArgs<RArg1, RArg2, RArg3>(args.A, args.B, args.C)); }
 
         public static Variable<R> tAsVariable<R>(this IToken<R> token, out VariableIdentifier<R> ident) where R : class, ResObj
         {

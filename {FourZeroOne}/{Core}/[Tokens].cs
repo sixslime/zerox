@@ -336,52 +336,82 @@ namespace FourZeroOne.Core.Tokens
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}".AsSome();
     }
-    public record Execute<RArg1, ROut> : Function<r.Boxed.MetaFunction<RArg1, ROut>, RArg1, ROut>
+    public record Execute<RArg1, ROut> : Function<r.Boxed.MetaFunction<RArg1, ROut>, r.Boxed.MetaArgs<RArg1>, ROut>
         where RArg1 : class, ResObj
         where ROut : class, ResObj
     {
-        public Execute(IToken<r.Boxed.MetaFunction<RArg1, ROut>> function, IToken<RArg1> arg) : base(function, arg) { }
+        public Execute(IToken<r.Boxed.MetaFunction<RArg1, ROut>> function, IToken<r.Boxed.MetaArgs<RArg1>> arg) : base(function, arg) { }
 
-        protected override ITask<IOption<ROut>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<RArg1, ROut>> in1, IOption<RArg1> in2)
+        protected override ITask<IOption<ROut>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<RArg1, ROut>> in1, IOption<r.Boxed.MetaArgs<RArg1>> in2)
         {
-            return in1.Check(out var function)
-                ? runtime.MetaExecute(function.Token, [(function.IdentifierA, in2)])
+            return in1.Check(out var function) && in2.Check(out var args)
+                ? runtime.MetaExecute(function.Token, [(function.IdentifierA, args.Arg1)])
                 : Task.FromResult(new None<ROut>()).AsITask();
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}".AsSome();
     }
-    public record Execute<RArg1, RArg2, ROut> : Function<r.Boxed.MetaFunction<RArg1, RArg2, ROut>, ro.Group<RArg1, RArg2>, ROut>
+    public record Execute<RArg1, RArg2, ROut> : Function<r.Boxed.MetaFunction<RArg1, RArg2, ROut>, r.Boxed.MetaArgs<RArg1, RArg2>, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
         where ROut : class, ResObj
     {
-        public Execute(IToken<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> function, IToken<ro.Group<RArg1, RArg2>> args) : base(function, args) { }
+        public Execute(IToken<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> function, IToken<r.Boxed.MetaArgs<RArg1, RArg2>> args) : base(function, args) { }
 
-        protected override ITask<IOption<ROut>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> in1, IOption<ro.Group<RArg1, RArg2>> in2)
+        protected override ITask<IOption<ROut>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> in1, IOption<r.Boxed.MetaArgs<RArg1, RArg2>> in2)
         {
             return in1.Check(out var function) && in2.Check(out var args)
-                ? runtime.MetaExecute(function.Token, [(function.IdentifierA, args.Res1), (function.IdentifierB, args.Res2)])
+                ? runtime.MetaExecute(function.Token, [(function.IdentifierA, args.Arg1), (function.IdentifierB, args.Arg2)])
                 : Task.FromResult(new None<ROut>()).AsITask();
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}".AsSome();
     }
-    public record Execute<RArg1, RArg2, RArg3, ROut> : Function<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>, ro.Group<RArg1, RArg2, RArg3>, ROut>
+    public record Execute<RArg1, RArg2, RArg3, ROut> : Function<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>, r.Boxed.MetaArgs<RArg1, RArg2, RArg3>, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
         where RArg3 : class, ResObj
         where ROut : class, ResObj
     {
-        public Execute(IToken<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> function, IToken<ro.Group<RArg1, RArg2, RArg3>> args) : base(function, args) { }
+        public Execute(IToken<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> function, IToken<r.Boxed.MetaArgs<RArg1, RArg2, RArg3>> args) : base(function, args) { }
 
-        protected override ITask<IOption<ROut>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> in1, IOption<ro.Group<RArg1, RArg2, RArg3>> in2)
+        protected override ITask<IOption<ROut>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> in1, IOption<r.Boxed.MetaArgs<RArg1, RArg2, RArg3>> in2)
         {
             return in1.Check(out var function) && in2.Check(out var args)
-                ? runtime.MetaExecute(function.Token, [(function.IdentifierA, args.Res1), (function.IdentifierB, args.Res2), (function.IdentifierC, args.Res3)])
+                ? runtime.MetaExecute(function.Token, [(function.IdentifierA, args.Arg1), (function.IdentifierB, args.Arg2), (function.IdentifierC, args.Arg3)])
                 : Task.FromResult(new None<ROut>()).AsITask();
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}".AsSome();
     }
 
+    public record ToBoxedArgs<R1> : Function<R1, r.Boxed.MetaArgs<R1>>
+        where R1 : class, ResObj
+    {
+        public ToBoxedArgs(IToken<R1> in1) : base(in1) { }
+        protected override ITask<IOption<r.Boxed.MetaArgs<R1>>> Evaluate(IRuntime _, IOption<R1> in1)
+        {
+            return Task.FromResult(new r.Boxed.MetaArgs<R1>() { Arg1 = in1 }.AsSome()).AsITask();
+        }
+    }
+    public record ToBoxedArgs<R1, R2> : Function<R1, R2, r.Boxed.MetaArgs<R1, R2>>
+        where R1 : class, ResObj
+        where R2 : class, ResObj
+    {
+        public ToBoxedArgs(IToken<R1> in1, IToken<R2> in2) : base(in1, in2) { }
+        protected override ITask<IOption<r.Boxed.MetaArgs<R1, R2>>> Evaluate(IRuntime _, IOption<R1> in1, IOption<R2> in2)
+        {
+            return Task.FromResult(new r.Boxed.MetaArgs<R1, R2>() { Arg1 = in1, Arg2 = in2}.AsSome()).AsITask();
+        }
+    }
+    public record ToBoxedArgs<R1, R2, R3> : Function<R1, R2, R3, r.Boxed.MetaArgs<R1, R2, R3>>
+        where R1 : class, ResObj
+        where R2 : class, ResObj
+        where R3 : class, ResObj
+    {
+        public ToBoxedArgs(IToken<R1> in1, IToken<R2> in2, IToken<R3> in3) : base(in1, in2, in3) { }
+        protected override ITask<IOption<r.Boxed.MetaArgs<R1, R2, R3>>> Evaluate(IRuntime _, IOption<R1> in1, IOption<R2> in2, IOption<R3> in3)
+        {
+            return Task.FromResult(new r.Boxed.MetaArgs<R1, R2, R3>() { Arg1 = in1, Arg2 = in2, Arg3 = in3 }.AsSome()).AsITask();
+        }
+    }
     public record AtPresent<S> : Function<Resolution.IStateTracked<S>, S> where S : class, Resolution.IStateTracked<S>
     {
         public AtPresent(IToken<S> source) : base(source) { }

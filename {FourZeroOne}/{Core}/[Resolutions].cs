@@ -206,22 +206,6 @@ namespace FourZeroOne.Core.Resolutions
             public override string ToString() => $"{IsTrue}";
         }
 
-        public sealed record Group<R1, R2, R3> : NoOp
-            where R1 : class, ResObj
-            where R2 : class, ResObj
-            where R3 : class, ResObj
-        {
-            public required IOption<R1> Res1 { get; init; }
-            public required IOption<R2> Res2 { get; init; }
-            public required IOption<R3> Res3 { get; init; }
-        }
-        public sealed record Group<R1, R2> : NoOp
-            where R1 : class, ResObj
-            where R2 : class, ResObj
-        {
-            public required IOption<R1> Res1 { get; init; }
-            public required IOption<R2> Res2 { get; init; }
-        }
     }
     namespace Actions
     {
@@ -385,6 +369,29 @@ namespace FourZeroOne.Core.Resolutions
             public required IToken<ROut> Token { get; init; }
             public override string ToString() => $"{Token}!";
         }
+
+        public sealed record MetaArgs<R1> : NoOp
+            where R1 : class, ResObj
+        {
+            public required IOption<R1> Arg1 { get; init; }
+        }
+        public sealed record MetaArgs<R1, R2> : NoOp
+            where R1 : class, ResObj
+            where R2 : class, ResObj
+        {
+            public required IOption<R1> Arg1 { get; init; }
+            public required IOption<R2> Arg2 { get; init; }
+        }
+        public sealed record MetaArgs<R1, R2, R3> : NoOp
+            where R1 : class, ResObj
+            where R2 : class, ResObj
+            where R3 : class, ResObj
+        {
+            public required IOption<R1> Arg1 { get; init; }
+            public required IOption<R2> Arg2 { get; init; }
+            public required IOption<R3> Arg3 { get; init; }
+        }
+        
     }
     public sealed record Multi<R> : Operation, IMulti<R> where R : class, ResObj
     {
