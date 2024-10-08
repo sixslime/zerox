@@ -191,11 +191,6 @@ namespace FourZeroOne.Core.Resolutions
                 }
             }
         }
-        public sealed record BoxedToken<R> : NoOp where R : class, ResObj
-        {
-            public required IToken<R> Token { get; init; }
-            public override string ToString() => $"{Token}!";
-        }
         public sealed record Number : NoOp
         {
             public required int Value { get; init; }
@@ -209,6 +204,23 @@ namespace FourZeroOne.Core.Resolutions
             public Updater<bool> dIsTrue { init => IsTrue = value(IsTrue); }
             public static implicit operator Bool(bool value) => new() { IsTrue = value };
             public override string ToString() => $"{IsTrue}";
+        }
+
+        public sealed record Group<R1, R2, R3> : NoOp
+            where R1 : class, ResObj
+            where R2 : class, ResObj
+            where R3 : class, ResObj
+        {
+            public required IOption<R1> Res1 { get; init; }
+            public required IOption<R2> Res2 { get; init; }
+            public required IOption<R3> Res3 { get; init; }
+        }
+        public sealed record Group<R1, R2> : NoOp
+            where R1 : class, ResObj
+            where R2 : class, ResObj
+        {
+            public required IOption<R1> Res1 { get; init; }
+            public required IOption<R2> Res2 { get; init; }
         }
     }
     namespace Actions
@@ -334,6 +346,44 @@ namespace FourZeroOne.Core.Resolutions
             {
                 dRules = Q => Q with { dElements = Q => Q.Also(Rule.Yield()) }
             };
+        }
+    }
+    namespace Boxed
+    {
+        public sealed record MetaFunction<R> : NoOp where R : class, ResObj
+        {
+            public required IToken<R> Token { get; init; }
+            public override string ToString() => $"{Token}!";
+        }
+        public sealed record MetaFunction<RArg1, ROut> : NoOp
+            where RArg1 : class, ResObj
+            where ROut : class, ResObj
+        {
+            public required VariableIdentifier<RArg1> IdentifierA { get; init; }
+            public required IToken<ROut> Token { get; init; }
+            public override string ToString() => $"{Token}!";
+        }
+        public sealed record MetaFunction<RArg1, RArg2, ROut> : NoOp
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where ROut : class, ResObj
+        {
+            public required VariableIdentifier<RArg1> IdentifierA { get; init; }
+            public required VariableIdentifier<RArg2> IdentifierB { get; init; }
+            public required IToken<ROut> Token { get; init; }
+            public override string ToString() => $"{Token}!";
+        }
+        public sealed record MetaFunction<RArg1, RArg2, RArg3, ROut> : NoOp
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where RArg3 : class, ResObj
+            where ROut : class, ResObj
+        {
+            public required VariableIdentifier<RArg1> IdentifierA { get; init; }
+            public required VariableIdentifier<RArg2> IdentifierB { get; init; }
+            public required VariableIdentifier<RArg3> IdentifierC { get; init; }
+            public required IToken<ROut> Token { get; init; }
+            public override string ToString() => $"{Token}!";
         }
     }
     public sealed record Multi<R> : Operation, IMulti<R> where R : class, ResObj

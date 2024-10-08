@@ -16,7 +16,7 @@ namespace FourZeroOne.Runtime
     {
         public State GetState();
         public Task<Resolved> Run();
-        public ITask<IOption<R>> PerformAction<R>(IToken<R> action) where R : class, ResObj;
+        public ITask<IOption<R>> MetaExecute<R>(IToken<R> token, IEnumerable<(Token.Unsafe.VariableIdentifier, Resolved)> args) where R : class, ResObj;
         public ITask<IOption<IEnumerable<R>>> ReadSelection<R>(IEnumerable<R> from, int count) where R : class, ResObj;
     }
 
@@ -45,17 +45,25 @@ namespace FourZeroOne.Runtime
             _runThread.Resolve(resolution);
         }
         public State GetState() => _stateStack.Check(out var state) ? state.Value : throw new Exception("[FrameSaving Runtime] No state exists on state stack?");
-        public ITask<IOption<R>> PerformAction<R>(IToken<R> action) where R : class, ResObj
+        public ITask<IOption<R>> MetaExecute<R>(IToken<R> token, IEnumerable<(Token.Unsafe.VariableIdentifier, Resolved)> args) where R : class, ResObj
         {
             var node = _operationStack.Unwrap();
-            if (node.Value is not Core.Tokens.Unbox<R> pToken)
-            {
-                throw new System.Exception("[FrameSaving Runtime] PerformAction() called when a PerformAction token was not at the top of the operation stack.");
-            }
-            // directly replaces the PerformAction token with it's stored Action token in the operation stack.
+            // directly replaces operation stack and state stack with token and arg variables.
+            // is probably impure and may have to change implementation.
             _operationStack = (node with
             {
-                Value = action
+                Value = token
+            }).AsSome();
+            var currentState = _stateStack.Unwrap();
+            _stateStack = (currentState with
+            {
+                Value = currentState.Value with
+                {
+                    dVariables = Q => Q with
+                    {
+                        dElements = E => E.Also(args)
+                    }
+                }
             }).AsSome();
             _discontinueEval = true;
             return Task.FromResult(new None<R>()).AsITask();

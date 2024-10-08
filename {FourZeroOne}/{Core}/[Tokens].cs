@@ -322,6 +322,66 @@ namespace FourZeroOne.Core.Tokens
 
 
     }
+
+    public record Execute<R> : Function<r.Boxed.MetaFunction<R>, R>
+        where R : class, ResObj
+    {
+        public Execute(IToken<r.Boxed.MetaFunction<R>> function) : base(function) { }
+
+        protected override ITask<IOption<R>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<R>> in1)
+        {
+            return in1.Check(out var function)
+                ? runtime.MetaExecute(function.Token, [])
+                : Task.FromResult(new None<R>()).AsITask();
+        }
+        protected override IOption<string> CustomToString() => $"!{Arg1}".AsSome();
+    }
+    public record Execute<RArg1, ROut> : Function<r.Boxed.MetaFunction<RArg1, ROut>, RArg1, ROut>
+        where RArg1 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public Execute(IToken<r.Boxed.MetaFunction<RArg1, ROut>> function, IToken<RArg1> arg) : base(function, arg) { }
+
+        protected override ITask<IOption<ROut>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<RArg1, ROut>> in1, IOption<RArg1> in2)
+        {
+            return in1.Check(out var function)
+                ? runtime.MetaExecute(function.Token, [(function.IdentifierA, in2)])
+                : Task.FromResult(new None<ROut>()).AsITask();
+        }
+        protected override IOption<string> CustomToString() => $"!{Arg1}".AsSome();
+    }
+    public record Execute<RArg1, RArg2, ROut> : Function<r.Boxed.MetaFunction<RArg1, RArg2, ROut>, ro.Group<RArg1, RArg2>, ROut>
+        where RArg1 : class, ResObj
+        where RArg2 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public Execute(IToken<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> function, IToken<ro.Group<RArg1, RArg2>> args) : base(function, args) { }
+
+        protected override ITask<IOption<ROut>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> in1, IOption<ro.Group<RArg1, RArg2>> in2)
+        {
+            return in1.Check(out var function) && in2.Check(out var args)
+                ? runtime.MetaExecute(function.Token, [(function.IdentifierA, args.Res1), (function.IdentifierB, args.Res2)])
+                : Task.FromResult(new None<ROut>()).AsITask();
+        }
+        protected override IOption<string> CustomToString() => $"!{Arg1}".AsSome();
+    }
+    public record Execute<RArg1, RArg2, RArg3, ROut> : Function<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>, ro.Group<RArg1, RArg2, RArg3>, ROut>
+        where RArg1 : class, ResObj
+        where RArg2 : class, ResObj
+        where RArg3 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public Execute(IToken<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> function, IToken<ro.Group<RArg1, RArg2, RArg3>> args) : base(function, args) { }
+
+        protected override ITask<IOption<ROut>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> in1, IOption<ro.Group<RArg1, RArg2, RArg3>> in2)
+        {
+            return in1.Check(out var function) && in2.Check(out var args)
+                ? runtime.MetaExecute(function.Token, [(function.IdentifierA, args.Res1), (function.IdentifierB, args.Res2), (function.IdentifierC, args.Res3)])
+                : Task.FromResult(new None<ROut>()).AsITask();
+        }
+        protected override IOption<string> CustomToString() => $"!{Arg1}".AsSome();
+    }
+
     public record AtPresent<S> : Function<Resolution.IStateTracked<S>, S> where S : class, Resolution.IStateTracked<S>
     {
         public AtPresent(IToken<S> source) : base(source) { }
@@ -330,16 +390,7 @@ namespace FourZeroOne.Core.Tokens
             return Task.FromResult(in1.RemapAs(x => x.GetAtState(runtime.GetState()))).AsITask();
         }
     }
-    public record Unbox<R> : Function<ro.BoxedToken<R>, R> where R : class, ResObj
-    {
-        public Unbox(IToken<ro.BoxedToken<R>> a) : base(a) { }
-
-        protected override ITask<IOption<R>> Evaluate(IRuntime runtime, IOption<ro.BoxedToken<R>> in1)
-        {
-            return in1.Check(out var action) ? runtime.PerformAction(action.Token) : Task.FromResult(new None<R>()).AsITask();
-        }
-        protected override IOption<string> CustomToString() => $"!{Arg1}".AsSome();
-    }
+    
     public record SubEnvironment<ROut> : PureFunction<Resolution.IMulti<ResObj>, ROut, ROut>
         where ROut : class, ResObj
     {
@@ -384,12 +435,12 @@ namespace FourZeroOne.Core.Tokens
         protected override IOption<string> CustomToString() => $"@\"{(RecursiveProxy.GetHashCode() % 7777).ToBase("vwmbkjqzsnthdiueoalrcgpfy", "")}\"({Arg1}, {Arg2}, {Arg3})".AsSome();
 
     }
-    public record IfElse<R> : Function<ro.Bool, ro.BoxedToken<R>, ro.BoxedToken<R>, ro.BoxedToken<R>> where R : class, ResObj
+    public record IfElse<R> : Function<ro.Bool, r.Boxed.MetaFunction<R>, r.Boxed.MetaFunction<R>, r.Boxed.MetaFunction<R>> where R : class, ResObj
     {
-        public IfElse(IToken<ro.Bool> condition, IToken<ro.BoxedToken<R>> positive, IToken<ro.BoxedToken<R>> negative) : base(condition, positive, negative) { }
-        protected override ITask<IOption<ro.BoxedToken<R>>> Evaluate(IRuntime runtime, IOption<ro.Bool> in1, IOption<ro.BoxedToken<R>> in2, IOption<ro.BoxedToken<R>> in3)
+        public IfElse(IToken<ro.Bool> condition, IToken<r.Boxed.MetaFunction<R>> positive, IToken<r.Boxed.MetaFunction<R>> negative) : base(condition, positive, negative) { }
+        protected override ITask<IOption<r.Boxed.MetaFunction<R>>> Evaluate(IRuntime runtime, IOption<ro.Bool> in1, IOption<r.Boxed.MetaFunction<R>> in2, IOption<r.Boxed.MetaFunction<R>> in3)
         {
-            return Task.FromResult( in1.RemapAs(x => x.IsTrue ? in2 : in3).Press() ).AsITask();
+            return Task.FromResult(in1.RemapAs(x => x.IsTrue ? in2 : in3).Press() ).AsITask();
         }
         protected override IOption<string> CustomToString() => $"if {Arg1} then {Arg2} else {Arg3}".AsSome();
     }

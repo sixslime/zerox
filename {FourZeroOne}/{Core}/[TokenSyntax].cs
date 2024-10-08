@@ -11,7 +11,7 @@ namespace FourZeroOne.Core.TokenSyntax
     using r = Resolutions;
     using ResObj = Resolution.IResolution;
     using IToken = Token.Unsafe.IToken;
-
+    using Resolutions.Boxed;
     public sealed record RHint<R> where R : class, ResObj
     {
         public static RHint<R> Hint() => new();
@@ -20,8 +20,8 @@ namespace FourZeroOne.Core.TokenSyntax
     {
         public sealed record IfElse<R> where R : class, ResObj
         {
-            public IToken<BoxedToken<R>> Then { get; init; }
-            public IToken<BoxedToken<R>> Else { get; init; }
+            public IToken<MetaFunction<R>> Then { get; init; }
+            public IToken<MetaFunction<R>> Else { get; init; }
         }
         public sealed record SubEnvironment<R> where R : class, ResObj
         {
@@ -96,7 +96,7 @@ namespace FourZeroOne.Core.TokenSyntax
     {
         public static Tokens.IO.Select.One<R> tIO_SelectOne<R>(this IToken<Multi<R>> source) where R : class, ResObj
         { return new(source); }
-        public static Tokens.Unbox<R> tUnbox<R>(this IToken<BoxedToken<R>> source) where R : class, ResObj
+        public static Tokens.Unbox<R> tUnbox<R>(this IToken<MetaFunction<R>> source) where R : class, ResObj
         { return new(source); }
         public static Tokens.IO.Select.Multiple<R> tIO_SelectMany<R>(this IToken<Multi<R>> source, IToken<Number> count) where R : class, ResObj
         { return new(source, count); }
@@ -113,7 +113,7 @@ namespace FourZeroOne.Core.TokenSyntax
         {
             return new(condition, block.Then, block.Else);
         }
-        public static Fixed<BoxedToken<R>> tBoxed<R>(this IToken<R> token) where R : class, ResObj
+        public static Fixed<MetaFunction<R>> tBoxed<R>(this IToken<R> token) where R : class, ResObj
         {
             return new(new() { Token = token });
         }
