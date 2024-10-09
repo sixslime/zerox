@@ -39,8 +39,8 @@ namespace FourZeroOne.Core.Macros
                     return i.tRef().tIsGreaterThan(enumerable.tRef().tCount())
                     .tIfTrue(RHint<r.Multi<ROut>>.Hint(), new()
                     {
-                        Then =
-                        CoreT.tMetaFunction(RHint<r.M>)
+                        Then = CoreT.tNolla(RHint<r.Multi<ROut>>.Hint()).tMetaBoxed(),
+                        Else = Iter.Over(enumerable.tRef().)
                     }
                 })
             });

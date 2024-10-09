@@ -223,8 +223,13 @@ namespace FourZeroOne.Core.TokenSyntax
         { return new(token); }
         public static Tokens.Multi.Union<R> tToMulti<R>(this IEnumerable<IToken<R>> tokens) where R : class, ResObj
         { return new(tokens.Map(x => x.tYield())); }
-        public static Tokens.Multi.Union<R> tUnioned<R>(this IEnumerable<IToken<Multi<R>>> tokens) where R : class, ResObj
+        public static Tokens.Multi.Union<R> tUnioned<R>(this IEnumerable<IToken<Resolution.IMulti<R>>> tokens) where R : class, ResObj
         { return new(tokens); }
+        /// <summary>
+        /// (1-based)
+        /// </summary>
+        public static Tokens.Multi.GetIndex<R> tGetIndex<R>(this IToken<Resolution.IMulti<R>> token, IToken<Number> index) where R : class, ResObj
+        { return new(token, index); }
 
         public static Tokens.Number.Add tAdd(this IToken<Number> a, IToken<Number> b) 
         { return new(a, b); }

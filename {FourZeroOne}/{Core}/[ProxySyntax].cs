@@ -246,6 +246,9 @@ namespace FourZeroOne.Core.ProxySyntax
         { return new(values.Map(x => x.pYield())); }
         public static Combiner<Tokens.Multi.Union<R>, TOrig, Resolution.IMulti<R>, r.Multi<R>> pUnioned<TOrig, R>(this IEnumerable<IProxy<TOrig, Resolution.IMulti<R>>> values) where TOrig : IToken where R : class, ResObj
         { return new(values); }
+        public static Function<Tokens.Multi.GetIndex<R>, TOrig, Resolution.IMulti<R>, ro.Number, R> pGetIndex<TOrig, R>(this IProxy<TOrig, Resolution.IMulti<R>> values, IProxy<TOrig, ro.Number> index) where TOrig : IToken where R : class, ResObj
+        { return new(values, index); }
+
 
         public static Function<Tokens.Number.Add, TOrig, ro.Number, ro.Number, ro.Number> pAdd<TOrig>(this IProxy<TOrig, ro.Number> a, IProxy<TOrig, ro.Number> b) where TOrig : IToken
         { return new(a, b); }
