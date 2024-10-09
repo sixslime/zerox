@@ -26,19 +26,82 @@ namespace FourZeroOne.Core.Proxies
         private readonly IToken<R> _token;
     }
 
-    public sealed record ToBoxed<TOrig, R> : Proxy<TOrig, ro.BoxedToken<R>> where TOrig : IToken where R : class, ResObj
+    public sealed record ToBoxedFunction<TOrig, R> : Proxy<TOrig, r.Boxed.MetaFunction<R>> where TOrig : IToken where R : class, ResObj
     {
-        public ToBoxed(IProxy<TOrig, R> proxy)
+        public ToBoxedFunction(IProxy<TOrig, R> proxy)
         {
-            _actionProxy = proxy;
+            _functionProxy = proxy;
         }
-        public override IToken<ro.BoxedToken<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        public override IToken<r.Boxed.MetaFunction<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
         {
-            return new Tokens.Fixed<ro.BoxedToken<R>>(new() { Token = _actionProxy.Realize(original, rule) });
+            return new Tokens.Fixed<r.Boxed.MetaFunction<R>>(new() { Token = _functionProxy.Realize(original, rule) });
         }
-
-        private readonly IProxy<TOrig, R> _actionProxy;
+        private readonly IProxy<TOrig, R> _functionProxy;
     }
+    public sealed record ToBoxedFunction<TOrig, RArg1, ROut> : Proxy<TOrig, r.Boxed.MetaFunction<RArg1, ROut>>
+        where TOrig : IToken
+        where RArg1 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public ToBoxedFunction(IProxy<TOrig, ROut> proxy, VariableIdentifier<RArg1> id1)
+        {
+            _functionProxy = proxy;
+            _vId1 = id1;
+        }
+        public override IToken<r.Boxed.MetaFunction<RArg1, ROut>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        {
+            return new Tokens.Fixed<r.Boxed.MetaFunction<RArg1, ROut>>(new()
+            { Token = _functionProxy.Realize(original, rule), IdentifierA = _vId1 });
+        }
+        private readonly IProxy<TOrig, ROut> _functionProxy;
+        private readonly VariableIdentifier<RArg1> _vId1;
+    }
+    public sealed record ToBoxedFunction<TOrig, RArg1, RArg2, ROut> : Proxy<TOrig, r.Boxed.MetaFunction<RArg1, RArg2, ROut>>
+        where TOrig : IToken
+        where RArg1 : class, ResObj
+        where RArg2 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public ToBoxedFunction(IProxy<TOrig, ROut> proxy, VariableIdentifier<RArg1> id1, VariableIdentifier<RArg2> id2)
+        {
+            _functionProxy = proxy;
+            _vId1 = id1;
+            _vId2 = id2;
+        }
+        public override IToken<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        {
+            return new Tokens.Fixed<r.Boxed.MetaFunction<RArg1, RArg2, ROut>>(new()
+            { Token = _functionProxy.Realize(original, rule), IdentifierA = _vId1, IdentifierB = _vId2 });
+        }
+        private readonly IProxy<TOrig, ROut> _functionProxy;
+        private readonly VariableIdentifier<RArg1> _vId1;
+        private readonly VariableIdentifier<RArg2> _vId2;
+    }
+    public sealed record ToBoxedFunction<TOrig, RArg1, RArg2, RArg3, ROut> : Proxy<TOrig, r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>
+        where TOrig : IToken
+        where RArg1 : class, ResObj
+        where RArg2 : class, ResObj
+        where RArg3 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public ToBoxedFunction(IProxy<TOrig, ROut> proxy, VariableIdentifier<RArg1> id1, VariableIdentifier<RArg2> id2, VariableIdentifier<RArg3> id3)
+        {
+            _functionProxy = proxy;
+            _vId1 = id1;
+            _vId2 = id2;
+            _vId3 = id3;
+        }
+        public override IToken<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        {
+            return new Tokens.Fixed<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>(new()
+            { Token = _functionProxy.Realize(original, rule), IdentifierA = _vId1, IdentifierB = _vId2, IdentifierC = _vId3 });
+        }
+        private readonly IProxy<TOrig, ROut> _functionProxy;
+        private readonly VariableIdentifier<RArg1> _vId1;
+        private readonly VariableIdentifier<RArg2> _vId2;
+        private readonly VariableIdentifier<RArg3> _vId3;
+    }
+
     public sealed record CombinerTransform<TNew, TOrig, RArg, ROut> : Proxy<TOrig, ROut>
         where TOrig : IHasCombinerArgs<RArg>, IToken<ROut>
         where TNew : Token.ICombiner<RArg, ROut>
@@ -100,16 +163,16 @@ namespace FourZeroOne.Core.Proxies
         private readonly IProxy<TOrig, R> _objectProxy;
     }
 
-    public sealed record IfElse<TOrig, R> : Proxy<TOrig, ro.BoxedToken<R>> where TOrig : IToken where R : class, ResObj
+    public sealed record IfElse<TOrig, R> : Proxy<TOrig, r.Boxed.MetaFunction<R>> where TOrig : IToken where R : class, ResObj
     {
         public readonly IProxy<TOrig, ro.Bool> Condition;
-        public IProxy<TOrig, ro.BoxedToken<R>> PassProxy { get; init; }
-        public IProxy<TOrig, ro.BoxedToken<R>> FailProxy { get; init; }
+        public IProxy<TOrig, r.Boxed.MetaFunction<R>> PassProxy { get; init; }
+        public IProxy<TOrig, r.Boxed.MetaFunction<R>> FailProxy { get; init; }
         public IfElse(IProxy<TOrig, ro.Bool> condition)
         {
             Condition = condition;
         }
-        public override IToken<ro.BoxedToken<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        public override IToken<r.Boxed.MetaFunction<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
         {
             return new Tokens.IfElse<R>(Condition.Realize(original, rule), PassProxy.Realize(original, rule), FailProxy.Realize(original, rule));
         }
@@ -176,7 +239,7 @@ namespace FourZeroOne.Core.Proxies
         where RArg3 : class, ResObj
         where ROut : class, ResObj
     {
-        public Function(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2, IProxy<TOrig, RArg2> in3) : base(in1, in2, in3) { }
+        public Function(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2, IProxy<TOrig, RArg3> in3) : base(in1, in2, in3) { }
         protected override IToken<ROut> ConstructFromArgs(TOrig _, List<IToken> tokens)
         {
             return (IToken<ROut>)

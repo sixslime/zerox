@@ -14,10 +14,34 @@ namespace FourZeroOne.Core.ProxySyntax
     public sealed record OriginalHint<TOrig> : IOriginalHint<TOrig, TOrig> where TOrig : IToken { }
     namespace ProxyStructure
     {
+        public sealed record Args<TOrig, RArg1>
+            where TOrig : IToken
+            where RArg1 : class, ResObj
+        {
+            public required IProxy<TOrig, RArg1> A { get; init; }
+        }
+        public sealed record Args<TOrig, RArg1, RArg2>
+            where TOrig : IToken
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+        {
+            public required IProxy<TOrig, RArg1> A { get; init; }
+            public required IProxy<TOrig, RArg2> B { get; init; }
+        }
+        public sealed record Args<TOrig, RArg1, RArg2, RArg3>
+            where TOrig : IToken
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where RArg3 : class, ResObj
+        {
+            public required IProxy<TOrig, RArg1> A { get; init; }
+            public required IProxy<TOrig, RArg2> B { get; init; }
+            public required IProxy<TOrig, RArg3> C { get; init; }
+        }
         public sealed record IfElse<TOrig, R> where TOrig : IToken where R : class, ResObj
         {
-            public IProxy<TOrig, ro.BoxedToken<R>> Then { get; init; }
-            public IProxy<TOrig, ro.BoxedToken<R>> Else { get; init; }
+            public IProxy<TOrig, r.Boxed.MetaFunction<R>> Then { get; init; }
+            public IProxy<TOrig, r.Boxed.MetaFunction<R>> Else { get; init; }
         }
         public sealed record RecursiveCall<RArg1, RArg2, RArg3, ROut>
             where RArg1 : class, ResObj
@@ -55,6 +79,39 @@ namespace FourZeroOne.Core.ProxySyntax
         { return statement(new()); }
         public static Rule.Rule<TOrig, ROut> RuleFor<TOrig, ROut>(System.Func<OriginalHint<TOrig>, IProxy<TOrig, ROut>> statement) where TOrig : Token.IToken<ROut> where ROut : class, ResObj
         { return new(statement(new())); }
+        public static ToBoxedFunction<TOrig, ROut> pMetaFunction<TOrig, ROut>(System.Func<IProxy<TOrig, ROut>> metaFunction)
+            where TOrig : IToken
+            where ROut : class, ResObj
+        {
+            return new(metaFunction());
+        }
+        public static ToBoxedFunction<TOrig, RArg1, ROut> pMetaFunction<TOrig, RArg1, ROut>(System.Func<Token.VariableIdentifier<RArg1>, IProxy<TOrig, ROut>> metaFunction)
+            where TOrig : IToken
+            where RArg1 : class, ResObj
+            where ROut : class, ResObj
+        {
+            var v1 = new Token.VariableIdentifier<RArg1>();
+            return new(metaFunction(v1), v1);
+        }
+        public static ToBoxedFunction<TOrig, RArg1, RArg2, ROut> pMetaFunction<TOrig, RArg1, RArg2, ROut>(System.Func<Token.VariableIdentifier<RArg1>, Token.VariableIdentifier<RArg2>, IProxy<TOrig, ROut>> metaFunction)
+            where TOrig : IToken
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where ROut : class, ResObj
+        {
+            var (v1, v2) = (new Token.VariableIdentifier<RArg1>(), new Token.VariableIdentifier<RArg2>());
+            return new(metaFunction(v1, v2), v1, v2);
+        }
+        public static ToBoxedFunction<TOrig, RArg1, RArg2, RArg3, ROut> pMetaFunction<TOrig, RArg1, RArg2, RArg3, ROut>(System.Func<Token.VariableIdentifier<RArg1>, Token.VariableIdentifier<RArg2>, Token.VariableIdentifier<RArg3>, IProxy<TOrig, ROut>> metaFunction)
+            where TOrig : IToken
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where RArg3 : class, ResObj
+            where ROut : class, ResObj
+        {
+            var (v1, v2, v3) = (new Token.VariableIdentifier<RArg1>(), new Token.VariableIdentifier<RArg2>(), new Token.VariableIdentifier<RArg3>());
+            return new(metaFunction(v1, v2, v3), v1, v2, v3);
+        }
     }
     public static class _Extensions
     {
@@ -79,9 +136,43 @@ namespace FourZeroOne.Core.ProxySyntax
             return array.pToMulti();
         }
 
-        public static RecursiveCall<RArg1, ROut> pRecurseWith<RArg1, ROut>(this OriginalHint<Tokens.Recursive<RArg1, ROut>> _, ProxyStructure.RecursiveCall<RArg1, ROut> block)
-             where RArg1 : class, ResObj
+        public static Function<Tokens.Execute<ROut>, TOrig, r.Boxed.MetaFunction<ROut>, ROut> pExecute<TOrig, ROut>(this IProxy<TOrig, r.Boxed.MetaFunction<ROut>> function)
+            where TOrig : IToken
             where ROut : class, ResObj
+        {
+            return new(function);
+        }
+        public static Function<Tokens.Execute<RArg1, ROut>, TOrig, r.Boxed.MetaFunction<RArg1, ROut>, r.Boxed.MetaArgs<RArg1>, ROut> pExecuteWith<TOrig, RArg1, ROut>(this IProxy<TOrig, r.Boxed.MetaFunction<RArg1, ROut>> function, ProxyStructure.Args<TOrig, RArg1> args)
+            where TOrig : IToken
+            where RArg1 : class, ResObj
+            where ROut : class, ResObj
+        {
+            var argProxy = new Function<Tokens.ToBoxedArgs<RArg1>, TOrig, RArg1, r.Boxed.MetaArgs<RArg1>>(args.A);
+            return new(function, argProxy);
+        }
+        public static Function<Tokens.Execute<RArg1, RArg2, ROut>, TOrig, r.Boxed.MetaFunction<RArg1, RArg2, ROut>, r.Boxed.MetaArgs<RArg1, RArg2>, ROut> pExecuteWith<TOrig, RArg1, RArg2, ROut>(this IProxy<TOrig, r.Boxed.MetaFunction<RArg1, RArg2, ROut>> function, ProxyStructure.Args<TOrig, RArg1, RArg2> args)
+            where TOrig : IToken
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where ROut : class, ResObj
+        {
+            var argProxy = new Function<Tokens.ToBoxedArgs<RArg1, RArg2>, TOrig, RArg1, RArg2, r.Boxed.MetaArgs<RArg1, RArg2>>(args.A, args.B);
+            return new(function, argProxy);
+        }
+        public static Function<Tokens.Execute<RArg1, RArg2, RArg3, ROut>, TOrig, r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>, r.Boxed.MetaArgs<RArg1, RArg2, RArg3>, ROut> pExecuteWith<TOrig, RArg1, RArg2, RArg3, ROut>(this IProxy<TOrig, r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> function, ProxyStructure.Args<TOrig, RArg1, RArg2, RArg3> args)
+            where TOrig : IToken
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where RArg3 : class, ResObj
+            where ROut : class, ResObj
+        {
+            var argProxy = new Function<Tokens.ToBoxedArgs<RArg1, RArg2, RArg3>, TOrig, RArg1, RArg2, RArg3, r.Boxed.MetaArgs<RArg1, RArg2, RArg3>>(args.A, args.B, args.C);
+            return new(function, argProxy);
+        }
+
+        public static RecursiveCall<RArg1, ROut> pRecurseWith<RArg1, ROut>(this OriginalHint<Tokens.Recursive<RArg1, ROut>> _, ProxyStructure.RecursiveCall<RArg1, ROut> block)
+         where RArg1 : class, ResObj
+         where ROut : class, ResObj
         { return new(block.A); }
         public static RecursiveCall<RArg1, RArg2, ROut> pRecurseWith<RArg1, RArg2, ROut>(this OriginalHint<Tokens.Recursive<RArg1, RArg2, ROut>> _, ProxyStructure.RecursiveCall<RArg1, RArg2, ROut> block)
              where RArg1 : class, ResObj
@@ -99,10 +190,6 @@ namespace FourZeroOne.Core.ProxySyntax
         {
             identifier = new();
             return new(identifier, value);
-        }
-        public static ToBoxed<TOrig, R> pBoxed<TOrig, R>(this IProxy<TOrig, R> proxy) where TOrig : IToken where R : class, ResObj
-        {
-            return new(proxy);
         }
         public static IfElse<TOrig, R> pIfTrue<TOrig, R>(this IProxy<TOrig, ro.Bool> condition, TokenSyntax.RHint<R> _, ProxyStructure.IfElse<TOrig, R> block) where TOrig : IToken where R : class, ResObj
         {
@@ -139,9 +226,6 @@ namespace FourZeroOne.Core.ProxySyntax
         { return new(source); }
         public static Function<Tokens.IO.Select.Multiple<R>, TOrig, Resolution.IMulti<R>, ro.Number, r.Multi<R>> pIO_SelectMany<TOrig, R>(this IProxy<TOrig, Resolution.IMulti<R>> source, IProxy<TOrig, ro.Number> count) where TOrig : IToken where R : class, ResObj
         { return new(source, count); }
-
-        public static Function<Tokens.Unbox<R>, TOrig, ro.BoxedToken<R>, R> pUnbox<TOrig, R>(this IProxy<TOrig, ro.BoxedToken<R>> action) where TOrig : IToken where R : class, ResObj
-        { return new(action); }
 
         public static Function<Tokens.Declare, TOrig, Resolution.Unsafe.IStateTracked, r.Actions.Declare> pDeclare<TOrig>(this IProxy<TOrig, Resolution.Unsafe.IStateTracked> subject) where TOrig : IToken
         { return new(subject); }
