@@ -264,7 +264,6 @@ namespace FourZeroOne.Core.Tokens
             protected override IOption<string> CustomToString() => $"{Arg1} - {Arg2}".AsSome();
 
         }
-
         public sealed record Yield<R> : PureFunction<R, r.Multi<R>> where R : class, ResObj
         {
             public Yield(IToken<R> value) : base(value) { }
@@ -274,13 +273,23 @@ namespace FourZeroOne.Core.Tokens
             }
             protected override IOption<string> CustomToString() => $"^{Arg1}".AsSome();
         }
-
         public sealed record Count : PureFunction<Resolution.IMulti<ResObj>, ro.Number>
         {
             public Count(IToken<Resolution.IMulti<ResObj>> of) : base(of) { }
             protected override ro.Number EvaluatePure(Resolution.IMulti<ResObj> in1)
             {
                 return new() { Value = in1.Count };
+            }
+        }
+        public sealed record GetIndex<R> : Function<Resolution.IMulti<R>, ro.Number, R> where R : class, ResObj
+        {
+            public GetIndex(IToken<Resolution.IMulti<R>> from, IToken<ro.Number> index) : base(from, index) { }
+            protected override ITask<IOption<R>> Evaluate(IRuntime _, IOption<Resolution.IMulti<R>> in1, IOption<ro.Number> in2)
+            {
+                var o = in1.Check(out var from) && in2.Check(out var index)
+                    ? from.Values.At(index.Value)
+                    : new None<R>();
+                return Task.FromResult(o).AsITask();
             }
         }
     }

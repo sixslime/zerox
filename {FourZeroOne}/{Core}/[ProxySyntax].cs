@@ -211,14 +211,14 @@ namespace FourZeroOne.Core.ProxySyntax
             return new(function, argProxy);
         }
 
-        public static RecursiveStart<TOrig, RArg1, ROut> pRecursive<TOrig, RArg1, ROut>(this OriginalHint<TOrig> _, ProxyStructure.Recursive<TOrig, RArg1, ROut> block)
+        public static RecursiveStart<TOrig, RArg1, ROut> pRecursive<TOrig, RArg1, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, ROut> __, ProxyStructure.Recursive<TOrig, RArg1, ROut> block)
             where TOrig : IToken
             where RArg1 : class, ResObj
             where ROut : class, ResObj
         {
             return new(block.A) { RecursiveProxy = block.RecursiveProxyStatement(new()) };
         }
-        public static RecursiveStart<TOrig, RArg1, RArg2, ROut> pRecursive<TOrig, RArg1, RArg2, ROut>(this OriginalHint<TOrig> _, ProxyStructure.Recursive<TOrig, RArg1, RArg2, ROut> block)
+        public static RecursiveStart<TOrig, RArg1, RArg2, ROut> pRecursive<TOrig, RArg1, RArg2, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, ROut> __, ProxyStructure.Recursive<TOrig, RArg1, RArg2, ROut> block)
             where TOrig : IToken
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
@@ -226,7 +226,7 @@ namespace FourZeroOne.Core.ProxySyntax
         {
             return new(block.A, block.B) { RecursiveProxy = block.RecursiveProxyStatement(new()) };
         }
-        public static RecursiveStart<TOrig, RArg1, RArg2, RArg3, ROut> pRecursive<TOrig, RArg1, RArg2, RArg3, ROut>(this OriginalHint<TOrig> _, ProxyStructure.Recursive<TOrig, RArg1, RArg2, RArg3, ROut> block)
+        public static RecursiveStart<TOrig, RArg1, RArg2, RArg3, ROut> pRecursive<TOrig, RArg1, RArg2, RArg3, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, RArg3, ROut> __, ProxyStructure.Recursive<TOrig, RArg1, RArg2, RArg3, ROut> block)
             where TOrig : IToken
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj

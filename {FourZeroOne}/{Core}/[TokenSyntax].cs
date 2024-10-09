@@ -16,6 +16,27 @@ namespace FourZeroOne.Core.TokenSyntax
     {
         public static RHint<R> Hint() => new();
     }
+    public sealed record RHint<R1, R2>
+        where R1 : class, ResObj
+        where R2 : class, ResObj
+    {
+        public static RHint<R1, R2> Hint() => new();
+    }
+    public sealed record RHint<R1, R2, R3>
+        where R1 : class, ResObj
+        where R2 : class, ResObj
+        where R3 : class, ResObj
+    {
+        public static RHint<R1, R2, R3> Hint() => new();
+    }
+    public sealed record RHint<R1, R2, R3, R4>
+        where R1 : class, ResObj
+        where R2 : class, ResObj
+        where R3 : class, ResObj
+        where R4 : class, ResObj
+    {
+        public static RHint<R1, R2, R3, R4> Hint() => new();
+    }
     namespace TokenStructure
     {
         public sealed record Args<RArg1>

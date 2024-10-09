@@ -73,6 +73,17 @@ namespace Perfection
             while (iter.MoveNext()) yield return iter.Current;
         }
 
+        public static IOption<T> At<T>(this IEnumerable<T> enumerable, int index)
+        {
+            if (index < 0) return new None<T>();
+            var iter = enumerable.GetEnumerator();
+            for (int i = 0; i <= index; i++)
+            {
+                if (!iter.MoveNext()) return new None<T>();
+            }
+            return iter.Current.AsSome();
+        }
+
         public static IEnumerable<T> Flatten<T>(this IEnumerable<IEnumerable<T>> enumerable)
         {
             foreach (var list in enumerable)
