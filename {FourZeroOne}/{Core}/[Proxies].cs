@@ -257,6 +257,7 @@ namespace FourZeroOne.Core.Proxies
     }
     // --------
 
+    [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
     public record RecursiveStart<TOrig, RArg1, RArg2, RArg3, ROut> : FunctionProxy<TOrig, ROut>
         where TOrig : IToken
         where RArg1 : class, ResObj
@@ -275,6 +276,7 @@ namespace FourZeroOne.Core.Proxies
             { RecursiveProxy = RecursiveProxy };
         }
     }
+    [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
     public record RecursiveStart<TOrig, RArg1, RArg2, ROut> : FunctionProxy<TOrig, ROut>
         where TOrig : IToken
         where RArg1 : class, ResObj
@@ -291,6 +293,7 @@ namespace FourZeroOne.Core.Proxies
             { RecursiveProxy = RecursiveProxy };
         }
     }
+    [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
     public record RecursiveStart<TOrig, RArg1, ROut> : FunctionProxy<TOrig, ROut>
         where TOrig : IToken
         where RArg1 : class, ResObj
@@ -307,6 +310,7 @@ namespace FourZeroOne.Core.Proxies
     }
 
     // ---- [ Recursive Call] ----
+    [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
     public record RecursiveCall<RArg1, ROut> : FunctionProxy<Tokens.Recursive<RArg1, ROut>, ROut>
         where RArg1 : class, ResObj
         where ROut : class, ResObj
@@ -317,6 +321,7 @@ namespace FourZeroOne.Core.Proxies
             return new Tokens.Recursive<RArg1, ROut>((IToken<RArg1>)tokens[0]) { RecursiveProxy = original.RecursiveProxy };
         }
     }
+    [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
     public record RecursiveCall<RArg1, RArg2, ROut> : FunctionProxy<Tokens.Recursive<RArg1, RArg2, ROut>, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
@@ -331,6 +336,7 @@ namespace FourZeroOne.Core.Proxies
             { RecursiveProxy = original.RecursiveProxy };
         }
     }
+    [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
     public record RecursiveCall<RArg1, RArg2, RArg3, ROut> : FunctionProxy<Tokens.Recursive<RArg1, RArg2, RArg3, ROut>, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj

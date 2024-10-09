@@ -29,7 +29,7 @@ public class Tester
         var token_tutorial_1 = 5.tConst().tAdd(10.tConst()); // 5 + 10 
         var token_tutorial_2 = Iter.Over(1, 2, 3, 4).Map(x => x.tConst()).tToConstMulti(); // [1, 2, 3, 4]
         var token_tutorial_3 = token_tutorial_2.tIO_SelectOne(); //prompt user to select one from [1, 2, 3, 4], and return it
-        var token_tutorial_4 = CoreT.tSubEnvironment<ro.Number>(new()
+        var token_tutorial_4 = CoreT.tSubEnvironment(RHint<ro.Number>.Hint(), new()
         {
             Environment = token_tutorial_2.tIO_SelectOne().tAsVariable(out var mySelection).tYield(),
             SubToken = mySelection.tRef().tMultiply(mySelection.tRef())
@@ -43,6 +43,7 @@ public class Tester
         var rule_tutorial_2 = CoreP.RuleFor<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalA()).pSubtract(P.pOriginalB())); // makes ALL add(A, B) tokens ('t.Number.Add') turn into subtract(add(A, A), B).
         //var rule_illogical = MakeProxy.RuleFor<t.Number.Add, ro.Bool>(P => P.pOriginalA().pIsGreaterThan(P.pOriginalB()) -- consider applying this rule to subtract(add(<number>, <number>), <number>), it would become subtract(<bool>, <number>), which does not make sense.
 
+        /*
         var token_complicated = CoreT.tRecursive<ro.Number, r.Multi<ro.Number>, ro.Number>(new() // if you can figure out what this does, then you understand the language; yes its recursive (recursion is not planned to be common, but it will exist sometimes)
         {
             A = 0.tConst(),
@@ -67,14 +68,15 @@ public class Tester
                     }).pExecute()
                 })
         });
-        var token_complicated_new = CoreT.tMetaFunction<ro.Number, r.Multi<ro.Number>, ro.Number>((selfFunc, counter, pool) =>
+        */
+        var token_complicated = CoreT.tMetaFunction(RHint<ro.Number, r.Multi<ro.Number>, ro.Number>.Hint(), (selfFunc, counter, pool) =>
         {
             return counter.tRef().tIsGreaterThan(2.tConst()).tIfTrue<ro.Number>(new()
             {
-                Then = CoreT.tMetaFunction<ro.Number>(_ => { return 0.tConst(); }),
-                Else = CoreT.tMetaFunction<ro.Number>(_ =>
+                Then = CoreT.tMetaFunction(RHint<ro.Number>.Hint(), _ => { return 0.tConst(); }),
+                Else = CoreT.tMetaFunction(RHint<ro.Number>.Hint(), _ =>
                 {
-                    return CoreT.tSubEnvironment<ro.Number>(new()
+                    return CoreT.tSubEnvironment(RHint<ro.Number>.Hint(), new()
                     {
                         Environment = pool.tRef().tIO_SelectOne().tAsVariable(out var selection).tYield(),
                         SubToken = selfFunc.tRef().tExecuteWith(new()
@@ -97,12 +99,12 @@ public class Tester
             .WithComponents(new a.Components.Unit.Effects.Slow.Component().Yield())
             .tConst()
             .tGetComponent(AxiomT.tEffectSlowCI());
-        var token_test_5 = CoreT.tMetaFunction<ro.Number, ro.Number, ro.Number>((_, a, b) => a.tRef().tMultiply(b.tRef())).tExecuteWith(new()
+        var token_test_5 = CoreT.tMetaFunction(RHint<ro.Number, ro.Number, ro.Number>.Hint(), (_, a, b) => a.tRef().tMultiply(b.tRef())).tExecuteWith(new()
         {
             A = token_tutorial_3,
             B = token_complicated
         });
-        var token_tester = token_complicated_new;
+        var token_tester = token_complicated;
         var rule_test = CoreP.RuleFor<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tConst().pDirect(P))));
 
         var startState = new FourZeroOne.State()

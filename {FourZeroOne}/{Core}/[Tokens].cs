@@ -281,13 +281,17 @@ namespace FourZeroOne.Core.Tokens
                 return new() { Value = in1.Count };
             }
         }
+        /// <summary>
+        /// 1 based because it makes things easier.
+        /// </summary>
+        /// <typeparam name="R"></typeparam>
         public sealed record GetIndex<R> : Function<Resolution.IMulti<R>, ro.Number, R> where R : class, ResObj
         {
             public GetIndex(IToken<Resolution.IMulti<R>> from, IToken<ro.Number> index) : base(from, index) { }
             protected override ITask<IOption<R>> Evaluate(IRuntime _, IOption<Resolution.IMulti<R>> in1, IOption<ro.Number> in2)
             {
                 var o = in1.Check(out var from) && in2.Check(out var index)
-                    ? from.Values.At(index.Value)
+                    ? from.Values.At(index.Value - 1)
                     : new None<R>();
                 return Task.FromResult(o).AsITask();
             }
@@ -441,6 +445,8 @@ namespace FourZeroOne.Core.Tokens
         protected override IOption<string> CustomToString() => $"let {Arg1} in {{{Arg2}}}".AsSome();
 
     }
+
+    [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
     public record Recursive<RArg1, ROut> : Macro.OneArg<RArg1, ROut>
         where RArg1 : class, ResObj
         where ROut : class, ResObj
@@ -451,6 +457,7 @@ namespace FourZeroOne.Core.Tokens
         protected override IOption<string> CustomToString() => $"@\"{(RecursiveProxy.GetHashCode()%7777).ToBase("vwmbkjqzsnthdiueoalrcgpfy", "")}\"({Arg1})".AsSome();
 
     }
+    [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
     public record Recursive<RArg1, RArg2, ROut> : Macro.TwoArg<RArg1, RArg2, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
@@ -462,6 +469,7 @@ namespace FourZeroOne.Core.Tokens
         protected override IOption<string> CustomToString() => $"@\"{(RecursiveProxy.GetHashCode() % 7777).ToBase("vwmbkjqzsnthdiueoalrcgpfy", "")}\"({Arg1}, {Arg2})".AsSome();
 
     }
+    [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
     public record Recursive<RArg1, RArg2, RArg3, ROut> : Macro.ThreeArg<RArg1, RArg2, RArg3, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj

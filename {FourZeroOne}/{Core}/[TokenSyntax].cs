@@ -65,11 +65,13 @@ namespace FourZeroOne.Core.TokenSyntax
             public IToken<MetaFunction<R>> Then { get; init; }
             public IToken<MetaFunction<R>> Else { get; init; }
         }
+
         public sealed record SubEnvironment<R> where R : class, ResObj
         {
             public IToken<Resolution.IMulti<ResObj>> Environment { get; init; }
             public IToken<R> SubToken { get; init; }
         }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public sealed record Recursive<RArg1, ROut>
             where RArg1 : class, ResObj
             where ROut : class, ResObj
@@ -77,6 +79,7 @@ namespace FourZeroOne.Core.TokenSyntax
             public IToken<RArg1> A { get; init; }
             public System.Func<ProxySyntax.OriginalHint<Tokens.Recursive<RArg1, ROut>>, Proxy.IProxy<Tokens.Recursive<RArg1, ROut>, ROut>> RecursiveProxyStatement { get; init; }
         }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public sealed record Recursive<RArg1, RArg2, ROut>
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
@@ -86,6 +89,7 @@ namespace FourZeroOne.Core.TokenSyntax
             public IToken<RArg2> B { get; init; }
             public System.Func<ProxySyntax.OriginalHint<Tokens.Recursive<RArg1, RArg2, ROut>>, Proxy.IProxy<Tokens.Recursive<RArg1, RArg2, ROut>, ROut>> RecursiveProxyStatement { get; init; }
         }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public sealed record Recursive<RArg1, RArg2, RArg3, ROut>
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
@@ -105,15 +109,15 @@ namespace FourZeroOne.Core.TokenSyntax
         public static Tokens.Board.Hex.AllHexes tAllHexes()
         { return new(); }
 
-        public static SubEnvironment<R> tSubEnvironment<R>(TokenStructure.SubEnvironment<R> block) where R : class, ResObj
+        public static SubEnvironment<R> tSubEnvironment<R>(RHint<R> _, TokenStructure.SubEnvironment<R> block) where R : class, ResObj
         { return new(block.Environment, block.SubToken); }
 
-        public static Fixed<MetaFunction<R>> tMetaFunction<R>(Func<VariableIdentifier<MetaFunction<R>>, IToken<R>> tokenFunction) where R : class, ResObj
+        public static Fixed<MetaFunction<ROut>> tMetaFunction<ROut>(RHint<ROut> _, Func<VariableIdentifier<MetaFunction<ROut>>, IToken<ROut>> tokenFunction) where ROut : class, ResObj
         {
-            var vs = new VariableIdentifier<MetaFunction<R>>();
+            var vs = new VariableIdentifier<MetaFunction<ROut>>();
             return new(new() { SelfIdentifier = vs, Token = tokenFunction(vs) });
         }
-        public static Fixed<MetaFunction<RArg1, ROut>> tMetaFunction<RArg1, ROut>(Func<VariableIdentifier<MetaFunction<RArg1, ROut>>, VariableIdentifier<RArg1>, IToken<ROut>> tokenFunction)
+        public static Fixed<MetaFunction<RArg1, ROut>> tMetaFunction<RArg1, ROut>(RHint<RArg1, ROut> _, Func<VariableIdentifier<MetaFunction<RArg1, ROut>>, VariableIdentifier<RArg1>, IToken<ROut>> tokenFunction)
             where RArg1 : class, ResObj
             where ROut : class, ResObj
         {
@@ -121,7 +125,7 @@ namespace FourZeroOne.Core.TokenSyntax
             var v1 = new VariableIdentifier<RArg1>();
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, Token = tokenFunction(vs, v1) });
         }
-        public static Fixed<MetaFunction<RArg1, RArg2, ROut>> tMetaFunction<RArg1, RArg2, ROut>(Func<VariableIdentifier<MetaFunction<RArg1, RArg2, ROut>>, VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, IToken<ROut>> tokenFunction)
+        public static Fixed<MetaFunction<RArg1, RArg2, ROut>> tMetaFunction<RArg1, RArg2, ROut>(RHint<RArg1, RArg2, ROut> _, Func<VariableIdentifier<MetaFunction<RArg1, RArg2, ROut>>, VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, IToken<ROut>> tokenFunction)
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where ROut : class, ResObj
@@ -130,7 +134,7 @@ namespace FourZeroOne.Core.TokenSyntax
             var (v1, v2) = (new VariableIdentifier<RArg1>(), new VariableIdentifier<RArg2>());
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, Token = tokenFunction(vs, v1, v2) });
         }
-        public static Fixed<MetaFunction<RArg1, RArg2, RArg3, ROut>> tMetaFunction<RArg1, RArg2, RArg3, ROut>(Func<VariableIdentifier<MetaFunction<RArg1, RArg2, RArg3, ROut>>, VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, VariableIdentifier<RArg3>, IToken<ROut>> tokenFunction)
+        public static Fixed<MetaFunction<RArg1, RArg2, RArg3, ROut>> tMetaFunction<RArg1, RArg2, RArg3, ROut>(RHint<RArg1, RArg2, RArg3, ROut> _, Func<VariableIdentifier<MetaFunction<RArg1, RArg2, RArg3, ROut>>, VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, VariableIdentifier<RArg3>, IToken<ROut>> tokenFunction)
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where RArg3 : class, ResObj
@@ -141,15 +145,18 @@ namespace FourZeroOne.Core.TokenSyntax
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, IdentifierC = v3, Token = tokenFunction(vs, v1, v2, v3) });
         }
 
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public static Recursive<RArg1, ROut> tRecursive<RArg1, ROut>(TokenStructure.Recursive<RArg1, ROut> block)
             where RArg1 : class, ResObj
             where ROut : class, ResObj
         { return new(block.A) { RecursiveProxy = block.RecursiveProxyStatement(new()) }; }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public static Recursive<RArg1, RArg2, ROut> tRecursive<RArg1, RArg2, ROut>(TokenStructure.Recursive<RArg1, RArg2, ROut> block)
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where ROut : class, ResObj
         { return new(block.A, block.B) { RecursiveProxy = block.RecursiveProxyStatement(new()) }; }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public static Recursive<RArg1, RArg2, RArg3, ROut> tRecursive<RArg1, RArg2, RArg3, ROut>(TokenStructure.Recursive<RArg1, RArg2, RArg3, ROut> block)
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
@@ -157,14 +164,14 @@ namespace FourZeroOne.Core.TokenSyntax
             where ROut : class, ResObj
         { return new(block.A, block.B, block.C) { RecursiveProxy = block.RecursiveProxyStatement(new()) }; }
 
-        public static Nolla<R> tNolla<R>() where R : class, ResObj
+        public static Nolla<R> tNolla<R>(RHint<R> _) where R : class, ResObj
         { return new(); }
 
-        public static Tokens.Multi.Union<R> tArrayOf<R>(List<IToken<R>> tokens) where R : class, ResObj
+        public static Tokens.Multi.Union<R> tArrayOf<R>(RHint<R> _, List<IToken<R>> tokens) where R : class, ResObj
         { return new(tokens.Map(x => x.tYield())); }
-        public static Tokens.Multi.Union<R> tUnion<R>(List<IToken<Multi<R>>> sets) where R : class, ResObj
+        public static Tokens.Multi.Union<R> tUnion<R>(RHint<R> _, List<IToken<Multi<R>>> sets) where R : class, ResObj
         { return new(sets); }
-        public static Tokens.Multi.Intersection<R> tIntersection<R>(List<IToken<Multi<R>>> sets) where R : class, ResObj
+        public static Tokens.Multi.Intersection<R> tIntersection<R>(RHint<R> _, List<IToken<Multi<R>>> sets) where R : class, ResObj
         { return new(sets); }
     }
     public static class _Extensions
@@ -200,7 +207,7 @@ namespace FourZeroOne.Core.TokenSyntax
         public static Reference<R> tRef<R>(this VariableIdentifier<R> ident) where R : class, ResObj
         { return new(ident); }
         
-        public static IfElse<R> tIfTrue<R>(this IToken<Bool> condition, TokenStructure.IfElse<R> block) where R : class, ResObj
+        public static IfElse<R> tIfTrue<R>(this IToken<Bool> condition, RHint<R> _, TokenStructure.IfElse<R> block) where R : class, ResObj
         {
             return new(condition, block.Then, block.Else);
         }

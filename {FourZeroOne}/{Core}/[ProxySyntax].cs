@@ -45,6 +45,7 @@ namespace FourZeroOne.Core.ProxySyntax
             public IProxy<TOrig, r.Boxed.MetaFunction<R>> Else { get; init; }
         }
 
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public sealed record Recursive<TOrig, RArg1, ROut>
             where TOrig : IToken
             where RArg1 : class, ResObj
@@ -53,6 +54,7 @@ namespace FourZeroOne.Core.ProxySyntax
             public required IProxy<TOrig, RArg1> A { get; init; }
             public required ProxyBuilder<Tokens.Recursive<RArg1, ROut>, ROut> RecursiveProxyStatement { get; init; }
         }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public sealed record Recursive<TOrig, RArg1, RArg2, ROut>
             where TOrig : IToken
             where RArg1 : class, ResObj
@@ -63,6 +65,7 @@ namespace FourZeroOne.Core.ProxySyntax
             public required IProxy<TOrig, RArg2> B { get; init; }
             public required ProxyBuilder<Tokens.Recursive<RArg1, RArg2, ROut>, ROut> RecursiveProxyStatement { get; init; }
         }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public sealed record Recursive<TOrig, RArg1, RArg2, RArg3, ROut>
             where TOrig : IToken
             where RArg1 : class, ResObj
@@ -76,6 +79,7 @@ namespace FourZeroOne.Core.ProxySyntax
             public required ProxyBuilder<Tokens.Recursive<RArg1, RArg2, RArg3, ROut>, ROut> RecursiveProxyStatement { get; init; }
         }
 
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public sealed record RecursiveCall<RArg1, RArg2, RArg3, ROut>
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
@@ -86,6 +90,7 @@ namespace FourZeroOne.Core.ProxySyntax
             public IProxy<Tokens.Recursive<RArg1, RArg2, RArg3, ROut>, RArg2> B { get; init; }
             public IProxy<Tokens.Recursive<RArg1, RArg2, RArg3, ROut>, RArg3> C { get; init; }
         }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public sealed record RecursiveCall<RArg1, RArg2, ROut>
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
@@ -94,6 +99,7 @@ namespace FourZeroOne.Core.ProxySyntax
             public IProxy<Tokens.Recursive<RArg1, RArg2, ROut>, RArg1> A { get; init; }
             public IProxy<Tokens.Recursive<RArg1, RArg2, ROut>, RArg2> B { get; init; }
         }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public sealed record RecursiveCall<RArg1, ROut>
             where RArg1 : class, ResObj
             where ROut : class, ResObj
@@ -209,6 +215,7 @@ namespace FourZeroOne.Core.ProxySyntax
             return new(function, argProxy);
         }
 
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public static RecursiveStart<TOrig, RArg1, ROut> pRecursive<TOrig, RArg1, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, ROut> __, ProxyStructure.Recursive<TOrig, RArg1, ROut> block)
             where TOrig : IToken
             where RArg1 : class, ResObj
@@ -216,6 +223,7 @@ namespace FourZeroOne.Core.ProxySyntax
         {
             return new(block.A) { RecursiveProxy = block.RecursiveProxyStatement(new()) };
         }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public static RecursiveStart<TOrig, RArg1, RArg2, ROut> pRecursive<TOrig, RArg1, RArg2, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, ROut> __, ProxyStructure.Recursive<TOrig, RArg1, RArg2, ROut> block)
             where TOrig : IToken
             where RArg1 : class, ResObj
@@ -224,6 +232,7 @@ namespace FourZeroOne.Core.ProxySyntax
         {
             return new(block.A, block.B) { RecursiveProxy = block.RecursiveProxyStatement(new()) };
         }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public static RecursiveStart<TOrig, RArg1, RArg2, RArg3, ROut> pRecursive<TOrig, RArg1, RArg2, RArg3, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, RArg3, ROut> __, ProxyStructure.Recursive<TOrig, RArg1, RArg2, RArg3, ROut> block)
             where TOrig : IToken
             where RArg1 : class, ResObj
@@ -234,15 +243,18 @@ namespace FourZeroOne.Core.ProxySyntax
             return new(block.A, block.B, block.C) { RecursiveProxy = block.RecursiveProxyStatement(new()) };
         }
 
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public static RecursiveCall<RArg1, ROut> pRecurseWith<RArg1, ROut>(this OriginalHint<Tokens.Recursive<RArg1, ROut>> _, ProxyStructure.RecursiveCall<RArg1, ROut> block)
          where RArg1 : class, ResObj
          where ROut : class, ResObj
         { return new(block.A); }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public static RecursiveCall<RArg1, RArg2, ROut> pRecurseWith<RArg1, RArg2, ROut>(this OriginalHint<Tokens.Recursive<RArg1, RArg2, ROut>> _, ProxyStructure.RecursiveCall<RArg1, RArg2, ROut> block)
              where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where ROut : class, ResObj
         { return new(block.A, block.B); }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
         public static RecursiveCall<RArg1, RArg2, RArg3, ROut> pRecurseWith<RArg1, RArg2, RArg3, ROut>(this OriginalHint<Tokens.Recursive<RArg1, RArg2, RArg3, ROut>> _, ProxyStructure.RecursiveCall<RArg1, RArg2, RArg3, ROut> block)
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
