@@ -58,13 +58,13 @@ public class Tester
                     }),
                     SubProxy = P.pOriginalA().pIsGreaterThan(2.tConst().pDirect(P)).pIfTrue(RHint<ro.Number>.Hint(), new()
                     {
-                        Then = selection.tRef().pDirect(P).pBoxed(),
-                        Else = P.pRecurseWith(new()
+                        Then = CoreP.pMetaFunction(() => selection.tRef().pDirect(P)),
+                        Else = CoreP.pMetaFunction(() => P.pRecurseWith(new()
                         {
                             A = counter.tRef().tAdd(1.tConst()).pDirect(P),
                             B = pool.tRef().tWithout(selection.tRef().tYield()).pDirect(P)
-                        }).pAdd(selection.tRef().pDirect(P)).pBoxed()
-                    }).pUnbox()
+                        }).pAdd(selection.tRef().pDirect(P)))
+                    }).pExecute()
                 })
         });
         var token_test_1 = token_tutorial_2.tIO_SelectMany(Iter.Over(1, 2, 3, 4).Map(x => x.tConst()).tToConstMulti().tIO_SelectOne());
@@ -74,7 +74,7 @@ public class Tester
             .WithComponents(new a.Components.Unit.Effects.Slow.Component().Yield())
             .tConst()
             .tGetComponent(AxiomT.tEffectSlowCI());
-        var token_test = token_test_4;
+        var token_test = token_complicated;
         var rule_test = CoreP.RuleFor<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tConst().pDirect(P))));
 
         var startState = new FourZeroOne.State()
