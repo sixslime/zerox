@@ -58,8 +58,8 @@ public class Tester
                     }),
                     SubProxy = P.pOriginalA().pIsGreaterThan(2.tConst().pDirect(P)).pIfTrue(RHint<ro.Number>.Hint(), new()
                     {
-                        Then = CoreP.pMetaFunction(() => selection.tRef().pDirect(P)),
-                        Else = CoreP.pMetaFunction(() => P.pRecurseWith(new()
+                        Then = P.pMetaFunction(() => selection.tRef().pDirect(P)),
+                        Else = P.pMetaFunction(() => P.pRecurseWith(new()
                         {
                             A = counter.tRef().tAdd(1.tConst()).pDirect(P),
                             B = pool.tRef().tWithout(selection.tRef().tYield()).pDirect(P)
@@ -79,7 +79,7 @@ public class Tester
             A = token_tutorial_3,
             B = token_complicated
         });
-        var token_tester = token_test_5;
+        var token_tester = token_tutorial_1;
         var rule_test = CoreP.RuleFor<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tConst().pDirect(P))));
 
         var startState = new FourZeroOne.State()
