@@ -71,7 +71,7 @@ public class Tester
         */
         var token_complicated = CoreT.tMetaFunction(RHint<ro.Number, r.Multi<ro.Number>, ro.Number>.Hint(), (selfFunc, counter, pool) =>
         {
-            return counter.tRef().tIsGreaterThan(2.tConst()).tIfTrue<ro.Number>(new()
+            return counter.tRef().tIsGreaterThan(2.tConst()).tIfTrue(RHint<ro.Number>.Hint(), new()
             {
                 Then = CoreT.tMetaFunction(RHint<ro.Number>.Hint(), _ => { return 0.tConst(); }),
                 Else = CoreT.tMetaFunction(RHint<ro.Number>.Hint(), _ =>

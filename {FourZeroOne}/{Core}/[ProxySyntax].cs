@@ -143,6 +143,13 @@ namespace FourZeroOne.Core.ProxySyntax
             return array.pToMulti();
         }
 
+        public static ToBoxedFunction<TOrig, ROut> pMetaBoxed<TOrig, ROut>(this IProxy<TOrig, ROut> proxy)
+            where TOrig : IToken
+            where ROut : class, ResObj
+        {
+            return new(proxy, new());
+        }
+
         public static ToBoxedFunction<TOrig, ROut> pMetaFunction<TOrig, ROut>(this OriginalHint<TOrig> _, RHint<ROut> __, System.Func<Token.VariableIdentifier<r.Boxed.MetaFunction<ROut>>, IProxy<TOrig, ROut>> metaFunction)
             where TOrig : IToken
             where ROut : class, ResObj
@@ -214,53 +221,6 @@ namespace FourZeroOne.Core.ProxySyntax
             var argProxy = new Function<Tokens.ToBoxedArgs<RArg1, RArg2, RArg3>, TOrig, RArg1, RArg2, RArg3, r.Boxed.MetaArgs<RArg1, RArg2, RArg3>>(args.A, args.B, args.C);
             return new(function, argProxy);
         }
-
-        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
-        public static RecursiveStart<TOrig, RArg1, ROut> pRecursive<TOrig, RArg1, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, ROut> __, ProxyStructure.Recursive<TOrig, RArg1, ROut> block)
-            where TOrig : IToken
-            where RArg1 : class, ResObj
-            where ROut : class, ResObj
-        {
-            return new(block.A) { RecursiveProxy = block.RecursiveProxyStatement(new()) };
-        }
-        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
-        public static RecursiveStart<TOrig, RArg1, RArg2, ROut> pRecursive<TOrig, RArg1, RArg2, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, ROut> __, ProxyStructure.Recursive<TOrig, RArg1, RArg2, ROut> block)
-            where TOrig : IToken
-            where RArg1 : class, ResObj
-            where RArg2 : class, ResObj
-            where ROut : class, ResObj
-        {
-            return new(block.A, block.B) { RecursiveProxy = block.RecursiveProxyStatement(new()) };
-        }
-        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
-        public static RecursiveStart<TOrig, RArg1, RArg2, RArg3, ROut> pRecursive<TOrig, RArg1, RArg2, RArg3, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, RArg3, ROut> __, ProxyStructure.Recursive<TOrig, RArg1, RArg2, RArg3, ROut> block)
-            where TOrig : IToken
-            where RArg1 : class, ResObj
-            where RArg2 : class, ResObj
-            where RArg3 : class, ResObj
-            where ROut : class, ResObj
-        {
-            return new(block.A, block.B, block.C) { RecursiveProxy = block.RecursiveProxyStatement(new()) };
-        }
-
-        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
-        public static RecursiveCall<RArg1, ROut> pRecurseWith<RArg1, ROut>(this OriginalHint<Tokens.Recursive<RArg1, ROut>> _, ProxyStructure.RecursiveCall<RArg1, ROut> block)
-         where RArg1 : class, ResObj
-         where ROut : class, ResObj
-        { return new(block.A); }
-        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
-        public static RecursiveCall<RArg1, RArg2, ROut> pRecurseWith<RArg1, RArg2, ROut>(this OriginalHint<Tokens.Recursive<RArg1, RArg2, ROut>> _, ProxyStructure.RecursiveCall<RArg1, RArg2, ROut> block)
-             where RArg1 : class, ResObj
-            where RArg2 : class, ResObj
-            where ROut : class, ResObj
-        { return new(block.A, block.B); }
-        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
-        public static RecursiveCall<RArg1, RArg2, RArg3, ROut> pRecurseWith<RArg1, RArg2, RArg3, ROut>(this OriginalHint<Tokens.Recursive<RArg1, RArg2, RArg3, ROut>> _, ProxyStructure.RecursiveCall<RArg1, RArg2, RArg3, ROut> block)
-            where RArg1 : class, ResObj
-            where RArg2 : class, ResObj
-            where RArg3 : class, ResObj
-            where ROut : class, ResObj
-        { return new(block.A, block.B, block.C); }
 
         public static Variable<TOrig, R> pAsVariable<TOrig, R>(this IProxy<TOrig, R> value, out Token.VariableIdentifier<R> identifier) where TOrig : IToken where R : class, ResObj
         {
@@ -337,5 +297,53 @@ namespace FourZeroOne.Core.ProxySyntax
         { return new(subject, setTo); }
         public static Function<Tokens.Board.Unit.Set.Owner, TOrig, ro.Board.Unit, ro.Board.Player, r.Actions.Board.Unit.OwnerChange> pSetOwner<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject, IProxy<TOrig, ro.Board.Player> setTo) where TOrig : IToken
         { return new(subject, setTo); }
+
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
+        public static RecursiveStart<TOrig, RArg1, ROut> pRecursive<TOrig, RArg1, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, ROut> __, ProxyStructure.Recursive<TOrig, RArg1, ROut> block)
+    where TOrig : IToken
+    where RArg1 : class, ResObj
+    where ROut : class, ResObj
+        {
+            return new(block.A) { RecursiveProxy = block.RecursiveProxyStatement(new()) };
+        }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
+        public static RecursiveStart<TOrig, RArg1, RArg2, ROut> pRecursive<TOrig, RArg1, RArg2, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, ROut> __, ProxyStructure.Recursive<TOrig, RArg1, RArg2, ROut> block)
+            where TOrig : IToken
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where ROut : class, ResObj
+        {
+            return new(block.A, block.B) { RecursiveProxy = block.RecursiveProxyStatement(new()) };
+        }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
+        public static RecursiveStart<TOrig, RArg1, RArg2, RArg3, ROut> pRecursive<TOrig, RArg1, RArg2, RArg3, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, RArg3, ROut> __, ProxyStructure.Recursive<TOrig, RArg1, RArg2, RArg3, ROut> block)
+            where TOrig : IToken
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where RArg3 : class, ResObj
+            where ROut : class, ResObj
+        {
+            return new(block.A, block.B, block.C) { RecursiveProxy = block.RecursiveProxyStatement(new()) };
+        }
+
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
+        public static RecursiveCall<RArg1, ROut> pRecurseWith<RArg1, ROut>(this OriginalHint<Tokens.Recursive<RArg1, ROut>> _, ProxyStructure.RecursiveCall<RArg1, ROut> block)
+         where RArg1 : class, ResObj
+         where ROut : class, ResObj
+        { return new(block.A); }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
+        public static RecursiveCall<RArg1, RArg2, ROut> pRecurseWith<RArg1, RArg2, ROut>(this OriginalHint<Tokens.Recursive<RArg1, RArg2, ROut>> _, ProxyStructure.RecursiveCall<RArg1, RArg2, ROut> block)
+             where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where ROut : class, ResObj
+        { return new(block.A, block.B); }
+        [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
+        public static RecursiveCall<RArg1, RArg2, RArg3, ROut> pRecurseWith<RArg1, RArg2, RArg3, ROut>(this OriginalHint<Tokens.Recursive<RArg1, RArg2, RArg3, ROut>> _, ProxyStructure.RecursiveCall<RArg1, RArg2, RArg3, ROut> block)
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where RArg3 : class, ResObj
+            where ROut : class, ResObj
+        { return new(block.A, block.B, block.C); }
+
     }
 }

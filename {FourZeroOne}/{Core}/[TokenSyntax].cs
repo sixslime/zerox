@@ -199,6 +199,10 @@ namespace FourZeroOne.Core.TokenSyntax
             where ROut : class, ResObj
         { return new(source, new ToBoxedArgs<RArg1, RArg2, RArg3>(args.A, args.B, args.C)); }
 
+        public static Fixed<MetaFunction<ROut>> tMetaBoxed<ROut>(this IToken<ROut> token) where ROut : class, ResObj
+        {
+            return new(new() { SelfIdentifier = new(), Token = token });
+        }
         public static Variable<R> tAsVariable<R>(this IToken<R> token, out VariableIdentifier<R> ident) where R : class, ResObj
         {
             ident = new();
