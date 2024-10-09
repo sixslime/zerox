@@ -74,7 +74,12 @@ public class Tester
             .WithComponents(new a.Components.Unit.Effects.Slow.Component().Yield())
             .tConst()
             .tGetComponent(AxiomT.tEffectSlowCI());
-        var token_test = token_complicated;
+        var token_test_5 = CoreT.tMetaFunction<ro.Number, ro.Number, ro.Number>((a, b) => a.tRef().tMultiply(b.tRef())).tExecuteWith(new()
+        {
+            A = token_tutorial_3,
+            B = token_complicated
+        });
+        var token_tester = token_test_5;
         var rule_test = CoreP.RuleFor<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tConst().pDirect(P))));
 
         var startState = new FourZeroOne.State()
@@ -83,7 +88,7 @@ public class Tester
             Variables = new() { Elements = [] },
             Board = new() { }
         };
-        _runtime = new FourZeroOne.Runtimes.FrameSaving.Gebug(startState, token_test);
+        _runtime = new FourZeroOne.Runtimes.FrameSaving.Gebug(startState, token_tester);
         var o = await _runtime.Run();
         Console.WriteLine($"FINAL: {o}");
     }
