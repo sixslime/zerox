@@ -108,33 +108,37 @@ namespace FourZeroOne.Core.TokenSyntax
         public static SubEnvironment<R> tSubEnvironment<R>(TokenStructure.SubEnvironment<R> block) where R : class, ResObj
         { return new(block.Environment, block.SubToken); }
 
-        public static Fixed<MetaFunction<R>> tMetaFunction<R>(Func<IToken<R>> tokenFunction) where R : class, ResObj
+        public static Fixed<MetaFunction<R>> tMetaFunction<R>(Func<VariableIdentifier<MetaFunction<R>>, IToken<R>> tokenFunction) where R : class, ResObj
         {
-            return new(new() { Token = tokenFunction() });
+            var vs = new VariableIdentifier<MetaFunction<R>>();
+            return new(new() { SelfIdentifier = vs, Token = tokenFunction(vs) });
         }
-        public static Fixed<MetaFunction<RArg1, ROut>> tMetaFunction<RArg1, ROut>(Func<VariableIdentifier<RArg1>, IToken<ROut>> tokenFunction)
+        public static Fixed<MetaFunction<RArg1, ROut>> tMetaFunction<RArg1, ROut>(Func<VariableIdentifier<MetaFunction<RArg1, ROut>>, VariableIdentifier<RArg1>, IToken<ROut>> tokenFunction)
             where RArg1 : class, ResObj
             where ROut : class, ResObj
         {
+            var vs = new VariableIdentifier<MetaFunction<RArg1, ROut>>();
             var v1 = new VariableIdentifier<RArg1>();
-            return new(new() { IdentifierA = v1, Token = tokenFunction(v1) });
+            return new(new() { SelfIdentifier = vs, IdentifierA = v1, Token = tokenFunction(vs, v1) });
         }
-        public static Fixed<MetaFunction<RArg1, RArg2, ROut>> tMetaFunction<RArg1, RArg2, ROut>(Func<VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, IToken<ROut>> tokenFunction)
+        public static Fixed<MetaFunction<RArg1, RArg2, ROut>> tMetaFunction<RArg1, RArg2, ROut>(Func<VariableIdentifier<MetaFunction<RArg1, RArg2, ROut>>, VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, IToken<ROut>> tokenFunction)
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where ROut : class, ResObj
         {
+            var vs = new VariableIdentifier<MetaFunction<RArg1, RArg2, ROut>>();
             var (v1, v2) = (new VariableIdentifier<RArg1>(), new VariableIdentifier<RArg2>());
-            return new(new() { IdentifierA = v1, IdentifierB = v2, Token = tokenFunction(v1, v2) });
+            return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, Token = tokenFunction(vs, v1, v2) });
         }
-        public static Fixed<MetaFunction<RArg1, RArg2, RArg3, ROut>> tMetaFunction<RArg1, RArg2, RArg3, ROut>(Func<VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, VariableIdentifier<RArg3>, IToken<ROut>> tokenFunction)
+        public static Fixed<MetaFunction<RArg1, RArg2, RArg3, ROut>> tMetaFunction<RArg1, RArg2, RArg3, ROut>(Func<VariableIdentifier<MetaFunction<RArg1, RArg2, RArg3, ROut>>, VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, VariableIdentifier<RArg3>, IToken<ROut>> tokenFunction)
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where RArg3 : class, ResObj
             where ROut : class, ResObj
         {
+            var vs = new VariableIdentifier<MetaFunction<RArg1, RArg2, RArg3, ROut>>();
             var (v1, v2, v3) = (new VariableIdentifier<RArg1>(), new VariableIdentifier<RArg2>(), new VariableIdentifier<RArg3>());
-            return new(new() { IdentifierA = v1, IdentifierB = v2, IdentifierC = v3, Token = tokenFunction(v1, v2, v3) });
+            return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, IdentifierC = v3, Token = tokenFunction(vs, v1, v2, v3) });
         }
 
         public static Recursive<RArg1, ROut> tRecursive<RArg1, ROut>(TokenStructure.Recursive<RArg1, ROut> block)
@@ -199,10 +203,6 @@ namespace FourZeroOne.Core.TokenSyntax
         public static IfElse<R> tIfTrue<R>(this IToken<Bool> condition, TokenStructure.IfElse<R> block) where R : class, ResObj
         {
             return new(condition, block.Then, block.Else);
-        }
-        public static Fixed<MetaFunction<R>> tBoxed<R>(this IToken<R> token) where R : class, ResObj
-        {
-            return new(new() { Token = token });
         }
         public static Tokens.Multi.Exclusion<R> tWithout<R>(this IToken<Multi<R>> source, IToken<Multi<R>> exclude) where R : class, ResObj
         { return new(source, exclude); }

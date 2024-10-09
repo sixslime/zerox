@@ -336,6 +336,7 @@ namespace FourZeroOne.Core.Resolutions
     {
         public sealed record MetaFunction<R> : NoOp where R : class, ResObj
         {
+            public required VariableIdentifier <MetaFunction<R>> SelfIdentifier { get; init; }
             public required IToken<R> Token { get; init; }
             public override string ToString() => $"{Token}!";
         }
@@ -343,6 +344,7 @@ namespace FourZeroOne.Core.Resolutions
             where RArg1 : class, ResObj
             where ROut : class, ResObj
         {
+            public required VariableIdentifier <MetaFunction<RArg1, ROut>> SelfIdentifier { get; init; }
             public required VariableIdentifier<RArg1> IdentifierA { get; init; }
             public required IToken<ROut> Token { get; init; }
             public override string ToString() => $"{Token}!";
@@ -352,6 +354,7 @@ namespace FourZeroOne.Core.Resolutions
             where RArg2 : class, ResObj
             where ROut : class, ResObj
         {
+            public required VariableIdentifier <MetaFunction<RArg1, RArg2, ROut>> SelfIdentifier { get; init; }
             public required VariableIdentifier<RArg1> IdentifierA { get; init; }
             public required VariableIdentifier<RArg2> IdentifierB { get; init; }
             public required IToken<ROut> Token { get; init; }
@@ -363,6 +366,7 @@ namespace FourZeroOne.Core.Resolutions
             where RArg3 : class, ResObj
             where ROut : class, ResObj
         {
+            public required VariableIdentifier <MetaFunction<RArg1, RArg2, RArg3, ROut>> SelfIdentifier { get; init; }
             public required VariableIdentifier<RArg1> IdentifierA { get; init; }
             public required VariableIdentifier<RArg2> IdentifierB { get; init; }
             public required VariableIdentifier<RArg3> IdentifierC { get; init; }

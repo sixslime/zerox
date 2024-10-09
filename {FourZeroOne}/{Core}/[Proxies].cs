@@ -28,32 +28,36 @@ namespace FourZeroOne.Core.Proxies
 
     public sealed record ToBoxedFunction<TOrig, R> : Proxy<TOrig, r.Boxed.MetaFunction<R>> where TOrig : IToken where R : class, ResObj
     {
-        public ToBoxedFunction(IProxy<TOrig, R> proxy)
+        public ToBoxedFunction(IProxy<TOrig, R> proxy, VariableIdentifier<r.Boxed.MetaFunction<R>> idSelf)
         {
             _functionProxy = proxy;
+            _vSelf = idSelf;
         }
         public override IToken<r.Boxed.MetaFunction<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
         {
-            return new Tokens.Fixed<r.Boxed.MetaFunction<R>>(new() { Token = _functionProxy.Realize(original, rule) });
+            return new Tokens.Fixed<r.Boxed.MetaFunction<R>>(new() { Token = _functionProxy.Realize(original, rule), SelfIdentifier = _vSelf });
         }
         private readonly IProxy<TOrig, R> _functionProxy;
+        private readonly VariableIdentifier<r.Boxed.MetaFunction<R>> _vSelf;
     }
     public sealed record ToBoxedFunction<TOrig, RArg1, ROut> : Proxy<TOrig, r.Boxed.MetaFunction<RArg1, ROut>>
         where TOrig : IToken
         where RArg1 : class, ResObj
         where ROut : class, ResObj
     {
-        public ToBoxedFunction(IProxy<TOrig, ROut> proxy, VariableIdentifier<RArg1> id1)
+        public ToBoxedFunction(IProxy<TOrig, ROut> proxy, VariableIdentifier<r.Boxed.MetaFunction<RArg1, ROut>> idSelf, VariableIdentifier<RArg1> id1)
         {
             _functionProxy = proxy;
             _vId1 = id1;
+            _vSelf = idSelf;
         }
         public override IToken<r.Boxed.MetaFunction<RArg1, ROut>> Realize(TOrig original, IOption<Rule.IRule> rule)
         {
             return new Tokens.Fixed<r.Boxed.MetaFunction<RArg1, ROut>>(new()
-            { Token = _functionProxy.Realize(original, rule), IdentifierA = _vId1 });
+            { Token = _functionProxy.Realize(original, rule), SelfIdentifier = _vSelf, IdentifierA = _vId1 });
         }
         private readonly IProxy<TOrig, ROut> _functionProxy;
+        private readonly VariableIdentifier<r.Boxed.MetaFunction<RArg1, ROut>> _vSelf;
         private readonly VariableIdentifier<RArg1> _vId1;
     }
     public sealed record ToBoxedFunction<TOrig, RArg1, RArg2, ROut> : Proxy<TOrig, r.Boxed.MetaFunction<RArg1, RArg2, ROut>>
@@ -62,18 +66,20 @@ namespace FourZeroOne.Core.Proxies
         where RArg2 : class, ResObj
         where ROut : class, ResObj
     {
-        public ToBoxedFunction(IProxy<TOrig, ROut> proxy, VariableIdentifier<RArg1> id1, VariableIdentifier<RArg2> id2)
+        public ToBoxedFunction(IProxy<TOrig, ROut> proxy, VariableIdentifier<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> idSelf, VariableIdentifier<RArg1> id1, VariableIdentifier<RArg2> id2)
         {
             _functionProxy = proxy;
             _vId1 = id1;
             _vId2 = id2;
+            _vSelf = idSelf;
         }
         public override IToken<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> Realize(TOrig original, IOption<Rule.IRule> rule)
         {
             return new Tokens.Fixed<r.Boxed.MetaFunction<RArg1, RArg2, ROut>>(new()
-            { Token = _functionProxy.Realize(original, rule), IdentifierA = _vId1, IdentifierB = _vId2 });
+            { Token = _functionProxy.Realize(original, rule), SelfIdentifier = _vSelf, IdentifierA = _vId1, IdentifierB = _vId2 });
         }
         private readonly IProxy<TOrig, ROut> _functionProxy;
+        private readonly VariableIdentifier<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> _vSelf;
         private readonly VariableIdentifier<RArg1> _vId1;
         private readonly VariableIdentifier<RArg2> _vId2;
     }
@@ -84,9 +90,10 @@ namespace FourZeroOne.Core.Proxies
         where RArg3 : class, ResObj
         where ROut : class, ResObj
     {
-        public ToBoxedFunction(IProxy<TOrig, ROut> proxy, VariableIdentifier<RArg1> id1, VariableIdentifier<RArg2> id2, VariableIdentifier<RArg3> id3)
+        public ToBoxedFunction(IProxy<TOrig, ROut> proxy, VariableIdentifier<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> idSelf, VariableIdentifier<RArg1> id1, VariableIdentifier<RArg2> id2, VariableIdentifier<RArg3> id3)
         {
             _functionProxy = proxy;
+            _vSelf = idSelf;
             _vId1 = id1;
             _vId2 = id2;
             _vId3 = id3;
@@ -94,9 +101,10 @@ namespace FourZeroOne.Core.Proxies
         public override IToken<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> Realize(TOrig original, IOption<Rule.IRule> rule)
         {
             return new Tokens.Fixed<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>(new()
-            { Token = _functionProxy.Realize(original, rule), IdentifierA = _vId1, IdentifierB = _vId2, IdentifierC = _vId3 });
+            { Token = _functionProxy.Realize(original, rule), SelfIdentifier = _vSelf, IdentifierA = _vId1, IdentifierB = _vId2, IdentifierC = _vId3 });
         }
         private readonly IProxy<TOrig, ROut> _functionProxy;
+        private readonly VariableIdentifier<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> _vSelf;
         private readonly VariableIdentifier<RArg1> _vId1;
         private readonly VariableIdentifier<RArg2> _vId2;
         private readonly VariableIdentifier<RArg3> _vId3;

@@ -340,7 +340,7 @@ namespace FourZeroOne.Core.Tokens
         protected override ITask<IOption<R>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<R>> in1)
         {
             return in1.Check(out var function)
-                ? runtime.MetaExecute(function.Token, [])
+                ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome())])
                 : Task.FromResult(new None<R>()).AsITask();
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}".AsSome();
@@ -354,7 +354,7 @@ namespace FourZeroOne.Core.Tokens
         protected override ITask<IOption<ROut>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<RArg1, ROut>> in1, IOption<r.Boxed.MetaArgs<RArg1>> in2)
         {
             return in1.Check(out var function) && in2.Check(out var args)
-                ? runtime.MetaExecute(function.Token, [(function.IdentifierA, args.Arg1)])
+                ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome()), (function.IdentifierA, args.Arg1)])
                 : Task.FromResult(new None<ROut>()).AsITask();
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}".AsSome();
@@ -369,7 +369,7 @@ namespace FourZeroOne.Core.Tokens
         protected override ITask<IOption<ROut>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> in1, IOption<r.Boxed.MetaArgs<RArg1, RArg2>> in2)
         {
             return in1.Check(out var function) && in2.Check(out var args)
-                ? runtime.MetaExecute(function.Token, [(function.IdentifierA, args.Arg1), (function.IdentifierB, args.Arg2)])
+                ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome()), (function.IdentifierA, args.Arg1), (function.IdentifierB, args.Arg2)])
                 : Task.FromResult(new None<ROut>()).AsITask();
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}".AsSome();
@@ -385,7 +385,7 @@ namespace FourZeroOne.Core.Tokens
         protected override ITask<IOption<ROut>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> in1, IOption<r.Boxed.MetaArgs<RArg1, RArg2, RArg3>> in2)
         {
             return in1.Check(out var function) && in2.Check(out var args)
-                ? runtime.MetaExecute(function.Token, [(function.IdentifierA, args.Arg1), (function.IdentifierB, args.Arg2), (function.IdentifierC, args.Arg3)])
+                ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome()), (function.IdentifierA, args.Arg1), (function.IdentifierB, args.Arg2), (function.IdentifierC, args.Arg3)])
                 : Task.FromResult(new None<ROut>()).AsITask();
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}".AsSome();

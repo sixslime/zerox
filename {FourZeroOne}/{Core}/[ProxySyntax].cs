@@ -113,12 +113,6 @@ namespace FourZeroOne.Core.ProxySyntax
         { return statement(new()); }
         public static Rule.Rule<TOrig, ROut> RuleFor<TOrig, ROut>(ProxyBuilder<TOrig, ROut> statement) where TOrig : Token.IToken<ROut> where ROut : class, ResObj
         { return new(statement(new())); }
-        public static ToBoxedFunction<TOrig, ROut> pMetaFunction<TOrig, ROut>(System.Func<IProxy<TOrig, ROut>> metaFunction)
-            where TOrig : IToken
-            where ROut : class, ResObj
-        {
-            return new(metaFunction());
-        }
     }
     public static class _Extensions
     {
@@ -143,38 +137,42 @@ namespace FourZeroOne.Core.ProxySyntax
             return array.pToMulti();
         }
 
-        public static ToBoxedFunction<TOrig, ROut> pMetaFunction<TOrig, ROut>(this OriginalHint<TOrig> _, System.Func<IProxy<TOrig, ROut>> metaFunction)
+        public static ToBoxedFunction<TOrig, ROut> pMetaFunction<TOrig, ROut>(this OriginalHint<TOrig> _, RHint<ROut> __, System.Func<Token.VariableIdentifier<r.Boxed.MetaFunction<ROut>>, IProxy<TOrig, ROut>> metaFunction)
             where TOrig : IToken
             where ROut : class, ResObj
         {
-            return new(metaFunction());
+            var vs = new Token.VariableIdentifier<r.Boxed.MetaFunction<ROut>>();
+            return new(metaFunction(vs), vs);
         }
-        public static ToBoxedFunction<TOrig, RArg1, ROut> pMetaFunction<TOrig, RArg1, ROut>(this OriginalHint<TOrig> _, System.Func<Token.VariableIdentifier<RArg1>, IProxy<TOrig, ROut>> metaFunction)
+        public static ToBoxedFunction<TOrig, RArg1, ROut> pMetaFunction<TOrig, RArg1, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, ROut> __, System.Func<Token.VariableIdentifier<r.Boxed.MetaFunction<RArg1, ROut>>, Token.VariableIdentifier<RArg1>, IProxy<TOrig, ROut>> metaFunction)
             where TOrig : IToken
             where RArg1 : class, ResObj
             where ROut : class, ResObj
         {
+            var vs = new Token.VariableIdentifier<r.Boxed.MetaFunction<RArg1, ROut>>();
             var v1 = new Token.VariableIdentifier<RArg1>();
-            return new(metaFunction(v1), v1);
+            return new(metaFunction(vs, v1), vs, v1);
         }
-        public static ToBoxedFunction<TOrig, RArg1, RArg2, ROut> pMetaFunction<TOrig, RArg1, RArg2, ROut>(this OriginalHint<TOrig> _, System.Func<Token.VariableIdentifier<RArg1>, Token.VariableIdentifier<RArg2>, IProxy<TOrig, ROut>> metaFunction)
+        public static ToBoxedFunction<TOrig, RArg1, RArg2, ROut> pMetaFunction<TOrig, RArg1, RArg2, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, ROut> __, System.Func<Token.VariableIdentifier<r.Boxed.MetaFunction<RArg1, RArg2, ROut>>, Token.VariableIdentifier<RArg1>, Token.VariableIdentifier<RArg2>, IProxy<TOrig, ROut>> metaFunction)
             where TOrig : IToken
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where ROut : class, ResObj
         {
+            var vs = new Token.VariableIdentifier<r.Boxed.MetaFunction<RArg1, RArg2, ROut>>();
             var (v1, v2) = (new Token.VariableIdentifier<RArg1>(), new Token.VariableIdentifier<RArg2>());
-            return new(metaFunction(v1, v2), v1, v2);
+            return new(metaFunction(vs, v1, v2), vs, v1, v2);
         }
-        public static ToBoxedFunction<TOrig, RArg1, RArg2, RArg3, ROut> pMetaFunction<TOrig, RArg1, RArg2, RArg3, ROut>(this OriginalHint<TOrig> _, System.Func<Token.VariableIdentifier<RArg1>, Token.VariableIdentifier<RArg2>, Token.VariableIdentifier<RArg3>, IProxy<TOrig, ROut>> metaFunction)
+        public static ToBoxedFunction<TOrig, RArg1, RArg2, RArg3, ROut> pMetaFunction<TOrig, RArg1, RArg2, RArg3, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, RArg3, ROut> __, System.Func<Token.VariableIdentifier<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>, Token.VariableIdentifier<RArg1>, Token.VariableIdentifier<RArg2>, Token.VariableIdentifier<RArg3>, IProxy<TOrig, ROut>> metaFunction)
             where TOrig : IToken
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where RArg3 : class, ResObj
             where ROut : class, ResObj
         {
+            var vs = new Token.VariableIdentifier<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>();
             var (v1, v2, v3) = (new Token.VariableIdentifier<RArg1>(), new Token.VariableIdentifier<RArg2>(), new Token.VariableIdentifier<RArg3>());
-            return new(metaFunction(v1, v2, v3), v1, v2, v3);
+            return new(metaFunction(vs, v1, v2, v3), vs, v1, v2, v3);
         }
 
         public static Function<Tokens.Execute<ROut>, TOrig, r.Boxed.MetaFunction<ROut>, ROut> pExecute<TOrig, ROut>(this IProxy<TOrig, r.Boxed.MetaFunction<ROut>> function)

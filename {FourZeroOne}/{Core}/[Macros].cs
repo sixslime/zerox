@@ -17,7 +17,7 @@ namespace FourZeroOne.Core.Macros
     using ProxySyntax;
     using TokenSyntax;
 
-
+    /*
     public sealed record Map<RIn, ROut> : TwoArg<Resolution.IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>>
         where RIn : class, ResObj
         where ROut : class, ResObj
@@ -37,4 +37,5 @@ namespace FourZeroOne.Core.Macros
             })
         });
     }
+    */
 }
