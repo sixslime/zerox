@@ -24,7 +24,10 @@ namespace FourZeroOne.Core.Macros
         public Map(IToken<Resolution.IMulti<RIn>> values, IToken<r.Boxed.MetaFunction<RIn, ROut>> mapFunction) : base(values, mapFunction) { }
         private static IProxy<Map<RIn, ROut>, r.Multi<ROut>> _proxy = CoreP.Statement<Map<RIn, ROut>, r.Multi<ROut>>(P =>
         {
-            return CoreT.tRecursive<>
+            return P.pRecursive(new()
+            {
+                A = 
+            });
         });
     }
 }

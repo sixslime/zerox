@@ -249,6 +249,55 @@ namespace FourZeroOne.Core.Proxies
     }
     // --------
 
+    public record RecursiveStart<TOrig, RArg1, RArg2, RArg3, ROut> : FunctionProxy<TOrig, ROut>
+        where TOrig : IToken
+        where RArg1 : class, ResObj
+        where RArg2 : class, ResObj
+        where RArg3 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public required IProxy<Tokens.Recursive<RArg1, RArg2, RArg3, ROut>, ROut> RecursiveProxy { get; init; }
+        public RecursiveStart(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2, IProxy<TOrig, RArg3> in3) : base(in1, in2, in3) { }
+        protected override IToken<ROut> ConstructFromArgs(TOrig _, List<IToken> tokens)
+        {
+            return new Tokens.Recursive<RArg1, RArg2, RArg3, ROut>(
+                (IToken<RArg1>)tokens[0],
+                (IToken<RArg2>)tokens[1],
+                (IToken<RArg3>)tokens[2])
+            { RecursiveProxy = RecursiveProxy };
+        }
+    }
+    public record RecursiveStart<TOrig, RArg1, RArg2, ROut> : FunctionProxy<TOrig, ROut>
+        where TOrig : IToken
+        where RArg1 : class, ResObj
+        where RArg2 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public required IProxy<Tokens.Recursive<RArg1, RArg2, ROut>, ROut> RecursiveProxy { get; init; }
+        public RecursiveStart(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2) : base(in1, in2) { }
+        protected override IToken<ROut> ConstructFromArgs(TOrig _, List<IToken> tokens)
+        {
+            return new Tokens.Recursive<RArg1, RArg2, ROut>(
+                (IToken<RArg1>)tokens[0],
+                (IToken<RArg2>)tokens[1])
+            { RecursiveProxy = RecursiveProxy };
+        }
+    }
+    public record RecursiveStart<TOrig, RArg1, ROut> : FunctionProxy<TOrig, ROut>
+        where TOrig : IToken
+        where RArg1 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public required IProxy<Tokens.Recursive<RArg1, ROut>, ROut> RecursiveProxy { get; init; }
+        public RecursiveStart(IProxy<TOrig, RArg1> in1) : base(in1) { }
+        protected override IToken<ROut> ConstructFromArgs(TOrig _, List<IToken> tokens)
+        {
+            return new Tokens.Recursive<RArg1, ROut>(
+                (IToken<RArg1>)tokens[0])
+            { RecursiveProxy = RecursiveProxy };
+        }
+    }
+
     // ---- [ Recursive Call] ----
     public record RecursiveCall<RArg1, ROut> : FunctionProxy<Tokens.Recursive<RArg1, ROut>, ROut>
         where RArg1 : class, ResObj
