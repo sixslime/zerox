@@ -262,6 +262,12 @@ namespace FourZeroOne.Core.TokenSyntax
         /// </summary>
         public static Tokens.Multi.GetIndex<R> tGetIndex<R>(this IToken<Resolution.IMulti<R>> token, IToken<Number> index) where R : class, ResObj
         { return new(token, index); }
+        public static Macros.Map<RIn, ROut> tMap<RIn, ROut>(this IToken<Resolution.IMulti<RIn>> source, Func<VariableIdentifier<RIn>, IToken<ROut>> mapFunction)
+            where RIn : class, ResObj
+            where ROut : class, ResObj
+        {
+            return new(source, CoreT.tMetaFunction(new(), mapFunction));
+        }
 
         public static Tokens.Number.Add tAdd(this IToken<Number> a, IToken<Number> b) 
         { return new(a, b); }

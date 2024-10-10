@@ -48,11 +48,11 @@ namespace FourZeroOne.Core.Macros
                         CoreT.tUnion<ROut>(RHint<ROut>.Hint(),
                         [
                             mapFunction.tRef().tExecuteWith(new() { A = enumerable.tRef().tGetIndex(i.tRef()) }).tYield(),
-                            selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tConst())})
+                            selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tConst()) })
                         ]).tMetaBoxed()
 
                     }).tExecute();
-                }).tExecuteWith(new() { A = 1.tConst()}).pDirect(P)
+                }).tExecuteWith(new() { A = 1.tConst() }).pDirect(P)
             });
         });
     }
