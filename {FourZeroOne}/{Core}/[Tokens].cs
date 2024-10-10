@@ -405,7 +405,7 @@ namespace FourZeroOne.Core.Tokens
         {
             return Task.FromResult(new r.Boxed.MetaArgs<R1>() { Arg1 = in1 }.AsSome()).AsITask();
         }
-        protected override IOption<string> CustomToString() => $"{Arg1}".AsSome();
+        protected override IOption<string> CustomToString() => $"<${Arg1}>".AsSome();
     }
     public record ToBoxedArgs<R1, R2> : Function<R1, R2, r.Boxed.MetaArgs<R1, R2>>
         where R1 : class, ResObj
@@ -416,7 +416,7 @@ namespace FourZeroOne.Core.Tokens
         {
             return Task.FromResult(new r.Boxed.MetaArgs<R1, R2>() { Arg1 = in1, Arg2 = in2}.AsSome()).AsITask();
         }
-        protected override IOption<string> CustomToString() => $"{Arg1},{Arg2}".AsSome();
+        protected override IOption<string> CustomToString() => $"<${Arg1} ${Arg2}>".AsSome();
     }
     public record ToBoxedArgs<R1, R2, R3> : Function<R1, R2, R3, r.Boxed.MetaArgs<R1, R2, R3>>
         where R1 : class, ResObj
@@ -428,7 +428,7 @@ namespace FourZeroOne.Core.Tokens
         {
             return Task.FromResult(new r.Boxed.MetaArgs<R1, R2, R3>() { Arg1 = in1, Arg2 = in2, Arg3 = in3 }.AsSome()).AsITask();
         }
-        protected override IOption<string> CustomToString() => $"{Arg1},{Arg2},{Arg3}".AsSome();
+        protected override IOption<string> CustomToString() => $"<${Arg1} ${Arg2} ${Arg3}>".AsSome();
     }
     public record AtPresent<S> : Function<Resolution.IStateTracked<S>, S> where S : class, Resolution.IStateTracked<S>
     {

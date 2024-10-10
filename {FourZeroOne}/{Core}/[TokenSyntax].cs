@@ -112,12 +112,44 @@ namespace FourZeroOne.Core.TokenSyntax
         public static SubEnvironment<R> tSubEnvironment<R>(RHint<R> _, TokenStructure.SubEnvironment<R> block) where R : class, ResObj
         { return new(block.Environment, block.SubToken); }
 
-        public static Fixed<MetaFunction<ROut>> tMetaFunction<ROut>(RHint<ROut> _, Func<VariableIdentifier<MetaFunction<ROut>>, IToken<ROut>> tokenFunction) where ROut : class, ResObj
+        public static Fixed<MetaFunction<ROut>> tMetaFunction<ROut>(RHint<ROut> _, Func<IToken<ROut>> tokenFunction) where ROut : class, ResObj
+        {
+            var vs = new VariableIdentifier<MetaFunction<ROut>>();
+            return new(new() { SelfIdentifier = vs, Token = tokenFunction() });
+        }
+        public static Fixed<MetaFunction<RArg1, ROut>> tMetaFunction<RArg1, ROut>(RHint<RArg1, ROut> _, Func<VariableIdentifier<RArg1>, IToken<ROut>> tokenFunction)
+            where RArg1 : class, ResObj
+            where ROut : class, ResObj
+        {
+            var vs = new VariableIdentifier<MetaFunction<RArg1, ROut>>();
+            var v1 = new VariableIdentifier<RArg1>();
+            return new(new() { SelfIdentifier = vs, IdentifierA = v1, Token = tokenFunction(v1) });
+        }
+        public static Fixed<MetaFunction<RArg1, RArg2, ROut>> tMetaFunction<RArg1, RArg2, ROut>(RHint<RArg1, RArg2, ROut> _, Func<VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, IToken<ROut>> tokenFunction)
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where ROut : class, ResObj
+        {
+            var vs = new VariableIdentifier<MetaFunction<RArg1, RArg2, ROut>>();
+            var (v1, v2) = (new VariableIdentifier<RArg1>(), new VariableIdentifier<RArg2>());
+            return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, Token = tokenFunction(v1, v2) });
+        }
+        public static Fixed<MetaFunction<RArg1, RArg2, RArg3, ROut>> tMetaFunction<RArg1, RArg2, RArg3, ROut>(RHint<RArg1, RArg2, RArg3, ROut> _, Func<VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, VariableIdentifier<RArg3>, IToken<ROut>> tokenFunction)
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where RArg3 : class, ResObj
+            where ROut : class, ResObj
+        {
+            var vs = new VariableIdentifier<MetaFunction<RArg1, RArg2, RArg3, ROut>>();
+            var (v1, v2, v3) = (new VariableIdentifier<RArg1>(), new VariableIdentifier<RArg2>(), new VariableIdentifier<RArg3>());
+            return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, IdentifierC = v3, Token = tokenFunction(v1, v2, v3) });
+        }
+        public static Fixed<MetaFunction<ROut>> tMetaRecursiveFunction<ROut>(RHint<ROut> _, Func<VariableIdentifier<MetaFunction<ROut>>, IToken<ROut>> tokenFunction) where ROut : class, ResObj
         {
             var vs = new VariableIdentifier<MetaFunction<ROut>>();
             return new(new() { SelfIdentifier = vs, Token = tokenFunction(vs) });
         }
-        public static Fixed<MetaFunction<RArg1, ROut>> tMetaFunction<RArg1, ROut>(RHint<RArg1, ROut> _, Func<VariableIdentifier<MetaFunction<RArg1, ROut>>, VariableIdentifier<RArg1>, IToken<ROut>> tokenFunction)
+        public static Fixed<MetaFunction<RArg1, ROut>> tMetaRecursiveFunction<RArg1, ROut>(RHint<RArg1, ROut> _, Func<VariableIdentifier<MetaFunction<RArg1, ROut>>, VariableIdentifier<RArg1>, IToken<ROut>> tokenFunction)
             where RArg1 : class, ResObj
             where ROut : class, ResObj
         {
@@ -125,7 +157,7 @@ namespace FourZeroOne.Core.TokenSyntax
             var v1 = new VariableIdentifier<RArg1>();
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, Token = tokenFunction(vs, v1) });
         }
-        public static Fixed<MetaFunction<RArg1, RArg2, ROut>> tMetaFunction<RArg1, RArg2, ROut>(RHint<RArg1, RArg2, ROut> _, Func<VariableIdentifier<MetaFunction<RArg1, RArg2, ROut>>, VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, IToken<ROut>> tokenFunction)
+        public static Fixed<MetaFunction<RArg1, RArg2, ROut>> tMetaRecursiveFunction<RArg1, RArg2, ROut>(RHint<RArg1, RArg2, ROut> _, Func<VariableIdentifier<MetaFunction<RArg1, RArg2, ROut>>, VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, IToken<ROut>> tokenFunction)
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where ROut : class, ResObj
@@ -134,7 +166,7 @@ namespace FourZeroOne.Core.TokenSyntax
             var (v1, v2) = (new VariableIdentifier<RArg1>(), new VariableIdentifier<RArg2>());
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, Token = tokenFunction(vs, v1, v2) });
         }
-        public static Fixed<MetaFunction<RArg1, RArg2, RArg3, ROut>> tMetaFunction<RArg1, RArg2, RArg3, ROut>(RHint<RArg1, RArg2, RArg3, ROut> _, Func<VariableIdentifier<MetaFunction<RArg1, RArg2, RArg3, ROut>>, VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, VariableIdentifier<RArg3>, IToken<ROut>> tokenFunction)
+        public static Fixed<MetaFunction<RArg1, RArg2, RArg3, ROut>> tMetaRecursiveFunction<RArg1, RArg2, RArg3, ROut>(RHint<RArg1, RArg2, RArg3, ROut> _, Func<VariableIdentifier<MetaFunction<RArg1, RArg2, RArg3, ROut>>, VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, VariableIdentifier<RArg3>, IToken<ROut>> tokenFunction)
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where RArg3 : class, ResObj

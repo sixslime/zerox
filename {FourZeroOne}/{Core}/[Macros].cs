@@ -38,7 +38,7 @@ namespace FourZeroOne.Core.Macros
                     P.pOriginalB().pAsVariable(out var mapFunction)
                 ]),
                 SubProxy =
-                CoreT.tMetaFunction(RHint<r.Objects.Number, r.Multi<ROut>>.Hint(), (iterFunc, i) =>
+                CoreT.tMetaRecursiveFunction(RHint<r.Objects.Number, r.Multi<ROut>>.Hint(), (selfFunc, i) =>
                 {
                     return i.tRef().tIsGreaterThan(enumerable.tRef().tCount())
                     .tIfTrue(RHint<r.Multi<ROut>>.Hint(), new()
@@ -48,7 +48,7 @@ namespace FourZeroOne.Core.Macros
                         CoreT.tUnion<ROut>(RHint<ROut>.Hint(),
                         [
                             mapFunction.tRef().tExecuteWith(new() { A = enumerable.tRef().tGetIndex(i.tRef()) }).tYield(),
-                            iterFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tConst())})
+                            selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tConst())})
                         ]).tMetaBoxed()
 
                     }).tExecute();

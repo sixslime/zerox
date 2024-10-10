@@ -69,12 +69,12 @@ public class Tester
                 })
         });
         */
-        var token_complicated = CoreT.tMetaFunction(RHint<ro.Number, r.Multi<ro.Number>, ro.Number>.Hint(), (selfFunc, counter, pool) =>
+        var token_complicated = CoreT.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<ro.Number>, ro.Number>.Hint(), (selfFunc, counter, pool) =>
         {
             return counter.tRef().tIsGreaterThan(2.tConst()).tIfTrue(RHint<ro.Number>.Hint(), new()
             {
-                Then = CoreT.tMetaFunction(RHint<ro.Number>.Hint(), _ => { return 0.tConst(); }),
-                Else = CoreT.tMetaFunction(RHint<ro.Number>.Hint(), _ =>
+                Then = CoreT.tMetaFunction(RHint<ro.Number>.Hint(), () => { return 0.tConst(); }),
+                Else = CoreT.tMetaFunction(RHint<ro.Number>.Hint(), () =>
                 {
                     return CoreT.tSubEnvironment(RHint<ro.Number>.Hint(), new()
                     {
@@ -99,13 +99,13 @@ public class Tester
             .WithComponents(new a.Components.Unit.Effects.Slow.Component().Yield())
             .tConst()
             .tGetComponent(AxiomT.tEffectSlowCI());
-        var token_test_5 = CoreT.tMetaFunction(RHint<ro.Number, ro.Number, ro.Number>.Hint(), (_, a, b) => a.tRef().tMultiply(b.tRef())).tExecuteWith(new()
+        var token_test_5 = CoreT.tMetaFunction(RHint<ro.Number, ro.Number, ro.Number>.Hint(), (a, b) => a.tRef().tMultiply(b.tRef())).tExecuteWith(new()
         {
             A = token_tutorial_3,
             B = token_complicated
         });
-        var token_test_6 = new FourZeroOne.Core.Macros.Map<ro.Number, ro.Bool>(token_tutorial_2, CoreT.tMetaFunction(RHint<ro.Number, ro.Bool>.Hint(), (_, x) => x.tRef().tIsGreaterThan(2.tConst())));
-        var token_tester = token_test_6;
+        var token_test_6 = new FourZeroOne.Core.Macros.Map<ro.Number, ro.Bool>(token_tutorial_2, CoreT.tMetaFunction(RHint<ro.Number, ro.Bool>.Hint(), (x) => x.tRef().tIsGreaterThan(2.tConst())));
+        var token_tester = token_test_5;
         var rule_test = CoreP.RuleFor<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tConst().pDirect(P))));
 
         var startState = new FourZeroOne.State()
