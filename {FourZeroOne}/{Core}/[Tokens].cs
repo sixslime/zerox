@@ -349,7 +349,7 @@ namespace FourZeroOne.Core.Tokens
                 ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome())])
                 : Task.FromResult(new None<R>()).AsITask();
         }
-        protected override IOption<string> CustomToString() => $"!{Arg1}:();".AsSome();
+        protected override IOption<string> CustomToString() => $"!{Arg1}:<>;".AsSome();
     }
     public record Execute<RArg1, ROut> : Function<r.Boxed.MetaFunction<RArg1, ROut>, r.Boxed.MetaArgs<RArg1>, ROut>
         where RArg1 : class, ResObj

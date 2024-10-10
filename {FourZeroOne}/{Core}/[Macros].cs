@@ -55,6 +55,7 @@ namespace FourZeroOne.Core.Macros
                 }).tExecuteWith(new() { A = 1.tConst() }).pDirect(P)
             });
         });
+        protected override IOption<string> CustomToString() => $"{Arg1}=>{Arg2}".AsSome();
     }
     
 }
