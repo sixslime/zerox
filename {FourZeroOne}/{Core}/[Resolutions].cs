@@ -338,7 +338,7 @@ namespace FourZeroOne.Core.Resolutions
         {
             public required VariableIdentifier <MetaFunction<R>> SelfIdentifier { get; init; }
             public required IToken<R> Token { get; init; }
-            public override string ToString() => $"{Token}!";
+            public override string ToString() => $"{SelfIdentifier}()-> {{{Token}}}";
         }
         public sealed record MetaFunction<RArg1, ROut> : NoOp
             where RArg1 : class, ResObj
@@ -347,7 +347,7 @@ namespace FourZeroOne.Core.Resolutions
             public required VariableIdentifier <MetaFunction<RArg1, ROut>> SelfIdentifier { get; init; }
             public required VariableIdentifier<RArg1> IdentifierA { get; init; }
             public required IToken<ROut> Token { get; init; }
-            public override string ToString() => $"{Token}!";
+            public override string ToString() => $"{SelfIdentifier}({IdentifierA})-> {{{Token}}}";
         }
         public sealed record MetaFunction<RArg1, RArg2, ROut> : NoOp
             where RArg1 : class, ResObj
@@ -358,7 +358,7 @@ namespace FourZeroOne.Core.Resolutions
             public required VariableIdentifier<RArg1> IdentifierA { get; init; }
             public required VariableIdentifier<RArg2> IdentifierB { get; init; }
             public required IToken<ROut> Token { get; init; }
-            public override string ToString() => $"{Token}!";
+            public override string ToString() => $"({IdentifierA}, {IdentifierB})-> {SelfIdentifier}{{{Token}}}";
         }
         public sealed record MetaFunction<RArg1, RArg2, RArg3, ROut> : NoOp
             where RArg1 : class, ResObj
@@ -371,13 +371,14 @@ namespace FourZeroOne.Core.Resolutions
             public required VariableIdentifier<RArg2> IdentifierB { get; init; }
             public required VariableIdentifier<RArg3> IdentifierC { get; init; }
             public required IToken<ROut> Token { get; init; }
-            public override string ToString() => $"{Token}!";
+            public override string ToString() => $"({IdentifierA}, {IdentifierB}, {IdentifierC})-> {SelfIdentifier}{{{Token}}}";
         }
 
         public sealed record MetaArgs<R1> : NoOp
             where R1 : class, ResObj
         {
             public required IOption<R1> Arg1 { get; init; }
+            public override string ToString() => $"({Arg1})";
         }
         public sealed record MetaArgs<R1, R2> : NoOp
             where R1 : class, ResObj
@@ -385,6 +386,7 @@ namespace FourZeroOne.Core.Resolutions
         {
             public required IOption<R1> Arg1 { get; init; }
             public required IOption<R2> Arg2 { get; init; }
+            public override string ToString() => $"({Arg1}, {Arg2})";
         }
         public sealed record MetaArgs<R1, R2, R3> : NoOp
             where R1 : class, ResObj
@@ -394,8 +396,9 @@ namespace FourZeroOne.Core.Resolutions
             public required IOption<R1> Arg1 { get; init; }
             public required IOption<R2> Arg2 { get; init; }
             public required IOption<R3> Arg3 { get; init; }
+            public override string ToString() => $"({Arg1}, {Arg2}, {Arg3})";
         }
-        
+
     }
     public sealed record Multi<R> : Operation, IMulti<R> where R : class, ResObj
     {
