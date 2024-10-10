@@ -104,7 +104,8 @@ public class Tester
             A = token_tutorial_3,
             B = token_complicated
         });
-        var token_tester = token_complicated;
+        var token_test_6 = new FourZeroOne.Core.Macros.Map<ro.Number, ro.Bool>(token_tutorial_2, CoreT.tMetaFunction(RHint<ro.Number, ro.Bool>.Hint(), (_, x) => x.tRef().tIsGreaterThan(2.tConst())));
+        var token_tester = token_test_6;
         var rule_test = CoreP.RuleFor<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tConst().pDirect(P))));
 
         var startState = new FourZeroOne.State()
