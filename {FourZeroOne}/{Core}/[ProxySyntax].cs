@@ -279,6 +279,8 @@ namespace FourZeroOne.Core.ProxySyntax
         { return new(source); }
         public static Function<Tokens.Multi.Yield<R>, TOrig, R, r.Multi<R>> pYield<TOrig, R>(this IProxy<TOrig, R> source) where TOrig : IToken where R : class, ResObj
         { return new(source); }
+        public static Function<Tokens.Multi.Contains<R>, TOrig, Resolution.IMulti<R>, R, ro.Bool> pContains<TOrig, R>(this IProxy<TOrig, Resolution.IMulti<R>> source, IProxy<TOrig, R> element) where TOrig : IToken where R : class, ResObj
+        { return new(source, element); }
         public static Combiner<Tokens.Multi.Union<R>, TOrig, Resolution.IMulti<R>, r.Multi<R>> pToMulti<TOrig, R>(this IEnumerable<IProxy<TOrig, R>> values) where TOrig : IToken where R : class, ResObj
         { return new(values.Map(x => x.pYield())); }
         public static Combiner<Tokens.Multi.Union<R>, TOrig, Resolution.IMulti<R>, r.Multi<R>> pUnioned<TOrig, R>(this IEnumerable<IProxy<TOrig, Resolution.IMulti<R>>> values) where TOrig : IToken where R : class, ResObj

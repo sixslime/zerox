@@ -217,6 +217,17 @@ namespace FourZeroOne.Core.Tokens
     namespace Multi
     {
         
+        public sealed record Contains<R> : Function<Resolution.IMulti<R>, R, ro.Bool> where R : class, ResObj
+        {
+            public Contains(IToken<Resolution.IMulti<R>> multi, IToken<R> element) : base(multi, element) { }
+            protected override ITask<IOption<ro.Bool>> Evaluate(IRuntime runtime, IOption<Resolution.IMulti<R>> in1, IOption<R> in2)
+            {
+                ro.Bool o = (in1.Check(out var multi) && in2.Check(out var element))
+                    ? new() { IsTrue = multi.Values.Contains(element) }
+                    : new() { IsTrue = false };
+                return Task.FromResult(o.AsSome()).AsITask();
+            }
+        }
         public sealed record Union<R> : PureCombiner<Resolution.IMulti<R>, r.Multi<R>> where R : class, ResObj
         {
             public Union(IEnumerable<IToken<Resolution.IMulti<R>>> elements) : base(elements) { }
@@ -231,7 +242,6 @@ namespace FourZeroOne.Core.Tokens
                 return $"[{argList[0]}{argList[1..].AccumulateInto("", (msg, v) => $"{msg}, {v}")}]".AsSome();
             }
         }
-
         public sealed record Intersection<R> : PureCombiner<Resolution.IMulti<R>, r.Multi<R>> where R : class, ResObj
         {
             public Intersection(IEnumerable<IToken<Resolution.IMulti<R>>> sets) : base(sets) { }
@@ -253,7 +263,6 @@ namespace FourZeroOne.Core.Tokens
                 return $"{argList[0]}{argList[1..].AccumulateInto("", (msg, v) => $"{msg}I{v}")}".AsSome();
             }
         }
-
         public sealed record Exclusion<R> : PureFunction<Resolution.IMulti<R>, Resolution.IMulti<R>, r.Multi<R>> where R : class, ResObj
         {
             public Exclusion(IToken<Resolution.IMulti<R>> from, IToken<Resolution.IMulti<R>> exclude) : base(from, exclude) { }

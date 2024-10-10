@@ -17,13 +17,12 @@ namespace FourZeroOne.Core.Macros
     using ProxySyntax;
     using TokenSyntax;
     using FourZeroOne.Proxy.Unsafe;
-    using FourZeroOne.Core.Resolutions;
 
     public sealed record Map<RIn, ROut> : TwoArg<Resolution.IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>>
         where RIn : class, ResObj
         where ROut : class, ResObj
     {
-        protected override IProxy<Multi<ROut>> InternalProxy => _proxy;
+        protected override IProxy<r.Multi<ROut>> InternalProxy => _proxy;
         public Map(IToken<Resolution.IMulti<RIn>> values, IToken<r.Boxed.MetaFunction<RIn, ROut>> mapFunction) : base(values, mapFunction) { }
 
         private static IProxy<Map<RIn, ROut>, r.Multi<ROut>> _proxy = CoreP.Statement<Map<RIn, ROut>, r.Multi<ROut>>(P =>

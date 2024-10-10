@@ -257,6 +257,8 @@ namespace FourZeroOne.Core.TokenSyntax
         { return new(tokens.Map(x => x.tYield())); }
         public static Tokens.Multi.Union<R> tUnioned<R>(this IEnumerable<IToken<Resolution.IMulti<R>>> tokens) where R : class, ResObj
         { return new(tokens); }
+        public static Tokens.Multi.Contains<R> tContains<R>(this IToken<Resolution.IMulti<R>> from, IToken<R> element) where R : class, ResObj
+        { return new(from, element); }
         /// <summary>
         /// (1-based)
         /// </summary>
