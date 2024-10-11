@@ -101,6 +101,8 @@ namespace FourZeroOne.Core.Resolutions
             public sealed record Unit : StateObject<Unit>, IPositioned
             {
                 public readonly int UUID;
+                // We could totally make HP and Owner (and even position) into components.
+                // Why should we? Why shouldn't we.
                 public required Number HP { get; init; }
                 public Updater<Number> dHP { init => HP = value(HP); }
                 public required Coordinates Position { get; init; }
@@ -204,6 +206,21 @@ namespace FourZeroOne.Core.Resolutions
             public Updater<bool> dIsTrue { init => IsTrue = value(IsTrue); }
             public static implicit operator Bool(bool value) => new() { IsTrue = value };
             public override string ToString() => $"{IsTrue}";
+        }
+
+        // This is stupid, this is stupid, this is stupid.
+        // DONT ADD TUPLES CHALLENGE (VERY HARD)
+        public sealed record Range : NoOp, IMulti<Number>
+        {
+            
+            public required Number Min { get; init; }
+            public required Number Max { get; init; }
+
+            public IEnumerable<Number> Values => (Min.Value <= Max.Value)
+                ? Min.Sequence(x => x with { dValue = Q => Q + 1 }).TakeWhile(x => x.Value <= Max.Value)
+                : [];
+            public int Count => (Min.Value <= Max.Value) ? (Max.Value - Min.Value) + 1 : 0;
+            public override string ToString() => $"{Min}..{Max}";
         }
 
     }
@@ -378,7 +395,7 @@ namespace FourZeroOne.Core.Resolutions
             where R1 : class, ResObj
         {
             public required IOption<R1> Arg1 { get; init; }
-            public override string ToString() => $"({Arg1})";
+            public override string ToString() => $"<{Arg1}>";
         }
         public sealed record MetaArgs<R1, R2> : NoOp
             where R1 : class, ResObj
@@ -386,7 +403,7 @@ namespace FourZeroOne.Core.Resolutions
         {
             public required IOption<R1> Arg1 { get; init; }
             public required IOption<R2> Arg2 { get; init; }
-            public override string ToString() => $"({Arg1}, {Arg2})";
+            public override string ToString() => $"<{Arg1},{Arg2}>";
         }
         public sealed record MetaArgs<R1, R2, R3> : NoOp
             where R1 : class, ResObj
@@ -396,7 +413,7 @@ namespace FourZeroOne.Core.Resolutions
             public required IOption<R1> Arg1 { get; init; }
             public required IOption<R2> Arg2 { get; init; }
             public required IOption<R3> Arg3 { get; init; }
-            public override string ToString() => $"({Arg1}, {Arg2}, {Arg3})";
+            public override string ToString() => $"<{Arg1},{Arg2},{Arg3}>";
         }
 
     }

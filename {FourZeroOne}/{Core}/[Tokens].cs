@@ -180,21 +180,18 @@ namespace FourZeroOne.Core.Tokens
             protected override ro.Number EvaluatePure(ro.Number a, ro.Number b) { return new() { Value = a.Value + b.Value }; }
             protected override IOption<string> CustomToString() => $"({Arg1} + {Arg2})".AsSome();
         }
-
         public sealed record Subtract : PureFunction<ro.Number, ro.Number, ro.Number>
         {
             public Subtract(IToken<ro.Number> operand1, IToken<ro.Number> operand2) : base(operand1, operand2) { }
             protected override ro.Number EvaluatePure(ro.Number a, ro.Number b) { return new() { Value = a.Value - b.Value }; }
             protected override IOption<string> CustomToString() => $"({Arg1} - {Arg2})".AsSome();
         }
-
         public sealed record Multiply : PureFunction<ro.Number, ro.Number, ro.Number>
         {
             public Multiply(IToken<ro.Number> operand1, IToken<ro.Number> operand2) : base(operand1, operand2) { }
             protected override ro.Number EvaluatePure(ro.Number a, ro.Number b) { return new() { Value = a.Value * b.Value }; }
             protected override IOption<string> CustomToString() => $"({Arg1} * {Arg2})".AsSome();
         }
-
         public sealed record Negate : PureFunction<ro.Number, ro.Number>
         {
             public Negate(IToken<ro.Number> operand) : base(operand) { }
@@ -211,6 +208,36 @@ namespace FourZeroOne.Core.Tokens
                     return new() { IsTrue = in1.Value > in2.Value };
                 }
                 protected override IOption<string> CustomToString() => $"({Arg1} > {Arg2})".AsSome();
+            }
+        }
+    }
+    namespace Range
+    {
+        public sealed record Create : PureFunction<ro.Number, ro.Number, ro.Range>
+        {
+            public Create(IToken<ro.Number> min, IToken<ro.Number> max) : base(min, max) { }
+            protected override ro.Range EvaluatePure(ro.Number in1, ro.Number in2)
+            {
+                return new() { Min = in1, Max = in2 };
+            }
+        }
+        namespace Get
+        {
+            public sealed record Min : PureFunction<ro.Range, ro.Number>
+            {
+                public Min(IToken<ro.Range> range) : base(range) { }
+                protected override ro.Number EvaluatePure(ro.Range in1)
+                {
+                    return in1.Min;
+                }
+            }
+            public sealed record Max : PureFunction<ro.Range, ro.Number>
+            {
+                public Max(IToken<ro.Range> range) : base(range) { }
+                protected override ro.Number EvaluatePure(ro.Range in1)
+                {
+                    return in1.Min;
+                }
             }
         }
     }
