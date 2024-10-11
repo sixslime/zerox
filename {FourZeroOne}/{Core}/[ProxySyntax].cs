@@ -287,7 +287,9 @@ namespace FourZeroOne.Core.ProxySyntax
         { return new(values); }
         public static Function<Tokens.Multi.GetIndex<R>, TOrig, Resolution.IMulti<R>, ro.Number, R> pGetIndex<TOrig, R>(this IProxy<TOrig, Resolution.IMulti<R>> values, IProxy<TOrig, ro.Number> index) where TOrig : IToken where R : class, ResObj
         { return new(values, index); }
-
+        public static Function<Macros.Multi.Map<RIn, ROut>, TOrig, Resolution.IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>> pMap<TOrig, RIn, ROut>(this IProxy<TOrig, Resolution.IMulti<RIn>> values, IProxy<TOrig, r.Boxed.MetaFunction<RIn, ROut>> mapFunction)
+            where TOrig : IToken where RIn : class, ResObj where ROut : class, ResObj
+        { return new(values, mapFunction); }
 
         public static Function<Tokens.Number.Add, TOrig, ro.Number, ro.Number, ro.Number> pAdd<TOrig>(this IProxy<TOrig, ro.Number> a, IProxy<TOrig, ro.Number> b) where TOrig : IToken
         { return new(a, b); }

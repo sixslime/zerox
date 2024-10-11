@@ -102,6 +102,28 @@ namespace FourZeroOne.Core.TokenSyntax
             public System.Func<ProxySyntax.OriginalHint<Tokens.Recursive<RArg1, RArg2, RArg3, ROut>>, Proxy.IProxy<Tokens.Recursive<RArg1, RArg2, RArg3, ROut>, ROut>> RecursiveProxyStatement { get; init; }
         }
     }
+    public static class Const
+    {
+        public static r.Objects.Board.Coordinates Coordinates(int R, int U, int D)
+        {
+            return new() { R = R, U = U, D = D };
+        }
+        public static r.Objects.Board.CoordinateArea GetAdjacent(this r.Objects.Board.Coordinates coordinates)
+        {
+            return new()
+            {
+                Center = coordinates,
+                Offsets = [
+                new() { R = 1, U = 0, D = -1 },
+                new() { R = 1, U = -1, D = 0 },
+                new() { R = 0, U = 1, D = -1 },
+                new() { R = 0, U = -1, D = 1 },
+                new() { R = -1, U = 0, D = 1 },
+                new() { R = -1, U = 1, D = 0 },
+                ]
+            };
+        }
+    }
     public static class CoreT
     {
         public static Tokens.Board.Unit.AllUnits tAllUnits()
@@ -264,7 +286,7 @@ namespace FourZeroOne.Core.TokenSyntax
         /// </summary>
         public static Tokens.Multi.GetIndex<R> tGetIndex<R>(this IToken<Resolution.IMulti<R>> token, IToken<Number> index) where R : class, ResObj
         { return new(token, index); }
-        public static Macros.Map<RIn, ROut> tMap<RIn, ROut>(this IToken<Resolution.IMulti<RIn>> source, Func<VariableIdentifier<RIn>, IToken<ROut>> mapFunction)
+        public static Macros.Multi.Map<RIn, ROut> tMap<RIn, ROut>(this IToken<Resolution.IMulti<RIn>> source, Func<VariableIdentifier<RIn>, IToken<ROut>> mapFunction)
             where RIn : class, ResObj
             where ROut : class, ResObj
         {
@@ -281,9 +303,9 @@ namespace FourZeroOne.Core.TokenSyntax
         { return new(a); }
         public static Tokens.Number.Compare.GreaterThan tIsGreaterThan(this IToken<Number> a, IToken<Number> b)
         { return new(a, b); }
-        public static Fixed<Number> tConst(this int value)
+        public static Fixed<Number> tFixed(this int value)
         { return new(value); }
-        public static Fixed<R> tConst<R>(this R value) where R : class, ResObj
+        public static Fixed<R> tFixed<R>(this R value) where R : class, ResObj
         { return new(value); }
         public static Fixed<r.Multi<R>> tToConstMulti<R>(this IEnumerable<Tokens.Fixed<R>> values) where R : class, ResObj
         { return new(new() { Values = values.Map(x => x.Resolution) }); }
