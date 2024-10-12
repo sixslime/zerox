@@ -213,14 +213,14 @@ namespace FourZeroOne.Core.Resolutions
         public sealed record Range : NoOp, IMulti<Number>
         {
             
-            public required Number Min { get; init; }
-            public required Number Max { get; init; }
+            public required Number Start { get; init; }
+            public required Number End { get; init; }
 
-            public IEnumerable<Number> Values => (Min.Value <= Max.Value)
-                ? Min.Sequence(x => x with { dValue = Q => Q + 1 }).TakeWhile(x => x.Value <= Max.Value)
+            public IEnumerable<Number> Values => (Start.Value <= End.Value)
+                ? Start.Sequence(x => x with { dValue = Q => Q + 1 }).TakeWhile(x => x.Value <= End.Value)
                 : [];
-            public int Count => (Min.Value <= Max.Value) ? (Max.Value - Min.Value) + 1 : 0;
-            public override string ToString() => $"{Min}..{Max}";
+            public int Count => (Start.Value <= End.Value) ? (End.Value - Start.Value) + 1 : 0;
+            public override string ToString() => $"{Start}..{End}";
         }
 
     }

@@ -218,25 +218,25 @@ namespace FourZeroOne.Core.Tokens
             public Create(IToken<ro.Number> min, IToken<ro.Number> max) : base(min, max) { }
             protected override ro.Range EvaluatePure(ro.Number in1, ro.Number in2)
             {
-                return new() { Min = in1, Max = in2 };
+                return new() { Start = in1, End = in2 };
             }
         }
         namespace Get
         {
-            public sealed record Min : PureFunction<ro.Range, ro.Number>
+            public sealed record Start : PureFunction<ro.Range, ro.Number>
             {
-                public Min(IToken<ro.Range> range) : base(range) { }
+                public Start(IToken<ro.Range> range) : base(range) { }
                 protected override ro.Number EvaluatePure(ro.Range in1)
                 {
-                    return in1.Min;
+                    return in1.Start;
                 }
             }
-            public sealed record Max : PureFunction<ro.Range, ro.Number>
+            public sealed record End : PureFunction<ro.Range, ro.Number>
             {
-                public Max(IToken<ro.Range> range) : base(range) { }
+                public End(IToken<ro.Range> range) : base(range) { }
                 protected override ro.Number EvaluatePure(ro.Range in1)
                 {
-                    return in1.Min;
+                    return in1.End;
                 }
             }
         }
