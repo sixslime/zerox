@@ -11,8 +11,12 @@ namespace FourZeroOne.Resolution
     /// </summary>
     public interface IResolution
     {
-        public State ChangeState(State context);
+        public PList<IInstruction> Instructions { get; }
         public bool ResEqual(IResolution? other);
+    }
+    public interface IInstruction
+    {
+        public State ChangeState(State context);
     }
     public interface IComponent<C, H> : Unsafe.IComponent<C>, Unsafe.IComponentFor<H> where C : IComponent<C, H> where H : IHasComponents<H> { }
     public interface IComponentIdentifier<C> : Unsafe.IComponentIdentifier where C : Unsafe.IComponent<C> { }
@@ -31,19 +35,19 @@ namespace FourZeroOne.Resolution
     public interface IStateTracked<Self> : Unsafe.IStateTracked where Self : IStateTracked<Self>
     {
         public Self GetAtState(State state);
-        public State SetAtState(State state);
     }
 
 
-    public abstract record Operation : Unsafe.Resolution
+    public abstract record Resolution : IResolution
     {
-        protected abstract State UpdateState(State context);
-        protected override sealed State ChangeStateInternal(State before) => UpdateState(before);
+        public abstract PList<IInstruction> Instructions { get; }
+        public virtual bool ResEqual(IResolution? other) => Equals(other);
     }
 
-    public abstract record NoOp : Unsafe.Resolution
+    public abstract record NoOp : Resolution
     {
-        protected override sealed State ChangeStateInternal(State context) => context;
+        private static readonly PList<IInstruction> _empty = new() { Elements = [] };
+        public override PList<IInstruction> Instructions => _empty;
     }
 
     public abstract record ComponentIdentifier<C> : NoOp, IComponentIdentifier<C> where C : Unsafe.IComponent<C>
@@ -106,12 +110,7 @@ namespace FourZeroOne.Resolution
 namespace FourZeroOne.Resolution.Unsafe
 {
     //not actually unsafe, just here because you should either extend 'Operation' or 'NoOp'.
-    public abstract record Resolution : IResolution
-    {
-        public virtual bool ResEqual(IResolution? other) => Equals(other);
-        public State ChangeState(State before) => ChangeStateInternal(before);
-        protected abstract State ChangeStateInternal(State context);
-    }
+    
     public interface IComponentFor<H> : IResolution where H : IHasComponents<H>
     {
         public IComponentIdentifier UnsafeIdentifier { get; }
