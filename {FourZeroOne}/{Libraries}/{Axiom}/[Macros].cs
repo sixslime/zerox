@@ -11,13 +11,13 @@ namespace FourZeroOne.Libraries.Axiom.Macros
     using t = Core.Tokens;
     using r = Core.Resolutions;
     using FourZeroOne.Proxy;
-    using FourZeroOne.Core.Resolutions.Actions.Board.Unit;
+    using FourZeroOne.Core.Resolutions.Instructions.Board.Unit;
     using Core.ProxySyntax;
     using ProxySyntax;
 
     namespace GameActions
     {
-        using Core.Resolutions.Actions.Board.Unit;
+        using Core.Resolutions.Instructions.Board.Unit;
         using Core.Resolutions.Objects.Board;
         using FourZeroOne.Proxy.Unsafe;
 

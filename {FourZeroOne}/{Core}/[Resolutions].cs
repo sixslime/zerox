@@ -13,7 +13,7 @@ namespace FourZeroOne.Core.Resolutions
     {
         namespace Board
         {
-            using Composition.Board;
+            using Resolution.Board;
             using Objects;
             public sealed record Coordinates : NoOp
             {
@@ -224,7 +224,7 @@ namespace FourZeroOne.Core.Resolutions
         }
 
     }
-    namespace Actions
+    namespace Instructions
     {
         using Objects;
 
@@ -235,32 +235,32 @@ namespace FourZeroOne.Core.Resolutions
             namespace Unit
             {
                 using static _.InternalUtil;
-                public sealed record HPChange : Operation
+                public sealed record HPChange : Instruction
                 {
                     public required b.Unit Subject { get; init; }
                     public Updater<b.Unit> dSubject { init => Subject = value(Subject); }
                     public required Number SetTo { get; init; }
                     public Updater<Number> dSetTo { init => SetTo = value(SetTo); }
                     public HPChange() { }
-                    protected override State UpdateState(State state) => ChangeUnit(state, Subject, x => x with { HP = SetTo });
+                    public override State ChangeState(State state) => ChangeUnit(state, Subject, x => x with { HP = SetTo });
                 }
-                public sealed record PositionChange : Operation
+                public sealed record PositionChange : Instruction
                 {
                     public required b.Unit Subject { get; init; }
                     public Updater<b.Unit> dSubject { init => Subject = value(Subject); }
                     public required b.Coordinates SetTo { get; init; }
                     public Updater<b.Coordinates> dSetTo { init => SetTo = value(SetTo); }
                     public PositionChange() { }
-                    protected override State UpdateState(State state) => ChangeUnit(state, Subject, x => x with { Position = SetTo });
+                    public override State ChangeState(State state) => ChangeUnit(state, Subject, x => x with { Position = SetTo });
                 }
-                public sealed record OwnerChange : Operation
+                public sealed record OwnerChange : Instruction
                 {
                     public required b.Unit Subject { get; init; }
                     public Updater<b.Unit> dSubject { init => Subject = value(Subject); }
                     public required b.Player SetTo { get; init; }
                     public Updater<b.Player> dSetTo { init => SetTo = value(SetTo); }
                     public OwnerChange() { }
-                    protected override State UpdateState(State state) => ChangeUnit(state, Subject, x => x with { Owner = SetTo });
+                    public override State ChangeState(State state) => ChangeUnit(state, Subject, x => x with { Owner = SetTo });
                 }
             }
 
@@ -278,24 +278,24 @@ namespace FourZeroOne.Core.Resolutions
 
         namespace Component
         {
-            public sealed record Insert<H> : Operation where H : IHasComponents<H>
+            public sealed record Insert<H> : Instruction where H : IHasComponents<H>
             {
                 public required H ComponentHolder { get; init; }
-                public required Multi<Composition.Unsafe.IComponentFor<H>> Components { get; init; }
+                public required Multi<Resolution.Unsafe.IComponentFor<H>> Components { get; init; }
 
-                protected override State UpdateState(State context)
+                public override State ChangeState(State context)
                 {
                     return ComponentHolder
                         .WithComponents(Components.Values)
                         .SetAtState(context);
                 }
             }
-            public sealed record Remove<H> : Operation where H : IHasComponents<H>
+            public sealed record Remove<H> : Instruction where H : IHasComponents<H>
             {
                 public required H ComponentHolder { get; init; }
-                public required Multi<Composition.Unsafe.IComponentIdentifier> Identifiers { get; init; }
+                public required Multi<Resolution.Unsafe.IComponentIdentifier> Identifiers { get; init; }
 
-                protected override State UpdateState(State context)
+                public override State ChangeState(State context)
                 {
                     return ComponentHolder
                         .WithoutComponents(Identifiers.Values)
@@ -304,23 +304,23 @@ namespace FourZeroOne.Core.Resolutions
             }
         }
         
-        public sealed record Declare : Operation
+        public sealed record Declare : Instruction
         {
-            public required Composition.Unsafe.IStateTracked Subject { get; init; }
-            protected override State UpdateState(State context)
+            public required Resolution.Unsafe.IStateTracked Subject { get; init; }
+            public override State ChangeState(State context)
             {
                 return Subject.SetAtState(context);
             }
         }
-        public sealed record Undeclare : Operation
+        public sealed record Undeclare : Instruction
         {
-            public required Composition.Unsafe.IStateTracked Subject { get; init; }
-            protected override State UpdateState(State context)
+            public required Resolution.Unsafe.IStateTracked Subject { get; init; }
+            public override State ChangeState(State context)
             {
                 return Subject.RemoveAtState(context);
             }
         }
-        public sealed record VariableAssign<R> : Operation where R : class, ResObj
+        public sealed record VariableAssign<R> : Instruction where R : class, ResObj
         {
             public readonly VariableIdentifier<R> Identifier;
             public required IOption<R> Object { get; init; }
@@ -329,7 +329,7 @@ namespace FourZeroOne.Core.Resolutions
             {
                 Identifier = identifier;
             }
-            protected override State UpdateState(State state) => state with
+            public override State ChangeState(State state) => state with
             {
                 dVariables = Q => Q with
                 {
@@ -338,12 +338,12 @@ namespace FourZeroOne.Core.Resolutions
             };
             public override string ToString() => $"{Identifier}<-{Object}";
         }
-        public sealed record RuleAdd : Operation
+        public sealed record RuleAdd : Instruction
         {
             public required Rule.IRule Rule { get; init; }
             public Updater<Rule.IRule> dRule { init => Rule = value(Rule); }
 
-            protected override State UpdateState(State state) => state with
+            public override State ChangeState(State state) => state with
             {
                 dRules = Q => Q with { dElements = Q => Q.Also(Rule.Yield()) }
             };
@@ -417,8 +417,9 @@ namespace FourZeroOne.Core.Resolutions
         }
 
     }
-    public sealed record Multi<R> : Operation, IMulti<R> where R : class, ResObj
+    public sealed record Multi<R> : Composition, IMulti<R> where R : class, ResObj
     {
+        public override IEnumerable<IInstruction> Instructions => Values.Map(x => x.Instructions).Flatten();
         public int Count => _list.Count;
         public required IEnumerable<R> Values { get => _list.Elements; init => _list = new() { Elements = value }; }
         public Updater<IEnumerable<R>> dValues { init => Values = value(Values); }
@@ -427,10 +428,6 @@ namespace FourZeroOne.Core.Resolutions
             if (other is not IMulti<R> othermulti) return false;
             foreach (var (a, b) in Values.ZipLong(othermulti.Values)) if (a is null || (a is not null && !a.ResEqual(b))) return false;
             return true;
-        }
-        protected override State UpdateState(State state)
-        {
-            return Values.AccumulateInto(state, (p, x) => p.WithResolution(x));
         }
 
         private readonly PList<R> _list;

@@ -18,7 +18,7 @@ namespace FourZeroOne
         public Updater<PList<Rule.IRule>> dRules { init => Rules = value(Rules); }
         public required BoardState Board { get; init; }
         public Updater<BoardState> dBoard { init => Board = value(Board); }
-        public State WithResolution(ResObj resolution) { return resolution.ChangeState(this); }
+        public State WithResolution(ResObj resolution) { return resolution.Instructions.AccumulateInto(this, (state, instruction) => instruction.ChangeState(state)); }
     }
     public record BoardState
     {

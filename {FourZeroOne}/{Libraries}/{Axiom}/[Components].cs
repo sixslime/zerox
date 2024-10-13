@@ -8,7 +8,7 @@ namespace FourZeroOne.Libraries.Axiom.Components
 {
     using r = Core.Resolutions;
     using Resolution;
-    using Core.Resolutions.Actions.Board.Unit;
+    using Core.Resolutions.Instructions.Board.Unit;
     using b = Core.Resolutions.Objects.Board;
 
     namespace Unit

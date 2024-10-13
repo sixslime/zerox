@@ -88,7 +88,7 @@ namespace FourZeroOne.Core.Tokens
             }
             namespace Set
             {
-                using Resolutions.Actions.Board.Unit;
+                using Resolutions.Instructions.Board.Unit;
                 public sealed record Position : PureFunction<rb.Unit, rb.Coordinates, PositionChange>
                 {
 
@@ -352,20 +352,20 @@ namespace FourZeroOne.Core.Tokens
                     ).AsITask();
             }
         }
-        public record Insert<H> : PureFunction<H, IMulti<Composition.Unsafe.IComponentFor<H>>, r.Actions.Component.Insert<H>> where H : class, IHasComponents<H>
+        public record Insert<H> : PureFunction<H, IMulti<Resolution.Unsafe.IComponentFor<H>>, r.Instructions.Component.Insert<H>> where H : class, IHasComponents<H>
         {
-            public Insert(IToken<H> holder, IToken<IMulti<Composition.Unsafe.IComponentFor<H>>> components) : base(holder, components) { }
+            public Insert(IToken<H> holder, IToken<IMulti<Resolution.Unsafe.IComponentFor<H>>> components) : base(holder, components) { }
 
-            protected override r.Actions.Component.Insert<H> EvaluatePure(H holder, IMulti<Composition.Unsafe.IComponentFor<H>> components)
+            protected override r.Instructions.Component.Insert<H> EvaluatePure(H holder, IMulti<Resolution.Unsafe.IComponentFor<H>> components)
             {
                 return new() { ComponentHolder = holder, Components = new() { Values = components.Values } };
             }
         }
-        public record Remove<H> : PureFunction<H, IMulti<Composition.Unsafe.IComponentIdentifier>, r.Actions.Component.Remove<H>> where H : class, IHasComponents<H>
+        public record Remove<H> : PureFunction<H, IMulti<Resolution.Unsafe.IComponentIdentifier>, r.Instructions.Component.Remove<H>> where H : class, IHasComponents<H>
         {
-            public Remove(IToken<H> holder, IToken<IMulti<Composition.Unsafe.IComponentIdentifier>> identifiers) : base(holder, identifiers) { }
+            public Remove(IToken<H> holder, IToken<IMulti<Resolution.Unsafe.IComponentIdentifier>> identifiers) : base(holder, identifiers) { }
 
-            protected override r.Actions.Component.Remove<H> EvaluatePure(H holder, IMulti<Composition.Unsafe.IComponentIdentifier> identifiers)
+            protected override r.Instructions.Component.Remove<H> EvaluatePure(H holder, IMulti<Resolution.Unsafe.IComponentIdentifier> identifiers)
             {
                 return new() { ComponentHolder = holder, Identifiers = new() { Values = identifiers.Values } };
             }
@@ -532,47 +532,47 @@ namespace FourZeroOne.Core.Tokens
         }
         protected override IOption<string> CustomToString() => $"if {Arg1} then {Arg2} else {Arg3}".AsSome();
     }
-    public sealed record Declare : PureFunction<Resolution.Unsafe.IStateTracked, r.Actions.Declare>
+    public sealed record Declare : PureFunction<Resolution.Unsafe.IStateTracked, r.Instructions.Declare>
     {
         public Declare(IToken<Resolution.Unsafe.IStateTracked> subject) : base(subject) { }
-        protected override r.Actions.Declare EvaluatePure(Resolution.Unsafe.IStateTracked in1)
+        protected override r.Instructions.Declare EvaluatePure(Resolution.Unsafe.IStateTracked in1)
         {
             return new() { Subject = in1 };
         }
     }
-    public sealed record Undeclare : PureFunction<Resolution.Unsafe.IStateTracked, r.Actions.Undeclare>
+    public sealed record Undeclare : PureFunction<Resolution.Unsafe.IStateTracked, r.Instructions.Undeclare>
     {
         public Undeclare(IToken<Resolution.Unsafe.IStateTracked> subject) : base(subject) { }
-        protected override r.Actions.Undeclare EvaluatePure(Resolution.Unsafe.IStateTracked in1)
+        protected override r.Instructions.Undeclare EvaluatePure(Resolution.Unsafe.IStateTracked in1)
         {
             return new() { Subject = in1 };
         }
     }
-    public sealed record Variable<R> : Token<r.Actions.VariableAssign<R>> where R : class, ResObj
+    public sealed record Variable<R> : Token<r.Instructions.VariableAssign<R>> where R : class, ResObj
     {
         public Variable(VariableIdentifier<R> identifier, IToken<R> token) : base(token)
         {
             _identifier = identifier;
         }
-        public override ITask<IOption<r.Actions.VariableAssign<R>>> Resolve(IRuntime runtime, IOption<ResObj>[] args)
+        public override ITask<IOption<r.Instructions.VariableAssign<R>>> Resolve(IRuntime runtime, IOption<ResObj>[] args)
         {
             var refObject = (IOption<R>)args[0];
-            return Task.FromResult(refObject.RemapAs(x => new r.Actions.VariableAssign<R>(_identifier) { Object = refObject })).AsITask();
+            return Task.FromResult(refObject.RemapAs(x => new r.Instructions.VariableAssign<R>(_identifier) { Object = refObject })).AsITask();
         }
         protected override IOption<string> CustomToString() => $"{_identifier}={ArgTokens[0]}".AsSome();
 
         private readonly VariableIdentifier<R> _identifier;
     }
-    public sealed record Rule<R> : PureValue<r.Actions.RuleAdd> where R : class, ResObj
+    public sealed record Rule<R> : PureValue<r.Instructions.RuleAdd> where R : class, ResObj
     {
         public Rule(Rule.IRule rule)
         {
             _rule = rule;
         }
 
-        protected override r.Actions.RuleAdd EvaluatePure()
+        protected override r.Instructions.RuleAdd EvaluatePure()
         {
-            return new r.Actions.RuleAdd() { Rule = _rule };
+            return new r.Instructions.RuleAdd() { Rule = _rule };
         }
 
         private readonly Rule.IRule _rule;

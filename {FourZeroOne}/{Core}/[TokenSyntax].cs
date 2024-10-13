@@ -6,7 +6,7 @@ namespace FourZeroOne.Core.TokenSyntax
     using Tokens;
     using FourZeroOne.Token;
     using Resolutions.Objects;
-    using Resolutions.Actions;
+    using Resolutions.Instructions;
     using Resolutions;
     using r = Resolutions;
     using ResObj = Resolution.IResolution;

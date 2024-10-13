@@ -307,9 +307,9 @@ namespace FourZeroOne.Core.ProxySyntax
         public static Function<Tokens.IO.Select.Multiple<R>, TOrig, Resolution.IMulti<R>, ro.Number, r.Multi<R>> pIO_SelectMany<TOrig, R>(this IProxy<TOrig, Resolution.IMulti<R>> source, IProxy<TOrig, ro.Number> count) where TOrig : IToken where R : class, ResObj
         { return new(source, count); }
 
-        public static Function<Tokens.Declare, TOrig, Resolution.Unsafe.IStateTracked, r.Actions.Declare> pDeclare<TOrig>(this IProxy<TOrig, Resolution.Unsafe.IStateTracked> subject) where TOrig : IToken
+        public static Function<Tokens.Declare, TOrig, Resolution.Unsafe.IStateTracked, r.Instructions.Declare> pDeclare<TOrig>(this IProxy<TOrig, Resolution.Unsafe.IStateTracked> subject) where TOrig : IToken
         { return new(subject); }
-        public static Function<Tokens.Undeclare, TOrig, Resolution.Unsafe.IStateTracked, r.Actions.Undeclare> pUndeclare<TOrig>(this IProxy<TOrig, Resolution.Unsafe.IStateTracked> subject) where TOrig : IToken
+        public static Function<Tokens.Undeclare, TOrig, Resolution.Unsafe.IStateTracked, r.Instructions.Undeclare> pUndeclare<TOrig>(this IProxy<TOrig, Resolution.Unsafe.IStateTracked> subject) where TOrig : IToken
         { return new(subject); }
 
         public static Function<Tokens.Component.Get<H, C>, TOrig, H, Resolution.IComponentIdentifier<C>, C> pGetComponent<TOrig, H, C>(this IProxy<TOrig, H> holder, IProxy<TOrig, Resolution.IComponentIdentifier<C>> identifier)
@@ -317,11 +317,11 @@ namespace FourZeroOne.Core.ProxySyntax
             where H : class, Resolution.IHasComponents<H>
             where C : class, Resolution.IComponent<C, H>
         { return new(holder, identifier); }
-        public static Function<Tokens.Component.Insert<H>, TOrig, H, Resolution.IMulti<Resolution.Unsafe.IComponentFor<H>>, r.Actions.Component.Insert<H>> pInsertComponents<TOrig, H, C>(this IProxy<TOrig, H> holder, IProxy<TOrig, Resolution.IMulti<Resolution.Unsafe.IComponentFor<H>>> components)
+        public static Function<Tokens.Component.Insert<H>, TOrig, H, Resolution.IMulti<Resolution.Unsafe.IComponentFor<H>>, r.Instructions.Component.Insert<H>> pInsertComponents<TOrig, H, C>(this IProxy<TOrig, H> holder, IProxy<TOrig, Resolution.IMulti<Resolution.Unsafe.IComponentFor<H>>> components)
             where TOrig : IToken
             where H : class, Resolution.IHasComponents<H>
         { return new(holder, components); }
-        public static Function<Tokens.Component.Remove<H>, TOrig, H, Resolution.IMulti<Resolution.Unsafe.IComponentIdentifier>, r.Actions.Component.Remove<H>> pRemoveComponents<TOrig, H, C>(this IProxy<TOrig, H> holder, IProxy<TOrig, Resolution.IMulti<Resolution.Unsafe.IComponentIdentifier>> identifier)
+        public static Function<Tokens.Component.Remove<H>, TOrig, H, Resolution.IMulti<Resolution.Unsafe.IComponentIdentifier>, r.Instructions.Component.Remove<H>> pRemoveComponents<TOrig, H, C>(this IProxy<TOrig, H> holder, IProxy<TOrig, Resolution.IMulti<Resolution.Unsafe.IComponentIdentifier>> identifier)
             where TOrig : IToken
             where H : class, Resolution.IHasComponents<H>
         { return new(holder, identifier); }
@@ -335,11 +335,11 @@ namespace FourZeroOne.Core.ProxySyntax
         { return new(subject); }
 
 
-        public static Function<Tokens.Board.Unit.Set.Position, TOrig, ro.Board.Unit, ro.Board.Coordinates, r.Actions.Board.Unit.PositionChange> pSetPosition<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject, IProxy<TOrig, ro.Board.Coordinates> setTo) where TOrig : IToken
+        public static Function<Tokens.Board.Unit.Set.Position, TOrig, ro.Board.Unit, ro.Board.Coordinates, r.Instructions.Board.Unit.PositionChange> pSetPosition<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject, IProxy<TOrig, ro.Board.Coordinates> setTo) where TOrig : IToken
         { return new(subject, setTo); }
-        public static Function<Tokens.Board.Unit.Set.HP, TOrig, ro.Board.Unit, ro.Number, r.Actions.Board.Unit.HPChange> pSetHP<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject, IProxy<TOrig, ro.Number> setTo) where TOrig : IToken
+        public static Function<Tokens.Board.Unit.Set.HP, TOrig, ro.Board.Unit, ro.Number, r.Instructions.Board.Unit.HPChange> pSetHP<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject, IProxy<TOrig, ro.Number> setTo) where TOrig : IToken
         { return new(subject, setTo); }
-        public static Function<Tokens.Board.Unit.Set.Owner, TOrig, ro.Board.Unit, ro.Board.Player, r.Actions.Board.Unit.OwnerChange> pSetOwner<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject, IProxy<TOrig, ro.Board.Player> setTo) where TOrig : IToken
+        public static Function<Tokens.Board.Unit.Set.Owner, TOrig, ro.Board.Unit, ro.Board.Player, r.Instructions.Board.Unit.OwnerChange> pSetOwner<TOrig>(this IProxy<TOrig, ro.Board.Unit> subject, IProxy<TOrig, ro.Board.Player> setTo) where TOrig : IToken
         { return new(subject, setTo); }
 
         [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]

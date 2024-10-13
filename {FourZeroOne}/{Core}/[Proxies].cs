@@ -153,7 +153,7 @@ namespace FourZeroOne.Core.Proxies
         }
         private readonly IProxy<TOrig, Resolution.IMulti<ResObj>> _envModifiers;
     }
-    public sealed record Variable<TOrig, R> : Proxy<TOrig, r.Actions.VariableAssign<R>>
+    public sealed record Variable<TOrig, R> : Proxy<TOrig, r.Instructions.VariableAssign<R>>
         where TOrig : IToken
         where R : class, ResObj
     {
@@ -162,7 +162,7 @@ namespace FourZeroOne.Core.Proxies
             _identifier = identifier;
             _objectProxy = proxy;
         }
-        public override IToken<r.Actions.VariableAssign<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        public override IToken<r.Instructions.VariableAssign<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
         {
             return new Tokens.Variable<R>(_identifier, _objectProxy.Realize(original, rule));
         }
