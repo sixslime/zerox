@@ -13,7 +13,7 @@ namespace FourZeroOne.Core.Resolutions
     {
         namespace Board
         {
-            using Resolution.Board;
+            using Composition.Board;
             using Objects;
             public sealed record Coordinates : NoOp
             {
@@ -281,7 +281,7 @@ namespace FourZeroOne.Core.Resolutions
             public sealed record Insert<H> : Operation where H : IHasComponents<H>
             {
                 public required H ComponentHolder { get; init; }
-                public required Multi<Resolution.Unsafe.IComponentFor<H>> Components { get; init; }
+                public required Multi<Composition.Unsafe.IComponentFor<H>> Components { get; init; }
 
                 protected override State UpdateState(State context)
                 {
@@ -293,7 +293,7 @@ namespace FourZeroOne.Core.Resolutions
             public sealed record Remove<H> : Operation where H : IHasComponents<H>
             {
                 public required H ComponentHolder { get; init; }
-                public required Multi<Resolution.Unsafe.IComponentIdentifier> Identifiers { get; init; }
+                public required Multi<Composition.Unsafe.IComponentIdentifier> Identifiers { get; init; }
 
                 protected override State UpdateState(State context)
                 {
@@ -306,7 +306,7 @@ namespace FourZeroOne.Core.Resolutions
         
         public sealed record Declare : Operation
         {
-            public required Resolution.Unsafe.IStateTracked Subject { get; init; }
+            public required Composition.Unsafe.IStateTracked Subject { get; init; }
             protected override State UpdateState(State context)
             {
                 return Subject.SetAtState(context);
@@ -314,7 +314,7 @@ namespace FourZeroOne.Core.Resolutions
         }
         public sealed record Undeclare : Operation
         {
-            public required Resolution.Unsafe.IStateTracked Subject { get; init; }
+            public required Composition.Unsafe.IStateTracked Subject { get; init; }
             protected override State UpdateState(State context)
             {
                 return Subject.RemoveAtState(context);

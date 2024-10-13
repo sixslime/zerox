@@ -11,10 +11,10 @@ namespace FourZeroOne.Resolution
     /// </summary>
     public interface IResolution
     {
-        public PList<IInstruction> Instructions { get; }
+        public IEnumerable<IInstruction> Instructions { get; }
         public bool ResEqual(IResolution? other);
     }
-    public interface IInstruction
+    public interface IInstruction : IResolution
     {
         public State ChangeState(State context);
     }
@@ -37,17 +37,20 @@ namespace FourZeroOne.Resolution
         public Self GetAtState(State state);
     }
 
-
-    public abstract record Resolution : IResolution
+    public abstract record Instruction : Composition, IInstruction
     {
-        public abstract PList<IInstruction> Instructions { get; }
+        public abstract State ChangeState(State previousState);
+        public override IEnumerable<IInstruction> Instructions => [this];
+    }
+    public abstract record Composition : IResolution
+    {
+        public abstract IEnumerable<IInstruction> Instructions { get; }
         public virtual bool ResEqual(IResolution? other) => Equals(other);
     }
 
-    public abstract record NoOp : Resolution
+    public abstract record NoOp : Composition
     {
-        private static readonly PList<IInstruction> _empty = new() { Elements = [] };
-        public override PList<IInstruction> Instructions => _empty;
+        public override IEnumerable<IInstruction> Instructions => [];
     }
 
     public abstract record ComponentIdentifier<C> : NoOp, IComponentIdentifier<C> where C : Unsafe.IComponent<C>

@@ -352,20 +352,20 @@ namespace FourZeroOne.Core.Tokens
                     ).AsITask();
             }
         }
-        public record Insert<H> : PureFunction<H, IMulti<Resolution.Unsafe.IComponentFor<H>>, r.Actions.Component.Insert<H>> where H : class, IHasComponents<H>
+        public record Insert<H> : PureFunction<H, IMulti<Composition.Unsafe.IComponentFor<H>>, r.Actions.Component.Insert<H>> where H : class, IHasComponents<H>
         {
-            public Insert(IToken<H> holder, IToken<IMulti<Resolution.Unsafe.IComponentFor<H>>> components) : base(holder, components) { }
+            public Insert(IToken<H> holder, IToken<IMulti<Composition.Unsafe.IComponentFor<H>>> components) : base(holder, components) { }
 
-            protected override r.Actions.Component.Insert<H> EvaluatePure(H holder, IMulti<Resolution.Unsafe.IComponentFor<H>> components)
+            protected override r.Actions.Component.Insert<H> EvaluatePure(H holder, IMulti<Composition.Unsafe.IComponentFor<H>> components)
             {
                 return new() { ComponentHolder = holder, Components = new() { Values = components.Values } };
             }
         }
-        public record Remove<H> : PureFunction<H, IMulti<Resolution.Unsafe.IComponentIdentifier>, r.Actions.Component.Remove<H>> where H : class, IHasComponents<H>
+        public record Remove<H> : PureFunction<H, IMulti<Composition.Unsafe.IComponentIdentifier>, r.Actions.Component.Remove<H>> where H : class, IHasComponents<H>
         {
-            public Remove(IToken<H> holder, IToken<IMulti<Resolution.Unsafe.IComponentIdentifier>> identifiers) : base(holder, identifiers) { }
+            public Remove(IToken<H> holder, IToken<IMulti<Composition.Unsafe.IComponentIdentifier>> identifiers) : base(holder, identifiers) { }
 
-            protected override r.Actions.Component.Remove<H> EvaluatePure(H holder, IMulti<Resolution.Unsafe.IComponentIdentifier> identifiers)
+            protected override r.Actions.Component.Remove<H> EvaluatePure(H holder, IMulti<Composition.Unsafe.IComponentIdentifier> identifiers)
             {
                 return new() { ComponentHolder = holder, Identifiers = new() { Values = identifiers.Values } };
             }
