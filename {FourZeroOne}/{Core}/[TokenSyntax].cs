@@ -102,7 +102,7 @@ namespace FourZeroOne.Core.TokenSyntax
             public System.Func<ProxySyntax.OriginalHint<Tokens.Recursive<RArg1, RArg2, RArg3, ROut>>, Proxy.IProxy<Tokens.Recursive<RArg1, RArg2, RArg3, ROut>, ROut>> RecursiveProxyStatement { get; init; }
         }
     }
-    public static class Const
+    public static class CoreR
     {
         public static r.Objects.Board.Coordinates Coordinates(int R, int U, int D)
         {
@@ -228,7 +228,7 @@ namespace FourZeroOne.Core.TokenSyntax
         public static Tokens.Multi.Intersection<R> tIntersection<R>(RHint<R> _, List<IToken<Multi<R>>> sets) where R : class, ResObj
         { return new(sets); }
     }
-    public static class _Extensions
+    public static class _ExtensionsT
     {
         public static Tokens.IO.Select.One<R> tIO_SelectOne<R>(this IToken<Multi<R>> source) where R : class, ResObj
         { return new(source); }
