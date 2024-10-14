@@ -98,6 +98,7 @@ namespace FourZeroOne.Core.Resolutions
                     return (other is Hex h && h.Position.ResEqual(Position));
                 }
             }
+            //DEV - with the addition of the HexID/UnitID objects, perhaps StateObjects just require a GetID() instead of GetAtState() and SetAtState().
             public sealed record Unit : StateObject<Unit>, IPositioned
             {
                 public readonly int UUID;
