@@ -210,7 +210,7 @@ namespace FourZeroOne.Core.Resolutions
 
         // This is stupid, this is stupid, this is stupid.
         // DONT ADD TUPLES CHALLENGE (VERY HARD)
-        public sealed record Range : NoOp, IMulti<Number>
+        public sealed record NumRange : NoOp, IMulti<Number>
         {
             
             public required Number Start { get; init; }
