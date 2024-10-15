@@ -16,129 +16,6 @@ namespace FourZeroOne.Core.Tokens
     using r = Resolutions;
     using ro = Resolutions.Objects;
     using Runtime;
-
-    namespace Board
-    {
-        using rb = r.Objects.Board;
-        namespace Coordinates
-        {
-            public sealed record Of : PureFunction<Resolution.Board.IPositioned, rb.Coordinates>
-            {
-                public Of(IToken<Resolution.Board.IPositioned> of) : base(of) { }
-                protected override rb.Coordinates EvaluatePure(Resolution.Board.IPositioned in1)
-                {
-                    return in1.Position;
-                }
-            }
-            public sealed record OffsetArea : PureFunction<rb.Coordinates, Resolution.IMulti<rb.Coordinates>, rb.CoordinateArea>
-            {
-                public OffsetArea(IToken<rb.Coordinates> offset, IToken<Resolution.IMulti<rb.Coordinates>> area) : base(offset, area) { }
-                protected override rb.CoordinateArea EvaluatePure(rb.Coordinates in1, Resolution.IMulti<rb.Coordinates> in2)
-                {
-                    return new() { Center = in1, Offsets = in2.Values };
-                }
-            }
-        }
-        namespace Hex
-        {
-            public sealed record AllHexes : Value<r.Multi<rb.Hex>>
-            {
-                protected override ITask<IOption<r.Multi<rb.Hex>>> Evaluate(IRuntime runtime)
-                {
-                    return Task.FromResult(new r.Multi<rb.Hex>() { Values = runtime.GetState().Board.Hexes }.AsSome()).AsITask();
-                }
-            }
-
-            public sealed record At : Function<rb.Coordinates, rb.Hex>
-            {
-                public At(IToken<rb.Coordinates> position) : base(position) { }
-                protected override ITask<IOption<rb.Hex>> Evaluate(IRuntime runtime, IOption<rb.Coordinates> in1)
-                {
-                    return Task.FromResult(in1.RemapAs(pos => runtime.GetState().Board.Hexes[pos]).Press()).AsITask();
-                }
-            }
-
-            public sealed record InArea : Function<Resolution.IMulti<rb.Coordinates>, r.Multi<rb.Hex>>
-            {
-                public InArea(IToken<Resolution.IMulti<rb.Coordinates>> positions) : base(positions) { }
-                protected override ITask<IOption<r.Multi<rb.Hex>>> Evaluate(IRuntime runtime, IOption<Resolution.IMulti<rb.Coordinates>> in1)
-                {
-                    return Task.FromResult(in1.RemapAs(positions => new r.Multi<rb.Hex>() { Values = positions.Values.FilterMap(x => runtime.GetState().Board.Hexes[x]) })).AsITask();
-                }
-            }
-            namespace Get
-            {
-
-            }
-        }
-        namespace Unit
-        {
-            namespace Get
-            {
-                public sealed record HP : PureFunction<rb.Unit, ro.Number>
-                {
-                    public HP(IToken<rb.Unit> of) : base(of) { }
-                    protected override ro.Number EvaluatePure(rb.Unit in1) { return in1.HP; }
-                }
-                public sealed record Owner : PureFunction<rb.Unit, rb.Player>
-                {
-                    public Owner(IToken<rb.Unit> source) : base(source) { }
-                    protected override rb.Player EvaluatePure(rb.Unit in1) { return in1.Owner; }
-                }
-            }
-            namespace Set
-            {
-                using Resolutions.Instructions.Board.Unit;
-                public sealed record Position : PureFunction<rb.Unit, rb.Coordinates, PositionChange>
-                {
-
-                    public Position(IToken<rb.Unit> in1, IToken<rb.Coordinates> in2) : base(in1, in2) { }
-
-                    protected override PositionChange EvaluatePure(rb.Unit in1, rb.Coordinates in2)
-                    {
-                        return new() { Subject = in1, SetTo = in2 };
-                    }
-                }
-                public sealed record HP : PureFunction<rb.Unit, ro.Number, HPChange>
-                {
-
-                    public HP(IToken<rb.Unit> in1, IToken<ro.Number> in2) : base(in1, in2) { }
-
-                    protected override HPChange EvaluatePure(rb.Unit in1, ro.Number in2)
-                    {
-                        return new() { Subject = in1, SetTo = in2 };
-                    }
-                }
-                public sealed record Owner : PureFunction<rb.Unit, rb.Player, OwnerChange>
-                {
-
-                    public Owner(IToken<rb.Unit> in1, IToken<rb.Player> in2) : base(in1, in2) { }
-
-                    protected override OwnerChange EvaluatePure(rb.Unit in1, rb.Player in2)
-                    {
-                        return new() { Subject = in1, SetTo = in2 };
-                    }
-                }
-            }
-            public sealed record AllUnits : Value<r.Multi<rb.Unit>>
-            {
-                protected override ITask<IOption<r.Multi<rb.Unit>>> Evaluate(IRuntime runtime)
-                {
-                    return Task.FromResult(new r.Multi<rb.Unit>() { Values = runtime.GetState().Board.Units }.AsSome()).AsITask();
-                }
-            }
-        }
-        namespace Player
-        {
-            public sealed record AllPlayers : Value<r.Multi<rb.Player>>
-            {
-                protected override ITask<IOption<r.Multi<rb.Player>>> Evaluate(IRuntime runtime)
-                {
-                    return Task.FromResult(new r.Multi<rb.Player>() { Values = runtime.GetState().Board.Players }.AsSome()).AsITask();
-                }
-            }
-        }
-    }
     namespace IO
     {
         namespace Select
@@ -335,44 +212,7 @@ namespace FourZeroOne.Core.Tokens
             protected override IOption<string> CustomToString() => $"{Arg1}[{Arg2}]".AsSome();
         }
     }
-    namespace Component
-    {
-        using Resolution;
-        public record Get<H, C> : Function<H, IComponentIdentifier<C>, C>
-            where C : class, IComponent<C, H>
-            where H : class, IHasComponents<H>
-        {
-            public Get(IToken<H> holder, IToken<IComponentIdentifier<C>> identifier) : base(holder, identifier) { }
-            protected override ITask<IOption<C>> Evaluate(IRuntime runtime, IOption<H> in1, IOption<IComponentIdentifier<C>> in2)
-            {
-                return Task.FromResult(
-                    (in1.Check(out var holder) && in2.Check(out var identifier))
-                    ? holder.GetComponent(identifier)
-                    : new None<C>()
-                    ).AsITask();
-            }
-        }
-        public record Insert<H> : PureFunction<H, IMulti<FourZeroOne.Resolution.Unsafe.IComponentFor<H>>, r.Instructions.Component.Insert<H>> where H : class, IHasComponents<H>
-        {
-            public Insert(IToken<H> holder, IToken<IMulti<FourZeroOne.Resolution.Unsafe.IComponentFor<H>>> components) : base(holder, components) { }
-
-            protected override r.Instructions.Component.Insert<H> EvaluatePure(H holder, IMulti<FourZeroOne.Resolution.Unsafe.IComponentFor<H>> components)
-            {
-                return new() { ComponentHolder = holder, Components = new() { Values = components.Values } };
-            }
-        }
-        public record Remove<H> : PureFunction<H, IMulti<FourZeroOne.Resolution.Unsafe.IComponentIdentifier>, r.Instructions.Component.Remove<H>> where H : class, IHasComponents<H>
-        {
-            public Remove(IToken<H> holder, IToken<IMulti<FourZeroOne.Resolution.Unsafe.IComponentIdentifier>> identifiers) : base(holder, identifiers) { }
-
-            protected override r.Instructions.Component.Remove<H> EvaluatePure(H holder, IMulti<FourZeroOne.Resolution.Unsafe.IComponentIdentifier> identifiers)
-            {
-                return new() { ComponentHolder = holder, Identifiers = new() { Values = identifiers.Values } };
-            }
-        }
-
-
-    }
+   
 
     public record Execute<R> : Function<r.Boxed.MetaFunction<R>, R>
         where R : class, ResObj
@@ -466,14 +306,6 @@ namespace FourZeroOne.Core.Tokens
         }
         protected override IOption<string> CustomToString() => $"<${Arg1} ${Arg2} ${Arg3}>".AsSome();
     }
-    public record AtPresent<S> : Function<Resolution.IStateTracked<S>, S> where S : class, Resolution.IStateTracked<S>
-    {
-        public AtPresent(IToken<S> source) : base(source) { }
-        protected override ITask<IOption<S>> Evaluate(IRuntime runtime, IOption<Resolution.IStateTracked<S>> in1)
-        {
-            return Task.FromResult(in1.RemapAs(x => x.GetAtState(runtime.GetState()))).AsITask();
-        }
-    }
     
     public record SubEnvironment<ROut> : PureFunction<Resolution.IMulti<ResObj>, ROut, ROut>
         where ROut : class, ResObj
@@ -550,7 +382,7 @@ namespace FourZeroOne.Core.Tokens
     }
     public sealed record Variable<R> : Token<r.Instructions.VariableAssign<R>> where R : class, ResObj
     {
-        public Variable(VariableIdentifier<R> identifier, IToken<R> token) : base(token)
+        public Variable(DynamicAddress<R> identifier, IToken<R> token) : base(token)
         {
             _identifier = identifier;
         }
@@ -561,7 +393,7 @@ namespace FourZeroOne.Core.Tokens
         }
         protected override IOption<string> CustomToString() => $"{_identifier}={ArgTokens[0]}".AsSome();
 
-        private readonly VariableIdentifier<R> _identifier;
+        private readonly DynamicAddress<R> _identifier;
     }
     public sealed record Rule<R> : PureValue<r.Instructions.RuleAdd> where R : class, ResObj
     {
@@ -598,7 +430,7 @@ namespace FourZeroOne.Core.Tokens
     }
     public sealed record Reference<R> : Value<R> where R : class, ResObj
     {
-        public Reference(VariableIdentifier<R> toIdentifier) => _toIdentifier = toIdentifier;
+        public Reference(DynamicAddress<R> toIdentifier) => _toIdentifier = toIdentifier;
 
         protected override ITask<IOption<R>> Evaluate(IRuntime runtime)
         {
@@ -613,6 +445,6 @@ namespace FourZeroOne.Core.Tokens
         }
         protected override IOption<string> CustomToString() => $"&{_toIdentifier}".AsSome();
 
-        private readonly VariableIdentifier<R> _toIdentifier;
+        private readonly DynamicAddress<R> _toIdentifier;
     }
 }

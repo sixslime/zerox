@@ -70,8 +70,5 @@ namespace FourZeroOne.Resolution.Unsafe
     }
     public interface IAddressOf<out R> : IAddress where R : IResolution { }
     public interface IAddress<in H> : IAddress where H : IComposition<H> { }
-    public interface IStateAddress
-    {
-        public string Identity { get; }
-    }
+    public interface IStateAddress { }
 }

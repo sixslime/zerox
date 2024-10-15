@@ -136,66 +136,66 @@ namespace FourZeroOne.Core.TokenSyntax
 
         public static Fixed<MetaFunction<ROut>> tMetaFunction<ROut>(RHint<ROut> _, Func<IToken<ROut>> tokenFunction) where ROut : class, ResObj
         {
-            var vs = new VariableIdentifier<MetaFunction<ROut>>();
+            var vs = new DynamicAddress<MetaFunction<ROut>>();
             return new(new() { SelfIdentifier = vs, Token = tokenFunction() });
         }
-        public static Fixed<MetaFunction<RArg1, ROut>> tMetaFunction<RArg1, ROut>(RHint<RArg1, ROut> _, Func<VariableIdentifier<RArg1>, IToken<ROut>> tokenFunction)
+        public static Fixed<MetaFunction<RArg1, ROut>> tMetaFunction<RArg1, ROut>(RHint<RArg1, ROut> _, Func<DynamicAddress<RArg1>, IToken<ROut>> tokenFunction)
             where RArg1 : class, ResObj
             where ROut : class, ResObj
         {
-            var vs = new VariableIdentifier<MetaFunction<RArg1, ROut>>();
-            var v1 = new VariableIdentifier<RArg1>();
+            var vs = new DynamicAddress<MetaFunction<RArg1, ROut>>();
+            var v1 = new DynamicAddress<RArg1>();
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, Token = tokenFunction(v1) });
         }
-        public static Fixed<MetaFunction<RArg1, RArg2, ROut>> tMetaFunction<RArg1, RArg2, ROut>(RHint<RArg1, RArg2, ROut> _, Func<VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, IToken<ROut>> tokenFunction)
+        public static Fixed<MetaFunction<RArg1, RArg2, ROut>> tMetaFunction<RArg1, RArg2, ROut>(RHint<RArg1, RArg2, ROut> _, Func<DynamicAddress<RArg1>, DynamicAddress<RArg2>, IToken<ROut>> tokenFunction)
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where ROut : class, ResObj
         {
-            var vs = new VariableIdentifier<MetaFunction<RArg1, RArg2, ROut>>();
-            var (v1, v2) = (new VariableIdentifier<RArg1>(), new VariableIdentifier<RArg2>());
+            var vs = new DynamicAddress<MetaFunction<RArg1, RArg2, ROut>>();
+            var (v1, v2) = (new DynamicAddress<RArg1>(), new DynamicAddress<RArg2>());
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, Token = tokenFunction(v1, v2) });
         }
-        public static Fixed<MetaFunction<RArg1, RArg2, RArg3, ROut>> tMetaFunction<RArg1, RArg2, RArg3, ROut>(RHint<RArg1, RArg2, RArg3, ROut> _, Func<VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, VariableIdentifier<RArg3>, IToken<ROut>> tokenFunction)
+        public static Fixed<MetaFunction<RArg1, RArg2, RArg3, ROut>> tMetaFunction<RArg1, RArg2, RArg3, ROut>(RHint<RArg1, RArg2, RArg3, ROut> _, Func<DynamicAddress<RArg1>, DynamicAddress<RArg2>, DynamicAddress<RArg3>, IToken<ROut>> tokenFunction)
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where RArg3 : class, ResObj
             where ROut : class, ResObj
         {
-            var vs = new VariableIdentifier<MetaFunction<RArg1, RArg2, RArg3, ROut>>();
-            var (v1, v2, v3) = (new VariableIdentifier<RArg1>(), new VariableIdentifier<RArg2>(), new VariableIdentifier<RArg3>());
+            var vs = new DynamicAddress<MetaFunction<RArg1, RArg2, RArg3, ROut>>();
+            var (v1, v2, v3) = (new DynamicAddress<RArg1>(), new DynamicAddress<RArg2>(), new DynamicAddress<RArg3>());
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, IdentifierC = v3, Token = tokenFunction(v1, v2, v3) });
         }
-        public static Fixed<MetaFunction<ROut>> tMetaRecursiveFunction<ROut>(RHint<ROut> _, Func<VariableIdentifier<MetaFunction<ROut>>, IToken<ROut>> tokenFunction) where ROut : class, ResObj
+        public static Fixed<MetaFunction<ROut>> tMetaRecursiveFunction<ROut>(RHint<ROut> _, Func<DynamicAddress<MetaFunction<ROut>>, IToken<ROut>> tokenFunction) where ROut : class, ResObj
         {
-            var vs = new VariableIdentifier<MetaFunction<ROut>>();
+            var vs = new DynamicAddress<MetaFunction<ROut>>();
             return new(new() { SelfIdentifier = vs, Token = tokenFunction(vs) });
         }
-        public static Fixed<MetaFunction<RArg1, ROut>> tMetaRecursiveFunction<RArg1, ROut>(RHint<RArg1, ROut> _, Func<VariableIdentifier<MetaFunction<RArg1, ROut>>, VariableIdentifier<RArg1>, IToken<ROut>> tokenFunction)
+        public static Fixed<MetaFunction<RArg1, ROut>> tMetaRecursiveFunction<RArg1, ROut>(RHint<RArg1, ROut> _, Func<DynamicAddress<MetaFunction<RArg1, ROut>>, DynamicAddress<RArg1>, IToken<ROut>> tokenFunction)
             where RArg1 : class, ResObj
             where ROut : class, ResObj
         {
-            var vs = new VariableIdentifier<MetaFunction<RArg1, ROut>>();
-            var v1 = new VariableIdentifier<RArg1>();
+            var vs = new DynamicAddress<MetaFunction<RArg1, ROut>>();
+            var v1 = new DynamicAddress<RArg1>();
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, Token = tokenFunction(vs, v1) });
         }
-        public static Fixed<MetaFunction<RArg1, RArg2, ROut>> tMetaRecursiveFunction<RArg1, RArg2, ROut>(RHint<RArg1, RArg2, ROut> _, Func<VariableIdentifier<MetaFunction<RArg1, RArg2, ROut>>, VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, IToken<ROut>> tokenFunction)
+        public static Fixed<MetaFunction<RArg1, RArg2, ROut>> tMetaRecursiveFunction<RArg1, RArg2, ROut>(RHint<RArg1, RArg2, ROut> _, Func<DynamicAddress<MetaFunction<RArg1, RArg2, ROut>>, DynamicAddress<RArg1>, DynamicAddress<RArg2>, IToken<ROut>> tokenFunction)
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where ROut : class, ResObj
         {
-            var vs = new VariableIdentifier<MetaFunction<RArg1, RArg2, ROut>>();
-            var (v1, v2) = (new VariableIdentifier<RArg1>(), new VariableIdentifier<RArg2>());
+            var vs = new DynamicAddress<MetaFunction<RArg1, RArg2, ROut>>();
+            var (v1, v2) = (new DynamicAddress<RArg1>(), new DynamicAddress<RArg2>());
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, Token = tokenFunction(vs, v1, v2) });
         }
-        public static Fixed<MetaFunction<RArg1, RArg2, RArg3, ROut>> tMetaRecursiveFunction<RArg1, RArg2, RArg3, ROut>(RHint<RArg1, RArg2, RArg3, ROut> _, Func<VariableIdentifier<MetaFunction<RArg1, RArg2, RArg3, ROut>>, VariableIdentifier<RArg1>, VariableIdentifier<RArg2>, VariableIdentifier<RArg3>, IToken<ROut>> tokenFunction)
+        public static Fixed<MetaFunction<RArg1, RArg2, RArg3, ROut>> tMetaRecursiveFunction<RArg1, RArg2, RArg3, ROut>(RHint<RArg1, RArg2, RArg3, ROut> _, Func<DynamicAddress<MetaFunction<RArg1, RArg2, RArg3, ROut>>, DynamicAddress<RArg1>, DynamicAddress<RArg2>, DynamicAddress<RArg3>, IToken<ROut>> tokenFunction)
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where RArg3 : class, ResObj
             where ROut : class, ResObj
         {
-            var vs = new VariableIdentifier<MetaFunction<RArg1, RArg2, RArg3, ROut>>();
-            var (v1, v2, v3) = (new VariableIdentifier<RArg1>(), new VariableIdentifier<RArg2>(), new VariableIdentifier<RArg3>());
+            var vs = new DynamicAddress<MetaFunction<RArg1, RArg2, RArg3, ROut>>();
+            var (v1, v2, v3) = (new DynamicAddress<RArg1>(), new DynamicAddress<RArg2>(), new DynamicAddress<RArg3>());
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, IdentifierC = v3, Token = tokenFunction(vs, v1, v2, v3) });
         }
 
@@ -257,12 +257,12 @@ namespace FourZeroOne.Core.TokenSyntax
         {
             return new(new() { SelfIdentifier = new(), Token = token });
         }
-        public static Variable<R> tAsVariable<R>(this IToken<R> token, out VariableIdentifier<R> ident) where R : class, ResObj
+        public static Variable<R> tAsVariable<R>(this IToken<R> token, out DynamicAddress<R> ident) where R : class, ResObj
         {
             ident = new();
             return new Variable<R>(ident, token);
         }
-        public static Reference<R> tRef<R>(this VariableIdentifier<R> ident) where R : class, ResObj
+        public static Reference<R> tRef<R>(this DynamicAddress<R> ident) where R : class, ResObj
         { return new(ident); }
         
         public static IfElse<R> tIfTrue<R>(this IToken<Bool> condition, RHint<R> _, TokenStructure.IfElse<R> block) where R : class, ResObj
@@ -286,7 +286,7 @@ namespace FourZeroOne.Core.TokenSyntax
         /// </summary>
         public static Tokens.Multi.GetIndex<R> tGetIndex<R>(this IToken<Resolution.IMulti<R>> token, IToken<Number> index) where R : class, ResObj
         { return new(token, index); }
-        public static Macros.Multi.Map<RIn, ROut> tMap<RIn, ROut>(this IToken<Resolution.IMulti<RIn>> source, Func<VariableIdentifier<RIn>, IToken<ROut>> mapFunction)
+        public static Macros.Multi.Map<RIn, ROut> tMap<RIn, ROut>(this IToken<Resolution.IMulti<RIn>> source, Func<DynamicAddress<RIn>, IToken<ROut>> mapFunction)
             where RIn : class, ResObj
             where ROut : class, ResObj
         {

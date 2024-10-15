@@ -8,192 +8,10 @@ namespace FourZeroOne.Core.Resolutions
     using ResObj = Resolution.IResolution;
     using Token;
     using Resolution;
+    using Resolution.Unsafe;
 
     namespace Objects
     {
-        namespace Board
-        {
-            using FourZeroOne.Resolution.Board;
-            using Objects;
-            public sealed record Coordinates : NoOp
-            {
-                public required int R { get; init; }
-                public required int U { get; init; }
-                public required int D { get; init; }
-                public int this[int i] => i switch
-                {
-                    0 => R,
-                    1 => U,
-                    2 => D,
-                    _ => throw new System.IndexOutOfRangeException("Attempted to index Coordinates out of 0..2 range.")
-                };
-                public override string ToString() => $"({R}.{U}.{D})";
-                public Coordinates Add(Coordinates b) => new()
-                {
-                    R = R + b.R,
-                    U = U + b.U,
-                    D = D + b.D,
-                };
-                public Coordinates ScalarManipulate(System.Func<int, int> scalarFunction) => new()
-                {
-                    R = scalarFunction(R),
-                    U = scalarFunction(U),
-                    D = scalarFunction(D)
-                };
-            }
-            public sealed record CoordinateArea : NoOp, IMulti<Coordinates>
-            {
-                public IEnumerable<Coordinates> Values => Offsets.Map(x => x.Add(Center));
-                public int Count => _offsets.Count;
-                public required IEnumerable<Coordinates> Offsets { get => _offsets.Elements; init => _offsets = new() { Elements = value }; }
-                public Updater<IEnumerable<Coordinates>> dOffsets { init => Offsets = value(Offsets); }
-                public required Coordinates Center { get; init; }
-                public Updater<Coordinates> dCenter { init => Center = value(Center); }
-                public CoordinateArea()
-                {
-                    _offsets = new() { Elements = [] };
-                }
-
-                private PList<Coordinates> _offsets;
-            }
-            public sealed record Hex : StateObject<Hex>, IPositioned
-            {
-                public required Coordinates Position { get; init; }
-                public Updater<Coordinates> dPosition { init => Position = value(Position); }
-                
-                public Hex() : base() { }
-                public override Hex GetAtState(IState state)
-                {
-                    return state.Board.Hexes[this].Unwrap();
-                }
-                public override IState SetAtState(IState state)
-                {
-                    return state with
-                    {
-                        dBoard = Q => Q with
-                        {
-                            dHexes = Q => Q with
-                            {
-                                dElements = E => E.Also(this.Yield())
-                            }
-                        }
-                    };
-                }
-                public override IState RemoveAtState(IState state)
-                {
-                    return state with
-                    {
-                        dBoard = Q => Q with
-                        {
-                            dHexes = D => D with
-                            {
-                                dElements = E => E.ExceptBy(D.IndexGenerator(this).Yield(), D.IndexGenerator)
-                            }
-                        }
-                    };
-                }
-
-                public override bool ResEqual(IResolution? other)
-                {
-                    return (other is Hex h && h.Position.ResEqual(Position));
-                }
-            }
-            //DEV - with the addition of the HexID/UnitID objects, perhaps StateObjects just require a GetID() instead of GetAtState() and SetAtState().
-            public sealed record Unit : StateObject<Unit>, IPositioned
-            {
-                public readonly int UUID;
-                // We could totally make HP and Owner (and even position) into components.
-                // Why should we? Why shouldn't we.
-                public required Number HP { get; init; }
-                public Updater<Number> dHP { init => HP = value(HP); }
-                public required Coordinates Position { get; init; }
-                public Updater<Coordinates> dPosition { init => Position = value(Position); }
-                public required Player Owner { get; init; }
-                public Updater<Player> dOwner { init => Owner = value(Owner); }
-                public Unit(int id) : base()
-                {
-                    UUID = id;
-                }
-                public override bool ResEqual(IResolution? other)
-                {
-                    return (other is Unit u && UUID == u.UUID);
-                }
-
-                public override Unit GetAtState(IState state)
-                {
-                    return state.Board.Units[this].Unwrap();
-                }
-                public override IState SetAtState(IState state)
-                {
-                    return state with
-                    {
-                        dBoard = Q => Q with
-                        {
-                            dUnits = Q => Q with
-                            {
-                                dElements = E => E.Also(this.Yield())
-                            }
-                        }
-                    };
-                }
-                public override IState RemoveAtState(IState state)
-                {
-                    return state with
-                    {
-                        dBoard = Q => Q with
-                        {
-                            dUnits = D => D with
-                            {
-                                //REFACTOR: A new IndexedSet or something so this doesnt have to happen.
-                                // Also PIndexedSet<I, T> should map to a PSet<T>,
-                                dElements = E => E.ExceptBy(D.IndexGenerator(this).Yield(), D.IndexGenerator)
-                            }
-                        }
-                    };
-                }
-
-            }
-            public sealed record Player : StateObject<Player>
-            {
-                public readonly int UUID;
-                public Player(int id) : base()
-                {
-                    UUID = id;
-                }
-
-                public override Player GetAtState(IState state)
-                {
-                    return state.Board.Players[this].Unwrap();
-                }
-
-                public override IState SetAtState(IState state)
-                {
-                    return state with
-                    {
-                        dBoard = Q => Q with
-                        {
-                            dPlayers = Q => Q with
-                            {
-                                dElements = E => E.Also(this.Yield())
-                            }
-                        }
-                    };
-                }
-                public override IState RemoveAtState(IState state)
-                {
-                    return state with
-                    {
-                        dBoard = Q => Q with
-                        {
-                            dPlayers = D => D with
-                            {
-                                dElements = E => E.ExceptBy(D.IndexGenerator(this).Yield(), D.IndexGenerator)
-                            }
-                        }
-                    };
-                }
-            }
-        }
         public sealed record Number : NoOp
         {
             public required int Value { get; init; }
@@ -208,9 +26,6 @@ namespace FourZeroOne.Core.Resolutions
             public static implicit operator Bool(bool value) => new() { IsTrue = value };
             public override string ToString() => $"{IsTrue}";
         }
-
-        // This is stupid, this is stupid, this is stupid.
-        // DONT ADD TUPLES CHALLENGE (VERY HARD)
         public sealed record NumRange : NoOp, IMulti<Number>
         {
             
@@ -228,133 +43,37 @@ namespace FourZeroOne.Core.Resolutions
     namespace Instructions
     {
         using Objects;
-
-        namespace Board
+        public sealed record Assign<R> : Instruction where R : class, ResObj
         {
-            using b = Objects.Board;
-
-            namespace Unit
-            {
-                using static _.InternalUtil;
-                public sealed record HPChange : Instruction
-                {
-                    public required b.Unit Subject { get; init; }
-                    public Updater<b.Unit> dSubject { init => Subject = value(Subject); }
-                    public required Number SetTo { get; init; }
-                    public Updater<Number> dSetTo { init => SetTo = value(SetTo); }
-                    public HPChange() { }
-                    public override IState ChangeState(IState state) => ChangeUnit(state, Subject, x => x with { HP = SetTo });
-                }
-                public sealed record PositionChange : Instruction
-                {
-                    public required b.Unit Subject { get; init; }
-                    public Updater<b.Unit> dSubject { init => Subject = value(Subject); }
-                    public required b.Coordinates SetTo { get; init; }
-                    public Updater<b.Coordinates> dSetTo { init => SetTo = value(SetTo); }
-                    public PositionChange() { }
-                    public override IState ChangeState(IState state) => ChangeUnit(state, Subject, x => x with { Position = SetTo });
-                }
-                public sealed record OwnerChange : Instruction
-                {
-                    public required b.Unit Subject { get; init; }
-                    public Updater<b.Unit> dSubject { init => Subject = value(Subject); }
-                    public required b.Player SetTo { get; init; }
-                    public Updater<b.Player> dSetTo { init => SetTo = value(SetTo); }
-                    public OwnerChange() { }
-                    public override IState ChangeState(IState state) => ChangeUnit(state, Subject, x => x with { Owner = SetTo });
-                }
-            }
-
-            namespace _
-            {
-                public static class InternalUtil
-                {
-                    public static IState ChangeUnit(IState state, b.Unit unit, Func<b.Unit, b.Unit> change)
-                    {
-                        return change(unit).SetAtState(state);
-                    }
-                }
-            }
-        }
-
-        namespace Component
-        {
-            public sealed record Insert<H> : Instruction where H : IHasComponents<H>
-            {
-                public required H ComponentHolder { get; init; }
-                public required Multi<FourZeroOne.Resolution.Unsafe.IComponentFor<H>> Components { get; init; }
-
-                public override IState ChangeState(IState context)
-                {
-                    return ComponentHolder
-                        .WithComponents(Components.Values)
-                        .SetAtState(context);
-                }
-            }
-            public sealed record Remove<H> : Instruction where H : IHasComponents<H>
-            {
-                public required H ComponentHolder { get; init; }
-                public required Multi<FourZeroOne.Resolution.Unsafe.IComponentIdentifier> Identifiers { get; init; }
-
-                public override IState ChangeState(IState context)
-                {
-                    return ComponentHolder
-                        .WithoutComponents(Identifiers.Values)
-                        .SetAtState(context);
-                }
-            }
-        }
-        
-        public sealed record Declare : Instruction
-        {
-            public required FourZeroOne.Resolution.Unsafe.IStateTracked Subject { get; init; }
+            public required IStateAddress<R> Address { get; init; }
+            public required R Subject { get; init; }
             public override IState ChangeState(IState context)
             {
-                return Subject.SetAtState(context);
+                return context.WithObjects([(Address, Subject)]);
             }
         }
-        public sealed record Undeclare : Instruction
+        public sealed record Redact : Instruction
         {
-            public required FourZeroOne.Resolution.Unsafe.IStateTracked Subject { get; init; }
+            public required IStateAddress Address { get; init; }
             public override IState ChangeState(IState context)
             {
-                return Subject.RemoveAtState(context);
+                return context.WithClearedAddresses([Address]);
             }
-        }
-        public sealed record VariableAssign<R> : Instruction where R : class, ResObj
-        {
-            public readonly VariableIdentifier<R> Identifier;
-            public required IOption<R> Object { get; init; }
-            public Updater<IOption<R>> dObject { init => Object = value(Object); }
-            public VariableAssign(VariableIdentifier<R> identifier)
-            {
-                Identifier = identifier;
-            }
-            public override IState ChangeState(IState state) => state with
-            {
-                dVariables = Q => Q with
-                {
-                    dElements = Q => Q.Also(((Token.Unsafe.VariableIdentifier)Identifier, (IOption<ResObj>)Object).Yield())
-                }
-            };
-            public override string ToString() => $"{Identifier}<-{Object}";
         }
         public sealed record RuleAdd : Instruction
         {
             public required Rule.IRule Rule { get; init; }
-            public Updater<Rule.IRule> dRule { init => Rule = value(Rule); }
-
-            public override IState ChangeState(IState state) => state with
+            public override IState ChangeState(IState state)
             {
-                dRules = Q => Q with { dElements = Q => Q.Also(Rule.Yield()) }
-            };
+                return state.WithRules([Rule]);
+            }
         }
     }
     namespace Boxed
     {
         public sealed record MetaFunction<R> : NoOp where R : class, ResObj
         {
-            public required VariableIdentifier <MetaFunction<R>> SelfIdentifier { get; init; }
+            public required DynamicAddress <MetaFunction<R>> SelfIdentifier { get; init; }
             public required IToken<R> Token { get; init; }
             public override string ToString() => $"{SelfIdentifier}()-> {{{Token}}}";
         }
@@ -362,8 +81,8 @@ namespace FourZeroOne.Core.Resolutions
             where RArg1 : class, ResObj
             where ROut : class, ResObj
         {
-            public required VariableIdentifier <MetaFunction<RArg1, ROut>> SelfIdentifier { get; init; }
-            public required VariableIdentifier<RArg1> IdentifierA { get; init; }
+            public required DynamicAddress <MetaFunction<RArg1, ROut>> SelfIdentifier { get; init; }
+            public required DynamicAddress<RArg1> IdentifierA { get; init; }
             public required IToken<ROut> Token { get; init; }
             public override string ToString() => $"{SelfIdentifier}({IdentifierA})-> {{{Token}}}";
         }
@@ -372,9 +91,9 @@ namespace FourZeroOne.Core.Resolutions
             where RArg2 : class, ResObj
             where ROut : class, ResObj
         {
-            public required VariableIdentifier <MetaFunction<RArg1, RArg2, ROut>> SelfIdentifier { get; init; }
-            public required VariableIdentifier<RArg1> IdentifierA { get; init; }
-            public required VariableIdentifier<RArg2> IdentifierB { get; init; }
+            public required DynamicAddress <MetaFunction<RArg1, RArg2, ROut>> SelfIdentifier { get; init; }
+            public required DynamicAddress<RArg1> IdentifierA { get; init; }
+            public required DynamicAddress<RArg2> IdentifierB { get; init; }
             public required IToken<ROut> Token { get; init; }
             public override string ToString() => $"({IdentifierA}, {IdentifierB})-> {SelfIdentifier}{{{Token}}}";
         }
@@ -384,10 +103,10 @@ namespace FourZeroOne.Core.Resolutions
             where RArg3 : class, ResObj
             where ROut : class, ResObj
         {
-            public required VariableIdentifier <MetaFunction<RArg1, RArg2, RArg3, ROut>> SelfIdentifier { get; init; }
-            public required VariableIdentifier<RArg1> IdentifierA { get; init; }
-            public required VariableIdentifier<RArg2> IdentifierB { get; init; }
-            public required VariableIdentifier<RArg3> IdentifierC { get; init; }
+            public required DynamicAddress <MetaFunction<RArg1, RArg2, RArg3, ROut>> SelfIdentifier { get; init; }
+            public required DynamicAddress<RArg1> IdentifierA { get; init; }
+            public required DynamicAddress<RArg2> IdentifierB { get; init; }
+            public required DynamicAddress<RArg3> IdentifierC { get; init; }
             public required IToken<ROut> Token { get; init; }
             public override string ToString() => $"({IdentifierA}, {IdentifierB}, {IdentifierC})-> {SelfIdentifier}{{{Token}}}";
         }
@@ -425,6 +144,16 @@ namespace FourZeroOne.Core.Resolutions
         {
             Identity = identity;
         }
+    }
+    public sealed record DynamicAddress<R> : NoOp, IStateAddress<R> where R : class, ResObj
+    {
+        private readonly int _id;
+
+        public DynamicAddress()
+        {
+            _id = _idAssigner++;
+        }
+        private static int _idAssigner = 0;
     }
     public sealed record Multi<R> : Resolution, IMulti<R> where R : class, ResObj
     {

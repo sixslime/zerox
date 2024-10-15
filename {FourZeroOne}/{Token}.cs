@@ -17,15 +17,6 @@ namespace FourZeroOne.Token
         // "Resolve(IOption<ResObj>[]...)"
         public ITask<IOption<R>> Resolve(IRuntime runtime, IOption<ResObj>[] args);
     }
-    
-    public sealed record VariableIdentifier<R> : Unsafe.VariableIdentifier where R : class, ResObj
-    {
-        public VariableIdentifier() : base() { }
-        public override string ToString()
-        {
-            return $"{_value.ToBase("yfpgcrlaoeuidhtnszqjkxbmwsv".ToUpper())}";
-        }
-    }
     public abstract record Token<R> : IToken<R> where R : class, ResObj
     {
         public Unsafe.IToken[] ArgTokens => _argTokens;
@@ -269,17 +260,5 @@ namespace FourZeroOne.Token.Unsafe
     public interface IHasArg2 : IHasArg1 { }
     public interface IHasArg3 : IHasArg2 { }
 
-    public abstract record VariableIdentifier
-    {
-        public VariableIdentifier()
-        {
-            _value = _assigner;
-            _assigner++;
-        }
-        public virtual bool Equals(VariableIdentifier? other) => other is not null && _value == other._value;
-        public override int GetHashCode() => _value.GetHashCode();
-        protected static int _assigner = 0;
-        protected readonly int _value;
-    }
 
 }

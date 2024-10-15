@@ -28,7 +28,7 @@ namespace FourZeroOne.Core.Proxies
 
     public sealed record ToBoxedFunction<TOrig, R> : Proxy<TOrig, r.Boxed.MetaFunction<R>> where TOrig : IToken where R : class, ResObj
     {
-        public ToBoxedFunction(IProxy<TOrig, R> proxy, VariableIdentifier<r.Boxed.MetaFunction<R>> idSelf)
+        public ToBoxedFunction(IProxy<TOrig, R> proxy, DynamicAddress<r.Boxed.MetaFunction<R>> idSelf)
         {
             _functionProxy = proxy;
             _vSelf = idSelf;
@@ -38,14 +38,14 @@ namespace FourZeroOne.Core.Proxies
             return new Tokens.Fixed<r.Boxed.MetaFunction<R>>(new() { Token = _functionProxy.Realize(original, rule), SelfIdentifier = _vSelf });
         }
         private readonly IProxy<TOrig, R> _functionProxy;
-        private readonly VariableIdentifier<r.Boxed.MetaFunction<R>> _vSelf;
+        private readonly DynamicAddress<r.Boxed.MetaFunction<R>> _vSelf;
     }
     public sealed record ToBoxedFunction<TOrig, RArg1, ROut> : Proxy<TOrig, r.Boxed.MetaFunction<RArg1, ROut>>
         where TOrig : IToken
         where RArg1 : class, ResObj
         where ROut : class, ResObj
     {
-        public ToBoxedFunction(IProxy<TOrig, ROut> proxy, VariableIdentifier<r.Boxed.MetaFunction<RArg1, ROut>> idSelf, VariableIdentifier<RArg1> id1)
+        public ToBoxedFunction(IProxy<TOrig, ROut> proxy, DynamicAddress<r.Boxed.MetaFunction<RArg1, ROut>> idSelf, DynamicAddress<RArg1> id1)
         {
             _functionProxy = proxy;
             _vId1 = id1;
@@ -57,8 +57,8 @@ namespace FourZeroOne.Core.Proxies
             { Token = _functionProxy.Realize(original, rule), SelfIdentifier = _vSelf, IdentifierA = _vId1 });
         }
         private readonly IProxy<TOrig, ROut> _functionProxy;
-        private readonly VariableIdentifier<r.Boxed.MetaFunction<RArg1, ROut>> _vSelf;
-        private readonly VariableIdentifier<RArg1> _vId1;
+        private readonly DynamicAddress<r.Boxed.MetaFunction<RArg1, ROut>> _vSelf;
+        private readonly DynamicAddress<RArg1> _vId1;
     }
     public sealed record ToBoxedFunction<TOrig, RArg1, RArg2, ROut> : Proxy<TOrig, r.Boxed.MetaFunction<RArg1, RArg2, ROut>>
         where TOrig : IToken
@@ -66,7 +66,7 @@ namespace FourZeroOne.Core.Proxies
         where RArg2 : class, ResObj
         where ROut : class, ResObj
     {
-        public ToBoxedFunction(IProxy<TOrig, ROut> proxy, VariableIdentifier<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> idSelf, VariableIdentifier<RArg1> id1, VariableIdentifier<RArg2> id2)
+        public ToBoxedFunction(IProxy<TOrig, ROut> proxy, DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> idSelf, DynamicAddress<RArg1> id1, DynamicAddress<RArg2> id2)
         {
             _functionProxy = proxy;
             _vId1 = id1;
@@ -79,9 +79,9 @@ namespace FourZeroOne.Core.Proxies
             { Token = _functionProxy.Realize(original, rule), SelfIdentifier = _vSelf, IdentifierA = _vId1, IdentifierB = _vId2 });
         }
         private readonly IProxy<TOrig, ROut> _functionProxy;
-        private readonly VariableIdentifier<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> _vSelf;
-        private readonly VariableIdentifier<RArg1> _vId1;
-        private readonly VariableIdentifier<RArg2> _vId2;
+        private readonly DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> _vSelf;
+        private readonly DynamicAddress<RArg1> _vId1;
+        private readonly DynamicAddress<RArg2> _vId2;
     }
     public sealed record ToBoxedFunction<TOrig, RArg1, RArg2, RArg3, ROut> : Proxy<TOrig, r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>
         where TOrig : IToken
@@ -90,7 +90,7 @@ namespace FourZeroOne.Core.Proxies
         where RArg3 : class, ResObj
         where ROut : class, ResObj
     {
-        public ToBoxedFunction(IProxy<TOrig, ROut> proxy, VariableIdentifier<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> idSelf, VariableIdentifier<RArg1> id1, VariableIdentifier<RArg2> id2, VariableIdentifier<RArg3> id3)
+        public ToBoxedFunction(IProxy<TOrig, ROut> proxy, DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> idSelf, DynamicAddress<RArg1> id1, DynamicAddress<RArg2> id2, DynamicAddress<RArg3> id3)
         {
             _functionProxy = proxy;
             _vSelf = idSelf;
@@ -104,10 +104,10 @@ namespace FourZeroOne.Core.Proxies
             { Token = _functionProxy.Realize(original, rule), SelfIdentifier = _vSelf, IdentifierA = _vId1, IdentifierB = _vId2, IdentifierC = _vId3 });
         }
         private readonly IProxy<TOrig, ROut> _functionProxy;
-        private readonly VariableIdentifier<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> _vSelf;
-        private readonly VariableIdentifier<RArg1> _vId1;
-        private readonly VariableIdentifier<RArg2> _vId2;
-        private readonly VariableIdentifier<RArg3> _vId3;
+        private readonly DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> _vSelf;
+        private readonly DynamicAddress<RArg1> _vId1;
+        private readonly DynamicAddress<RArg2> _vId2;
+        private readonly DynamicAddress<RArg3> _vId3;
     }
 
     public sealed record CombinerTransform<TNew, TOrig, RArg, ROut> : Proxy<TOrig, ROut>
@@ -157,7 +157,7 @@ namespace FourZeroOne.Core.Proxies
         where TOrig : IToken
         where R : class, ResObj
     {
-        public Variable(VariableIdentifier<R> identifier, IProxy<TOrig, R> proxy)
+        public Variable(DynamicAddress<R> identifier, IProxy<TOrig, R> proxy)
         {
             _identifier = identifier;
             _objectProxy = proxy;
@@ -167,7 +167,7 @@ namespace FourZeroOne.Core.Proxies
             return new Tokens.Variable<R>(_identifier, _objectProxy.Realize(original, rule));
         }
 
-        private readonly VariableIdentifier<R> _identifier;
+        private readonly DynamicAddress<R> _identifier;
         private readonly IProxy<TOrig, R> _objectProxy;
     }
 
