@@ -352,20 +352,20 @@ namespace FourZeroOne.Core.Tokens
                     ).AsITask();
             }
         }
-        public record Insert<H> : PureFunction<H, IMulti<Resolution.Unsafe.IComponentFor<H>>, r.Instructions.Component.Insert<H>> where H : class, IHasComponents<H>
+        public record Insert<H> : PureFunction<H, IMulti<FourZeroOne.Resolution.Unsafe.IComponentFor<H>>, r.Instructions.Component.Insert<H>> where H : class, IHasComponents<H>
         {
-            public Insert(IToken<H> holder, IToken<IMulti<Resolution.Unsafe.IComponentFor<H>>> components) : base(holder, components) { }
+            public Insert(IToken<H> holder, IToken<IMulti<FourZeroOne.Resolution.Unsafe.IComponentFor<H>>> components) : base(holder, components) { }
 
-            protected override r.Instructions.Component.Insert<H> EvaluatePure(H holder, IMulti<Resolution.Unsafe.IComponentFor<H>> components)
+            protected override r.Instructions.Component.Insert<H> EvaluatePure(H holder, IMulti<FourZeroOne.Resolution.Unsafe.IComponentFor<H>> components)
             {
                 return new() { ComponentHolder = holder, Components = new() { Values = components.Values } };
             }
         }
-        public record Remove<H> : PureFunction<H, IMulti<Resolution.Unsafe.IComponentIdentifier>, r.Instructions.Component.Remove<H>> where H : class, IHasComponents<H>
+        public record Remove<H> : PureFunction<H, IMulti<FourZeroOne.Resolution.Unsafe.IComponentIdentifier>, r.Instructions.Component.Remove<H>> where H : class, IHasComponents<H>
         {
-            public Remove(IToken<H> holder, IToken<IMulti<Resolution.Unsafe.IComponentIdentifier>> identifiers) : base(holder, identifiers) { }
+            public Remove(IToken<H> holder, IToken<IMulti<FourZeroOne.Resolution.Unsafe.IComponentIdentifier>> identifiers) : base(holder, identifiers) { }
 
-            protected override r.Instructions.Component.Remove<H> EvaluatePure(H holder, IMulti<Resolution.Unsafe.IComponentIdentifier> identifiers)
+            protected override r.Instructions.Component.Remove<H> EvaluatePure(H holder, IMulti<FourZeroOne.Resolution.Unsafe.IComponentIdentifier> identifiers)
             {
                 return new() { ComponentHolder = holder, Identifiers = new() { Values = identifiers.Values } };
             }

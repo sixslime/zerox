@@ -16,7 +16,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     {
         namespace Move
         {
-            public sealed record Numerical : Composition
+            public sealed record Numerical : Resolution
             {
                 public override IEnumerable<IInstruction> Instructions => [new PositionChange() { Subject = Unit, SetTo = Destination }];
                 public required b.Unit Unit { get; init; }

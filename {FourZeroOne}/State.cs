@@ -10,6 +10,8 @@ namespace FourZeroOne
     using ResObj = Resolution.IResolution;
     using r = Core.Resolutions;
     using rb = Core.Resolutions.Objects.Board;
+    
+
     public record State
     {
         public required PMap<VariableIdentifier, IOption<ResObj>> Variables { get; init; }
@@ -19,6 +21,10 @@ namespace FourZeroOne
         public required BoardState Board { get; init; }
         public Updater<BoardState> dBoard { init => Board = value(Board); }
         public State WithResolution(ResObj resolution) { return resolution.Instructions.AccumulateInto(this, (state, instruction) => instruction.ChangeState(state)); }
+        public IOption<R> GetObject<R>(Resolution.IStateAddress<R> address) where R : class, Resolution.IStateTracked<R>
+        {
+
+        }
     }
     public record BoardState
     {

@@ -13,7 +13,7 @@ namespace FourZeroOne.Core.Resolutions
     {
         namespace Board
         {
-            using Resolution.Board;
+            using FourZeroOne.Resolution.Board;
             using Objects;
             public sealed record Coordinates : NoOp
             {
@@ -282,7 +282,7 @@ namespace FourZeroOne.Core.Resolutions
             public sealed record Insert<H> : Instruction where H : IHasComponents<H>
             {
                 public required H ComponentHolder { get; init; }
-                public required Multi<Resolution.Unsafe.IComponentFor<H>> Components { get; init; }
+                public required Multi<FourZeroOne.Resolution.Unsafe.IComponentFor<H>> Components { get; init; }
 
                 public override State ChangeState(State context)
                 {
@@ -294,7 +294,7 @@ namespace FourZeroOne.Core.Resolutions
             public sealed record Remove<H> : Instruction where H : IHasComponents<H>
             {
                 public required H ComponentHolder { get; init; }
-                public required Multi<Resolution.Unsafe.IComponentIdentifier> Identifiers { get; init; }
+                public required Multi<FourZeroOne.Resolution.Unsafe.IComponentIdentifier> Identifiers { get; init; }
 
                 public override State ChangeState(State context)
                 {
@@ -307,7 +307,7 @@ namespace FourZeroOne.Core.Resolutions
         
         public sealed record Declare : Instruction
         {
-            public required Resolution.Unsafe.IStateTracked Subject { get; init; }
+            public required FourZeroOne.Resolution.Unsafe.IStateTracked Subject { get; init; }
             public override State ChangeState(State context)
             {
                 return Subject.SetAtState(context);
@@ -315,7 +315,7 @@ namespace FourZeroOne.Core.Resolutions
         }
         public sealed record Undeclare : Instruction
         {
-            public required Resolution.Unsafe.IStateTracked Subject { get; init; }
+            public required FourZeroOne.Resolution.Unsafe.IStateTracked Subject { get; init; }
             public override State ChangeState(State context)
             {
                 return Subject.RemoveAtState(context);
@@ -418,7 +418,15 @@ namespace FourZeroOne.Core.Resolutions
         }
 
     }
-    public sealed record Multi<R> : Composition, IMulti<R> where R : class, ResObj
+    public sealed record Address<H, R> : NoOp, IAddress<H, R> where H : IComposition<H> where R : IResolution
+    {
+        public string Identity { get; private init; }
+        public Address(string identity)
+        {
+            Identity = identity;
+        }
+    }
+    public sealed record Multi<R> : Resolution, IMulti<R> where R : class, ResObj
     {
         public override IEnumerable<IInstruction> Instructions => Values.Map(x => x.Instructions).Flatten();
         public int Count => _list.Count;
