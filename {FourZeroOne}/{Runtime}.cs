@@ -14,7 +14,7 @@ namespace FourZeroOne.Runtime
     using Token;
     public interface IRuntime
     {
-        public State GetState();
+        public IState GetState();
         public Task<Resolved> Run();
         public ITask<IOption<R>> MetaExecute<R>(IToken<R> token, IEnumerable<(Token.Unsafe.VariableIdentifier, Resolved)> args) where R : class, ResObj;
         public ITask<IOption<IEnumerable<R>>> ReadSelection<R>(IEnumerable<R> from, int count) where R : class, ResObj;
@@ -23,9 +23,9 @@ namespace FourZeroOne.Runtime
     public abstract class FrameSaving : Runtime.IRuntime
     {
         
-        public FrameSaving(State startingState, IToken program)
+        public FrameSaving(IState startingState, IToken program)
         {
-            _stateStack = new LinkedStack<State>(startingState).AsSome();
+            _stateStack = new LinkedStack<IState>(startingState).AsSome();
             _operationStack = new LinkedStack<IToken>(program).AsSome();
             _resolutionStack = new None<LinkedStack<Resolved>>();
             _runThread = ControlledFlow.Resolved((Resolved)(new None<ResObj>()));
@@ -44,7 +44,7 @@ namespace FourZeroOne.Runtime
         {
             _runThread.Resolve(resolution);
         }
-        public State GetState() => _stateStack.Check(out var state) ? state.Value : throw new Exception("[FrameSaving Runtime] No state exists on state stack?");
+        public IState GetState() => _stateStack.Check(out var state) ? state.Value : throw new Exception("[FrameSaving Runtime] No state exists on state stack?");
         public ITask<IOption<R>> MetaExecute<R>(IToken<R> token, IEnumerable<(Token.Unsafe.VariableIdentifier, Resolved)> args) where R : class, ResObj
         {
             var node = _operationStack.Unwrap();
@@ -101,7 +101,7 @@ namespace FourZeroOne.Runtime
         {
             public required IToken Token { get; init; }
             public required IOption<Resolved> Resolution { get; init; }
-            public required IOption<LinkedStack<State>> StateStack { get; init; }
+            public required IOption<LinkedStack<IState>> StateStack { get; init; }
             public required IOption<LinkedStack<IToken>> OperationStack { get; init; }
             public required IOption<LinkedStack<Resolved>> ResolutionStack { get; init; }
         }
@@ -255,7 +255,7 @@ namespace FourZeroOne.Runtime
         private ControlledFlow<Resolved> _runThread;
         // I guess _appliedRuleStack could be a stack of normal IEnumerables, but PList has P in it
         private IOption<LinkedStack<PList<Rule.IRule>>> _appliedRuleStack;
-        private IOption<LinkedStack<State>> _stateStack;
+        private IOption<LinkedStack<IState>> _stateStack;
         private IOption<LinkedStack<Frame>> _frameStack;
         private IOption<LinkedStack<IToken>> _operationStack;
         private IOption<LinkedStack<Resolved>> _resolutionStack;

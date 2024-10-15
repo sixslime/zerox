@@ -9,7 +9,7 @@ namespace FourZeroOne
 {
     public readonly struct ProgramSource
     {
-        public State StartingState { get; init; }
+        public IState StartingState { get; init; }
         public Token.IToken<Core.Resolutions.Objects.Board.Player> Expression { get; init; }
     }
 }

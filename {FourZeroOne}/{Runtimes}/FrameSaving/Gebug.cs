@@ -13,7 +13,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
         private int _depth = 0;
         private bool _macroExpanding = false;
         private string DepthPad(int depth) => "| ".Yield(depth).AccumulateInto("", (msg, x) => msg + x);
-        public Gebug(State startingState, IToken program) : base(startingState, program)
+        public Gebug(IState startingState, IToken program) : base(startingState, program)
         {
             _currentFrame = new None<LinkedStack<Frame>>();
         }

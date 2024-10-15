@@ -16,7 +16,7 @@ namespace FourZeroOne.Resolution
     }
     public interface IInstruction : IResolution
     {
-        public State ChangeState(State context);
+        public IState ChangeState(IState context);
     }
     public interface IAddress<in H, out R> : Unsafe.IAddress<H>, Unsafe.IAddressOf<R> where H : IComposition<H> where R : IResolution { }
     public interface IComposition<Self> : IResolution where Self : IComposition<Self>
@@ -30,18 +30,11 @@ namespace FourZeroOne.Resolution
         public IEnumerable<R> Values { get; }
         public int Count { get; }
     }
-    public interface IStateTracked<Self> : Unsafe.IStateTracked where Self : IStateTracked<Self>
-    {
-        public Self GetAtState(State state);
-    }
 
-    public interface IStateAddress<out R> : IResolution where R : IResolution
-    {
-        public string Identity { get; }
-    }
+    public interface IStateAddress<out R> : IResolution where R : IResolution { }
     public abstract record Instruction : Resolution, IInstruction
     {
-        public abstract State ChangeState(State previousState);
+        public abstract IState ChangeState(IState previousState);
         public override IEnumerable<IInstruction> Instructions => [this];
     }
     public abstract record Resolution : IResolution
@@ -53,14 +46,6 @@ namespace FourZeroOne.Resolution
     public abstract record NoOp : Resolution
     {
         public override IEnumerable<IInstruction> Instructions => [];
-    }
-
-    public abstract record StateObject<Self> : NoOp, IStateTracked<Self> where Self : StateObject<Self>
-    {
-        public abstract Self GetAtState(State state);
-        public abstract State SetAtState(State state);
-        public abstract State RemoveAtState(State state);
-        public Unsafe.IStateTracked GetAtStateUnsafe(State state) => GetAtState(state);
     }
     namespace Board
     {
@@ -85,10 +70,8 @@ namespace FourZeroOne.Resolution.Unsafe
     }
     public interface IAddressOf<out R> : IAddress where R : IResolution { }
     public interface IAddress<in H> : IAddress where H : IComposition<H> { }
-    public interface IStateTracked : IResolution
+    public interface IStateAddress
     {
-        public IStateTracked GetAtStateUnsafe(State state);
-        public State SetAtState(State state);
-        public State RemoveAtState(State state);
+        public string Identity { get; }
     }
 }

@@ -108,7 +108,7 @@ public class Tester
         var token_tester = token_test_6;
         var rule_test = CoreP.RuleFor<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tFixed().pDirect(P))));
 
-        var startState = new FourZeroOne.State()
+        var startState = new FourZeroOne.IState()
         {
             Rules = new() { Elements = [] },
             Variables = new() { Elements = [] },
