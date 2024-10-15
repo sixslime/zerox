@@ -45,5 +45,8 @@ namespace FourZeroOne.Libraries.Axiom.Macros
         // numericalmove(Units, Range, Func<Hex, Hex> modifier)
         //                               ^ Glorping crazy!
     }
+    // IField<Unit, ro.Number>
     // DEV - instead of changing the checks for the pathfinding, change the hex that is checked!!
+    // DEV - ITS ALL COMPONENTS !!!!!!
+    // ITS ALL FUNCTIONAL !!!!!
 }
