@@ -14,6 +14,7 @@ namespace FourZeroOne.Core.Proxies
     using r = Resolutions;
     using ro = Resolutions.Objects;
     using ResObj = Resolution.IResolution;
+    using Resolution;
     public sealed record Direct<TOrig, R> : Proxy<TOrig, R> where TOrig : IToken where R : class, ResObj
     {
         public Direct(IToken<R> token)
@@ -143,7 +144,7 @@ namespace FourZeroOne.Core.Proxies
         where ROut : class, ResObj
     {
         public IProxy<TOrig, ROut> SubTokenProxy { get; init; }
-        public SubEnvironment(IProxy<TOrig, Resolution.IMulti<ResObj>> environment)
+        public SubEnvironment(IProxy<TOrig, IMulti<ResObj>> environment)
         {
             _envModifiers = environment;
         }
@@ -151,7 +152,7 @@ namespace FourZeroOne.Core.Proxies
         {
             return new Tokens.SubEnvironment<ROut>(_envModifiers.Realize(original, rule), SubTokenProxy.Realize(original, rule));
         }
-        private readonly IProxy<TOrig, Resolution.IMulti<ResObj>> _envModifiers;
+        private readonly IProxy<TOrig, IMulti<ResObj>> _envModifiers;
     }
     public sealed record Variable<TOrig, R> : Proxy<TOrig, r.Instructions.VariableAssign<R>>
         where TOrig : IToken

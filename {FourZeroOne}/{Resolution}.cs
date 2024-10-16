@@ -31,7 +31,7 @@ namespace FourZeroOne.Resolution
         public int Count { get; }
     }
 
-    public interface IStateAddress<out R> : IResolution where R : IResolution { }
+    public interface IStateAddress<out R> where R : IResolution { }
     public abstract record Instruction : Resolution, IInstruction
     {
         public abstract IState ChangeState(IState previousState);
@@ -47,13 +47,15 @@ namespace FourZeroOne.Resolution
     {
         public override IEnumerable<IInstruction> Instructions => [];
     }
-    namespace Board
+    public sealed record DynamicAddress<R> : IStateAddress<R> where R : class, IResolution
     {
-        public interface IPositioned : IResolution
+        private readonly int _id;
+
+        public DynamicAddress()
         {
-            public Core.Resolutions.Objects.Board.Coordinates Position { get; }
+            _id = _idAssigner++;
         }
-        
+        private static int _idAssigner = 0;
     }
 }
 namespace FourZeroOne.Resolution.Unsafe

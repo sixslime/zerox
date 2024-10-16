@@ -145,16 +145,6 @@ namespace FourZeroOne.Core.Resolutions
             Identity = identity;
         }
     }
-    public sealed record DynamicAddress<R> : NoOp, IStateAddress<R> where R : class, ResObj
-    {
-        private readonly int _id;
-
-        public DynamicAddress()
-        {
-            _id = _idAssigner++;
-        }
-        private static int _idAssigner = 0;
-    }
     public sealed record Multi<R> : Resolution, IMulti<R> where R : class, ResObj
     {
         public override IEnumerable<IInstruction> Instructions => Values.Map(x => x.Instructions).Flatten();

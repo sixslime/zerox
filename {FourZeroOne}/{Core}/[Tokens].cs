@@ -16,15 +16,16 @@ namespace FourZeroOne.Core.Tokens
     using r = Resolutions;
     using ro = Resolutions.Objects;
     using Runtime;
+    using Resolution;
     namespace IO
     {
         namespace Select
         {
-            public sealed record One<R> : Function<Resolution.IMulti<R>, R> where R : class, ResObj
+            public sealed record One<R> : Function<IMulti<R>, R> where R : class, ResObj
             {
-                public One(IToken<Resolution.IMulti<R>> from) : base(from) { }
+                public One(IToken<IMulti<R>> from) : base(from) { }
 
-                protected async override ITask<IOption<R>> Evaluate(IRuntime runtime, IOption<Resolution.IMulti<R>> fromOpt)
+                protected async override ITask<IOption<R>> Evaluate(IRuntime runtime, IOption<IMulti<R>> fromOpt)
                 {
                     return fromOpt.Check(out var from)
                         ? (await runtime.ReadSelection(from.Values, 1)).RemapAs(x => x.First().NullToNone()).Press()
@@ -34,11 +35,11 @@ namespace FourZeroOne.Core.Tokens
             }
 
             //make range instead of single int count
-            public sealed record Multiple<R> : Function<Resolution.IMulti<R>, ro.Number, r.Multi<R>> where R : class, ResObj
+            public sealed record Multiple<R> : Function<IMulti<R>, ro.Number, r.Multi<R>> where R : class, ResObj
             {
-                public Multiple(IToken<Resolution.IMulti<R>> from, IToken<ro.Number> count) : base(from, count) { }
+                public Multiple(IToken<IMulti<R>> from, IToken<ro.Number> count) : base(from, count) { }
 
-                protected override async ITask<IOption<r.Multi<R>>> Evaluate(IRuntime runtime, IOption<Resolution.IMulti<R>> fromOpt, IOption<ro.Number> countOpt)
+                protected override async ITask<IOption<r.Multi<R>>> Evaluate(IRuntime runtime, IOption<IMulti<R>> fromOpt, IOption<ro.Number> countOpt)
                 {
                     return (fromOpt.Check(out var from) && countOpt.Check(out var count))
                         ? (await runtime.ReadSelection(from.Values, count.Value)).RemapAs(v => new r.Multi<R>() { Values = v })
@@ -121,10 +122,10 @@ namespace FourZeroOne.Core.Tokens
     namespace Multi
     {
         
-        public sealed record Contains<R> : Function<Resolution.IMulti<R>, R, ro.Bool> where R : class, ResObj
+        public sealed record Contains<R> : Function<IMulti<R>, R, ro.Bool> where R : class, ResObj
         {
-            public Contains(IToken<Resolution.IMulti<R>> multi, IToken<R> element) : base(multi, element) { }
-            protected override ITask<IOption<ro.Bool>> Evaluate(IRuntime runtime, IOption<Resolution.IMulti<R>> in1, IOption<R> in2)
+            public Contains(IToken<IMulti<R>> multi, IToken<R> element) : base(multi, element) { }
+            protected override ITask<IOption<ro.Bool>> Evaluate(IRuntime runtime, IOption<IMulti<R>> in1, IOption<R> in2)
             {
                 ro.Bool o = (in1.Check(out var multi) && in2.Check(out var element))
                     ? new() { IsTrue = multi.Values.Contains(element) }
@@ -132,25 +133,25 @@ namespace FourZeroOne.Core.Tokens
                 return Task.FromResult(o.AsSome()).AsITask();
             }
         }
-        public sealed record Union<R> : PureCombiner<Resolution.IMulti<R>, r.Multi<R>> where R : class, ResObj
+        public sealed record Union<R> : PureCombiner<IMulti<R>, r.Multi<R>> where R : class, ResObj
         {
-            public Union(IEnumerable<IToken<Resolution.IMulti<R>>> elements) : base(elements) { }
-            public Union(params IToken<Resolution.IMulti<R>>[] elements) : base(elements) { }
-            protected override r.Multi<R> EvaluatePure(IEnumerable<Resolution.IMulti<R>> inputs)
+            public Union(IEnumerable<IToken<IMulti<R>>> elements) : base(elements) { }
+            public Union(params IToken<IMulti<R>>[] elements) : base(elements) { }
+            protected override r.Multi<R> EvaluatePure(IEnumerable<IMulti<R>> inputs)
             {
                 return new() { Values = inputs.Map(x => x.Values).Flatten() };
             }
             protected override IOption<string> CustomToString()
             {
-                List<IToken<Resolution.IMulti<R>>> argList = [.. Args];
+                List<IToken<IMulti<R>>> argList = [.. Args];
                 return $"[{argList[0]}{argList[1..].AccumulateInto("", (msg, v) => $"{msg}, {v}")}]".AsSome();
             }
         }
-        public sealed record Intersection<R> : PureCombiner<Resolution.IMulti<R>, r.Multi<R>> where R : class, ResObj
+        public sealed record Intersection<R> : PureCombiner<IMulti<R>, r.Multi<R>> where R : class, ResObj
         {
-            public Intersection(IEnumerable<IToken<Resolution.IMulti<R>>> sets) : base(sets) { }
-            public Intersection(params IToken<Resolution.IMulti<R>>[] sets) : base(sets) { }
-            protected override r.Multi<R> EvaluatePure(IEnumerable<Resolution.IMulti<R>> inputs)
+            public Intersection(IEnumerable<IToken<IMulti<R>>> sets) : base(sets) { }
+            public Intersection(params IToken<IMulti<R>>[] sets) : base(sets) { }
+            protected override r.Multi<R> EvaluatePure(IEnumerable<IMulti<R>> inputs)
             {
                 var iter = inputs.GetEnumerator();
                 if (!iter.MoveNext()) return new() { Values = [] };
@@ -163,14 +164,14 @@ namespace FourZeroOne.Core.Tokens
             }
             protected override IOption<string> CustomToString()
             {
-                List<IToken<Resolution.IMulti<R>>> argList = [.. Args];
+                List<IToken<IMulti<R>>> argList = [.. Args];
                 return $"{argList[0]}{argList[1..].AccumulateInto("", (msg, v) => $"{msg}I{v}")}".AsSome();
             }
         }
-        public sealed record Exclusion<R> : PureFunction<Resolution.IMulti<R>, Resolution.IMulti<R>, r.Multi<R>> where R : class, ResObj
+        public sealed record Exclusion<R> : PureFunction<IMulti<R>, IMulti<R>, r.Multi<R>> where R : class, ResObj
         {
-            public Exclusion(IToken<Resolution.IMulti<R>> from, IToken<Resolution.IMulti<R>> exclude) : base(from, exclude) { }
-            protected override r.Multi<R> EvaluatePure(Resolution.IMulti<R> in1, Resolution.IMulti<R> in2)
+            public Exclusion(IToken<IMulti<R>> from, IToken<IMulti<R>> exclude) : base(from, exclude) { }
+            protected override r.Multi<R> EvaluatePure(IMulti<R> in1, IMulti<R> in2)
             {
                 return new() { Values = in1.Values.Where(x => !in2.Values.HasMatch(y => y.ResEqual(x))) };
             }
@@ -186,10 +187,10 @@ namespace FourZeroOne.Core.Tokens
             }
             protected override IOption<string> CustomToString() => $"^{Arg1}".AsSome();
         }
-        public sealed record Count : PureFunction<Resolution.IMulti<ResObj>, ro.Number>
+        public sealed record Count : PureFunction<IMulti<ResObj>, ro.Number>
         {
-            public Count(IToken<Resolution.IMulti<ResObj>> of) : base(of) { }
-            protected override ro.Number EvaluatePure(Resolution.IMulti<ResObj> in1)
+            public Count(IToken<IMulti<ResObj>> of) : base(of) { }
+            protected override ro.Number EvaluatePure(IMulti<ResObj> in1)
             {
                 return new() { Value = in1.Count };
             }
@@ -199,10 +200,10 @@ namespace FourZeroOne.Core.Tokens
         /// 1 based because it makes things easier.
         /// </summary>
         /// <typeparam name="R"></typeparam>
-        public sealed record GetIndex<R> : Function<Resolution.IMulti<R>, ro.Number, R> where R : class, ResObj
+        public sealed record GetIndex<R> : Function<IMulti<R>, ro.Number, R> where R : class, ResObj
         {
-            public GetIndex(IToken<Resolution.IMulti<R>> from, IToken<ro.Number> index) : base(from, index) { }
-            protected override ITask<IOption<R>> Evaluate(IRuntime _, IOption<Resolution.IMulti<R>> in1, IOption<ro.Number> in2)
+            public GetIndex(IToken<IMulti<R>> from, IToken<ro.Number> index) : base(from, index) { }
+            protected override ITask<IOption<R>> Evaluate(IRuntime _, IOption<IMulti<R>> in1, IOption<ro.Number> in2)
             {
                 var o = in1.Check(out var from) && in2.Check(out var index)
                     ? from.Values.At(index.Value - 1)
@@ -212,7 +213,25 @@ namespace FourZeroOne.Core.Tokens
             protected override IOption<string> CustomToString() => $"{Arg1}[{Arg2}]".AsSome();
         }
     }
-   
+    namespace Data
+    {
+        public sealed record Get<RAddress, RObj> : Function<RAddress, RObj> where RAddress : class, IStateAddress<RObj>, ResObj where RObj : class, ResObj
+        {
+            public Get(IToken<RAddress> address) : base(address) { }
+            protected override ITask<IOption<RObj>> Evaluate(IRuntime runtime, IOption<RAddress> in1)
+            {
+                return Task.FromResult(in1.RemapAs(x => runtime.GetState().GetObject(x)).Press()).AsITask();
+            }
+        }
+        public sealed record Set<RAddress, RObj> : PureFunction<RAddress, RObj, r.Instructions.Assign<RObj>> where RAddress : class, IStateAddress<RObj>, ResObj where RObj : class, ResObj
+        {
+            public Set(IToken<RAddress> address, IToken<RObj> obj) : base(address, obj) { }
+            protected override r.Instructions.Assign<RObj> EvaluatePure(RAddress in1, RObj in2)
+            {
+                return new() { Address = in1, Subject = in2 };
+            }
+        }
+    }
 
     public record Execute<R> : Function<r.Boxed.MetaFunction<R>, R>
         where R : class, ResObj
@@ -307,11 +326,11 @@ namespace FourZeroOne.Core.Tokens
         protected override IOption<string> CustomToString() => $"<${Arg1} ${Arg2} ${Arg3}>".AsSome();
     }
     
-    public record SubEnvironment<ROut> : PureFunction<Resolution.IMulti<ResObj>, ROut, ROut>
+    public record SubEnvironment<ROut> : PureFunction<IMulti<ResObj>, ROut, ROut>
         where ROut : class, ResObj
     {
-        public SubEnvironment(IToken<Resolution.IMulti<ResObj>> envModifiers, IToken<ROut> evalToken) : base(envModifiers, evalToken) { }
-        protected override ROut EvaluatePure(Resolution.IMulti<ResObj> _, ROut in2)
+        public SubEnvironment(IToken<IMulti<ResObj>> envModifiers, IToken<ROut> evalToken) : base(envModifiers, evalToken) { }
+        protected override ROut EvaluatePure(IMulti<ResObj> _, ROut in2)
         {
             return in2;
         }
@@ -364,37 +383,7 @@ namespace FourZeroOne.Core.Tokens
         }
         protected override IOption<string> CustomToString() => $"if {Arg1} then {Arg2} else {Arg3}".AsSome();
     }
-    public sealed record Declare : PureFunction<Resolution.Unsafe.IStateTracked, r.Instructions.Declare>
-    {
-        public Declare(IToken<Resolution.Unsafe.IStateTracked> subject) : base(subject) { }
-        protected override r.Instructions.Declare EvaluatePure(Resolution.Unsafe.IStateTracked in1)
-        {
-            return new() { Subject = in1 };
-        }
-    }
-    public sealed record Undeclare : PureFunction<Resolution.Unsafe.IStateTracked, r.Instructions.Undeclare>
-    {
-        public Undeclare(IToken<Resolution.Unsafe.IStateTracked> subject) : base(subject) { }
-        protected override r.Instructions.Undeclare EvaluatePure(Resolution.Unsafe.IStateTracked in1)
-        {
-            return new() { Subject = in1 };
-        }
-    }
-    public sealed record Variable<R> : Token<r.Instructions.VariableAssign<R>> where R : class, ResObj
-    {
-        public Variable(DynamicAddress<R> identifier, IToken<R> token) : base(token)
-        {
-            _identifier = identifier;
-        }
-        public override ITask<IOption<r.Instructions.VariableAssign<R>>> Resolve(IRuntime runtime, IOption<ResObj>[] args)
-        {
-            var refObject = (IOption<R>)args[0];
-            return Task.FromResult(refObject.RemapAs(x => new r.Instructions.VariableAssign<R>(_identifier) { Object = refObject })).AsITask();
-        }
-        protected override IOption<string> CustomToString() => $"{_identifier}={ArgTokens[0]}".AsSome();
-
-        private readonly DynamicAddress<R> _identifier;
-    }
+ 
     public sealed record Rule<R> : PureValue<r.Instructions.RuleAdd> where R : class, ResObj
     {
         public Rule(Rule.IRule rule)
@@ -428,23 +417,16 @@ namespace FourZeroOne.Core.Tokens
         protected override ITask<IOption<R>> Evaluate(IRuntime _) { return Task.FromResult(new None<R>()).AsITask(); }
         protected override IOption<string> CustomToString() => "nolla".AsSome();
     }
-    public sealed record Reference<R> : Value<R> where R : class, ResObj
+    public sealed record DynamicReference<R> : Value<R> where R : class, ResObj
     {
-        public Reference(DynamicAddress<R> toIdentifier) => _toIdentifier = toIdentifier;
+        public DynamicReference(DynamicAddress<R> referenceAddress) => _referenceAddress = referenceAddress;
 
         protected override ITask<IOption<R>> Evaluate(IRuntime runtime)
         {
-            var o = (runtime.GetState().Variables[_toIdentifier] is IOption<R> val) ? val :
-                throw new Exception($"Reference token resolved to non-existent or wrongly-typed object.\n" +
-                $"Identifier: {_toIdentifier}\n" +
-                $"Expected: {typeof(R).Name}\n" +
-                $"Recieved: {runtime.GetState().Variables[_toIdentifier]}\n" +
-                $"Current Scope:\n" +
-                $"{runtime.GetState().Variables.Elements.AccumulateInto("", (msg, x) => msg + $"> '{x.key}' : {x.val}\n")}");
-            return Task.FromResult(o).AsITask();
+            return Task.FromResult(runtime.GetState().GetObject(_referenceAddress)).AsITask();
         }
-        protected override IOption<string> CustomToString() => $"&{_toIdentifier}".AsSome();
+        protected override IOption<string> CustomToString() => $"&{_referenceAddress}".AsSome();
 
-        private readonly DynamicAddress<R> _toIdentifier;
+        private readonly DynamicAddress<R> _referenceAddress;
     }
 }

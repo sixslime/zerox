@@ -262,7 +262,7 @@ namespace FourZeroOne.Core.TokenSyntax
             ident = new();
             return new Variable<R>(ident, token);
         }
-        public static Reference<R> tRef<R>(this DynamicAddress<R> ident) where R : class, ResObj
+        public static DynamicReference<R> tRef<R>(this DynamicAddress<R> ident) where R : class, ResObj
         { return new(ident); }
         
         public static IfElse<R> tIfTrue<R>(this IToken<Bool> condition, RHint<R> _, TokenStructure.IfElse<R> block) where R : class, ResObj
