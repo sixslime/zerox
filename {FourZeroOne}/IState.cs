@@ -15,6 +15,7 @@ namespace FourZeroOne
         public IOption<R> GetObject<R>(Resolution.IStateAddress<R> address) where R : class, ResObj;
         public IState WithRules(IEnumerable<Rule.IRule> rules);
         public IState WithObjects<R>(IEnumerable<(Resolution.IStateAddress<R> address, R obj)> insertions) where R : class, ResObj;
+        public IState WithObjectsUnsafe(IEnumerable<(Resolution.Unsafe.IStateAddress address, ResObj obj)> insertions);
         public IState WithClearedAddresses(IEnumerable<Resolution.Unsafe.IStateAddress> removals);
     }
 

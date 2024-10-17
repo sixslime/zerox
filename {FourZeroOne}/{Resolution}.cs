@@ -31,7 +31,7 @@ namespace FourZeroOne.Resolution
         public int Count { get; }
     }
 
-    public interface IStateAddress<out R> where R : IResolution { }
+    public interface IStateAddress<out R> : Unsafe.IStateAddress where R : IResolution { }
     public abstract record Instruction : Resolution, IInstruction
     {
         public abstract IState ChangeState(IState previousState);
