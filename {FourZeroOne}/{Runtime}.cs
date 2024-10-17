@@ -20,7 +20,7 @@ namespace FourZeroOne.Runtime
         public ITask<IOption<IEnumerable<R>>> ReadSelection<R>(IEnumerable<R> from, int count) where R : class, ResObj;
     }
 
-    public abstract class FrameSaving : Runtime.IRuntime
+    public abstract class FrameSaving : IRuntime
     {
         
         public FrameSaving(IState startingState, IToken program)
