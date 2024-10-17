@@ -142,7 +142,7 @@ namespace FourZeroOne.Runtime
             {
                 // _stateStack should never be empty, depth 0 is the starting state.
                 var currentStateNode = _stateStack.Unwrap();
-                var rulesToApply = currentStateNode.Value.Rules.Elements;
+                var rulesToApply = currentStateNode.Value.Rules;
 
                 if (_appliedRuleStack.Check(out var appliedRuleNode))
                 {

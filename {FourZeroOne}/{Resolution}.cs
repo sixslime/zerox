@@ -18,12 +18,12 @@ namespace FourZeroOne.Resolution
     {
         public IState ChangeState(IState context);
     }
-    public interface IAddress<in H, out R> : Unsafe.IAddress<H>, Unsafe.IAddressOf<R> where H : IComposition<H> where R : IResolution { }
+    public interface IComponentIdentifier<in H, out R> : Unsafe.IComponentIdentifier<H>, Unsafe.IComponentIdentifierOf<R> where H : IComposition<H> where R : IResolution { }
     public interface IComposition<Self> : IResolution where Self : IComposition<Self>
     {
-        public Self WithComponents<R>(IEnumerable<(IAddress<Self, R>,  R)> components) where R : IResolution;
-        public Self WithoutComponents(IEnumerable<Unsafe.IAddress> addresses);
-        public IOption<R> GetComponent<R>(IAddress<Self, R> address) where R : IResolution;
+        public Self WithComponents<R>(IEnumerable<(IComponentIdentifier<Self, R>,  R)> components) where R : IResolution;
+        public Self WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier> addresses);
+        public IOption<R> GetComponent<R>(IComponentIdentifier<Self, R> address) where R : IResolution;
     }
     public interface IMulti<out R> : IResolution where R : IResolution
     {
@@ -57,6 +57,15 @@ namespace FourZeroOne.Resolution
         }
         private static int _idAssigner = 0;
     }
+    public sealed record StaticComponentIdentifier<H, R> : IComponentIdentifier<H, R> where H : IComposition<H> where R : class, IResolution
+    {
+        public string Identity => _identifier;
+        public StaticComponentIdentifier(string fixedIdentity)
+        {
+            _identifier = fixedIdentity;
+        }
+        private string _identifier;
+    }
 }
 namespace FourZeroOne.Resolution.Unsafe
 {
@@ -64,13 +73,13 @@ namespace FourZeroOne.Resolution.Unsafe
     
     public interface IComposition : IResolution
     {
-        public IOption<IResolution> GetComponentUnsafe(IAddress address);
+        public IOption<IResolution> GetComponentUnsafe(IComponentIdentifier address);
     }
-    public interface IAddress : IResolution
+    public interface IComponentIdentifier
     { 
         public string Identity { get; }
     }
-    public interface IAddressOf<out R> : IAddress where R : IResolution { }
-    public interface IAddress<in H> : IAddress where H : IComposition<H> { }
+    public interface IComponentIdentifierOf<out R> : IComponentIdentifier where R : IResolution { }
+    public interface IComponentIdentifier<in H> : IComponentIdentifier where H : IComposition<H> { }
     public interface IStateAddress { }
 }

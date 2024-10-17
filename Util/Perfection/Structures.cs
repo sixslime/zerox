@@ -189,4 +189,6 @@ namespace Perfection
         private int _cachedIndex;
         private readonly List<T> _list;
     }
+
+    // DEV - bro, we need HAMTs bro. just trust me bro... bro... kiss me...
 }

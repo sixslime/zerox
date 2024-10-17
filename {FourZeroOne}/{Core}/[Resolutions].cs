@@ -137,7 +137,7 @@ namespace FourZeroOne.Core.Resolutions
         }
 
     }
-    public sealed record Address<H, R> : NoOp, IAddress<H, R> where H : IComposition<H> where R : IResolution
+    public sealed record Address<H, R> : NoOp, IComponentIdentifier<H, R> where H : IComposition<H> where R : IResolution
     {
         public string Identity { get; private init; }
         public Address(string identity)
