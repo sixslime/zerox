@@ -44,7 +44,7 @@ namespace FourZeroOne.Runtime
         {
             _runThread.Resolve(resolution);
         }
-        public IState GetState() => _stateStack.Check(out var state) ? state.Value : throw new Exception("[FrameSaving Runtime] No state exists on state stack?");
+        public IState GetState() => _stateStack.Check(out var state) ? state.Value : throw MakeInternalError("No state exists on state stack?");
         public ITask<IOption<R>> MetaExecute<R>(IToken<R> token, IEnumerable<(Resolution.Unsafe.IStateAddress, Resolved)> metaPointers) where R : class, ResObj
         {
             var node = _operationStack.Unwrap();
@@ -152,8 +152,9 @@ namespace FourZeroOne.Runtime
                 var ruledToken = ApplyRules(operationNode.Value, rulesToApply, out var appliedRules);
                 rulesToApply = rulesToApply.Except(appliedRules.Elements.Map(x => x.rule));
 
-                for (int macroExpansions = 0; ruledToken is Macro.Unsafe.IMacro macro && macroExpansions < MAX_MACRO_EXPANSION_DEPTH; macroExpansions++)
+                for (int macroExpansions = 0; ruledToken is Macro.Unsafe.IMacro macro; macroExpansions++)
                 {
+                    if (macroExpansions > MAX_MACRO_EXPANSION_DEPTH) throw MakeInternalError("Max macro expansion depth exceeded (usually the result of a macro expansion loop).");
                     var expanded = macro.ExpandUnsafe();
                     RecieveMacroExpansion(macro, expanded, operationNode.Depth);
                     ruledToken = ApplyRules(expanded, rulesToApply, out var appliedPostMacro);
@@ -225,7 +226,7 @@ namespace FourZeroOne.Runtime
         }
         private static LinkedStack<T> PopFromStack<T>(ref IOption<LinkedStack<T>> stack)
         {
-            var o = stack.Check(out var popped) ? popped : throw new System.Exception("[FrameSaving Runtime] tried to pop from empty LinkedStack.");
+            var o = stack.Check(out var popped) ? popped : throw MakeInternalError("Tried to pop from empty LinkedStack.");
             if (stack.Check(out var node)) stack = node.Link;
             return o;
         }
@@ -244,6 +245,10 @@ namespace FourZeroOne.Runtime
             }
             appliedRules = new() { Elements = appliedRulesList };
             return o;
+        }
+        private static Exception MakeInternalError(string msg)
+        {
+            return new Exception($"[FrameSaving Runtime] {msg}");
         }
         private ControlledFlow<Resolved> _runThread;
         // I guess _appliedRuleStack could be a stack of normal IEnumerables, but PList has P in it
