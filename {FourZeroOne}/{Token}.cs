@@ -76,7 +76,7 @@ namespace FourZeroOne.Token
         protected PureValue() : base() { }
         protected sealed override ITask<IOption<R>> Evaluate(IRuntime _)
         {
-            return Task.FromResult(EvaluatePure().AsSome()).AsITask();
+            return EvaluatePure().AsSome().ToCompletedITask();
         }
         protected abstract R EvaluatePure();
     }
@@ -182,7 +182,7 @@ namespace FourZeroOne.Token
         {
             IOption<ROut> o = (in1.CheckNone(out var a)) ? new None<ROut>() :
                 EvaluatePure(a).AsSome();
-            return Task.FromResult(o).AsITask();
+            return o.ToCompletedITask();
         }
     }
     public abstract record PureFunction<RArg1, RArg2, ROut> : Function<RArg1, RArg2, ROut>
@@ -196,7 +196,7 @@ namespace FourZeroOne.Token
         {
             IOption<ROut> o = (in1.CheckNone(out var a) || in2.CheckNone(out var b)) ? new None<ROut>() :
                 EvaluatePure(a, b).AsSome();
-            return Task.FromResult(o).AsITask();
+            return o.ToCompletedITask();
         }
     }
     public abstract record PureFunction<RArg1, RArg2, RArg3, ROut> : Function<RArg1, RArg2, RArg3, ROut>
@@ -212,7 +212,7 @@ namespace FourZeroOne.Token
         {
             IOption<ROut> o = (in1.CheckNone(out var a) || in2.CheckNone(out var b) || in3.CheckNone(out var c)) ? new None<ROut>() :
                 EvaluatePure(a, b, c).AsSome();
-            return Task.FromResult(o).AsITask();
+            return o.ToCompletedITask();
         }
     }
     public abstract record PureCombiner<RArg, ROut> : Combiner<RArg, ROut>
@@ -222,7 +222,7 @@ namespace FourZeroOne.Token
 
         protected abstract ROut EvaluatePure(IEnumerable<RArg> inputs);
         protected PureCombiner(IEnumerable<IToken<RArg>> tokens) : base(tokens) { }
-        protected sealed override ITask<IOption<ROut>> Evaluate(IRuntime _, IEnumerable<IOption<RArg>> inputs) => Task.FromResult(EvaluatePure(inputs.Where(x => x.IsSome()).Map(x => x.Unwrap())).AsSome()).AsITask();
+        protected sealed override ITask<IOption<ROut>> Evaluate(IRuntime _, IEnumerable<IOption<RArg>> inputs) => EvaluatePure(inputs.Where(x => x.IsSome()).Map(x => x.Unwrap())).AsSome().ToCompletedITask();
     }
     // ----
     #endregion

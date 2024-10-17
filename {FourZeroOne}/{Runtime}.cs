@@ -66,7 +66,7 @@ namespace FourZeroOne.Runtime
                 }
             }).AsSome();
             _discontinueEval = true;
-            return Task.FromResult(new None<R>()).AsITask();
+            return new None<R>().ToCompletedITask();
 
             // This thread should be ceased, as it is part of the eval thread.
 

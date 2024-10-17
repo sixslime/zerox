@@ -137,14 +137,6 @@ namespace FourZeroOne.Core.Resolutions
         }
 
     }
-    public sealed record Address<H, R> : NoOp, IComponentIdentifier<H, R> where H : IComposition<H> where R : IResolution
-    {
-        public string Identity { get; private init; }
-        public Address(string identity)
-        {
-            Identity = identity;
-        }
-    }
     public sealed record Multi<R> : Resolution, IMulti<R> where R : class, ResObj
     {
         public override IEnumerable<IInstruction> Instructions => Values.Map(x => x.Instructions).Flatten();

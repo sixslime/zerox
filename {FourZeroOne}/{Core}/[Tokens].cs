@@ -130,7 +130,7 @@ namespace FourZeroOne.Core.Tokens
                 ro.Bool o = (in1.Check(out var multi) && in2.Check(out var element))
                     ? new() { IsTrue = multi.Values.Contains(element) }
                     : new() { IsTrue = false };
-                return Task.FromResult(o.AsSome()).AsITask();
+                return o.AsSome().ToCompletedITask();
             }
         }
         public sealed record Union<R> : PureCombiner<IMulti<R>, r.Multi<R>> where R : class, ResObj
@@ -208,7 +208,7 @@ namespace FourZeroOne.Core.Tokens
                 var o = in1.Check(out var from) && in2.Check(out var index)
                     ? from.Values.At(index.Value - 1)
                     : new None<R>();
-                return Task.FromResult(o).AsITask();
+                return o.ToCompletedITask();
             }
             protected override IOption<string> CustomToString() => $"{Arg1}[{Arg2}]".AsSome();
         }
@@ -220,19 +220,49 @@ namespace FourZeroOne.Core.Tokens
             public Get(IToken<RAddress> address) : base(address) { }
             protected override ITask<IOption<RObj>> Evaluate(IRuntime runtime, IOption<RAddress> in1)
             {
-                return Task.FromResult(in1.RemapAs(x => runtime.GetState().GetObject(x)).Press()).AsITask();
+                return in1.RemapAs(x => runtime.GetState().GetObject(x)).Press().ToCompletedITask();
             }
         }
-        public sealed record Set<RAddress, RObj> : PureFunction<RAddress, RObj, r.Instructions.Assign<RObj>> where RAddress : class, IStateAddress<RObj>, ResObj where RObj : class, ResObj
+        public sealed record Insert<RAddress, RObj> : PureFunction<RAddress, RObj, r.Instructions.Assign<RObj>> where RAddress : class, IStateAddress<RObj>, ResObj where RObj : class, ResObj
         {
-            public Set(IToken<RAddress> address, IToken<RObj> obj) : base(address, obj) { }
+            public Insert(IToken<RAddress> address, IToken<RObj> obj) : base(address, obj) { }
             protected override r.Instructions.Assign<RObj> EvaluatePure(RAddress in1, RObj in2)
             {
                 return new() { Address = in1, Subject = in2 };
             }
         }
     }
-    // TODO: components
+    namespace Component
+    {
+        public sealed record Get<H, R> : Token<R> where R : class, ResObj where H : class, IComposition<H>
+        {
+            public Get(IToken<H> holder, IComponentIdentifier<H, R> identifier) : base(holder)
+            {
+                _identifier = identifier;
+            }
+            public override ITask<IOption<R>> Resolve(IRuntime _, IOption<ResObj>[] args)
+            {
+                return args[0].RemapAs(x => ((H)x).GetComponent(_identifier)).Press().ToCompletedITask();
+            }
+            private readonly IComponentIdentifier<H, R> _identifier;
+        }
+        public sealed record Insert<H, R> : Token<R> where R : class, ResObj where H : class, IComposition<H>
+        {
+            public Insert(IToken<H> holder, IToken<R> component, IComponentIdentifier<H, R> identifier) : base(holder, component)
+            {
+                _identifier = identifier;
+            }
+            public override ITask<IOption<R>> Resolve(IRuntime _, IOption<ResObj>[] args)
+            {
+                return (
+                    (args[0].RemapAs(x => (H)x).Check(out var holder) && args[1].RemapAs(x => (R)x).Check(out var component))
+                    ? (IOption<R>) holder.WithComponents([(_identifier, component)]).AsSome()
+                    : new None<R>()
+                    ).ToCompletedITask();
+            }
+            private readonly IComponentIdentifier<H, R> _identifier;
+        }
+    }
     public record Execute<R> : Function<r.Boxed.MetaFunction<R>, R>
         where R : class, ResObj
     {
@@ -242,7 +272,7 @@ namespace FourZeroOne.Core.Tokens
         {
             return in1.Check(out var function)
                 ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome())])
-                : Task.FromResult(new None<R>()).AsITask();
+                : new None<R>().ToCompletedITask();
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}:<>;".AsSome();
     }
@@ -256,7 +286,7 @@ namespace FourZeroOne.Core.Tokens
         {
             return in1.Check(out var function) && in2.Check(out var args)
                 ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome()), (function.IdentifierA, args.Arg1)])
-                : Task.FromResult(new None<ROut>()).AsITask();
+                : new None<ROut>().ToCompletedITask();
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2};".AsSome();
     }
@@ -271,7 +301,7 @@ namespace FourZeroOne.Core.Tokens
         {
             return in1.Check(out var function) && in2.Check(out var args)
                 ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome()), (function.IdentifierA, args.Arg1), (function.IdentifierB, args.Arg2)])
-                : Task.FromResult(new None<ROut>()).AsITask();
+                : new None<ROut>().ToCompletedITask();
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2};".AsSome();
     }
@@ -287,7 +317,7 @@ namespace FourZeroOne.Core.Tokens
         {
             return in1.Check(out var function) && in2.Check(out var args)
                 ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome()), (function.IdentifierA, args.Arg1), (function.IdentifierB, args.Arg2), (function.IdentifierC, args.Arg3)])
-                : Task.FromResult(new None<ROut>()).AsITask();
+                : new None<ROut>().ToCompletedITask();
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2};".AsSome();
     }
@@ -298,7 +328,7 @@ namespace FourZeroOne.Core.Tokens
         public ToBoxedArgs(IToken<R1> in1) : base(in1) { }
         protected override ITask<IOption<r.Boxed.MetaArgs<R1>>> Evaluate(IRuntime _, IOption<R1> in1)
         {
-            return Task.FromResult(new r.Boxed.MetaArgs<R1>() { Arg1 = in1 }.AsSome()).AsITask();
+            return new r.Boxed.MetaArgs<R1>() { Arg1 = in1 }.AsSome().ToCompletedITask();
         }
         protected override IOption<string> CustomToString() => $"<${Arg1}>".AsSome();
     }
@@ -309,7 +339,7 @@ namespace FourZeroOne.Core.Tokens
         public ToBoxedArgs(IToken<R1> in1, IToken<R2> in2) : base(in1, in2) { }
         protected override ITask<IOption<r.Boxed.MetaArgs<R1, R2>>> Evaluate(IRuntime _, IOption<R1> in1, IOption<R2> in2)
         {
-            return Task.FromResult(new r.Boxed.MetaArgs<R1, R2>() { Arg1 = in1, Arg2 = in2}.AsSome()).AsITask();
+            return new r.Boxed.MetaArgs<R1, R2>() { Arg1 = in1, Arg2 = in2}.AsSome().ToCompletedITask();
         }
         protected override IOption<string> CustomToString() => $"<${Arg1} ${Arg2}>".AsSome();
     }
@@ -321,7 +351,7 @@ namespace FourZeroOne.Core.Tokens
         public ToBoxedArgs(IToken<R1> in1, IToken<R2> in2, IToken<R3> in3) : base(in1, in2, in3) { }
         protected override ITask<IOption<r.Boxed.MetaArgs<R1, R2, R3>>> Evaluate(IRuntime _, IOption<R1> in1, IOption<R2> in2, IOption<R3> in3)
         {
-            return Task.FromResult(new r.Boxed.MetaArgs<R1, R2, R3>() { Arg1 = in1, Arg2 = in2, Arg3 = in3 }.AsSome()).AsITask();
+            return new r.Boxed.MetaArgs<R1, R2, R3>() { Arg1 = in1, Arg2 = in2, Arg3 = in3 }.AsSome().ToCompletedITask();
         }
         protected override IOption<string> CustomToString() => $"<${Arg1} ${Arg2} ${Arg3}>".AsSome();
     }
@@ -379,7 +409,7 @@ namespace FourZeroOne.Core.Tokens
         public IfElse(IToken<ro.Bool> condition, IToken<r.Boxed.MetaFunction<R>> positive, IToken<r.Boxed.MetaFunction<R>> negative) : base(condition, positive, negative) { }
         protected override ITask<IOption<r.Boxed.MetaFunction<R>>> Evaluate(IRuntime runtime, IOption<ro.Bool> in1, IOption<r.Boxed.MetaFunction<R>> in2, IOption<r.Boxed.MetaFunction<R>> in3)
         {
-            return Task.FromResult(in1.RemapAs(x => x.IsTrue ? in2 : in3).Press() ).AsITask();
+            return in1.RemapAs(x => x.IsTrue ? in2 : in3).Press() .ToCompletedITask();
         }
         protected override IOption<string> CustomToString() => $"if {Arg1} then {Arg2} else {Arg3}".AsSome();
     }
@@ -414,16 +444,19 @@ namespace FourZeroOne.Core.Tokens
     public sealed record Nolla<R> : Value<R> where R : class, ResObj
     {
         public Nolla() { }
-        protected override ITask<IOption<R>> Evaluate(IRuntime _) { return Task.FromResult(new None<R>()).AsITask(); }
+        protected override ITask<IOption<R>> Evaluate(IRuntime _) { return new None<R>().ToCompletedITask(); }
         protected override IOption<string> CustomToString() => "nolla".AsSome();
     }
     public sealed record DynamicReference<R> : Value<R> where R : class, ResObj
     {
-        public DynamicReference(DynamicAddress<R> referenceAddress) => _referenceAddress = referenceAddress;
+        public DynamicReference(DynamicAddress<R> referenceAddress)
+        {
+            _referenceAddress = referenceAddress;
+        }
 
         protected override ITask<IOption<R>> Evaluate(IRuntime runtime)
         {
-            return Task.FromResult(runtime.GetState().GetObject(_referenceAddress)).AsITask();
+            return runtime.GetState().GetObject(_referenceAddress).ToCompletedITask();
         }
         protected override IOption<string> CustomToString() => $"&{_referenceAddress}".AsSome();
 

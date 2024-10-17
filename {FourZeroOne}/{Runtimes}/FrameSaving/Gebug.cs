@@ -89,7 +89,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
         {
             targetFrame = new None<LinkedStack<Frame>>();
             R[] selectables = [.. from];
-            if (selectables.Length < count) return Task.FromResult(new None<IEnumerable<R>>()).AsITask();
+            if (selectables.Length < count) return new None<IEnumerable<R>>().ToCompletedITask();
             string showString =
                 selectables
                 .Enumerate()
@@ -106,7 +106,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
                         continue;
                     targetFrame = _currentFrame.Sequence(x => x.Unwrap().Link).ElementAt(framesBack);
                     _currentFrame = targetFrame;
-                    return Task.FromResult(new None<IEnumerable<R>>()).AsITask();
+                    return new None<IEnumerable<R>>().ToCompletedITask();
                 }
                 int[] selectionIndicies = [.. inputString.Split(" ", StringSplitOptions.RemoveEmptyEntries)
                     .Map(x => int.TryParse(x, out var value) ? value : -1)
@@ -123,7 +123,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
                     Console.WriteLine(showString);
                     continue;
                 }
-                return Task.FromResult(selectionIndicies.Map(x => selectables[x]).AsSome()).AsITask();
+                return selectionIndicies.Map(x => selectables[x]).AsSome().ToCompletedITask();
             }
 
         }
