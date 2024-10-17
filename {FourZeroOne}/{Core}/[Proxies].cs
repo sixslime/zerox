@@ -111,39 +111,70 @@ namespace FourZeroOne.Core.Proxies
         private readonly DynamicAddress<RArg3> _vId3;
     }
 
-    public sealed record CombinerTransform<TNew, TOrig, RArg, ROut> : Proxy<TOrig, ROut>
-        where TOrig : IHasCombinerArgs<RArg>, IToken<ROut>
-        where TNew : Token.ICombiner<RArg, ROut>
-        where RArg : class, ResObj
-        where ROut : class, ResObj
+    
+    namespace SpecialCase
     {
-        public override IToken<ROut> Realize(TOrig original, IOption<Rule.IRule> rule)
+        public sealed record DynamicAssign<TOrig, R> : Proxy<TOrig, r.Instructions.Assign<R>>
+            where TOrig : IToken
+            where R : class, ResObj
         {
-            return (TNew)typeof(TNew).GetConstructor(new Type[] { typeof(IEnumerable<IToken<RArg>>) })
-                .Invoke(new object[] { original.Args.Map(x => RuleApplied(rule, x)) }) ;
+            public DynamicAssign(DynamicAddress<R> address, IProxy<TOrig, R> holderProxy)
+            {
+                _address = address;
+                _objectProxy = holderProxy;
+            }
+            public override IToken<r.Instructions.Assign<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
+            {
+                return new Tokens.DynamicAssign<R>(_address, _objectProxy.Realize(original, rule));
+            }
+
+            private readonly DynamicAddress<R> _address;
+            private readonly IProxy<TOrig, R> _objectProxy;
+        }
+        public sealed record ComponentGet<TOrig, H, R> : Proxy<TOrig, R>
+            where TOrig : IToken
+            where R : class, ResObj
+            where H : class, IComposition<H>
+        {
+            public ComponentGet(IComponentIdentifier<H, R> identifier, IProxy<TOrig, H> proxy)
+            {
+                _identifier = identifier;
+                _holderProxy = proxy;
+            }
+            public override IToken<R> Realize(TOrig original, IOption<Rule.IRule> rule)
+            {
+                return new Tokens.Component.Get<H, R>(_identifier, _holderProxy.Realize(original, rule));
+            }
+            private readonly IComponentIdentifier<H, R> _identifier;
+            private readonly IProxy<TOrig, H> _holderProxy;
+        }
+        public sealed record ComponentInsert<TOrig, H, R> : Proxy<TOrig, R>
+            where TOrig : IToken
+            where R : class, ResObj
+            where H : class, IComposition<H>
+        {
+            public ComponentInsert(IComponentIdentifier<H, R> identifier, IProxy<TOrig, H> holderProxy, IProxy<TOrig, R> componentProxy)
+            {
+                _identifier = identifier;
+                _holderProxy = holderProxy;
+                _componentProxy = componentProxy;
+            }
+            public override IToken<R> Realize(TOrig original, IOption<Rule.IRule> rule)
+            {
+                return new Tokens.Component.Insert<H, R>(_identifier, _holderProxy.Realize(original, rule), _componentProxy.Realize(original, rule));
+            }
+            private readonly IComponentIdentifier<H, R> _identifier;
+            private readonly IProxy<TOrig, H> _holderProxy;
+            private readonly IProxy<TOrig, R> _componentProxy;
         }
     }
 
-    public record Combiner<TNew, TOrig, RArgs, ROut> : FunctionProxy<TOrig, ROut>
-        where TNew : Token.ICombiner<RArgs, ROut>
-        where TOrig : IToken
-        where RArgs : class, ResObj
-        where ROut : class, ResObj
-    {
-        public Combiner(IEnumerable<IProxy<TOrig, RArgs>> proxies) : base(proxies) { }
-
-        protected override IToken<ROut> ConstructFromArgs(TOrig _, List<IToken> tokens)
-        {
-            return (IToken<ROut>)typeof(TNew).GetConstructor(new Type[] { typeof(IEnumerable<IToken<RArgs>>) })
-                .Invoke(new object[] { tokens.Map(x => (IToken<RArgs>)x) });
-        }
-    }
-
+    [Obsolete("This doesn't need to exist.", true)]
     public sealed record SubEnvironment<TOrig, ROut> : Proxy<TOrig, ROut>
         where TOrig : IToken
         where ROut : class, ResObj
     {
-        public IProxy<TOrig, ROut> SubTokenProxy { get; init; }
+        public required IProxy<TOrig, ROut> SubTokenProxy { get; init; }
         public SubEnvironment(IProxy<TOrig, IMulti<ResObj>> environment)
         {
             _envModifiers = environment;
@@ -154,24 +185,7 @@ namespace FourZeroOne.Core.Proxies
         }
         private readonly IProxy<TOrig, IMulti<ResObj>> _envModifiers;
     }
-    public sealed record Variable<TOrig, R> : Proxy<TOrig, r.Instructions.VariableAssign<R>>
-        where TOrig : IToken
-        where R : class, ResObj
-    {
-        public Variable(DynamicAddress<R> identifier, IProxy<TOrig, R> proxy)
-        {
-            _identifier = identifier;
-            _objectProxy = proxy;
-        }
-        public override IToken<r.Instructions.VariableAssign<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
-        {
-            return new Tokens.Variable<R>(_identifier, _objectProxy.Realize(original, rule));
-        }
-
-        private readonly DynamicAddress<R> _identifier;
-        private readonly IProxy<TOrig, R> _objectProxy;
-    }
-
+    [Obsolete("This doesn't need to exist.", true)]
     public sealed record IfElse<TOrig, R> : Proxy<TOrig, r.Boxed.MetaFunction<R>> where TOrig : IToken where R : class, ResObj
     {
         public readonly IProxy<TOrig, ro.Bool> Condition;
@@ -254,6 +268,32 @@ namespace FourZeroOne.Core.Proxies
             return (IToken<ROut>)
                 typeof(TNew).GetConstructor(new Type[] { typeof(IToken<RArg1>), typeof(IToken<RArg2>), typeof(IToken<RArg3>) })
                 .Invoke(tokens.ToArray());
+        }
+    }
+    public record Combiner<TNew, TOrig, RArgs, ROut> : FunctionProxy<TOrig, ROut>
+        where TNew : Token.ICombiner<RArgs, ROut>
+        where TOrig : IToken
+        where RArgs : class, ResObj
+        where ROut : class, ResObj
+    {
+        public Combiner(IEnumerable<IProxy<TOrig, RArgs>> proxies) : base(proxies) { }
+
+        protected override IToken<ROut> ConstructFromArgs(TOrig _, List<IToken> tokens)
+        {
+            return (IToken<ROut>)typeof(TNew).GetConstructor(new Type[] { typeof(IEnumerable<IToken<RArgs>>) })
+                .Invoke(new object[] { tokens.Map(x => (IToken<RArgs>)x) });
+        }
+    }
+    public sealed record CombinerTransform<TNew, TOrig, RArg, ROut> : Proxy<TOrig, ROut>
+        where TOrig : IHasCombinerArgs<RArg>, IToken<ROut>
+        where TNew : Token.ICombiner<RArg, ROut>
+        where RArg : class, ResObj
+        where ROut : class, ResObj
+    {
+        public override IToken<ROut> Realize(TOrig original, IOption<Rule.IRule> rule)
+        {
+            return (TNew)typeof(TNew).GetConstructor(new Type[] { typeof(IEnumerable<IToken<RArg>>) })
+                .Invoke(new object[] { original.Args.Map(x => RuleApplied(rule, x)) });
         }
     }
     // --------

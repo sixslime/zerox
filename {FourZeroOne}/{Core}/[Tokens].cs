@@ -17,6 +17,7 @@ namespace FourZeroOne.Core.Tokens
     using ro = Resolutions.Objects;
     using Runtime;
     using Resolution;
+
     namespace IO
     {
         namespace Select
@@ -236,7 +237,7 @@ namespace FourZeroOne.Core.Tokens
     {
         public sealed record Get<H, R> : Token<R> where R : class, ResObj where H : class, IComposition<H>
         {
-            public Get(IToken<H> holder, IComponentIdentifier<H, R> identifier) : base(holder)
+            public Get(IComponentIdentifier<H, R> identifier, IToken<H> holder) : base(holder)
             {
                 _identifier = identifier;
             }
@@ -248,7 +249,7 @@ namespace FourZeroOne.Core.Tokens
         }
         public sealed record Insert<H, R> : Token<R> where R : class, ResObj where H : class, IComposition<H>
         {
-            public Insert(IToken<H> holder, IToken<R> component, IComponentIdentifier<H, R> identifier) : base(holder, component)
+            public Insert(IComponentIdentifier<H, R> identifier, IToken<H> holder, IToken<R> component) : base(holder, component)
             {
                 _identifier = identifier;
             }
@@ -446,6 +447,19 @@ namespace FourZeroOne.Core.Tokens
         public Nolla() { }
         protected override ITask<IOption<R>> Evaluate(IRuntime _) { return new None<R>().ToCompletedITask(); }
         protected override IOption<string> CustomToString() => "nolla".AsSome();
+    }
+
+    public sealed record DynamicAssign<R> : Token<r.Instructions.Assign<R>> where R : class, ResObj
+    {
+        public DynamicAssign(DynamicAddress<R> address, IToken<R> obj) : base(obj)
+        {
+            _assigningAddress = address;
+        }
+        public override ITask<IOption<r.Instructions.Assign<R>>> Resolve(IRuntime runtime, IOption<ResObj>[] args)
+        {
+            return args[0].RemapAs(x => new r.Instructions.Assign<R>() { Address = _assigningAddress, Subject = (R)x }).ToCompletedITask();
+        }
+        private readonly DynamicAddress<R> _assigningAddress;
     }
     public sealed record DynamicReference<R> : Value<R> where R : class, ResObj
     {
