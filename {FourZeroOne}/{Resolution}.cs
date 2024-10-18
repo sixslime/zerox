@@ -22,7 +22,7 @@ namespace FourZeroOne.Resolution
     public interface IComposition<Self> : IResolution where Self : IComposition<Self>
     {
         public Self WithComponents<R>(IEnumerable<(IComponentIdentifier<Self, R>,  R)> components) where R : IResolution;
-        public Self WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier> addresses);
+        public Self WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<Self>> addresses);
         public IOption<R> GetComponent<R>(IComponentIdentifier<Self, R> address) where R : IResolution;
     }
     public interface IMulti<out R> : IResolution where R : IResolution

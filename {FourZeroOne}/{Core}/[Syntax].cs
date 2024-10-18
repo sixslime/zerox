@@ -247,33 +247,20 @@ namespace FourZeroOne.Core.Syntax
             where H : class, IComposition<H>
             where C : class, ResObj
         { return new(componentIdentifier, holder, component); }
-        public static Tokens.Component.Remove<H> tRemoveComponents<H>(this IToken<H> holder, IToken<r.Multi<Unsafe.IComponentIdentifier>> components)
-            where H : class, IHasComponents<H>
-        { return new(holder, components); }
+        public static Tokens.Component.Without<H> tWithoutComponent<H>(this IToken<H> holder, Resolution.Unsafe.IComponentIdentifier<H> componentIdentifier)
+            where H : class, IComposition<H>
+        { return new(componentIdentifier, holder); }
 
-        public static Tokens.Declare tDeclare(this IToken<Unsafe.IStateTracked> subject)
-        { return new(subject); }
-        public static Tokens.Undeclare tUndeclare(this IToken<Unsafe.IStateTracked> subject)
-        { return new(subject); }
-
-        public static Tokens.Board.Coordinates.Of tGetPosition(this IToken<Board.IPositioned> subject)
-        { return new(subject); }
-
-        public static Tokens.Board.Hex.At tHexAt(this IToken<r.Objects.Board.Coordinates> coordinates)
-        { return new(coordinates); }
-        public static Tokens.Board.Hex.InArea tHexesAt(this IToken<IMulti<r.Objects.Board.Coordinates>> coordinates)
-        { return new(coordinates); }
-
-        public static Tokens.Board.Unit.Get.HP tGetHP(this IToken<r.Objects.Board.Unit> unit)
-        { return new(unit); }
-        public static Tokens.Board.Unit.Get.Owner tGetOwner(this IToken<r.Objects.Board.Unit> unit)
-        { return new(unit); }
-
-        public static Tokens.Board.Unit.Set.Position tSetPosition(this IToken<r.Objects.Board.Unit> unit, IToken<r.Objects.Board.Coordinates> setTo)
-        { return new(unit, setTo); }
-        public static Tokens.Board.Unit.Set.HP tSetHP(this IToken<r.Objects.Board.Unit> unit, IToken<r.Objects.Number> setTo)
-        { return new(unit, setTo); }
-        public static Tokens.Board.Unit.Set.Owner tSetOwner(this IToken<r.Objects.Board.Unit> unit, IToken<r.Objects.Board.Player> setTo)
-        { return new(unit, setTo); }
+        public static Tokens.Data.Insert<RAddress, RObj> tWriteTo<RAddress, RObj>(this IToken<RObj> subject, IToken<RAddress> address)
+            where RAddress : class, IStateAddress<RObj>, ResObj
+            where RObj : class, ResObj
+        { return new(address, subject); }
+        public static Tokens.Data.Get<RAddress, RObj> tGetData<RAddress, RObj>(this IToken<RAddress> address)
+            where RAddress : class, IStateAddress<RObj>, ResObj
+            where RObj : class, ResObj
+        { return new(address); }
+        public static Tokens.Data.Remove<RAddress> tRedact<RAddress>(this IToken<RAddress> address)
+            where RAddress : class, Resolution.Unsafe.IStateAddress, ResObj
+        { return new(address); }
     }
 }

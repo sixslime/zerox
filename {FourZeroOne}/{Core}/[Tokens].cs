@@ -232,7 +232,7 @@ namespace FourZeroOne.Core.Tokens
                 return new() { Address = in1, Subject = in2 };
             }
         }
-        public sealed record Remove<RAddress> : PureFunction<RAddress, r.Instructions.Redact> where RAddress : class, IStateAddress, ResObj
+        public sealed record Remove<RAddress> : PureFunction<RAddress, r.Instructions.Redact> where RAddress : class, Resolution.Unsafe.IStateAddress, ResObj
         {
             public Remove(IToken<RAddress> address) : base(address) { }
             protected override r.Instructions.Redact EvaluatePure(RAddress in1)
