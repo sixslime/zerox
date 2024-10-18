@@ -55,6 +55,7 @@ namespace FourZeroOne.Resolution
         {
             _id = _idAssigner++;
         }
+        public static implicit operator Core.Tokens.DynamicReference<R>(DynamicAddress<R> address) => new(address);
         private static int _idAssigner = 0;
     }
     public sealed record StaticComponentIdentifier<H, R> : IComponentIdentifier<H, R> where H : IComposition<H> where R : class, IResolution

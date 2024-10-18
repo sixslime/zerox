@@ -140,7 +140,7 @@ namespace FourZeroOne.Core.Syntax
             where TOrig : IToken
             where ROut : class, ResObj
         {
-            var vs = new Resolution.DynamicAddress<r.Boxed.MetaFunction<ROut>>();
+            var vs = new DynamicAddress<r.Boxed.MetaFunction<ROut>>();
             return new(metaFunction(), vs);
         }
         public static t.Fixed<r.Boxed.MetaFunction<RArg1, ROut>> tMetaFunction<RArg1, ROut>(RHint<RArg1, ROut> _, Func<DynamicAddress<RArg1>, IToken<ROut>> tokenFunction)
@@ -151,13 +151,13 @@ namespace FourZeroOne.Core.Syntax
             var v1 = new DynamicAddress<RArg1>();
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, Token = tokenFunction(v1) });
         }
-        public static p.ToBoxedFunction<TOrig, RArg1, ROut> pMetaFunction<TOrig, RArg1, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, ROut> __, System.Func<Resolution.DynamicAddress<RArg1>, IProxy<TOrig, ROut>> metaFunction)
+        public static p.ToBoxedFunction<TOrig, RArg1, ROut> pMetaFunction<TOrig, RArg1, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, ROut> __, System.Func<DynamicAddress<RArg1>, IProxy<TOrig, ROut>> metaFunction)
             where TOrig : IToken
             where RArg1 : class, ResObj
             where ROut : class, ResObj
         {
-            var vs = new Resolution.DynamicAddress<r.Boxed.MetaFunction<RArg1, ROut>>();
-            var v1 = new Resolution.DynamicAddress<RArg1>();
+            var vs = new DynamicAddress<r.Boxed.MetaFunction<RArg1, ROut>>();
+            var v1 = new DynamicAddress<RArg1>();
             return new(metaFunction(v1), vs, v1);
         }
         public static t.Fixed<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> tMetaFunction<RArg1, RArg2, ROut>(RHint<RArg1, RArg2, ROut> _, Func<DynamicAddress<RArg1>, DynamicAddress<RArg2>, IToken<ROut>> tokenFunction)
@@ -169,14 +169,14 @@ namespace FourZeroOne.Core.Syntax
             var (v1, v2) = (new DynamicAddress<RArg1>(), new DynamicAddress<RArg2>());
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, Token = tokenFunction(v1, v2) });
         }
-        public static p.ToBoxedFunction<TOrig, RArg1, RArg2, ROut> pMetaFunction<TOrig, RArg1, RArg2, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, ROut> __, System.Func<Resolution.DynamicAddress<RArg1>, Resolution.DynamicAddress<RArg2>, IProxy<TOrig, ROut>> metaFunction)
+        public static p.ToBoxedFunction<TOrig, RArg1, RArg2, ROut> pMetaFunction<TOrig, RArg1, RArg2, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, ROut> __, System.Func<DynamicAddress<RArg1>, DynamicAddress<RArg2>, IProxy<TOrig, ROut>> metaFunction)
             where TOrig : IToken
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where ROut : class, ResObj
         {
-            var vs = new Resolution.DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, ROut>>();
-            var (v1, v2) = (new Resolution.DynamicAddress<RArg1>(), new Resolution.DynamicAddress<RArg2>());
+            var vs = new DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, ROut>>();
+            var (v1, v2) = (new DynamicAddress<RArg1>(), new DynamicAddress<RArg2>());
             return new(metaFunction(v1, v2), vs, v1, v2);
         }
         public static t.Fixed<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> tMetaFunction<RArg1, RArg2, RArg3, ROut>(RHint<RArg1, RArg2, RArg3, ROut> _, Func<DynamicAddress<RArg1>, DynamicAddress<RArg2>, DynamicAddress<RArg3>, IToken<ROut>> tokenFunction)
@@ -189,15 +189,15 @@ namespace FourZeroOne.Core.Syntax
             var (v1, v2, v3) = (new DynamicAddress<RArg1>(), new DynamicAddress<RArg2>(), new DynamicAddress<RArg3>());
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, IdentifierC = v3, Token = tokenFunction(v1, v2, v3) });
         }
-        public static p.ToBoxedFunction<TOrig, RArg1, RArg2, RArg3, ROut> pMetaFunction<TOrig, RArg1, RArg2, RArg3, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, RArg3, ROut> __, System.Func<Resolution.DynamicAddress<RArg1>, Resolution.DynamicAddress<RArg2>, Resolution.DynamicAddress<RArg3>, IProxy<TOrig, ROut>> metaFunction)
+        public static p.ToBoxedFunction<TOrig, RArg1, RArg2, RArg3, ROut> pMetaFunction<TOrig, RArg1, RArg2, RArg3, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, RArg3, ROut> __, System.Func<DynamicAddress<RArg1>, DynamicAddress<RArg2>, DynamicAddress<RArg3>, IProxy<TOrig, ROut>> metaFunction)
             where TOrig : IToken
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where RArg3 : class, ResObj
             where ROut : class, ResObj
         {
-            var vs = new Resolution.DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>();
-            var (v1, v2, v3) = (new Resolution.DynamicAddress<RArg1>(), new Resolution.DynamicAddress<RArg2>(), new Resolution.DynamicAddress<RArg3>());
+            var vs = new DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>();
+            var (v1, v2, v3) = (new DynamicAddress<RArg1>(), new DynamicAddress<RArg2>(), new DynamicAddress<RArg3>());
             return new(metaFunction(v1, v2, v3), vs, v1, v2, v3);
         }
         public static t.Fixed<r.Boxed.MetaFunction<ROut>> tMetaRecursiveFunction<ROut>(RHint<ROut> _, Func<DynamicAddress<r.Boxed.MetaFunction<ROut>>, IToken<ROut>> tokenFunction) where ROut : class, ResObj
@@ -205,11 +205,11 @@ namespace FourZeroOne.Core.Syntax
             var vs = new DynamicAddress<r.Boxed.MetaFunction<ROut>>();
             return new(new() { SelfIdentifier = vs, Token = tokenFunction(vs) });
         }
-        public static p.ToBoxedFunction<TOrig, ROut> pMetaRecursiveFunction<TOrig, ROut>(this OriginalHint<TOrig> _, RHint<ROut> __, System.Func<Resolution.DynamicAddress<r.Boxed.MetaFunction<ROut>>, IProxy<TOrig, ROut>> metaFunction)
+        public static p.ToBoxedFunction<TOrig, ROut> pMetaRecursiveFunction<TOrig, ROut>(this OriginalHint<TOrig> _, RHint<ROut> __, System.Func<DynamicAddress<r.Boxed.MetaFunction<ROut>>, IProxy<TOrig, ROut>> metaFunction)
             where TOrig : IToken
             where ROut : class, ResObj
         {
-            var vs = new Resolution.DynamicAddress<r.Boxed.MetaFunction<ROut>>();
+            var vs = new DynamicAddress<r.Boxed.MetaFunction<ROut>>();
             return new(metaFunction(vs), vs);
         }
         public static t.Fixed<r.Boxed.MetaFunction<RArg1, ROut>> tMetaRecursiveFunction<RArg1, ROut>(RHint<RArg1, ROut> _, Func<DynamicAddress<r.Boxed.MetaFunction<RArg1, ROut>>, DynamicAddress<RArg1>, IToken<ROut>> tokenFunction)
@@ -220,13 +220,13 @@ namespace FourZeroOne.Core.Syntax
             var v1 = new DynamicAddress<RArg1>();
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, Token = tokenFunction(vs, v1) });
         }
-        public static p.ToBoxedFunction<TOrig, RArg1, ROut> pMetaRecursiveFunction<TOrig, RArg1, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, ROut> __, System.Func<Resolution.DynamicAddress<r.Boxed.MetaFunction<RArg1, ROut>>, Resolution.DynamicAddress<RArg1>, IProxy<TOrig, ROut>> metaFunction)
+        public static p.ToBoxedFunction<TOrig, RArg1, ROut> pMetaRecursiveFunction<TOrig, RArg1, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, ROut> __, System.Func<DynamicAddress<r.Boxed.MetaFunction<RArg1, ROut>>, DynamicAddress<RArg1>, IProxy<TOrig, ROut>> metaFunction)
             where TOrig : IToken
             where RArg1 : class, ResObj
             where ROut : class, ResObj
         {
-            var vs = new Resolution.DynamicAddress<r.Boxed.MetaFunction<RArg1, ROut>>();
-            var v1 = new Resolution.DynamicAddress<RArg1>();
+            var vs = new DynamicAddress<r.Boxed.MetaFunction<RArg1, ROut>>();
+            var v1 = new DynamicAddress<RArg1>();
             return new(metaFunction(vs, v1), vs, v1);
         }
         public static t.Fixed<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> tMetaRecursiveFunction<RArg1, RArg2, ROut>(RHint<RArg1, RArg2, ROut> _, Func<DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, ROut>>, DynamicAddress<RArg1>, DynamicAddress<RArg2>, IToken<ROut>> tokenFunction)
@@ -238,14 +238,14 @@ namespace FourZeroOne.Core.Syntax
             var (v1, v2) = (new DynamicAddress<RArg1>(), new DynamicAddress<RArg2>());
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, Token = tokenFunction(vs, v1, v2) });
         }
-        public static p.ToBoxedFunction<TOrig, RArg1, RArg2, ROut> pMetaRecursiveFunction<TOrig, RArg1, RArg2, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, ROut> __, System.Func<Resolution.DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, ROut>>, Resolution.DynamicAddress<RArg1>, Resolution.DynamicAddress<RArg2>, IProxy<TOrig, ROut>> metaFunction)
+        public static p.ToBoxedFunction<TOrig, RArg1, RArg2, ROut> pMetaRecursiveFunction<TOrig, RArg1, RArg2, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, ROut> __, System.Func<DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, ROut>>, DynamicAddress<RArg1>, DynamicAddress<RArg2>, IProxy<TOrig, ROut>> metaFunction)
             where TOrig : IToken
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where ROut : class, ResObj
         {
-            var vs = new Resolution.DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, ROut>>();
-            var (v1, v2) = (new Resolution.DynamicAddress<RArg1>(), new Resolution.DynamicAddress<RArg2>());
+            var vs = new DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, ROut>>();
+            var (v1, v2) = (new DynamicAddress<RArg1>(), new DynamicAddress<RArg2>());
             return new(metaFunction(vs, v1, v2), vs, v1, v2);
         }
         public static t.Fixed<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> tMetaRecursiveFunction<RArg1, RArg2, RArg3, ROut>(RHint<RArg1, RArg2, RArg3, ROut> _, Func<DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>, DynamicAddress<RArg1>, DynamicAddress<RArg2>, DynamicAddress<RArg3>, IToken<ROut>> tokenFunction)
@@ -258,15 +258,15 @@ namespace FourZeroOne.Core.Syntax
             var (v1, v2, v3) = (new DynamicAddress<RArg1>(), new DynamicAddress<RArg2>(), new DynamicAddress<RArg3>());
             return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, IdentifierC = v3, Token = tokenFunction(vs, v1, v2, v3) });
         }
-        public static p.ToBoxedFunction<TOrig, RArg1, RArg2, RArg3, ROut> pMetaRecursiveFunction<TOrig, RArg1, RArg2, RArg3, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, RArg3, ROut> __, System.Func<Resolution.DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>, Resolution.DynamicAddress<RArg1>, Resolution.DynamicAddress<RArg2>, Resolution.DynamicAddress<RArg3>, IProxy<TOrig, ROut>> metaFunction)
+        public static p.ToBoxedFunction<TOrig, RArg1, RArg2, RArg3, ROut> pMetaRecursiveFunction<TOrig, RArg1, RArg2, RArg3, ROut>(this OriginalHint<TOrig> _, RHint<RArg1, RArg2, RArg3, ROut> __, System.Func<DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>, DynamicAddress<RArg1>, DynamicAddress<RArg2>, DynamicAddress<RArg3>, IProxy<TOrig, ROut>> metaFunction)
             where TOrig : IToken
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where RArg3 : class, ResObj
             where ROut : class, ResObj
         {
-            var vs = new Resolution.DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>();
-            var (v1, v2, v3) = (new Resolution.DynamicAddress<RArg1>(), new Resolution.DynamicAddress<RArg2>(), new Resolution.DynamicAddress<RArg3>());
+            var vs = new DynamicAddress<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>();
+            var (v1, v2, v3) = (new DynamicAddress<RArg1>(), new DynamicAddress<RArg2>(), new DynamicAddress<RArg3>());
             return new(metaFunction(vs, v1, v2, v3), vs, v1, v2, v3);
         }
 
@@ -378,7 +378,7 @@ namespace FourZeroOne.Core.Syntax
             ident = new();
             return new(ident, token);
         }
-        public static p.SpecialCase.DynamicAssign<TOrig, R> pAsVariable<TOrig, R>(this IProxy<TOrig, R> value, out Resolution.DynamicAddress<R> identifier) where TOrig : IToken where R : class, ResObj
+        public static p.SpecialCase.DynamicAssign<TOrig, R> pAsVariable<TOrig, R>(this IProxy<TOrig, R> value, out DynamicAddress<R> identifier) where TOrig : IToken where R : class, ResObj
         {
             identifier = new();
             return new(identifier, value);
