@@ -13,7 +13,25 @@ namespace FourZeroOne.Libraries.Axiom.TokenSyntax
 
     public static class AxiomT
     {
-        
+        public static r.Objects.Board.Coordinates Coordinates(int R, int U, int D)
+        {
+            return new() { R = R, U = U, D = D };
+        }
+        public static r.Objects.Board.CoordinateArea GetAdjacent(this r.Objects.Board.Coordinates coordinates)
+        {
+            return new()
+            {
+                Center = coordinates,
+                Offsets = [
+                new() { R = 1, U = 0, D = -1 },
+                new() { R = 1, U = -1, D = 0 },
+                new() { R = 0, U = 1, D = -1 },
+                new() { R = 0, U = -1, D = 1 },
+                new() { R = -1, U = 0, D = 1 },
+                new() { R = -1, U = 1, D = 0 },
+                ]
+            };
+        }
         public static t.Fixed<aEffects.Slow.Component> tEffectSlow()
         { return new(new()); }
         public static t.Fixed<aEffects.Slow.Identifier> tEffectSlowCI()

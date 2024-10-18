@@ -247,17 +247,21 @@ namespace FourZeroOne.Core.Tokens
             }
             private readonly IComponentIdentifier<H, R> _identifier;
         }
-        public sealed record Insert<H, R> : Token<R> where R : class, ResObj where H : class, IComposition<H>
+        public sealed record Compose<H, R> : Token<R> where R : class, ResObj where H : class, IComposition<H>
         {
-            public Insert(IComponentIdentifier<H, R> identifier, IToken<H> holder, IToken<R> component) : base(holder, component)
+            public Compose(IComponentIdentifier<H, R> identifier, IToken<H> holder, IToken<R> component) : base(holder, component)
             {
                 _identifier = identifier;
             }
             public override ITask<IOption<R>> Resolve(IRuntime _, IOption<ResObj>[] args)
             {
                 return (
-                    (args[0].RemapAs(x => (H)x).Check(out var holder) && args[1].RemapAs(x => (R)x).Check(out var component))
-                    ? (IOption<R>) holder.WithComponents([(_identifier, component)]).AsSome()
+                    (args[0].RemapAs(x => (H)x).Check(out var holder))
+                    ? (IOption<R>) (
+                        (args[1].RemapAs(x => (R)x).Check(out var component))
+                        ? holder.WithComponents([(_identifier, component)])
+                        : holder
+                        ).AsSome()
                     : new None<R>()
                     ).ToCompletedITask();
             }

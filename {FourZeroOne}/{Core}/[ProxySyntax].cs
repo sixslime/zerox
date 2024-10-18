@@ -317,7 +317,7 @@ namespace FourZeroOne.Core.ProxySyntax
             where H : class, Resolution.IHasComponents<H>
             where C : class, Resolution.IComponent<C, H>
         { return new(holder, identifier); }
-        public static Function<Tokens.Component.Insert<H>, TOrig, H, Resolution.IMulti<Resolution.Unsafe.IComponentFor<H>>, r.Instructions.Component.Insert<H>> pInsertComponents<TOrig, H, C>(this IProxy<TOrig, H> holder, IProxy<TOrig, Resolution.IMulti<Resolution.Unsafe.IComponentFor<H>>> components)
+        public static Function<Tokens.Component.Compose<H>, TOrig, H, Resolution.IMulti<Resolution.Unsafe.IComponentFor<H>>, r.Instructions.Component.Insert<H>> pInsertComponents<TOrig, H, C>(this IProxy<TOrig, H> holder, IProxy<TOrig, Resolution.IMulti<Resolution.Unsafe.IComponentFor<H>>> components)
             where TOrig : IToken
             where H : class, Resolution.IHasComponents<H>
         { return new(holder, components); }

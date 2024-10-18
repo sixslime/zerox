@@ -161,7 +161,7 @@ namespace FourZeroOne.Core.Proxies
             }
             public override IToken<R> Realize(TOrig original, IOption<Rule.IRule> rule)
             {
-                return new Tokens.Component.Insert<H, R>(_identifier, _holderProxy.Realize(original, rule), _componentProxy.Realize(original, rule));
+                return new Tokens.Component.Compose<H, R>(_identifier, _holderProxy.Realize(original, rule), _componentProxy.Realize(original, rule));
             }
             private readonly IComponentIdentifier<H, R> _identifier;
             private readonly IProxy<TOrig, H> _holderProxy;

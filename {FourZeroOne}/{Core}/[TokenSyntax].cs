@@ -314,7 +314,7 @@ namespace FourZeroOne.Core.TokenSyntax
             where H : class, Resolution.IHasComponents<H>
             where C : class, Resolution.IComponent<C, H>
         { return new(holder, componentIdentifier); }
-        public static Tokens.Component.Insert<H> tInsertComponents<H>(this IToken<H> holder, IToken<r.Multi<Resolution.Unsafe.IComponentFor<H>>> components)
+        public static Tokens.Component.Compose<H> tInsertComponents<H>(this IToken<H> holder, IToken<r.Multi<Resolution.Unsafe.IComponentFor<H>>> components)
             where H : class, Resolution.IHasComponents<H>
         { return new(holder, components); }
         public static Tokens.Component.Remove<H> tRemoveComponents<H>(this IToken<H> holder, IToken<r.Multi<Resolution.Unsafe.IComponentIdentifier>> components)
