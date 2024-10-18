@@ -8,7 +8,7 @@ namespace FourZeroOne.Programs
 {
     public static class Axiom
     {
-        public static ProgramSource Create()
+        public static ProgramSource<Core.Resolutions.Objects.Bool> Create()
         {
 
             throw new NotImplementedException();

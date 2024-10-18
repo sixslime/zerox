@@ -13,8 +13,7 @@ namespace FourZeroOne.Core.Macros
     using t = Core.Tokens;
     using r = Core.Resolutions;
     using FourZeroOne.Proxy;
-    using ProxySyntax;
-    using TokenSyntax;
+    using Syntax;
     using FourZeroOne.Proxy.Unsafe;
 
     namespace Multi
@@ -26,26 +25,26 @@ namespace FourZeroOne.Core.Macros
             protected override IProxy<r.Multi<ROut>> InternalProxy => _proxy;
             public Map(IToken<Resolution.IMulti<RIn>> values, IToken<r.Boxed.MetaFunction<RIn, ROut>> mapFunction) : base(values, mapFunction) { }
 
-            private static IProxy<Map<RIn, ROut>, r.Multi<ROut>> _proxy = CoreP.Statement<Map<RIn, ROut>, r.Multi<ROut>>(P =>
+            private static IProxy<Map<RIn, ROut>, r.Multi<ROut>> _proxy = ProxyStatement.Build<Map<RIn, ROut>, r.Multi<ROut>>(P =>
             {
                 return
                 P.pSubEnvironment(RHint<r.Multi<ROut>>.Hint(), new()
                 {
                     EnvironmentProxy =
-                    P.pArrayOf(RHint<ResObj>.Hint(),
+                    P.pMultiOf(RHint<ResObj>.Hint(),
                     [
                         P.pOriginalA().pAsVariable(out var enumerable),
                     P.pOriginalB().pAsVariable(out var mapFunction)
                     ]),
                     SubProxy =
-                    CoreT.tMetaRecursiveFunction(RHint<r.Objects.Number, r.Multi<ROut>>.Hint(), (selfFunc, i) =>
+                    Core.tMetaRecursiveFunction(RHint<r.Objects.Number, r.Multi<ROut>>.Hint(), (selfFunc, i) =>
                     {
                         return i.tRef().tIsGreaterThan(enumerable.tRef().tCount())
                         .tIfTrue(RHint<r.Multi<ROut>>.Hint(), new()
                         {
-                            Then = CoreT.tNolla(RHint<r.Multi<ROut>>.Hint()).tMetaBoxed(),
+                            Then = Core.tNolla(RHint<r.Multi<ROut>>.Hint()).tMetaBoxed(),
                             Else =
-                            CoreT.tUnion<ROut>(RHint<ROut>.Hint(),
+                            Core.tUnion<ROut>(RHint<ROut>.Hint(),
                             [
                                 mapFunction.tRef().tExecuteWith(new() { A = enumerable.tRef().tGetIndex(i.tRef()) }).tYield(),
                             selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tFixed()) })

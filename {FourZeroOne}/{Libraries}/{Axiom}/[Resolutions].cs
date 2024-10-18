@@ -9,9 +9,8 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     using r = Core.Resolutions;
     using ro = Core.Resolutions.Objects;
     using Resolution;
-    using Core.Resolutions.Instructions.Board.Unit;
-    using b = Core.Resolutions.Objects.Board;
 
+    /*
     namespace GameActions
     {
         namespace Move
@@ -28,4 +27,5 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         // DEV - do we make the lang purely functional and make declare() the only real instruction where functions just modify the object and declare updates the state with the object?
         // if this is done, then, like coordinates map to hexes, perhaps we should have some sort of unit ID object (that is a resolution itself) map to units.
     }
+    */
 }

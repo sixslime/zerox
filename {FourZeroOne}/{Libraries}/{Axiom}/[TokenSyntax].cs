@@ -3,6 +3,7 @@ using Perfection;
 using System.Collections.Generic;
 namespace FourZeroOne.Libraries.Axiom.TokenSyntax
 {
+    /*
     using r = Core.Resolutions;
     using ro = Core.Resolutions.Objects;
     using t = Core.Tokens;
@@ -41,4 +42,5 @@ namespace FourZeroOne.Libraries.Axiom.TokenSyntax
     {
 
     }
+    */
 }
