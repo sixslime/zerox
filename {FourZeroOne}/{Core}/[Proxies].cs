@@ -131,41 +131,61 @@ namespace FourZeroOne.Core.Proxies
             private readonly DynamicAddress<R> _address;
             private readonly IProxy<TOrig, R> _objectProxy;
         }
-        public sealed record ComponentGet<TOrig, H, R> : Proxy<TOrig, R>
-            where TOrig : IToken
-            where R : class, ResObj
-            where H : class, IComposition<H>
+        namespace Component
         {
-            public ComponentGet(IComponentIdentifier<H, R> identifier, IProxy<TOrig, H> proxy)
+            public sealed record Get<TOrig, H, R> : Proxy<TOrig, R>
+                where TOrig : IToken
+                where R : class, ResObj
+                where H : class, IComposition<H>
             {
-                _identifier = identifier;
-                _holderProxy = proxy;
+                public Get(IComponentIdentifier<H, R> identifier, IProxy<TOrig, H> proxy)
+                {
+                    _identifier = identifier;
+                    _holderProxy = proxy;
+                }
+                public override IToken<R> Realize(TOrig original, IOption<Rule.IRule> rule)
+                {
+                    return new Tokens.Component.Get<H, R>(_identifier, _holderProxy.Realize(original, rule));
+                }
+                private readonly IComponentIdentifier<H, R> _identifier;
+                private readonly IProxy<TOrig, H> _holderProxy;
             }
-            public override IToken<R> Realize(TOrig original, IOption<Rule.IRule> rule)
+            public sealed record With<TOrig, H, R> : Proxy<TOrig, H>
+                where TOrig : IToken
+                where R : class, ResObj
+                where H : class, IComposition<H>
             {
-                return new Tokens.Component.Get<H, R>(_identifier, _holderProxy.Realize(original, rule));
+                public With(IComponentIdentifier<H, R> identifier, IProxy<TOrig, H> holderProxy, IProxy<TOrig, R> componentProxy)
+                {
+                    _identifier = identifier;
+                    _holderProxy = holderProxy;
+                    _componentProxy = componentProxy;
+                }
+                public override IToken<H> Realize(TOrig original, IOption<Rule.IRule> rule)
+                {
+                    return new Tokens.Component.With<H, R>(_identifier, _holderProxy.Realize(original, rule), _componentProxy.Realize(original, rule));
+                }
+                private readonly IComponentIdentifier<H, R> _identifier;
+                private readonly IProxy<TOrig, H> _holderProxy;
+                private readonly IProxy<TOrig, R> _componentProxy;
             }
-            private readonly IComponentIdentifier<H, R> _identifier;
-            private readonly IProxy<TOrig, H> _holderProxy;
-        }
-        public sealed record ComponentInsert<TOrig, H, R> : Proxy<TOrig, R>
-            where TOrig : IToken
-            where R : class, ResObj
-            where H : class, IComposition<H>
-        {
-            public ComponentInsert(IComponentIdentifier<H, R> identifier, IProxy<TOrig, H> holderProxy, IProxy<TOrig, R> componentProxy)
+            public sealed record Without<TOrig, H> : Proxy<TOrig, H>
+                where TOrig : IToken
+                where H : class, IComposition<H>
             {
-                _identifier = identifier;
-                _holderProxy = holderProxy;
-                _componentProxy = componentProxy;
+                public Without(Resolution.Unsafe.IComponentIdentifier<H> identifier, IProxy<TOrig, H> holderProxy)
+                {
+                    _identifier = identifier;
+                    _holderProxy = holderProxy;
+                }
+                public override IToken<H> Realize(TOrig original, IOption<Rule.IRule> rule)
+                {
+                    return new Tokens.Component.Without<H>(_identifier, _holderProxy.Realize(original, rule));
+                }
+                private readonly Resolution.Unsafe.IComponentIdentifier<H> _identifier;
+                private readonly IProxy<TOrig, H> _holderProxy;
             }
-            public override IToken<R> Realize(TOrig original, IOption<Rule.IRule> rule)
-            {
-                return new Tokens.Component.With<H, R>(_identifier, _holderProxy.Realize(original, rule), _componentProxy.Realize(original, rule));
-            }
-            private readonly IComponentIdentifier<H, R> _identifier;
-            private readonly IProxy<TOrig, H> _holderProxy;
-            private readonly IProxy<TOrig, R> _componentProxy;
+
         }
     }
 
