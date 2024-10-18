@@ -51,6 +51,7 @@ namespace FourZeroOne.Core.Resolutions
             {
                 return context.WithObjects([(Address, Subject)]);
             }
+            public override string ToString() => $"{Address}<-{Subject}";
         }
         public sealed record Redact : Instruction
         {
@@ -73,9 +74,9 @@ namespace FourZeroOne.Core.Resolutions
     {
         public sealed record MetaFunction<R> : NoOp where R : class, ResObj
         {
-            public required DynamicAddress <MetaFunction<R>> SelfIdentifier { get; init; }
+            public required DynamicAddress<MetaFunction<R>> SelfIdentifier { get; init; }
             public required IToken<R> Token { get; init; }
-            public override string ToString() => $"{SelfIdentifier}()-> {{{Token}}}";
+            public override string ToString() => $"()-> {SelfIdentifier}{{{Token}}}";
         }
         public sealed record MetaFunction<RArg1, ROut> : NoOp
             where RArg1 : class, ResObj
@@ -84,7 +85,7 @@ namespace FourZeroOne.Core.Resolutions
             public required DynamicAddress <MetaFunction<RArg1, ROut>> SelfIdentifier { get; init; }
             public required DynamicAddress<RArg1> IdentifierA { get; init; }
             public required IToken<ROut> Token { get; init; }
-            public override string ToString() => $"{SelfIdentifier}({IdentifierA})-> {{{Token}}}";
+            public override string ToString() => $"({IdentifierA})-> {SelfIdentifier}{{{Token}}}";
         }
         public sealed record MetaFunction<RArg1, RArg2, ROut> : NoOp
             where RArg1 : class, ResObj

@@ -1,7 +1,7 @@
 
 using System.Collections.Generic;
 using Perfection;
-
+using PROTO_ZeroxFour_1.Util;
 #nullable enable
 namespace FourZeroOne.Resolution
 {
@@ -55,8 +55,11 @@ namespace FourZeroOne.Resolution
         {
             _id = _idAssigner++;
         }
-        public static implicit operator Core.Tokens.DynamicReference<R>(DynamicAddress<R> address) => new(address);
         private static int _idAssigner = 0;
+        public override string ToString()
+        {
+            return $"{(_id % 5).ToBase("AOEUI", "")}{(typeof(R).GetHashCode() % 441).ToBase("DHTNSYFPGCRLVWMBXKJQZ".ToLower(), "")}";
+        }
     }
     public sealed record StaticComponentIdentifier<H, R> : IComponentIdentifier<H, R> where H : IComposition<H> where R : class, IResolution
     {
