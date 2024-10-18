@@ -32,18 +32,18 @@ namespace FourZeroOne.Resolution
     }
 
     public interface IStateAddress<out R> : Unsafe.IStateAddress where R : IResolution { }
-    public abstract record Instruction : Resolution, IInstruction
+    public abstract record Instruction : Construct, IInstruction
     {
         public abstract IState ChangeState(IState previousState);
         public override IEnumerable<IInstruction> Instructions => [this];
     }
-    public abstract record Resolution : IResolution
+    public abstract record Construct : IResolution
     {
         public abstract IEnumerable<IInstruction> Instructions { get; }
         public virtual bool ResEqual(IResolution? other) => Equals(other);
     }
 
-    public abstract record NoOp : Resolution
+    public abstract record NoOp : Construct
     {
         public override IEnumerable<IInstruction> Instructions => [];
     }

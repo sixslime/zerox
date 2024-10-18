@@ -137,7 +137,7 @@ namespace FourZeroOne.Core.Resolutions
         }
 
     }
-    public sealed record Multi<R> : Resolution, IMulti<R> where R : class, ResObj
+    public sealed record Multi<R> : Construct, IMulti<R> where R : class, ResObj
     {
         public override IEnumerable<IInstruction> Instructions => Values.Map(x => x.Instructions).Flatten();
         public int Count => _list.Count;

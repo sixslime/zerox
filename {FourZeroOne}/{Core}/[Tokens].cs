@@ -232,6 +232,14 @@ namespace FourZeroOne.Core.Tokens
                 return new() { Address = in1, Subject = in2 };
             }
         }
+        public sealed record Remove<RAddress> : PureFunction<RAddress, r.Instructions.Redact> where RAddress : class, IStateAddress, ResObj
+        {
+            public Remove(IToken<RAddress> address) : base(address) { }
+            protected override r.Instructions.Redact EvaluatePure(RAddress in1)
+            {
+                return new() { Address = in1 };
+            }
+        }
     }
     namespace Component
     {
@@ -247,25 +255,37 @@ namespace FourZeroOne.Core.Tokens
             }
             private readonly IComponentIdentifier<H, R> _identifier;
         }
-        public sealed record Compose<H, R> : Token<R> where R : class, ResObj where H : class, IComposition<H>
+        public sealed record With<H, R> : Token<H> where R : class, ResObj where H : class, IComposition<H>
         {
-            public Compose(IComponentIdentifier<H, R> identifier, IToken<H> holder, IToken<R> component) : base(holder, component)
+            public With(IComponentIdentifier<H, R> identifier, IToken<H> holder, IToken<R> component) : base(holder, component)
             {
                 _identifier = identifier;
             }
-            public override ITask<IOption<R>> Resolve(IRuntime _, IOption<ResObj>[] args)
+            public override ITask<IOption<H>> Resolve(IRuntime _, IOption<ResObj>[] args)
             {
                 return (
                     (args[0].RemapAs(x => (H)x).Check(out var holder))
-                    ? (IOption<R>) (
+                    ? (IOption<H>) (
                         (args[1].RemapAs(x => (R)x).Check(out var component))
                         ? holder.WithComponents([(_identifier, component)])
                         : holder
                         ).AsSome()
-                    : new None<R>()
+                    : new None<H>()
                     ).ToCompletedITask();
             }
             private readonly IComponentIdentifier<H, R> _identifier;
+        }
+        public sealed record Without<H> : Token<H> where H : class, IComposition<H>
+        {
+            public Without(Resolution.Unsafe.IComponentIdentifier<H> identifier, IToken<H> holder) : base(holder)
+            {
+                _identifier = identifier;
+            }
+            public override ITask<IOption<H>> Resolve(IRuntime _, IOption<ResObj>[] args)
+            {
+                return args[0].RemapAs(x => ((H)x).WithoutComponents([_identifier])).ToCompletedITask();
+            }
+            private readonly Resolution.Unsafe.IComponentIdentifier<H> _identifier;
         }
     }
     public record Execute<R> : Function<r.Boxed.MetaFunction<R>, R>

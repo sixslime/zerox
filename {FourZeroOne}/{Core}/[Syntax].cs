@@ -243,7 +243,7 @@ namespace FourZeroOne.Core.Syntax
             where H : class, IComposition<H>
             where C : class, ResObj
         { return new(componentIdentifier, holder); }
-        public static Tokens.Component.Compose<H, C> tWithComponent<H, C>(this IToken<H> holder, IComponentIdentifier<H, C> componentIdentifier, IToken<C> component)
+        public static Tokens.Component.With<H, C> tWithComponent<H, C>(this IToken<H> holder, IComponentIdentifier<H, C> componentIdentifier, IToken<C> component)
             where H : class, IComposition<H>
             where C : class, ResObj
         { return new(componentIdentifier, holder, component); }
