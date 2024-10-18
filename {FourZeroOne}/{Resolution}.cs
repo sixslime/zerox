@@ -73,8 +73,6 @@ namespace FourZeroOne.Resolution
 }
 namespace FourZeroOne.Resolution.Unsafe
 {
-    //not actually unsafe, just here because you should either extend 'Operation' or 'NoOp'.
-    
     public interface IComposition : IResolution
     {
         public IOption<IResolution> GetComponentUnsafe(IComponentIdentifier address);
