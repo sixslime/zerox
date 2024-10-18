@@ -102,7 +102,7 @@ public class Tester
         var token_tester = token_test_4;
         var rule_test = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tFixed().pDirect(P))));
 
-        FourZeroOne.IState startState = null;
+        FourZeroOne.IState startState = new FourZeroOne.StateModels.Minimal();
         _runtime = new FourZeroOne.Runtimes.FrameSaving.Gebug(startState, token_tester);
         var o = await _runtime.Run();
         Console.WriteLine($"FINAL: {o}");
