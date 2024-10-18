@@ -63,12 +63,16 @@ namespace FourZeroOne.Resolution
     }
     public sealed record StaticComponentIdentifier<H, R> : IComponentIdentifier<H, R> where H : IComposition<H> where R : class, IResolution
     {
+        public string Source => _source;
         public string Identity => _identifier;
-        public StaticComponentIdentifier(string fixedIdentity)
+        public StaticComponentIdentifier(string source, string fixedIdentity)
         {
+            _source = source;
             _identifier = fixedIdentity;
         }
         private string _identifier;
+        private string _source;
+        public override string ToString() => $"{Identity}";
     }
 }
 namespace FourZeroOne.Resolution.Unsafe
@@ -79,6 +83,7 @@ namespace FourZeroOne.Resolution.Unsafe
     }
     public interface IComponentIdentifier
     { 
+        public string Source { get; }
         public string Identity { get; }
     }
     public interface IComponentIdentifierOf<out R> : IComponentIdentifier where R : IResolution { }
