@@ -19,10 +19,11 @@ namespace FourZeroOne.Resolution
         public IState ChangeState(IState context);
     }
     public interface IComponentIdentifier<in H, out R> : Unsafe.IComponentIdentifier<H>, Unsafe.IComponentIdentifierOf<R> where H : IComposition<H> where R : IResolution { }
+    // pretty fucking silly bro im not going even to even lie even.
     public interface IComposition<Self> : IResolution where Self : IComposition<Self>
     {
-        public Self WithComponents<R>(IEnumerable<(IComponentIdentifier<Self, R>,  R)> components) where R : IResolution;
-        public Self WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<Self>> addresses);
+        public IComposition<Self> WithComponents<R>(IEnumerable<(IComponentIdentifier<Self, R>,  R)> components) where R : IResolution;
+        public IComposition<Self> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<Self>> addresses);
         public IOption<R> GetComponent<R>(IComponentIdentifier<Self, R> address) where R : IResolution;
     }
     public interface IMulti<out R> : IResolution where R : IResolution
@@ -42,7 +43,29 @@ namespace FourZeroOne.Resolution
         public abstract IEnumerable<IInstruction> Instructions { get; }
         public virtual bool ResEqual(IResolution? other) => Equals(other);
     }
+    public abstract record Composition<Self> : Construct, IComposition<Self> where Self : IComposition<Self>
+    {
+        public Composition()
+        {
+            _components = new() { Elements = [] };
+        }
+        private PMap<Unsafe.IComponentIdentifier<Self>, IResolution> _components;
 
+        public IComposition<Self> WithComponents<R>(IEnumerable<(IComponentIdentifier<Self, R>, R)> components) where R : IResolution
+        {
+            return this with { _components = _components with { dElements = Q => Q.Also(components.Map(x => ((Unsafe.IComponentIdentifier<Self>)x.Item1, (IResolution)x.Item2))) } };
+        }
+
+        public IComposition<Self> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<Self>> addresses)
+        {
+            return this with { _components = _components with { dElements = Q => Q.ExceptBy(addresses, x => x.key) } };
+        }
+
+        public IOption<R> GetComponent<R>(IComponentIdentifier<Self, R> address) where R : IResolution
+        {
+            return _components[address].NullToNone().RemapAs(x => (R)x);
+        }
+    }
     public abstract record NoOp : Construct
     {
         public override IEnumerable<IInstruction> Instructions => [];

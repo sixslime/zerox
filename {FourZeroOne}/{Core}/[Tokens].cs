@@ -277,7 +277,7 @@ namespace FourZeroOne.Core.Tokens
             }
             public override ITask<IOption<H>> Resolve(IRuntime _, IOption<ResObj>[] args)
             {
-                return args[0].RemapAs(x => ((H)x).WithoutComponents([_identifier])).ToCompletedITask();
+                return args[0].RemapAs(x => (H)((H)x).WithoutComponents([_identifier])).ToCompletedITask();
             }
             private readonly Resolution.Unsafe.IComponentIdentifier<H> _identifier;
         }

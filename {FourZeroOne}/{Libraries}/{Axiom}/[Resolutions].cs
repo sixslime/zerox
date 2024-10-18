@@ -10,6 +10,13 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     using ro = Core.Resolutions.Objects;
     using Resolution;
 
+    namespace Objects
+    {
+        public sealed record Unit : NoOp
+        {
+
+        }
+    }
     /*
     namespace GameActions
     {
