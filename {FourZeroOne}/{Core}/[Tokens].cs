@@ -71,12 +71,6 @@ namespace FourZeroOne.Core.Tokens
             protected override ro.Number EvaluatePure(ro.Number a, ro.Number b) { return new() { Value = a.Value * b.Value }; }
             protected override IOption<string> CustomToString() => $"({Arg1} * {Arg2})".AsSome();
         }
-        public sealed record Negate : PureFunction<ro.Number, ro.Number>
-        {
-            public Negate(IToken<ro.Number> operand) : base(operand) { }
-            protected override ro.Number EvaluatePure(ro.Number operand) { return new() { Value = -operand.Value }; }
-            protected override IOption<string> CustomToString() => $"(-{Arg1})".AsSome();
-        }
         namespace Compare
         {
             public sealed record GreaterThan : PureFunction<ro.Number, ro.Number, ro.Bool>
