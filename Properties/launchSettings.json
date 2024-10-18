@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PROTO-ZeroxFour 1": {
+      "commandName": "Project",
+      "hotReloadEnabled": false
+    }
+  }
+}
