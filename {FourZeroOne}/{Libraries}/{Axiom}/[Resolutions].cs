@@ -12,10 +12,59 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
 
     namespace Objects
     {
-        public sealed record Unit : NoOp
+        namespace Unit
         {
-
+            public sealed record Data : Composition<Data>
+            {
+                public override IEnumerable<IInstruction> Instructions => [];
+            }
+            public sealed record Identifier : NoOp, IStateAddress<Data>
+            {
+                public required int ID { get; init; }
+                public Identifier() { }
+            }
+            public static class Component
+            {
+                public readonly static StaticComponentIdentifier<Data, ro.Number> HP = new("axiom", "unit.hp");
+                public readonly static StaticComponentIdentifier<Data, Hex.Position> POSITION = new("axiom", "unit.position");
+                public readonly static StaticComponentIdentifier<Data, Player.Identifier> OWNER = new("axiom", "unit.owner");
+            }
         }
+        namespace Hex
+        {
+            public sealed record Data : Composition<Data>
+            {
+                public override IEnumerable<IInstruction> Instructions => [];
+            }
+            public sealed record Position : NoOp, IStateAddress<Data>
+            {
+                public required int R { get; init; }
+                public required int U { get; init; }
+                public required int D { get; init; }
+                public Position() { }
+            }
+            public static class Component
+            {
+
+            }
+        }
+        namespace Player
+        {
+            public sealed record Data : Composition<Data>
+            {
+                public override IEnumerable<IInstruction> Instructions => [];
+            }
+            public sealed record Identifier : NoOp, IStateAddress<Data>
+            {
+                public required int ID { get; init; }
+                public Identifier() { }
+            }
+            public static class Component
+            {
+
+            }
+        }
+
     }
     /*
     namespace GameActions
