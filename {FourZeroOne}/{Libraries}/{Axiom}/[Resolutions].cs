@@ -24,6 +24,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
                 public readonly static StaticComponentIdentifier<Data, ro.Number> HP = new("axiom", "unit.hp");
                 public readonly static StaticComponentIdentifier<Data, Hex.Position> POSITION = new("axiom", "unit.position");
                 public readonly static StaticComponentIdentifier<Data, Player.Identifier> OWNER = new("axiom", "unit.owner");
+                public readonly static StaticComponentIdentifier<Data, r.Multi<Effect>> EFFECTS = new("axiom", "unit.effects");
             }
         }
         namespace Hex
@@ -63,6 +64,27 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
             {
 
             }
+        }
+
+        // weirdchamp implementation of enums/flags but i think it works probably.
+        // make a Multi<Effect>
+        public abstract record Effect : NoOp
+        {
+            public Effect(byte effectId)
+            {
+                _effectId = effectId;
+            }
+            public override bool ResEqual(IResolution? other)
+            {
+                return other is Effect effect && effect._effectId == _effectId;
+            }
+            private readonly byte _effectId;
+        }
+        namespace Effects
+        {
+            
+            
+            public sealed record Slow : Effect { public Slow() : base(1) { } }
         }
     }
     namespace Structures
