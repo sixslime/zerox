@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using Perfection;
 namespace FourZeroOne.Libraries.Axiom.Resolutions
 {
     using r = Core.Resolutions;
     using ro = Core.Resolutions.Objects;
     using Resolution;
 
-    namespace Objects
+    namespace GameObjects
     {
         namespace Unit
         {
@@ -42,10 +38,14 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
                 public required int U { get; init; }
                 public required int D { get; init; }
                 public Position() { }
+                public Position Add(Position other)
+                {
+                    return new() { R = R + other.R, U = U + other.U, D = D + other.D };
+                }
             }
             public static class Component
             {
-
+                 
             }
         }
         namespace Player
@@ -64,7 +64,16 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
 
             }
         }
-
+    }
+    namespace Structures
+    {
+        public sealed record HexArea : NoOp, IMulti<GameObjects.Hex.Position>
+        {
+            public IEnumerable<GameObjects.Hex.Position> Values => Offsets.Elements.Map(x => x.Add(Center));
+            public int Count => Offsets.Count;
+            public required GameObjects.Hex.Position Center { get; init; }
+            public required PList<GameObjects.Hex.Position> Offsets { get; init; }
+        }
     }
     /*
     namespace GameActions
