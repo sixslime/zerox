@@ -4,6 +4,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
 {
     using r = Core.Resolutions;
     using ro = Core.Resolutions.Objects;
+    using ax = GameObjects;
     using Resolution;
 
     namespace GameObjects
@@ -21,10 +22,10 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
             }
             public static class Component
             {
-                public readonly static StaticComponentIdentifier<Data, ro.Number> HP = new("axiom", "unit.hp");
-                public readonly static StaticComponentIdentifier<Data, Hex.Position> POSITION = new("axiom", "unit.position");
-                public readonly static StaticComponentIdentifier<Data, Player.Identifier> OWNER = new("axiom", "unit.owner");
-                public readonly static StaticComponentIdentifier<Data, r.Multi<Effect>> EFFECTS = new("axiom", "unit.effects");
+                public readonly static StaticComponentIdentifier<Data, ro.Number> HP = new("axiom", "hp");
+                public readonly static StaticComponentIdentifier<Data, Hex.Position> POSITION = new("axiom", "position");
+                public readonly static StaticComponentIdentifier<Data, Player.Identifier> OWNER = new("axiom", "owner");
+                public readonly static StaticComponentIdentifier<Data, r.Multi<Effect>> EFFECTS = new("axiom", "effects");
             }
         }
         namespace Hex
@@ -82,19 +83,38 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         }
         namespace Effects
         {
-            
-            
             public sealed record Slow : Effect { public Slow() : base(1) { } }
+            public sealed record Root : Effect { public Root() : base(2) { } }
+            public sealed record Stun : Effect { public Stun() : base(3) { } }
+            public sealed record Silence : Effect { public Silence() : base(4) { } }
         }
     }
     namespace Structures
     {
-        public sealed record HexArea : NoOp, IMulti<GameObjects.Hex.Position>
+        public sealed record HexArea : NoOp, IMulti<ax.Hex.Position>
         {
-            public IEnumerable<GameObjects.Hex.Position> Values => Offsets.Elements.Map(x => x.Add(Center));
+            public IEnumerable<ax.Hex.Position> Values => Offsets.Elements.Map(x => x.Add(Center));
             public int Count => Offsets.Count;
-            public required GameObjects.Hex.Position Center { get; init; }
-            public required PList<GameObjects.Hex.Position> Offsets { get; init; }
+            public required ax.Hex.Position Center { get; init; }
+            public required PList<ax.Hex.Position> Offsets { get; init; }
+        }
+    }
+
+    namespace GameActions
+    {
+        namespace Move
+        {
+            public sealed record Data : Composition<Data>
+            {
+                public override IEnumerable<IInstruction> Instructions => throw new NotImplementedException();
+
+            }
+            public static class Component
+            {
+                public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> START = new("axiom", "start");
+                public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> DESTINATION = new("axiom", "destination");
+
+            }
         }
     }
     /*

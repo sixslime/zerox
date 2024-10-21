@@ -13,12 +13,13 @@ namespace FourZeroOne.Libraries.Axiom.Macros
     using FourZeroOne.Proxy;
     using Core.Syntax;
     using ar = Resolutions;
+    using ax = Resolutions.GameObjects;
     using Resolution;
 
     namespace GameActions
     {
         using FourZeroOne.Proxy.Unsafe;
-
+    
         // numericalmove(Units, Range, Func<Hex, Hex> modifier)
         //                               ^ Glorping crazy!
     }

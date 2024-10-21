@@ -47,24 +47,24 @@ namespace FourZeroOne.Resolution
     {
         public Composition()
         {
-            _components = new() { Elements = [] };
+            Components = new() { Elements = [] };
         }
-        private PMap<Unsafe.IComponentIdentifier<Self>, IResolution> _components;
 
         public IComposition<Self> WithComponents<R>(IEnumerable<(IComponentIdentifier<Self, R>, R)> components) where R : IResolution
         {
-            return this with { _components = _components with { dElements = Q => Q.Also(components.Map(x => ((Unsafe.IComponentIdentifier<Self>)x.Item1, (IResolution)x.Item2))) } };
+            return this with { Components = Components with { dElements = Q => Q.Also(components.Map(x => ((Unsafe.IComponentIdentifier<Self>)x.Item1, (IResolution)x.Item2))) } };
         }
 
         public IComposition<Self> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<Self>> addresses)
         {
-            return this with { _components = _components with { dElements = Q => Q.ExceptBy(addresses, x => x.key) } };
+            return this with { Components = Components with { dElements = Q => Q.ExceptBy(addresses, x => x.key) } };
         }
 
         public IOption<R> GetComponent<R>(IComponentIdentifier<Self, R> address) where R : IResolution
         {
-            return _components[address].NullToNone().RemapAs(x => (R)x);
+            return Components[address].NullToNone().RemapAs(x => (R)x);
         }
+        protected PMap<Unsafe.IComponentIdentifier<Self>, IResolution> Components { get; init; }
     }
     public abstract record NoOp : Construct
     {
