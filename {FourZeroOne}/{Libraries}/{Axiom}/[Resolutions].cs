@@ -106,7 +106,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         {
             public record Data : Composition<Data>
             {
-                public override IEnumerable<IInstruction> Instructions => throw new NotImplementedException();
+                public override IEnumerable<IInstruction> Instructions => Components[Component.START].Instructions;
 
             }
             public static class Component
@@ -117,6 +117,13 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
             }
         }
     }
+    // DeclareAction<R> is the hook for rules to change specific actions, while allowing additional actions, aswell as reading a single action.
+    // make a rule for a specific DeclareAction<R>.
+    // DeclareAction<R> is functionally equivalent to yield.
+    // Multi<MoveAction> Move(...) => Multi<MoveAction> Declare<MoveAction>(MoveAction action) { yield action };
+    
+    // example rule: DeclareAction<MoveAction>(A) => Union(<other action>, DeclareAction<MoveAction>(A)).
+    // the whole point is to always keep the declare action.
     /*
     namespace GameActions
     {
