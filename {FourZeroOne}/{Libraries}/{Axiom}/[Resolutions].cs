@@ -1,5 +1,6 @@
 ﻿using System;
 using Perfection;
+#nullable enable
 namespace FourZeroOne.Libraries.Axiom.Resolutions
 {
     using r = Core.Resolutions;
@@ -98,10 +99,6 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
             public required ax.Hex.Position Center { get; init; }
             public required PList<ax.Hex.Position> Offsets { get; init; }
         }
-    }
-
-    namespace GameActions
-    {
         namespace Move
         {
             public record Data : Composition<Data>
@@ -117,6 +114,23 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
             }
         }
     }
+
+    namespace GameActions
+    {
+        namespace MoveSet
+        {
+            public record Data : Composition<Data>
+            {
+                public override IEnumerable<IInstruction> Instructions => Components[Component.MOVES].Instructions;
+            }
+            public static class Component
+            {
+                public readonly static StaticComponentIdentifier<Data, r.Multi<Structures.Move.Data>> MOVES = new("axiom", "moves");
+            }
+        }
+    }
+    // yea we should have a MoveSet gameaction composed of individual moves
+
     // DeclareAction<R> is the hook for rules to change specific actions, while allowing additional actions, aswell as reading a single action.
     // make a rule for a specific DeclareAction<R>.
     // DeclareAction<R> is functionally equivalent to yield.

@@ -8,6 +8,7 @@ namespace FourZeroOne.Libraries.Axiom.Macros
 {
     using Token;
     using Macro;
+    using ResObj = Resolution.IResolution;
     using t = Core.Tokens;
     using r = Core.Resolutions;
     using FourZeroOne.Proxy;
@@ -15,7 +16,14 @@ namespace FourZeroOne.Libraries.Axiom.Macros
     using ar = Resolutions;
     using ax = Resolutions.GameObjects;
     using Resolution;
+    using FourZeroOne.Proxy.Unsafe;
 
+    public sealed record SendAction<R> : OneArg<R, r.Multi<R>> where R : class, ResObj
+    {
+        public SendAction(IToken<R> action) : base(action) { }
+        protected override IProxy<r.Multi<R>> InternalProxy => PROXY;
+        private readonly static IProxy<SendAction<R>, r.Multi<R>> PROXY = ProxyStatement.Build<SendAction<R>, r.Multi<R>>(P => P.pOriginalA().pYield());
+    }
     namespace GameActions
     {
         using FourZeroOne.Proxy.Unsafe;
