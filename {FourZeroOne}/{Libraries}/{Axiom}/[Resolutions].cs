@@ -11,11 +11,11 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     {
         namespace Unit
         {
-            public sealed record Data : Composition<Data>
+            public record Data : Composition<Data>
             {
                 public override IEnumerable<IInstruction> Instructions => [];
             }
-            public sealed record Identifier : NoOp, IStateAddress<Data>
+            public record Identifier : NoOp, IStateAddress<Data>
             {
                 public required int ID { get; init; }
                 public Identifier() { }
@@ -25,7 +25,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
                 public readonly static StaticComponentIdentifier<Data, ro.Number> HP = new("axiom", "hp");
                 public readonly static StaticComponentIdentifier<Data, Hex.Position> POSITION = new("axiom", "position");
                 public readonly static StaticComponentIdentifier<Data, Player.Identifier> OWNER = new("axiom", "owner");
-                public readonly static StaticComponentIdentifier<Data, r.Multi<Effect>> EFFECTS = new("axiom", "effects");
+                public readonly static StaticComponentIdentifier<Data, r.Multi<NEffect>> EFFECTS = new("axiom", "effects");
             }
         }
         namespace Hex
@@ -68,30 +68,30 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         }
 
         // weirdchamp implementation of enums/flags but i think it works probably.
-        // make a Multi<Effect>
-        public abstract record Effect : NoOp
+        // make a Multi<NEffect>
+        public record NEffect : Composition<NEffect>
         {
-            public Effect(byte effectId)
+            public static readonly NEffect SLOW = new(1);
+            public static readonly NEffect SILENCE = new(2);
+            public static readonly NEffect ROOT = new(3);
+            public static readonly NEffect STUN = new(4);
+
+            public readonly byte EffectID;
+            public override IEnumerable<IInstruction> Instructions => [];
+            protected NEffect(byte effectId)
             {
-                _effectId = effectId;
+                EffectID = effectId;
             }
             public override bool ResEqual(IResolution? other)
             {
-                return other is Effect effect && effect._effectId == _effectId;
+                return other is NEffect effect && effect.EffectID == EffectID;
             }
-            private readonly byte _effectId;
         }
-        namespace Effects
-        {
-            public sealed record Slow : Effect { public Slow() : base(1) { } }
-            public sealed record Root : Effect { public Root() : base(2) { } }
-            public sealed record Stun : Effect { public Stun() : base(3) { } }
-            public sealed record Silence : Effect { public Silence() : base(4) { } }
-        }
+
     }
     namespace Structures
     {
-        public sealed record HexArea : NoOp, IMulti<ax.Hex.Position>
+        public record HexArea : NoOp, IMulti<ax.Hex.Position>
         {
             public IEnumerable<ax.Hex.Position> Values => Offsets.Elements.Map(x => x.Add(Center));
             public int Count => Offsets.Count;
@@ -104,7 +104,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     {
         namespace Move
         {
-            public sealed record Data : Composition<Data>
+            public record Data : Composition<Data>
             {
                 public override IEnumerable<IInstruction> Instructions => throw new NotImplementedException();
 
