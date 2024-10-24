@@ -103,14 +103,14 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         {
             public record Data : Composition<Data>
             {
-                public override IEnumerable<IInstruction> Instructions => Components[Component.START].Instructions;
+                public override IEnumerable<IInstruction> Instructions => throw new NotImplementedException();
 
             }
             public static class Component
             {
                 public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> START = new("axiom", "start");
                 public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> DESTINATION = new("axiom", "destination");
-
+                public readonly static StaticComponentIdentifier<Data, ro.Number> DISTANCE = new("axiom", "distance");
             }
         }
     }
@@ -121,7 +121,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         {
             public record Data : Composition<Data>
             {
-                public override IEnumerable<IInstruction> Instructions => Components[Component.MOVES].Instructions;
+                public override IEnumerable<IInstruction> Instructions => Components[Component.MOVES].RemapAs(x => x.Instructions).Or([]);
             }
             public static class Component
             {

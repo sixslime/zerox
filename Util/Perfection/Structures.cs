@@ -112,7 +112,7 @@ namespace Perfection
             Count = 0;
             _storage = new(0);
         }
-        public T this[K indexer] => GetBucket(indexer).Find(x => indexer.Equals(x.key)).val;
+        public IOption<T> this[K indexer] => GetBucket(indexer).FirstMatch(x => indexer.Equals(x.key)).RemapAs(x => x.val);
         private List<(K key, T val)> GetBucket(K element) => _storage[element.GetHashCode().Abs() % Modulo];
         public override string ToString() => Elements.AccumulateInto("PMap:\n", (msg, x) => msg + $"- [{x.key} : {x.val}]\n");
 

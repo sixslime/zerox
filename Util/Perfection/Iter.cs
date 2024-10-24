@@ -72,7 +72,11 @@ namespace Perfection
             }
             while (iter.MoveNext()) yield return iter.Current;
         }
-
+        public static IOption<T> FirstMatch<T>(this IEnumerable<T> enumerable, Predicate<T> matchPredicate)
+        {
+            foreach (var v in enumerable) if (matchPredicate(v)) return v.AsSome();
+            return new None<T>();
+        }
         public static IOption<T> At<T>(this IEnumerable<T> enumerable, int index)
         {
             if (index < 0) return new None<T>();
