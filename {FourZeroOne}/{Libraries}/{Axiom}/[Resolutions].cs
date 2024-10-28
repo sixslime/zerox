@@ -48,7 +48,10 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
             }
             public static class Component
             {
-                 
+                public readonly static StaticComponentIdentifier<Data, ro.Bool> BLOCKS_MOVEMENT = new("axiom", "blocks_movement");
+                public readonly static StaticComponentIdentifier<Data, ro.Bool> BLOCKS_TARGETING = new("axiom", "blocks_targeting");
+                public readonly static StaticComponentIdentifier<Data, ro.Bool> LANDABLE = new("axiom", "landable");
+                public readonly static StaticComponentIdentifier<Data, Player.Identifier> PLAYER_BASE = new("axiom", "player_base");
             }
         }
         namespace Player
@@ -115,6 +118,27 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         }
     }
 
+    namespace Axioms
+    {
+        namespace Unit
+        {
+            namespace PositionChange
+            {
+                public record Data : Composition<Data>
+                {
+                    public override IEnumerable<IInstruction> Instructions =>
+                    [
+                        
+                    ];
+                }
+                public static class Component
+                {
+                    public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> START = new("axiom", "start");
+                    public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> DESTINATION = new("axiom", "destination");
+                }
+            }
+        }
+    }
     namespace GameActions
     {
         namespace MoveSet

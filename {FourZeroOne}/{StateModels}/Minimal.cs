@@ -31,7 +31,7 @@ namespace FourZeroOne.StateModels
         }
         IOption<R> IState.GetObject<R>(IStateAddress<R> address)
         {
-            return _objects[address].NullToNone().RemapAs(x => (R)x);
+            return _objects[address].RemapAs(x => (R)x);
         }
         IState IState.WithObjects<R>(IEnumerable<(IStateAddress<R>, R)> insertions) => WithObjectsUnsafe(insertions.Map(x => ((IStateAddress)x.Item1, (IResolution)x.Item2)));
 

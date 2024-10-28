@@ -22,7 +22,7 @@ public class Tester
         // 401 is just an interpreter for 'Tokens'.
         // Tokens resolve to 'Resolutions', which change the state of the game.
         // A 'Game' of 401 can be expressed via a sequence of resolutions.
-        // ALL user input is gathered via IO tokens.
+        // ALL user input is through IO tokens.
         // tutorial on how to make tokens to get you up to speed:
         // (tokens for in-game usage will include resolutions of actual objects/actions, but work exactly the same)
         var token_tutorial_1 = 5.tFixed().tAdd(10.tFixed()); // 5 + 10 
@@ -35,39 +35,17 @@ public class Tester
         }); //creates a Sub-Environment (aka scope) where 'mySelection' stores the resolution of a user selection, then references it twice to multiply it by itself.
         // is different than just calling 'token_tutorial_2.tIO_SelectOne()' twice, that would prompt the user selection 2 times, possibly resolving different values each time (because the user could select 2 different things obv.).
         // 'Rules' can be made and applied to tokens to replace certain types of tokens with other tokens.
-        // Rules are expressed by 'Proxies', which are basically just tokens, but have the ability to reference information about the token they are meant to replace (such as arguements).
+        // Rules are expressed by 'Proxies', which are basically just tokens, but have the ability to reference information about the token they are meant to replace (usually arguments).
         // logically, the replaced token and replacing token must both have the same resolution type.
         // MakeProxy.RuleFor<{token type to replace}, {resolution type}>({proxy statement specifying the replacement})
         var rule_tutorial_1 = ProxyStatement.BuildAsRule<t.Fixed<ro.Number>, ro.Number>(P => 4.tFixed().pDirect(P)); // makes ALL constant number tokens ('t.Fixed<ro.Number>') turn into 4 (as a constant number token).
         var rule_tutorial_2 = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalA()).pSubtract(P.pOriginalB())); // makes ALL add(A, B) tokens ('t.Number.Add') turn into subtract(add(A, A), B).
         //var rule_illogical = MakeProxy.RuleFor<t.Number.Add, ro.Bool>(P => P.pOriginalA().pIsGreaterThan(P.pOriginalB()) -- consider applying this rule to subtract(add(<number>, <number>), <number>), it would become subtract(<bool>, <number>), which does not make sense.
 
-        /*
-        var token_complicated = Core.tRecursive<ro.Number, r.Multi<ro.Number>, ro.Number>(new() // if you can figure out what this does, then you understand the language; yes its recursive (recursion is not planned to be common, but it will exist sometimes)
-        {
-            A = 0.tConst(),
-            B = 1.Sequence(x => x + 1).Take(5).Map(x => x.tConst()).tToMulti(),
-            RecursiveProxyStatement = P =>
-                P.pSubEnvironment(RHint<ro.Number>.Hint(), new()
-                {
-                    EnvironmentProxy = P.pArrayOf(RHint<FourZeroOne.Resolution.IResolution>.Hint(), new()
-                    {
-                        P.pOriginalB().pAsVariable(out var pool),
-                        pool.tRef().pDirect(P).pIO_SelectOne().pAsVariable(out var selection),
-                        P.pOriginalA().pAsVariable(out var counter)
-                    }),
-                    SubProxy = P.pOriginalA().pIsGreaterThan(2.tConst().pDirect(P)).pIfTrue(RHint<ro.Number>.Hint(), new()
-                    {
-                        Then = P.pMetaFunction(RHint<ro.Number>.Hint(), (_) => selection.tRef().pDirect(P)),
-                        Else = P.pMetaFunction(RHint<ro.Number>.Hint(), (_) => P.pRecurseWith(new()
-                        {
-                            A = counter.tRef().tAdd(1.tConst()).pDirect(P),
-                            B = pool.tRef().tWithout(selection.tRef().tYield()).pDirect(P)
-                        }).pAdd(selection.tRef().pDirect(P)))
-                    }).pExecute()
-                })
-        });
-        */
+        // the final boss.
+        // prompts the user to select a number from an array 3 times, removing the selected number after each selection.
+        // after all 3 selections, returns the 3 selected numbers added together.
+        // this can be achieved more easily though IOSelectMany, but it's done with IOSelectOne for demonstration of recursion.
         var token_complicated = Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<ro.Number>, ro.Number>.Hint(), (selfFunc, counter, pool) =>
         {
             return counter.tRef().tIsGreaterThan(2.tFixed()).tIfTrue(RHint<ro.Number>.Hint(), new()
@@ -89,7 +67,7 @@ public class Tester
         }).tExecuteWith(new()
         {
             A = 0.tFixed(),
-            B = 1.Sequence(x => x + 3).Take(5).Map(x => x.tFixed()).tToMulti()
+            B = 1.Sequence(x => x * 2).Take(5).Map(x => x.tFixed()).tToMulti()
         });
         var token_test_1 = token_tutorial_2.tIOSelectMany(Iter.Over(1, 2, 3, 4).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne());
         var token_test_2 = token_tutorial_1.tAdd(1.tFixed());
@@ -99,11 +77,12 @@ public class Tester
             B = token_complicated
         });
         var token_test_4 = token_tutorial_2.tMap(x => x.tRef().tMultiply(2.tFixed()));
-        var token_tester = token_test_3;
-        var rule_test = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tFixed().pDirect(P))));
 
+        var token_tester = token_test_3;
+        //var rule_tester = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tFixed().pDirect(P))));
         FourZeroOne.IState startState = new FourZeroOne.StateModels.Minimal();
         _runtime = new FourZeroOne.Runtimes.FrameSaving.Gebug(startState, token_tester);
+
         var o = await _runtime.Run();
         Console.WriteLine($"FINAL: {o}");
     }
