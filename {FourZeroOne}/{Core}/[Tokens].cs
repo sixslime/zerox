@@ -428,14 +428,14 @@ namespace FourZeroOne.Core.Tokens
         public IfElse(IToken<ro.Bool> condition, IToken<r.Boxed.MetaFunction<R>> positive, IToken<r.Boxed.MetaFunction<R>> negative) : base(condition, positive, negative) { }
         protected override ITask<IOption<r.Boxed.MetaFunction<R>>> Evaluate(IRuntime runtime, IOption<ro.Bool> in1, IOption<r.Boxed.MetaFunction<R>> in2, IOption<r.Boxed.MetaFunction<R>> in3)
         {
-            return in1.RemapAs(x => x.IsTrue ? in2 : in3).Press() .ToCompletedITask();
+            return in1.RemapAs(x => x.IsTrue ? in2 : in3).Press().ToCompletedITask();
         }
         protected override IOption<string> CustomToString() => $"if {Arg1} then {Arg2} else {Arg3}".AsSome();
     }
  
-    public sealed record Rule<R> : PureValue<r.Instructions.RuleAdd> where R : class, ResObj
+    public sealed record AddRule : PureValue<r.Instructions.RuleAdd>
     {
-        public Rule(Rule.IRule rule)
+        public AddRule(Rule.IRule rule)
         {
             _rule = rule;
         }
@@ -466,7 +466,14 @@ namespace FourZeroOne.Core.Tokens
         protected override ITask<IOption<R>> Evaluate(IRuntime _) { return new None<R>().ToCompletedITask(); }
         protected override IOption<string> CustomToString() => "nolla".AsSome();
     }
-
+    public sealed record Exists : Function<ResObj, ro.Bool>
+    {
+        public Exists(IToken<ResObj> obj) : base(obj) { }
+        protected override ITask<IOption<ro.Bool>> Evaluate(IRuntime _, IOption<ResObj> obj)
+        {
+            return new ro.Bool() { IsTrue = obj.IsSome() }.AsSome().ToCompletedITask();
+        }
+    }
     public sealed record DynamicAssign<R> : Token<r.Instructions.Assign<R>> where R : class, ResObj
     {
         public DynamicAssign(DynamicAddress<R> address, IToken<R> obj) : base(obj)
