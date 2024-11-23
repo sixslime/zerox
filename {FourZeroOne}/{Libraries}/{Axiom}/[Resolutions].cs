@@ -41,16 +41,16 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
                 public required int U { get; init; }
                 public required int D { get; init; }
                 public Position() { }
-                public Position Add(Position other)
+                public Position Transform(Func<int, int, int> transformFunction, Position other)
                 {
-                    return new() { R = R + other.R, U = U + other.U, D = D + other.D };
+                    return new() { R = transformFunction(R, other.R), U = transformFunction(U, other.U), D = transformFunction(D, other.D) };
                 }
             }
             public static class Component
             {
-                public readonly static StaticComponentIdentifier<Data, ro.Bool> BLOCKS_MOVEMENT = new("axiom", "blocks_movement");
-                public readonly static StaticComponentIdentifier<Data, ro.Bool> BLOCKS_TARGETING = new("axiom", "blocks_targeting");
-                public readonly static StaticComponentIdentifier<Data, ro.Bool> LANDABLE = new("axiom", "landable");
+                public readonly static StaticComponentIdentifier<Data, ro.Bool> CONTROL_POINT = new("axiom", "control_point");
+                public readonly static StaticComponentIdentifier<Data, ro.Bool> OPEN = new("axiom", "open");
+                public readonly static StaticComponentIdentifier<Data, ro.Bool> WALL = new("axiom", "wall");
                 public readonly static StaticComponentIdentifier<Data, Player.Identifier> PLAYER_BASE = new("axiom", "player_base");
             }
         }
@@ -97,7 +97,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     {
         public record HexArea : NoOp, IMulti<ax.Hex.Position>
         {
-            public IEnumerable<ax.Hex.Position> Values => Offsets.Elements.Map(x => x.Add(Center));
+            public IEnumerable<ax.Hex.Position> Values => Offsets.Elements.Map(x => x.Transform((a, b) => a + b, Center));
             public int Count => Offsets.Count;
             public required ax.Hex.Position Center { get; init; }
             public required PList<ax.Hex.Position> Offsets { get; init; }
