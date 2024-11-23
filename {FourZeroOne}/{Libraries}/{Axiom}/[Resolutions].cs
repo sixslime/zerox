@@ -102,39 +102,36 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
             public required ax.Hex.Position Center { get; init; }
             public required PList<ax.Hex.Position> Offsets { get; init; }
         }
-        namespace Move
-        {
-            public record Data : Composition<Data>
-            {
-                public override IEnumerable<IInstruction> Instructions => throw new NotImplementedException();
-
-            }
-            public static class Component
-            {
-                public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> START = new("axiom", "start");
-                public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> DESTINATION = new("axiom", "destination");
-                public readonly static StaticComponentIdentifier<Data, ro.Number> DISTANCE = new("axiom", "distance");
-            }
-        }
     }
-
-    namespace Axioms
+    namespace Actions
     {
         namespace Unit
         {
-            namespace PositionChange
+            namespace Change
             {
-                public record Data : Composition<Data>
+                namespace Position
                 {
-                    public override IEnumerable<IInstruction> Instructions =>
-                    [
-                        
-                    ];
-                }
-                public static class Component
-                {
-                    public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> START = new("axiom", "start");
-                    public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> DESTINATION = new("axiom", "destination");
+                    public record Data : Composition<Data>
+                    {
+                        public override IEnumerable<IInstruction> Instructions => throw new NotImplementedException();
+                    }
+                    public static class Component
+                    {
+                        public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> MOVE_DATA = new("axiom", "move_data");
+                        public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> FROM = new("axiom", "from");
+                        public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> TO = new("axiom", "to");
+                    }
+                    namespace Move
+                    {
+                        public record Data : Composition<Data>
+                        {
+                            public override IEnumerable<IInstruction> Instructions => [];
+                        }
+                        public static class Component
+                        {
+                            public readonly static StaticComponentIdentifier<Data, ro.Number> DISTANCE = new("axiom", "distance");
+                        }
+                    }
                 }
             }
         }

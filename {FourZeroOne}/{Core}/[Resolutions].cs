@@ -70,6 +70,7 @@ namespace FourZeroOne.Core.Resolutions
             }
         }
     }
+
     namespace Boxed
     {
         public sealed record MetaFunction<R> : NoOp where R : class, ResObj
