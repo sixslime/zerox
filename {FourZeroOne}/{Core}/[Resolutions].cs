@@ -56,12 +56,12 @@ namespace FourZeroOne.Core.Resolutions
         public sealed record Merge<H, R> : Instruction where H : class, IComposition<H> where R : class, ResObj
         {
             public required IStateAddress<H> Address { get; init; }
-            public required IComponentIdentifier<H, R> ComponentIdentifier { get; init; }
-            public required R ComponentData { get; init; }
+            public required IComponentIdentifier<H, R> Component { get; init; }
+            public required R Data { get; init; }
             public override IState ChangeState(IState previousState)
             {
                 return previousState.GetObject(Address).Check(out var prevObj)
-                    ? previousState.WithObjects([(Address, prevObj.WithComponents([(ComponentIdentifier, ComponentData)]))])
+                    ? previousState.WithObjects([(Address, prevObj.WithComponents([(Component, Data)]))])
                     : previousState;
             }
         }

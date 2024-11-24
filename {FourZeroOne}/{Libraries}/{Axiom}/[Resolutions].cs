@@ -105,20 +105,24 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     }
     namespace Actions
     {
-        namespace Unit
+        namespace Change
         {
-            namespace Change
+            public abstract record Template<Self, S, R> : Composition<Template<Self, S, R>> where Self : IComposition<Self> where R : class, IResolution where S : class, Resolution.Unsafe.IStateAddress
+            {
+                 
+            }
+            public static class Component
+            {
+                public static StaticComponentIdentifier<Template<Self, S, R>, R> SUBJECT<Self, S, R>() where Self : IComposition<Self> where R : class, IResolution where S : class, Resolution.Unsafe.IStateAddress, IResolution => new("axiom", "subject");
+            }
+            namespace Unit
             {
                 namespace Position
                 {
                     public record Data : Composition<Data>
                     {
                         public override IEnumerable<IInstruction> Instructions =>
-                            GetComponent(Component.SUBJECT).RemapAs(x => new r.Instructions.Assign<ax.Unit.Data>()
-                            {
-                                Address = x,
-                                Subject = x.
-                            })
+                            GetComponent(Component.SUBJECT) &&
                     }
                     public static class Component
                     {
@@ -140,6 +144,9 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
                     }
                 }
             }
+        }
+        namespace Unit
+        {
             namespace MoveSet
             {
                 public record Data : Composition<Data>
