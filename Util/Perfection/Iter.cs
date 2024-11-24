@@ -6,9 +6,10 @@ namespace Perfection
 {
     public static class Iter
     {
+        // "Map" is just a better name man.
         public static IEnumerable<TResult> Map<TIn, TResult>(this IEnumerable<TIn> enumerable, Func<TIn, TResult> mapFunction)
         {
-            foreach (var e in enumerable) yield return mapFunction(e);
+            return enumerable.Select(mapFunction);
         }
         public static IEnumerable<TResult> FilterMap<TIn, TResult>(this IEnumerable<TIn> enumerable, Func<TIn, IOption<TResult>> mapFunction)
         {
@@ -27,7 +28,7 @@ namespace Perfection
         }
 
         /// <summary>
-        /// WARNING: generates INFINITE iterator. meant to be used with <see cref="Until{T}(IEnumerable{T}, Predicate{T})"/>
+        /// WARNING: generates *infinite* values. Must be used with a terminator (such as <see cref="Until{T}(IEnumerable{T}, Predicate{T})"/>
         /// </summary>
         /// <returns></returns>
         public static IEnumerable<T> Sequence<T>(this T startingValue, Func<T, T> function)
@@ -148,10 +149,7 @@ namespace Perfection
         public static PIndexedSet<I, T> ToIndexedSet<I, T>(this IEnumerable<T> enumerable, Func<T, I> indexGenerator, int modulo) { return new(indexGenerator, modulo) { Elements = enumerable }; }
         public static PMap<K, T> ToMap<K, T>(this IEnumerable<(K, T)> mapPairs, int modulo) { return new(modulo) { Elements = mapPairs }; }
 
-        public static IEnumerable<T> Over<T>(params T[] arr)
-        {
-            foreach (var v in arr) yield return v;
-        }
+        public static IEnumerable<T> Over<T>(params T[] arr) => arr;
     }
     
 }

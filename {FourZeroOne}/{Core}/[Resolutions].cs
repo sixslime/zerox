@@ -53,7 +53,6 @@ namespace FourZeroOne.Core.Resolutions
             }
             public override string ToString() => $"{Address}<-{Subject}";
         }
-
         namespace Merge
         {
             public record Data<S> : Composition<Data<S>>, IInstruction where S : IStateAddress<IComposition>
@@ -68,7 +67,7 @@ namespace FourZeroOne.Core.Resolutions
                             Components.Elements
                             .Map(x => ((x.key as _Private.MergeComponentIdentifier<S>).NullToNone(), x.val))
                             .Where(x => x.Item1.IsSome())
-                            .Map(x => ((IComponentIdentifier)x.Item1.Unwrap(), x.val))
+                            .Map(x => (x.Item1.Unwrap().ForComponent, x.val))
                         ))]);
                 }
             }
@@ -90,7 +89,6 @@ namespace FourZeroOne.Core.Resolutions
                 }
             }
         }
-        
         public sealed record Redact : Instruction
         {
             public required IStateAddress Address { get; init; }
