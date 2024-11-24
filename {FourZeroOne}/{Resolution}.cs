@@ -20,7 +20,7 @@ namespace FourZeroOne.Resolution
     }
     public interface IComponentIdentifier<in H, out R> : Unsafe.IComponentIdentifier<H>, Unsafe.IComponentIdentifierOf<R> where H : IComposition<H> where R : IResolution { }
     // pretty fucking silly bro im not going even to even lie even.
-    public interface IComposition<Self> : IResolution where Self : IComposition<Self>
+    public interface IComposition<Self> : Unsafe.IComposition, IResolution where Self : IComposition<Self>
     {
         public IComposition<Self> WithComponents<R>(IEnumerable<(IComponentIdentifier<Self, R>,  R)> components) where R : IResolution;
         public IComposition<Self> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<Self>> addresses);
@@ -32,7 +32,7 @@ namespace FourZeroOne.Resolution
         public int Count { get; }
     }
 
-    public interface IStateAddress<out R> : Unsafe.IStateAddress where R : IResolution { }
+    public interface IStateAddress<out R> : Unsafe.IStateAddress where R : class, IResolution { }
     public abstract record Instruction : Construct, IInstruction
     {
         public abstract IState ChangeState(IState previousState);
@@ -52,9 +52,12 @@ namespace FourZeroOne.Resolution
 
         public IComposition<Self> WithComponents<R>(IEnumerable<(IComponentIdentifier<Self, R>, R)> components) where R : IResolution
         {
-            return this with { Components = Components with { dElements = Q => Q.Also(components.Map(x => ((Unsafe.IComponentIdentifier<Self>)x.Item1, (IResolution)x.Item2))) } };
+            return (IComposition<Self>)WithComponentsUnsafe(components.Map(x => ((Unsafe.IComponentIdentifier)x.Item1, (IResolution)x.Item2)));
         }
-
+        public Unsafe.IComposition WithComponentsUnsafe(IEnumerable<(Unsafe.IComponentIdentifier, IResolution)> components)
+        {
+            return this with { Components = Components with { dElements = Q => Q.Also(components) } };
+        }
         public IComposition<Self> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<Self>> addresses)
         {
             return this with { Components = Components with { dElements = Q => Q.ExceptBy(addresses, x => x.key) } };
@@ -62,9 +65,13 @@ namespace FourZeroOne.Resolution
 
         public IOption<R> GetComponent<R>(IComponentIdentifier<Self, R> address) where R : IResolution
         {
-            return Components[address].NullToNone().RemapAs(x => (R)x);
+            return GetComponentUnsafe(address).RemapAs(x => (R)x);
         }
-        protected PMap<Unsafe.IComponentIdentifier<Self>, IResolution> Components { get; init; }
+        public IOption<IResolution> GetComponentUnsafe(Unsafe.IComponentIdentifier address)
+        {
+            return Components[address];
+        }
+        protected PMap<Unsafe.IComponentIdentifier, IResolution> Components { get; init; }
     }
     public abstract record NoOp : Construct
     {
@@ -103,6 +110,7 @@ namespace FourZeroOne.Resolution.Unsafe
     public interface IComposition : IResolution
     {
         public IOption<IResolution> GetComponentUnsafe(IComponentIdentifier address);
+        public IComposition WithComponentsUnsafe(IEnumerable<(Unsafe.IComponentIdentifier, IResolution)> components);
     }
     public interface IComponentIdentifier
     { 

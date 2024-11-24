@@ -29,9 +29,10 @@ namespace FourZeroOne.StateModels
         {
             return this with { _rules = _rules with { dElements = E => E.Also(rules) } };
         }
-        IOption<R> IState.GetObject<R>(IStateAddress<R> address)
+        IOption<R> IState.GetObject<R>(IStateAddress<R> address) => GetObjectUnsafe(address).RemapAs(x => (R)x);
+        IOption<IResolution> GetObjectUnsafe(IStateAddress address)
         {
-            return _objects[address].RemapAs(x => (R)x);
+            return _objects[address];
         }
         IState IState.WithObjects<R>(IEnumerable<(IStateAddress<R>, R)> insertions) => WithObjectsUnsafe(insertions.Map(x => ((IStateAddress)x.Item1, (IResolution)x.Item2)));
 

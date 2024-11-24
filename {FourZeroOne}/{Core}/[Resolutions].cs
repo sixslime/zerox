@@ -53,18 +53,44 @@ namespace FourZeroOne.Core.Resolutions
             }
             public override string ToString() => $"{Address}<-{Subject}";
         }
-        public sealed record Merge<H, R> : Instruction where H : class, IComposition<H> where R : class, ResObj
+
+        namespace Merge
         {
-            public required IStateAddress<H> Address { get; init; }
-            public required IComponentIdentifier<H, R> Component { get; init; }
-            public required R Data { get; init; }
-            public override IState ChangeState(IState previousState)
+            public record Data<S> : Composition<Data<S>>, IInstruction where S : IStateAddress<IComposition>
             {
-                return previousState.GetObject(Address).Check(out var prevObj)
-                    ? previousState.WithObjects([(Address, prevObj.WithComponents([(Component, Data)]))])
-                    : previousState;
+                public required S Address { get; init; }
+                public override IEnumerable<IInstruction> Instructions => [this];
+                public IState ChangeState(IState prevState)
+                {
+                    return prevState.GetObjectUnsafe(Address).CheckNone(out var subject)
+                        ? prevState
+                        : prevState.WithObjectsUnsafe([(Address, ((IComposition)subject).WithComponentsUnsafe(
+                            Components.Elements
+                            .Map(x => ((x.key as _Private.MergeComponentIdentifier<S>).NullToNone(), x.val))
+                            .Where(x => x.Item1.IsSome())
+                            .Map(x => ((IComponentIdentifier)x.Item1.Unwrap(), x.val))
+                        ))]);
+                }
+            }
+            public static class Component
+            {
+                public static _Private.MergeComponentIdentifier<S> CHANGE<S, H, R>(IComponentIdentifier<H, R> component) where S : IStateAddress<H> where H : class, IComposition<H> where R : class, ResObj => new(component);
+            }
+            namespace _Private
+            {
+                public record MergeComponentIdentifier<S> : IComponentIdentifier<Data<S>> where S : IStateAddress<IComposition>
+                {
+                    public readonly IComponentIdentifier ForComponent;
+                    public string Source => "axiom";
+                    public string Identity => $"change-{ForComponent.Identity}";
+                    public MergeComponentIdentifier(IComponentIdentifier component)
+                    {
+                        ForComponent = component;
+                    }
+                }
             }
         }
+        
         public sealed record Redact : Instruction
         {
             public required IStateAddress Address { get; init; }
@@ -82,7 +108,6 @@ namespace FourZeroOne.Core.Resolutions
             }
         }
     }
-
     namespace Boxed
     {
         public sealed record MetaFunction<R> : NoOp where R : class, ResObj
@@ -151,6 +176,7 @@ namespace FourZeroOne.Core.Resolutions
         }
 
     }
+
     public sealed record Multi<R> : Construct, IMulti<R> where R : class, ResObj
     {
         public override IEnumerable<IInstruction> Instructions => Values.Map(x => x.Instructions).Flatten();

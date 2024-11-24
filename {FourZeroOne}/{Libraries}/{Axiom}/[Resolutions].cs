@@ -103,48 +103,13 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
             public required PList<ax.Hex.Position> Offsets { get; init; }
         }
     }
+    namespace Change
+    {
+        // move this to Core and replace the merge instruction with this. this should be an instruction.
+        
+    }
     namespace Actions
     {
-        namespace Change
-        {
-            public abstract record Template<Self, S, R> : Composition<Template<Self, S, R>> where Self : IComposition<Self> where R : class, IResolution where S : class, Resolution.Unsafe.IStateAddress
-            {
-                 
-            }
-            public static class Component
-            {
-                public static StaticComponentIdentifier<Template<Self, S, R>, R> SUBJECT<Self, S, R>() where Self : IComposition<Self> where R : class, IResolution where S : class, Resolution.Unsafe.IStateAddress, IResolution => new("axiom", "subject");
-            }
-            namespace Unit
-            {
-                namespace Position
-                {
-                    public record Data : Composition<Data>
-                    {
-                        public override IEnumerable<IInstruction> Instructions =>
-                            GetComponent(Component.SUBJECT) &&
-                    }
-                    public static class Component
-                    {
-                        public readonly static StaticComponentIdentifier<Data, ax.Unit.Identifier> SUBJECT = new("axiom", "subject");
-                        public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> FROM = new("axiom", "from");
-                        public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> TO = new("axiom", "to");
-                        public readonly static StaticComponentIdentifier<Data, Move.Data> MOVE_DATA = new("axiom", "move_data");
-                    }
-                    namespace Move
-                    {
-                        public record Data : Composition<Data>
-                        {
-                            public override IEnumerable<IInstruction> Instructions => [];
-                        }
-                        public static class Component
-                        {
-                            public readonly static StaticComponentIdentifier<Data, ro.Number> DISTANCE = new("axiom", "distance");
-                        }
-                    }
-                }
-            }
-        }
         namespace Unit
         {
             namespace MoveSet

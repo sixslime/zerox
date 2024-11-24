@@ -37,9 +37,22 @@ namespace Perfection
                 _ => throw new System.Exception("Unwrapped non-Some option.")
             };
         }
-        public static ISome<T> AsSome<T>(this T value)
+        public static IOption<T> AsSome<T>(this T value)
         {
             return new Some<T>(value);
+        }
+        public static IOption<T> Retain<T>(this T value, Func<T, bool> predicate)
+        {
+            return predicate(value)
+                ? value.AsSome()
+                : new None<T>();            
+        }
+        public static IOption<R> RetainTransform<T, R>(this T value, Func<T, (bool, R)> func)
+        {
+            var (keep, o) = func(value);
+            return keep
+                ? o.AsSome()
+                : new None<R>();
         }
         // kinda gay that it cannot be compiler asserted that val is not null if returns true.
         public static bool Check<T>(this IOption<T> option, out T val)
