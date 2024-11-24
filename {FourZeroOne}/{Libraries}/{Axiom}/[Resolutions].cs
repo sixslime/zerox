@@ -113,13 +113,19 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
                 {
                     public record Data : Composition<Data>
                     {
-                        public override IEnumerable<IInstruction> Instructions => throw new NotImplementedException();
+                        public override IEnumerable<IInstruction> Instructions =>
+                            GetComponent(Component.SUBJECT).RemapAs(x => new r.Instructions.Assign<ax.Unit.Data>()
+                            {
+                                Address = x,
+                                Subject = x.
+                            })
                     }
                     public static class Component
                     {
-                        public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> MOVE_DATA = new("axiom", "move_data");
+                        public readonly static StaticComponentIdentifier<Data, ax.Unit.Identifier> SUBJECT = new("axiom", "subject");
                         public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> FROM = new("axiom", "from");
                         public readonly static StaticComponentIdentifier<Data, ax.Hex.Position> TO = new("axiom", "to");
+                        public readonly static StaticComponentIdentifier<Data, Move.Data> MOVE_DATA = new("axiom", "move_data");
                     }
                     namespace Move
                     {
@@ -132,6 +138,17 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
                             public readonly static StaticComponentIdentifier<Data, ro.Number> DISTANCE = new("axiom", "distance");
                         }
                     }
+                }
+            }
+            namespace MoveSet
+            {
+                public record Data : Composition<Data>
+                {
+                    public override IEnumerable<IInstruction> Instructions => GetComponent(Component.MOVES).RemapAs(x => x.Values.Map(y => y.Instructions).Flatten()).Or([]);
+                }
+                public static class Component
+                {
+                    public readonly static StaticComponentIdentifier<Data, r.Multi<Change.Position.Data>> MOVES = new("axiom", "moves");
                 }
             }
         }

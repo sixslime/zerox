@@ -43,15 +43,27 @@ namespace FourZeroOne.Core.Resolutions
     namespace Instructions
     {
         using Objects;
-        public sealed record Assign<R> : Instruction where R : class, ResObj
+        public sealed record Assign<D> : Instruction where D : class, ResObj
         {
-            public required IStateAddress<R> Address { get; init; }
-            public required R Subject { get; init; }
-            public override IState ChangeState(IState context)
+            public required IStateAddress<D> Address { get; init; }
+            public required D Subject { get; init; }
+            public override IState ChangeState(IState previousState)
             {
-                return context.WithObjects([(Address, Subject)]);
+                return previousState.WithObjects([(Address, Subject)]);
             }
             public override string ToString() => $"{Address}<-{Subject}";
+        }
+        public sealed record Merge<H, R> : Instruction where H : class, IComposition<H> where R : class, ResObj
+        {
+            public required IStateAddress<H> Address { get; init; }
+            public required IComponentIdentifier<H, R> ComponentIdentifier { get; init; }
+            public required R ComponentData { get; init; }
+            public override IState ChangeState(IState previousState)
+            {
+                return previousState.GetObject(Address).Check(out var prevObj)
+                    ? previousState.WithObjects([(Address, prevObj.WithComponents([(ComponentIdentifier, ComponentData)]))])
+                    : previousState;
+            }
         }
         public sealed record Redact : Instruction
         {
