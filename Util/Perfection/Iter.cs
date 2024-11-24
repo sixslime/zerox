@@ -6,7 +6,7 @@ namespace Perfection
 {
     public static class Iter
     {
-        // "Map" is just a better name man.
+        // "Map" is just a better name, fight me.
         public static IEnumerable<TResult> Map<TIn, TResult>(this IEnumerable<TIn> enumerable, Func<TIn, TResult> mapFunction)
         {
             return enumerable.Select(mapFunction);

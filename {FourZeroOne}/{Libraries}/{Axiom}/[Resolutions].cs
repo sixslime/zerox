@@ -103,24 +103,31 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
             public required PList<ax.Hex.Position> Offsets { get; init; }
         }
     }
-    namespace Change
-    {
-        // move this to Core and replace the merge instruction with this. this should be an instruction.
-        
-    }
+
     namespace Actions
     {
         namespace Unit
         {
-            namespace MoveSet
+            namespace Move
             {
+                namespace Set
+                {
+                    public record Data : Composition<Data>
+                    {
+                        public override IEnumerable<IInstruction> Instructions => GetComponent(Component.MOVES).RemapAs(x => x.Values.Map(y => y.Instructions).Flatten()).Or([]);
+                    }
+                    public static class Component
+                    {
+                        public readonly static StaticComponentIdentifier<Data, r.Multi<r.Instructions.Merge.Data<ax.Unit.Identifier>>> MOVES = new("axiom", "moves");
+                    }
+                }
                 public record Data : Composition<Data>
                 {
-                    public override IEnumerable<IInstruction> Instructions => GetComponent(Component.MOVES).RemapAs(x => x.Values.Map(y => y.Instructions).Flatten()).Or([]);
+                    public override IEnumerable<IInstruction> Instructions => [];
                 }
                 public static class Component
                 {
-                    public readonly static StaticComponentIdentifier<Data, r.Multi<Change.Position.Data>> MOVES = new("axiom", "moves");
+                    public readonly static StaticComponentIdentifier<Data, ro.Number> DISTANCE = new("axiom", "distance");
                 }
             }
         }
