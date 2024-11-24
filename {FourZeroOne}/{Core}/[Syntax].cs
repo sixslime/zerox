@@ -373,6 +373,15 @@ namespace FourZeroOne.Core.Syntax
             return new(proxy, new());
         }
 
+        public static t.Exists tExists(this IToken<ResObj> token)
+        {
+            return new(token);
+        }
+        public static p.Function<t.Exists,TOrig, ResObj, ro.Bool> pExists<TOrig>(this IProxy<TOrig, ResObj> value) where TOrig : IToken
+        {
+            return new(value);
+        }
+
         public static t.DynamicAssign<R> tAsVariable<R>(this IToken<R> token, out DynamicAddress<R> ident) where R : class, ResObj
         {
             ident = new();

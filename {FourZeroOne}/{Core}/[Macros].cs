@@ -57,9 +57,28 @@ namespace FourZeroOne.Core.Macros
             protected override IOption<string> CustomToString() => $"{Arg1}=>{Arg2}".AsSome();
         }
     }
-
-    namespace Coordinates
+    
+    public sealed record CatchNolla<R> : TwoArg<R, R, R> where R : class, ResObj
     {
-        
+        protected override IProxy<R> InternalProxy => _proxy;
+        public CatchNolla(IToken<R> value, IToken<R> fallback) : base(value, fallback) { }
+        private static IProxy<CatchNolla<R>, R> _proxy = ProxyStatement.Build<CatchNolla<R>, R>(P =>
+        {
+            return
+            P.pSubEnvironment(RHint<R>.Hint(), new()
+            {
+                EnvironmentProxy = P.pMultiOf(RHint<ResObj>.Hint(),
+                [
+                    P.pOriginalA().pAsVariable(out var value)
+                ]),
+                SubProxy = value.tRef().tExists().pDirect(P).pIfTrue(RHint<R>.Hint(), new()
+                {
+                    Then = value.tRef().pDirect(P).pMetaBoxed(),
+                    Else = P.pOriginalB().pMetaBoxed()
+                })
+                .pExecute()
+            });
+        });
     }
+
 }

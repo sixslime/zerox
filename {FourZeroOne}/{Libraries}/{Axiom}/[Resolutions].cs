@@ -136,6 +136,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
             }
         }
     }
+    /*f
     namespace GameActions
     {
         namespace MoveSet
@@ -159,7 +160,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     
     // example rule: DeclareAction<MoveAction>(A) => Union(<other action>, DeclareAction<MoveAction>(A)).
     // the whole point is to always keep the declare action.
-    /*
+    
     namespace GameActions
     {
         namespace Move
