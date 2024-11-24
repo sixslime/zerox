@@ -129,6 +129,10 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
                 {
                     public readonly static StaticComponentIdentifier<Data, ro.Number> DISTANCE = new("axiom", "distance");
                 }
+                public static class ExtComponent
+                {
+                    public readonly static StaticComponentIdentifier<r.Instructions.Merge.Data<ax.Unit.Identifier>, Data> MOVE_DATA = new("axiom", "move_data");
+                }
             }
         }
     }

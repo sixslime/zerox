@@ -80,8 +80,8 @@ namespace FourZeroOne.Core.Resolutions
                 public record MergeComponentIdentifier<S> : IComponentIdentifier<Data<S>> where S : IStateAddress<IComposition>
                 {
                     public readonly IComponentIdentifier ForComponent;
-                    public string Source => "axiom";
-                    public string Identity => $"change-{ForComponent.Identity}";
+                    public string Source => "CORE";
+                    public string Identity => $"merge-{ForComponent.Identity}";
                     public MergeComponentIdentifier(IComponentIdentifier component)
                     {
                         ForComponent = component;

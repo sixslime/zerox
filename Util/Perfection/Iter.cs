@@ -9,6 +9,8 @@ namespace Perfection
         // "Map" is just a better name, fight me.
         public static IEnumerable<TResult> Map<TIn, TResult>(this IEnumerable<TIn> enumerable, Func<TIn, TResult> mapFunction)
         {
+            //foreach (var e in enumerable) yield return mapFunction(e);
+            // using Linq is probably '''optimized'''
             return enumerable.Select(mapFunction);
         }
         public static IEnumerable<TResult> FilterMap<TIn, TResult>(this IEnumerable<TIn> enumerable, Func<TIn, IOption<TResult>> mapFunction)
