@@ -297,11 +297,15 @@ namespace FourZeroOne.Core.Syntax
     {
         public static IProxy<TOrig, ROut> Build<TOrig, ROut>(ProxyBuilder<TOrig, ROut> statement) where TOrig : Token.IToken<ROut> where ROut : class, ResObj
         { return statement(new()); }
-        public static Rule.Rule<TOrig, ROut> BuildAsRule<TOrig, ROut>(ProxyBuilder<TOrig, ROut> statement) where TOrig : Token.IToken<ROut> where ROut : class, ResObj
-        { return new(statement(new())); }
+        public static Rule.Rule<TOrig, ROut> BuildAsRule<TOrig, ROut>(string hook, ProxyBuilder<TOrig, ROut> statement) where TOrig : Token.IToken<ROut> where ROut : class, ResObj
+        { return new(hook, statement(new())); }
     }
     public static class _Extensions
     {
+        public static TT Hooks<TT>(this TT token, params string[] hooks) where TT : class, IToken
+        {
+            return (TT)token.WithHookLabelsUnsafe(hooks);
+        }
         public static t.IO.Select.One<R> tIOSelectOne<R>(this IToken<IMulti<R>> source) where R : class, ResObj
         { return new(source); }
         public static p.Function<t.IO.Select.One<R>, TOrig, IMulti<R>, R> pIOSelectOne<TOrig, R>(this IProxy<TOrig, IMulti<R>> source) where TOrig : IToken where R : class, ResObj

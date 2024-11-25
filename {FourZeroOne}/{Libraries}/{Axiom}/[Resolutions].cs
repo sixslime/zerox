@@ -105,6 +105,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         }
     }
 
+    /*
     namespace Action
     {
         // INSTEAD OF ALL THIS BULLSHIT, MAKE THIS BIG CHANGE:
@@ -149,6 +150,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
             }
         }
     }
+    */
     /*f
     namespace GameActions
     {

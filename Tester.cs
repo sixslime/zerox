@@ -38,8 +38,8 @@ public class Tester
         // Rules are expressed by 'Proxies', which are basically just tokens, but have the ability to reference information about the token they are meant to replace (usually arguments).
         // logically, the replaced token and replacing token must both have the same resolution type.
         // MakeProxy.RuleFor<{token type to replace}, {resolution type}>({proxy statement specifying the replacement})
-        var rule_tutorial_1 = ProxyStatement.BuildAsRule<t.Fixed<ro.Number>, ro.Number>(P => 4.tFixed().pDirect(P)); // makes ALL constant number tokens ('t.Fixed<ro.Number>') turn into 4 (as a constant number token).
-        var rule_tutorial_2 = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalA()).pSubtract(P.pOriginalB())); // makes ALL add(A, B) tokens ('t.Number.Add') turn into subtract(add(A, A), B).
+        var rule_tutorial_1 = ProxyStatement.BuildAsRule<t.Fixed<ro.Number>, ro.Number>("test_hook", P => 4.tFixed().pDirect(P)); // makes ALL constant number tokens ('t.Fixed<ro.Number>') turn into 4 (as a constant number token).
+        var rule_tutorial_2 = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>("test_hook", P => P.pOriginalA().pAdd(P.pOriginalA()).pSubtract(P.pOriginalB())); // makes ALL add(A, B) tokens ('t.Number.Add') turn into subtract(add(A, A), B).
         //var rule_illogical = MakeProxy.RuleFor<t.Number.Add, ro.Bool>(P => P.pOriginalA().pIsGreaterThan(P.pOriginalB()) -- consider applying this rule to subtract(add(<number>, <number>), <number>), it would become subtract(<bool>, <number>), which does not make sense.
 
         // the final boss.
@@ -78,9 +78,16 @@ public class Tester
         });
         var token_test_4 = token_tutorial_2.tMap(x => x.tRef().tMultiply(2.tFixed()));
 
-        var token_tester = token_test_3;
+        var token_tester = token_tutorial_1;
         //var rule_tester = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tFixed().pDirect(P))));
-        FourZeroOne.IState startState = new FourZeroOne.StateModels.Minimal();
+
+        PList<int> l = new() { Elements = [6] };
+        var v = l.Elements.Also(Iter.Over(4, 4)).GetEnumerator();
+        l = l with { dElements = Q => Q.Append(4) };
+        foreach (int i in l.Elements) Console.WriteLine(i);
+
+        FourZeroOne.IState startState = new FourZeroOne.StateModels.Minimal()
+            .WithRules(rule_tutorial_1.Yield());
         _runtime = new FourZeroOne.Runtimes.FrameSaving.Gebug(startState, token_tester);
 
         var o = await _runtime.Run();

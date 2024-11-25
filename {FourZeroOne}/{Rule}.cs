@@ -15,9 +15,10 @@ namespace FourZeroOne.Rule
 
     public record Rule<TFor, R> : IRule where TFor : Token.IToken<R> where R : class, ResObj
     {
-        public Rule(IProxy<TFor, R> proxy)
+        public Rule(string hook, IProxy<TFor, R> proxy)
         {
             _proxy = proxy;
+            _hook = hook;
         }
         public Token.IToken<R> Apply(TFor original)
         {
@@ -25,13 +26,14 @@ namespace FourZeroOne.Rule
         }
         public IOption<Token.Unsafe.IToken> TryApply(Token.Unsafe.IToken original)
         {
-            return (original is TFor match) ? Apply(match).AsSome() : original.None();
+            return (original is TFor match && match.HookLabels.Contains(_hook)) ? Apply(match).AsSome() : original.None();
         }
         public IOption<Token.IToken<ROut>> TryApplyTyped<ROut>(Token.IToken<ROut> original) where ROut : class, ResObj
         {
-            return (original is TFor match) ? ((Token.IToken<ROut>)Apply(match)).AsSome() : original.None();
+            return (original is TFor match && match.HookLabels.Contains(_hook)) ? ((Token.IToken<ROut>)Apply(match)).AsSome() : original.None();
         }
         private readonly IProxy<TFor, R> _proxy;
+        private readonly string _hook;
     }
-    
+
 }
