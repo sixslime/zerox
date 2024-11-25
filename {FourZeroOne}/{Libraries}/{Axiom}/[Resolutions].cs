@@ -4,6 +4,7 @@ using Perfection;
 namespace FourZeroOne.Libraries.Axiom.Resolutions
 {
     using r = Core.Resolutions;
+    using ResObj = Resolution.IResolution;
     using ro = Core.Resolutions.Objects;
     using ax = GameObjects;
     using Resolution;
@@ -104,15 +105,27 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         }
     }
 
-    namespace Actions
+    namespace Action
     {
+        // INSTEAD OF ALL THIS BULLSHIT, MAKE THIS BIG CHANGE:
+        // instead of rules affecting all tokens of 1 type, make tokens have a "hook" field that contains an arbitrary label.
+        // rules are then applied to all tokens with a specified hook point instead of type.
+        public record Data : Composition<Data>, IMulti<ResObj>
+        {
+            public override IEnumerable<IInstruction> Instructions => GetComponent(Component.MOVES).RemapAs(x => x.Values.Map(y => y.Instructions).Flatten()).Or([]);
+        }
+        public static class Component
+        {
+            // of resobj
+            public readonly static StaticComponentIdentifier<Data, r.Multi<r.Instructions.Merge.Data<ax.Unit.Identifier>>> MOVES = new("axiom", "moves");
+        }
         namespace Unit
         {
             namespace Move
             {
                 namespace Set
                 {
-                    public record Data : Composition<Data>
+                    public record Data : Composition<Data>, IMulti<ResObj>
                     {
                         public override IEnumerable<IInstruction> Instructions => GetComponent(Component.MOVES).RemapAs(x => x.Values.Map(y => y.Instructions).Flatten()).Or([]);
                     }
