@@ -34,6 +34,10 @@ namespace FourZeroOne.Rule
         }
         private readonly IProxy<TFor, R> _proxy;
         private readonly string _hook;
+        public override string ToString()
+        {
+            return "rule";
+        }
     }
 
 }

@@ -45,7 +45,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
         protected override void RecieveRuleSteps(IEnumerable<(IToken token, IRule appliedRule)> steps)
         {
             if (!steps.Any()) return;
-            Console.WriteLine($"{DepthPad(_depth)}? {steps.AccumulateInto("", (msg, x) => msg + x.token + $"\n")}");
+            Console.Write($"{DepthPad(_depth + 1)}? {steps.AccumulateInto("", (msg, x) => msg + x.token + $"\n")}");
         }
 
         protected override void RecieveToken(IToken token, int depth)
@@ -75,7 +75,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
                 Console.WriteLine($" {token}");
                 Console.ResetColor();
             }
-            _depth = depth;
+            _depth = depth + 1;
         }
 
         protected override ITask<IOption<IEnumerable<R>>> SelectionImplementation<R>(IEnumerable<R> from, int count, out IOption<LinkedStack<Frame>> targetFrame)

@@ -77,17 +77,13 @@ public class Tester
             B = token_complicated
         });
         var token_test_4 = token_tutorial_2.tMap(x => x.tRef().tMultiply(2.tFixed()));
+        var token_test_5 = 5.tFixed().Hooks("test_hook").tAdd(10.tFixed().Hooks("test_hook","bruh"));
 
-        var token_tester = token_tutorial_1;
+        var token_tester = token_test_5;
         //var rule_tester = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tFixed().pDirect(P))));
 
-        PList<int> l = new() { Elements = [6] };
-        var v = l.Elements.Also(Iter.Over(4, 4)).GetEnumerator();
-        l = l with { dElements = Q => Q.Append(4) };
-        foreach (int i in l.Elements) Console.WriteLine(i);
-
         FourZeroOne.IState startState = new FourZeroOne.StateModels.Minimal()
-            .WithRules(rule_tutorial_1.Yield());
+            .WithRules([rule_tutorial_1]);
         _runtime = new FourZeroOne.Runtimes.FrameSaving.Gebug(startState, token_tester);
 
         var o = await _runtime.Run();

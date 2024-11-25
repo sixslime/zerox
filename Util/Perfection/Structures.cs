@@ -126,67 +126,17 @@ namespace Perfection
     /// <typeparam name="T"></typeparam>
     public record PList<T>
     {
-        public required IEnumerable<T> Elements {
-            get
-            {
-                int i = 0;
-                while (ConsumeToIndex(i))
-                {
-                    yield return _list[i];
-                    i++;
-                }
-            }
-            init
-            {
-                _enumerator = value.GetEnumerator();
-            }
-        }
+        public required IEnumerable<T> Elements { get => _list; init => _list = new(value); }
         public Updater<IEnumerable<T>> dElements { init => Elements = value(Elements); }
-        public int Count { get
-            {
-                while (MoveNext())
-                    _ = Consume();
-                return _list.Count;
-            } }
+        public int Count => _list.Count;
         public PList()
         {
             _list = new(0);
-            _cachedIndex = -1;
         }
-        public T this[int i] { get
-            {
-                if (!ConsumeToIndex(i)) throw new IndexOutOfRangeException();
-                return _list[i];
-            } 
-        }
-        public T[] ToArray() => [.. Elements];
+        public IEnumerable<T> this[Range range] => _list[range];
+        public T this[int index] => _list[index];
+        public T[] ToArray() => _list.ToArray();
         public override string ToString() => Elements.AccumulateInto("PList:\n", (msg, x) => msg + $"- {x}\n");
-
-        private bool ConsumeToIndex(int index)
-        {
-            while (index > _cachedIndex)
-            {
-                if (!MoveNext()) return false;
-                _ = Consume();
-            }
-            return true;
-        }
-        private bool MoveNext()
-        {
-            if (_enumerator is null) return false;
-            if (_enumerator.MoveNext()) return true;
-            _enumerator = null;
-            return false;
-        }
-        private T Consume()
-        {
-            var v = _enumerator.Current;
-            _list.Add(v);
-            _cachedIndex++;
-            return v;
-        }
-        private IEnumerator<T> _enumerator;
-        private int _cachedIndex;
         private readonly List<T> _list;
     }
 

@@ -35,9 +35,16 @@ namespace FourZeroOne.Token
         public Unsafe.IToken WithHookLabelsUnsafe(params string[] hooks) => this with { HookLabels = hooks };
         protected virtual IOption<string> CustomToString() => new None<string>();
 
-        public sealed override string ToString() => CustomToString().Check(out var custom)
+        public sealed override string ToString()
+        {
+            var mainPart = CustomToString().Check(out var custom)
                 ? custom
                 : $"{this.GetType().Name}( {_argTokens.AccumulateInto("", (msg, arg) => $"{msg}{arg} ")})";
+            var hookPart = HookLabels.Length > 0
+                ? $"-HOOKS[{string.Join(",", HookLabels)}]"
+                : "";
+            return mainPart + hookPart;
+        }
         private static int _assigner = 0;
         private Unsafe.IToken[] _argTokens;
         private int _uniqueId;
