@@ -304,7 +304,7 @@ namespace FourZeroOne.Core.Syntax
     {
         public static TT Hooks<TT>(this TT token, params string[] hooks) where TT : class, IToken
         {
-            return (TT)token.WithHookLabelsUnsafe(hooks);
+            return (TT)token.UnsafeWithHookLabels(hooks);
         }
         public static t.IO.Select.One<R> tIOSelectOne<R>(this IToken<IMulti<R>> source) where R : class, ResObj
         { return new(source); }

@@ -175,7 +175,7 @@ namespace FourZeroOne.Runtime
                     {
                         argPass[i] = PopFromStack(ref _resolutionStack).Value;
                     }
-                    var resolution = await operationNode.Value.ResolveUnsafe(this, argPass);
+                    var resolution = await operationNode.Value.UnsafeResolve(this, argPass);
                     if (_discontinueEval)
                     {
                         _discontinueEval = false;

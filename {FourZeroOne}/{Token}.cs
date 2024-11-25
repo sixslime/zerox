@@ -30,9 +30,9 @@ namespace FourZeroOne.Token
         }
         public Token(IEnumerable<Unsafe.IToken> args) : this(args.AsList().ToArray()) { }
         public abstract ITask<IOption<R>> Resolve(IRuntime runtime, IOption<ResObj>[] args);
-        public ITask<IOption<ResObj>> ResolveUnsafe(IRuntime runtime, IOption<ResObj>[] args) { return Resolve(runtime, args); }
-        public IToken<R> WithHookLabels(params string[] hooks) => (IToken<R>)WithHookLabelsUnsafe(hooks);
-        public Unsafe.IToken WithHookLabelsUnsafe(params string[] hooks) => this with { HookLabels = hooks };
+        public ITask<IOption<ResObj>> UnsafeResolve(IRuntime runtime, IOption<ResObj>[] args) { return Resolve(runtime, args); }
+        public IToken<R> WithHookLabels(params string[] hooks) => (IToken<R>)UnsafeWithHookLabels(hooks);
+        public Unsafe.IToken UnsafeWithHookLabels(params string[] hooks) => this with { HookLabels = hooks };
         protected virtual IOption<string> CustomToString() => new None<string>();
 
         public sealed override string ToString()
@@ -251,8 +251,8 @@ namespace FourZeroOne.Token.Unsafe
     {
         public IToken[] ArgTokens { get; }
         public string[] HookLabels { get; }
-        public IToken WithHookLabelsUnsafe(params string[] hooks);
-        public ITask<IOption<ResObj>> ResolveUnsafe(IRuntime runtime, IOption<ResObj>[] args);
+        public IToken UnsafeWithHookLabels(params string[] hooks);
+        public ITask<IOption<ResObj>> UnsafeResolve(IRuntime runtime, IOption<ResObj>[] args);
     }
 
     public interface IHasArg1<RArg> : IHasArg1 where RArg : class, ResObj

@@ -15,6 +15,11 @@ namespace FourZeroOne.Proxy
     }
     public abstract record Proxy<TOrig, R> : IProxy<TOrig, R> where TOrig : IToken where R : class, ResObj
     {
+        public string[] HookLabels { get; init; }
+        public Proxy()
+        {
+            HookLabels = [];
+        }
         public abstract IToken<R> Realize(TOrig original, IOption<Rule.IRule> realizingRule);
         public IToken<R> UnsafeTypedRealize(IToken original, IOption<Rule.IRule> rule) { return Realize((TOrig)original, rule); }
         public IToken UnsafeContextualRealize(TOrig original, IOption<Rule.IRule> rule) { return Realize(original, rule); }
@@ -33,6 +38,7 @@ namespace FourZeroOne.Proxy.Unsafe
     using Token;
     public interface IProxy
     {
+        public string[] HookLabels { get; }
         public IToken UnsafeRealize(IToken original, IOption<Rule.IRule> rule);
     }
     public interface IProxy<out R> : IProxy where R : class, ResObj
