@@ -77,7 +77,7 @@ public class Tester
             B = token_complicated
         });
         var token_test_4 = token_tutorial_2.tMap(x => x.tRef().tMultiply(2.tFixed()));
-        var token_test_5 = 5.tFixed().Hooks("test_hook").tAdd(10.tFixed().Hooks("test_hook","bruh"));
+        var token_test_5 = 5.tFixed().tWithHooks("test_hook").tAdd(10.tFixed().tWithHooks("test_hook","bruh"));
 
         var token_tester = token_test_5;
         //var rule_tester = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tFixed().pDirect(P))));
