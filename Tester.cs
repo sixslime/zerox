@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using FourZeroOne.Core.Syntax;
 using t = FourZeroOne.Core.Tokens;
 using p = FourZeroOne.Core.Proxies;
+using FZ = FourZeroOne;
+using ResObj = FourZeroOne.Resolution.IResolution;
 using r = FourZeroOne.Core.Resolutions;
 using a = FourZeroOne.Libraries.Axiom;
 using ro = FourZeroOne.Core.Resolutions.Objects;
@@ -13,12 +15,14 @@ using System.Threading.Tasks;
 using Perfection;
 using ControlledFlows;
 namespace PROTO_ZeroxFour_1;
+
+// TODO: make a dedicated testing object/mini-framework
 public class Tester
 {
     private FourZeroOne.Runtime.IRuntime _runtime;
-    // Start is called before the first frame update
     public async Task Run()
     {
+
         // 401 is just an interpreter for 'Tokens'.
         // Tokens resolve to 'Resolutions', which change the state of the game.
         // A 'Game' of 401 can be expressed via a sequence of resolutions.
@@ -77,7 +81,8 @@ public class Tester
             B = token_complicated
         });
         var token_test_4 = token_tutorial_2.tMap(x => x.tRef().tMultiply(2.tFixed()));
-        var token_test_5 = 5.tFixed().tWithHooks("test").tAdd(10.tFixed().tWithHooks("test")).tWithHooks("test");
+        var token_test_5 = 5.tFixed().tWithHooks("test").tAdd(10.tFixed().tWithHooks("test"));
+        var token_test_6 = token_test_5.tWithHooks("test");
 
         var rule_test_1 = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>("test", P => P.pOriginalA().pSubtract(P.pOriginalB()));
         var rule_test_2 = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>("test", P => P.pSubEnvironment(RHint<ro.Number>.Hint(), new()
@@ -94,11 +99,11 @@ public class Tester
             Environment = P.pOriginalA().pAsVariable(out var num).pYield(),
             Value = num.tRef().tAdd(num.tRef()).pDirect(P)
         }));
-        var token_tester = token_test_5;
-   
-        FourZeroOne.IState startState = new FourZeroOne.StateModels.Minimal()
-            .WithRules([rule_test_3, rule_test_1]);
-        _runtime = new FourZeroOne.Runtimes.FrameSaving.Gebug(startState, token_tester);
+        var rule_test_4 = ProxyStatement.BuildAsRule<FZ.Token.IToken<ro.Number>, ro.Number>("test", P => 6.tFixed().pDirect(P));
+        var token_tester = token_test_6;
+        FZ.IState startState = new FourZeroOne.StateModels.Minimal()
+            .WithRules([rule_test_4]);
+        _runtime = new FZ.Runtimes.FrameSaving.Gebug(startState, token_tester);
 
         var o = await _runtime.Run();
         Console.WriteLine($"FINAL: {o}");

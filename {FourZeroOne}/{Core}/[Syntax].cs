@@ -519,6 +519,8 @@ namespace FourZeroOne.Core.Syntax
 
         public static t.DynamicReference<R> tRef<R>(this DynamicAddress<R> ident) where R : class, ResObj
         { return new(ident); }
+        public static t.Fixed<ro.Bool> tFixed(this bool value)
+        { return new(value); }
         public static t.Fixed<ro.Number> tFixed(this int value)
         { return new(value); }
         public static t.Fixed<R> tFixed<R>(this R value) where R : class, ResObj

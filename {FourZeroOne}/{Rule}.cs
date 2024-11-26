@@ -6,31 +6,56 @@ using Perfection;
 namespace FourZeroOne.Rule
 {
     using Proxy;
+    using Token;
     
     public interface IRule
     {
-        public IOption<Token.IToken<R>> TryApplyTyped<R>(Token.IToken<R> original) where R : class, ResObj;
+        public IOption<IToken<R>> TryApplyTyped<R>(IToken<R> original) where R : class, ResObj;
         public IOption<Token.Unsafe.IToken> TryApply(Token.Unsafe.IToken original);
     }
 
-    public record Rule<TFor, R> : IRule where TFor : Token.IToken<R> where R : class, ResObj
+    /// <summary>
+    /// Rule will apply to tokens that match all of the following criteria: <br></br>
+    /// - Can be assigned to type <typeparamref name="TFor"/>. (Proxy input will be <typeparamref name="TFor"/>) <br></br>
+    /// - Has a resolution type that <typeparamref name="R"/> derives from or is equal to. (Proxy output will resolve to <typeparamref name="R"/>) <br></br>
+    /// - Contains the rule's hook label.
+    /// </summary>
+    /// <typeparam name="TFor"></typeparam>
+    /// <typeparam name="R"></typeparam>
+    public record Rule<TFor, R> : IRule where TFor : IToken<R> where R : class, ResObj
     {
         public Rule(string hook, IProxy<TFor, R> proxy)
         {
             _proxy = proxy;
             _hook = hook;
         }
-        public Token.IToken<R> Apply(TFor original)
+        public IToken<R> Apply(TFor original)
         {
             return _proxy.Realize(original, this.AsSome());
         }
-        public IOption<Token.Unsafe.IToken> TryApply(Token.Unsafe.IToken original)
+        private IOption<IToken<R>> TryApplyInternal(Token.Unsafe.IToken original)
         {
-            return (original is TFor match && match.HookLabels.Contains(_hook)) ? Apply(match).AsSome() : original.None();
+            // i don't see a better way. rules are just cheugy.
+            return 
+                original is TFor match
+                && match.HookLabels.Contains(_hook)
+                && original.GetType().FindInterfaces(InterfaceFilter, typeof(IToken<ResObj>).GetGenericTypeDefinition())
+                    .Map(x => x.GenericTypeArguments[0])
+                    .HasMatch(x => typeof(R).IsAssignableTo(x))
+                ? Apply(match).AsSome()
+                : new None<IToken<R>>();
         }
-        public IOption<Token.IToken<ROut>> TryApplyTyped<ROut>(Token.IToken<ROut> original) where ROut : class, ResObj
+        public IOption<Token.Unsafe.IToken> TryApply(Token.Unsafe.IToken original) => TryApplyInternal(original);
+        public IOption<IToken<ROut>> TryApplyTyped<ROut>(IToken<ROut> original) where ROut : class, ResObj
         {
-            return (original is TFor match && match.HookLabels.Contains(_hook)) ? ((Token.IToken<ROut>)Apply(match)).AsSome() : original.None();
+            // can be safely casted directly
+            return TryApply(original).RemapAs(x => (IToken<ROut>)x);
+        }
+        private static bool InterfaceFilter(Type type, Object? comparison)
+        {
+            return comparison is Type c
+                && type.IsGenericType
+                && type.GetGenericTypeDefinition() == c;
         }
         private readonly IProxy<TFor, R> _proxy;
         private readonly string _hook;
