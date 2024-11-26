@@ -31,7 +31,7 @@ public class Tester
         var token_tutorial_4 = Core.tSubEnvironment(RHint<ro.Number>.Hint(), new()
         {
             Environment = token_tutorial_2.tIOSelectOne().tAsVariable(out var mySelection).tYield(),
-            SubToken = mySelection.tRef().tMultiply(mySelection.tRef())
+            Value = mySelection.tRef().tMultiply(mySelection.tRef())
         }); //creates a Sub-Environment (aka scope) where 'mySelection' stores the resolution of a user selection, then references it twice to multiply it by itself.
         // is different than just calling 'token_tutorial_2.tIO_SelectOne()' twice, that would prompt the user selection 2 times, possibly resolving different values each time (because the user could select 2 different things obv.).
         // 'Rules' can be made and applied to tokens to replace certain types of tokens with other tokens.
@@ -56,7 +56,7 @@ public class Tester
                     return Core.tSubEnvironment(RHint<ro.Number>.Hint(), new()
                     {
                         Environment = pool.tRef().tIOSelectOne().tAsVariable(out var selection).tYield(),
-                        SubToken = selfFunc.tRef().tExecuteWith(new()
+                        Value = selfFunc.tRef().tExecuteWith(new()
                         {
                             A = counter.tRef().tAdd(1.tFixed()),
                             B = pool.tRef().tWithout(selection.tRef().tYield())
@@ -77,13 +77,27 @@ public class Tester
             B = token_complicated
         });
         var token_test_4 = token_tutorial_2.tMap(x => x.tRef().tMultiply(2.tFixed()));
-        var token_test_5 = 5.tFixed().tWithHooks("test_hook").tAdd(10.tFixed().tWithHooks("test_hook","bruh"));
+        var token_test_5 = 5.tFixed().tWithHooks("test").tAdd(10.tFixed().tWithHooks("test")).tWithHooks("test");
 
+        var rule_test_1 = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>("test", P => P.pOriginalA().pSubtract(P.pOriginalB()));
+        var rule_test_2 = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>("test", P => P.pSubEnvironment(RHint<ro.Number>.Hint(), new()
+        {
+            Environment = P.pOriginalA().pAsVariable(out var num).pYield(),
+            Value = P.pOriginal(new()
+            {
+                A = num.tRef().pDirect(P),
+                B = num.tRef().pDirect(P)
+            })
+        }));
+        var rule_test_3 = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>("test", P => P.pSubEnvironment(RHint<ro.Number>.Hint(), new()
+        {
+            Environment = P.pOriginalA().pAsVariable(out var num).pYield(),
+            Value = num.tRef().tAdd(num.tRef()).pDirect(P)
+        }));
         var token_tester = token_test_5;
-        //var rule_tester = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>(P => P.pOriginalA().pAdd(P.pOriginalB().pAdd(1.tFixed().pDirect(P))));
-
+   
         FourZeroOne.IState startState = new FourZeroOne.StateModels.Minimal()
-            .WithRules([rule_tutorial_1]);
+            .WithRules([rule_test_3, rule_test_1]);
         _runtime = new FourZeroOne.Runtimes.FrameSaving.Gebug(startState, token_tester);
 
         var o = await _runtime.Run();

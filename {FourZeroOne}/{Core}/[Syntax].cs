@@ -77,7 +77,7 @@ namespace FourZeroOne.Core.Syntax
             public sealed record SubEnvironment<R> where R : class, ResObj
             {
                 public required IToken<IMulti<ResObj>> Environment { get; init; }
-                public required IToken<R> SubToken { get; init; }
+                public required IToken<R> Value { get; init; }
             }
         }
         namespace Proxy
@@ -115,8 +115,8 @@ namespace FourZeroOne.Core.Syntax
 
             public sealed record SubEnvironment<TOrig, R> where TOrig : IToken where R : class, ResObj
             {
-                public required IProxy<TOrig, IMulti<ResObj>> EnvironmentProxy { get; init; }
-                public required IProxy<TOrig, R> SubProxy { get; init; }
+                public required IProxy<TOrig, IMulti<ResObj>> Environment { get; init; }
+                public required IProxy<TOrig, R> Value { get; init; }
             }
         }
 
@@ -125,10 +125,10 @@ namespace FourZeroOne.Core.Syntax
     public static class Core
     {
         public static t.SubEnvironment<R> tSubEnvironment<R>(RHint<R> _, Structure.Token.SubEnvironment<R> block) where R : class, ResObj
-        { return new(block.Environment, block.SubToken); }
+        { return new(block.Environment, block.Value); }
         public static p.Function<t.SubEnvironment<R>, TOrig, IMulti<ResObj>, R, R> pSubEnvironment<TOrig, R>(this OriginalHint<TOrig> _, RHint<R> __, Structure.Proxy.SubEnvironment<TOrig, R> block) where TOrig : IToken where R : class, ResObj
         {
-            return new(block.EnvironmentProxy, block.SubProxy);
+            return new(block.Environment, block.Value);
         }
 
         public static t.Fixed<r.Boxed.MetaFunction<ROut>> tMetaFunction<ROut>(RHint<ROut> _, Func<IToken<ROut>> tokenFunction) where ROut : class, ResObj

@@ -30,13 +30,13 @@ namespace FourZeroOne.Core.Macros
                 return
                 P.pSubEnvironment(RHint<r.Multi<ROut>>.Hint(), new()
                 {
-                    EnvironmentProxy =
+                    Environment =
                     P.pMultiOf(RHint<ResObj>.Hint(),
                     [
                         P.pOriginalA().pAsVariable(out var enumerable),
                     P.pOriginalB().pAsVariable(out var mapFunction)
                     ]),
-                    SubProxy =
+                    Value =
                     Core.tMetaRecursiveFunction(RHint<r.Objects.Number, r.Multi<ROut>>.Hint(), (selfFunc, i) =>
                     {
                         return i.tRef().tIsGreaterThan(enumerable.tRef().tCount())
@@ -67,11 +67,11 @@ namespace FourZeroOne.Core.Macros
             return
             P.pSubEnvironment(RHint<R>.Hint(), new()
             {
-                EnvironmentProxy = P.pMultiOf(RHint<ResObj>.Hint(),
+                Environment = P.pMultiOf(RHint<ResObj>.Hint(),
                 [
                     P.pOriginalA().pAsVariable(out var value)
                 ]),
-                SubProxy = value.tRef().tExists().pDirect(P).pIfTrue(RHint<R>.Hint(), new()
+                Value = value.tRef().tExists().pDirect(P).pIfTrue(RHint<R>.Hint(), new()
                 {
                     Then = value.tRef().pDirect(P).pMetaBoxed(),
                     Else = P.pOriginalB().pMetaBoxed()
