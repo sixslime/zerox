@@ -293,11 +293,11 @@ namespace FourZeroOne.Core.Syntax
         { return new(); }
 
     }
-    public static class ProxyStatement
+    public static class MakeProxy
     {
-        public static IProxy<TOrig, ROut> Build<TOrig, ROut>(ProxyBuilder<TOrig, ROut> statement) where TOrig : Token.IToken<ROut> where ROut : class, ResObj
+        public static IProxy<TOrig, ROut> Statement<TOrig, ROut>(ProxyBuilder<TOrig, ROut> statement) where TOrig : Token.IToken<ROut> where ROut : class, ResObj
         { return statement(new()); }
-        public static Rule.Rule<TOrig, ROut> BuildAsRule<TOrig, ROut>(string hook, ProxyBuilder<TOrig, ROut> statement) where TOrig : Token.IToken<ROut> where ROut : class, ResObj
+        public static Rule.Rule<TOrig, ROut> AsRule<TOrig, ROut>(string hook, ProxyBuilder<TOrig, ROut> statement) where TOrig : Token.IToken<ROut> where ROut : class, ResObj
         { return new(hook, statement(new())); }
     }
     public static class _Extensions

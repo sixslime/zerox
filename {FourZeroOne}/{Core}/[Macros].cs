@@ -25,7 +25,7 @@ namespace FourZeroOne.Core.Macros
             protected override IProxy<r.Multi<ROut>> InternalProxy => _proxy;
             public Map(IToken<Resolution.IMulti<RIn>> values, IToken<r.Boxed.MetaFunction<RIn, ROut>> mapFunction) : base(values, mapFunction) { }
 
-            private static IProxy<Map<RIn, ROut>, r.Multi<ROut>> _proxy = ProxyStatement.Build<Map<RIn, ROut>, r.Multi<ROut>>(P =>
+            private static IProxy<Map<RIn, ROut>, r.Multi<ROut>> _proxy = MakeProxy.Statement<Map<RIn, ROut>, r.Multi<ROut>>(P =>
             {
                 return
                 P.pSubEnvironment(RHint<r.Multi<ROut>>.Hint(), new()
@@ -62,7 +62,7 @@ namespace FourZeroOne.Core.Macros
     {
         protected override IProxy<R> InternalProxy => _proxy;
         public CatchNolla(IToken<R> value, IToken<R> fallback) : base(value, fallback) { }
-        private static IProxy<CatchNolla<R>, R> _proxy = ProxyStatement.Build<CatchNolla<R>, R>(P =>
+        private static IProxy<CatchNolla<R>, R> _proxy = MakeProxy.Statement<CatchNolla<R>, R>(P =>
         {
             return
             P.pSubEnvironment(RHint<R>.Hint(), new()

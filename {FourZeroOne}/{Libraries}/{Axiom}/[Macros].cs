@@ -22,11 +22,12 @@ namespace FourZeroOne.Libraries.Axiom.Macros
     namespace Hooks
     {
         // yes, this is good. this means that "gameactions" (and other action structures) are defined in resolutions
-        public sealed record SendAction<R> : OneArg<R, ResObj> where R : class, ResObj
+        // do we even need hooks man
+        public sealed record SendAction<R> : OneArg<R, ResObj> where R : class, ar.Action.IAction
         {
             public SendAction(IToken<R> action) : base(action) { }
             protected override IProxy<ResObj> InternalProxy => PROXY;
-            private readonly static IProxy<SendAction<R>, ResObj> PROXY = ProxyStatement.Build<SendAction<R>, ResObj>(P => P.pOriginalA());
+            private readonly static IProxy<SendAction<R>, ResObj> PROXY = MakeProxy.Statement<SendAction<R>, ResObj>(P => P.pOriginalA());
         }
         
     } 

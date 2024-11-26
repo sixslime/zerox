@@ -17,7 +17,7 @@ namespace FourZeroOne.Rule
     /// <summary>
     /// Rule will apply to tokens that match all of the following criteria: <br></br>
     /// - Can be assigned to type <typeparamref name="TFor"/>. (Proxy input will be <typeparamref name="TFor"/>) <br></br>
-    /// - Has a resolution type that <typeparamref name="R"/> derives from or is equal to. (Proxy output will resolve to <typeparamref name="R"/>) <br></br>
+    /// - Has a resolution type that <typeparamref name="R"/> can be assigned too. (Proxy output will resolve to <typeparamref name="R"/>) <br></br>
     /// - Contains the rule's hook label.
     /// </summary>
     /// <typeparam name="TFor"></typeparam>

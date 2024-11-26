@@ -10,7 +10,6 @@ using ResObj = FourZeroOne.Resolution.IResolution;
 using r = FourZeroOne.Core.Resolutions;
 using a = FourZeroOne.Libraries.Axiom;
 using ro = FourZeroOne.Core.Resolutions.Objects;
-using FourZeroOne.Libraries.Axiom.TokenSyntax;
 using System.Threading.Tasks;
 using Perfection;
 using ControlledFlows;
@@ -42,8 +41,8 @@ public class Tester
         // Rules are expressed by 'Proxies', which are basically just tokens, but have the ability to reference information about the token they are meant to replace (usually arguments).
         // logically, the replaced token and replacing token must both have the same resolution type.
         // MakeProxy.RuleFor<{token type to replace}, {resolution type}>({proxy statement specifying the replacement})
-        var rule_tutorial_1 = ProxyStatement.BuildAsRule<t.Fixed<ro.Number>, ro.Number>("test_hook", P => 4.tFixed().pDirect(P)); // makes ALL constant number tokens ('t.Fixed<ro.Number>') turn into 4 (as a constant number token).
-        var rule_tutorial_2 = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>("test_hook", P => P.pOriginalA().pAdd(P.pOriginalA()).pSubtract(P.pOriginalB())); // makes ALL add(A, B) tokens ('t.Number.Add') turn into subtract(add(A, A), B).
+        var rule_tutorial_1 = MakeProxy.AsRule<t.Fixed<ro.Number>, ro.Number>("test_hook", P => 4.tFixed().pDirect(P)); // makes ALL constant number tokens ('t.Fixed<ro.Number>') turn into 4 (as a constant number token).
+        var rule_tutorial_2 = MakeProxy.AsRule<t.Number.Add, ro.Number>("test_hook", P => P.pOriginalA().pAdd(P.pOriginalA()).pSubtract(P.pOriginalB())); // makes ALL add(A, B) tokens ('t.Number.Add') turn into subtract(add(A, A), B).
         //var rule_illogical = MakeProxy.RuleFor<t.Number.Add, ro.Bool>(P => P.pOriginalA().pIsGreaterThan(P.pOriginalB()) -- consider applying this rule to subtract(add(<number>, <number>), <number>), it would become subtract(<bool>, <number>), which does not make sense.
 
         // the final boss.
@@ -84,8 +83,8 @@ public class Tester
         var token_test_5 = 5.tFixed().tWithHooks("test").tAdd(10.tFixed().tWithHooks("test"));
         var token_test_6 = token_test_5.tWithHooks("test");
 
-        var rule_test_1 = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>("test", P => P.pOriginalA().pSubtract(P.pOriginalB()));
-        var rule_test_2 = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>("test", P => P.pSubEnvironment(RHint<ro.Number>.Hint(), new()
+        var rule_test_1 = MakeProxy.AsRule<t.Number.Add, ro.Number>("test", P => P.pOriginalA().pSubtract(P.pOriginalB()));
+        var rule_test_2 = MakeProxy.AsRule<t.Number.Add, ro.Number>("test", P => P.pSubEnvironment(RHint<ro.Number>.Hint(), new()
         {
             Environment = P.pOriginalA().pAsVariable(out var num).pYield(),
             Value = P.pOriginal(new()
@@ -94,12 +93,12 @@ public class Tester
                 B = num.tRef().pDirect(P)
             })
         }));
-        var rule_test_3 = ProxyStatement.BuildAsRule<t.Number.Add, ro.Number>("test", P => P.pSubEnvironment(RHint<ro.Number>.Hint(), new()
+        var rule_test_3 = MakeProxy.AsRule<t.Number.Add, ro.Number>("test", P => P.pSubEnvironment(RHint<ro.Number>.Hint(), new()
         {
             Environment = P.pOriginalA().pAsVariable(out var num).pYield(),
             Value = num.tRef().tAdd(num.tRef()).pDirect(P)
         }));
-        var rule_test_4 = ProxyStatement.BuildAsRule<FZ.Token.IToken<ro.Number>, ro.Number>("test", P => 6.tFixed().pDirect(P));
+        var rule_test_4 = MakeProxy.AsRule<FZ.Token.IToken<ro.Number>, ro.Number>("test", P => 6.tFixed().pDirect(P));
         var token_tester = token_test_6;
         FZ.IState startState = new FourZeroOne.StateModels.Minimal()
             .WithRules([rule_test_4]);

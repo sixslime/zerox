@@ -104,7 +104,14 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
             public required PList<ax.Hex.Position> Offsets { get; init; }
         }
     }
-
+    namespace Action
+    {
+        public interface IAction : ResObj { }
+        public record Data : Composition<Data>
+        {
+            public override IEnumerable<IInstruction> Instructions => throw new NotImplementedException();
+        }
+    }
     /*
     namespace Action
     {
