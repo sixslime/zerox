@@ -39,7 +39,7 @@ namespace FourZeroOne.Rule
             return 
                 original is TFor match
                 && match.HookLabels.Contains(_hook)
-                && original.GetType().FindInterfaces(InterfaceFilter, typeof(IToken<ResObj>).GetGenericTypeDefinition())
+                && original.GetType().FindInterfaces(InterfaceFilter, ITOKEN_TYPE)
                     .Map(x => x.GenericTypeArguments[0])
                     .HasMatch(x => typeof(R).IsAssignableTo(x))
                 ? Apply(match).AsSome()
@@ -57,12 +57,14 @@ namespace FourZeroOne.Rule
                 && type.IsGenericType
                 && type.GetGenericTypeDefinition() == c;
         }
-        private readonly IProxy<TFor, R> _proxy;
-        private readonly string _hook;
         public override string ToString()
         {
             return "rule";
         }
+        private readonly IProxy<TFor, R> _proxy;
+        private readonly string _hook;
+        private readonly static Type ITOKEN_TYPE = typeof(IToken<ResObj>).GetGenericTypeDefinition();
+        
     }
 
 }
