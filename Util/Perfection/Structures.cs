@@ -31,11 +31,16 @@ namespace Perfection
     // Shitty ass HashSet
     public record PSet<T> : PIndexedSet<T, T>
     {
-        public PSet(int modulo) : base(x => x, modulo) { }
+        public PSet(float storageRatio = 1.3f) : base(x => x, storageRatio) { }
         public override string ToString() => _storage
             .AccumulateInto($"PSet:\n", (msg1, x) => msg1 +
         $"{x.AccumulateInto(">", (msg2, y) => msg2 + $" [{y}]\n  ")}\n");
     }
+    /// <summary>
+    /// TODO: make HAMT.
+    /// </summary>
+    /// <typeparam name="I"></typeparam>
+    /// <typeparam name="T"></typeparam>
     public record PIndexedSet<I, T> : IEnumerable<T>
     {
         protected readonly List<List<T>> _storage;
@@ -81,6 +86,11 @@ namespace Perfection
         private readonly float _storageRatio;
     }
     // Shitty ass Dictionary
+    /// <summary>
+    /// TODO: make HAMT.
+    /// </summary>
+    /// <typeparam name="K"></typeparam>
+    /// <typeparam name="T"></typeparam>
     public record PMap<K, T>
     {
         private readonly List<List<(K key, T val)>> _storage;
@@ -119,9 +129,7 @@ namespace Perfection
         private readonly float _storageRatio;
     }
     /// <summary>
-    /// This implementation is fucking stupid because it assumes all PLists are never dropped. <br></br>
-    /// Just make it save a evaluate and save a list on creation. <br></br>
-    /// <i>The type of shit that makes me want to quit.</i>
+    /// TODO: make efficient.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public record PList<T>

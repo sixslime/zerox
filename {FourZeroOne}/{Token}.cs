@@ -15,24 +15,24 @@ namespace FourZeroOne.Token
     {
         // "ToNodes(IRuntime runtime)".
         // "Resolve(IOption<ResObj>[]...)"
-        public IToken<R> WithHookLabels(params string[] hooks);
+        public IToken<R> WithHookLabels(IEnumerable<string> labels);
         public ITask<IOption<R>> Resolve(IRuntime runtime, IOption<ResObj>[] args);
     }
     public abstract record Token<R> : IToken<R> where R : class, ResObj
     {
         public Unsafe.IToken[] ArgTokens => _argTokens;
-        public string[] HookLabels { get; init; }
+        public IEnumerable<string> HookLabels => _hookLabels.Elements;
         public Token(params Unsafe.IToken[] args)
         {
             _argTokens = args;
             _uniqueId = ++_assigner;
-            HookLabels = [];
+            _hookLabels = new() { Elements = [] };
         }
         public Token(IEnumerable<Unsafe.IToken> args) : this(args.AsList().ToArray()) { }
         public abstract ITask<IOption<R>> Resolve(IRuntime runtime, IOption<ResObj>[] args);
         public ITask<IOption<ResObj>> UnsafeResolve(IRuntime runtime, IOption<ResObj>[] args) { return Resolve(runtime, args); }
-        public IToken<R> WithHookLabels(params string[] hooks) => (IToken<R>)UnsafeWithHookLabels(hooks);
-        public Unsafe.IToken UnsafeWithHookLabels(params string[] hooks) => this with { HookLabels = hooks };
+        public IToken<R> WithHookLabels(IEnumerable<string> labels) => this with { _hookLabels = new() { Elements = labels } };
+        public Unsafe.IToken UnsafeWithHookLabels(IEnumerable<string> labels) => WithHookLabels(labels);
         protected virtual IOption<string> CustomToString() => new None<string>();
 
         public sealed override string ToString()
@@ -40,13 +40,14 @@ namespace FourZeroOne.Token
             var mainPart = CustomToString().Check(out var custom)
                 ? custom
                 : $"{this.GetType().Name}( {_argTokens.AccumulateInto("", (msg, arg) => $"{msg}{arg} ")})";
-            var hookPart = HookLabels.Length > 0
+            var hookPart = _hookLabels.Count > 0
                 ? $"-HOOKS[{string.Join(",", HookLabels)}]"
                 : "";
             return mainPart + hookPart;
         }
         private static int _assigner = 0;
         private Unsafe.IToken[] _argTokens;
+        private PSet<string> _hookLabels;
         private int _uniqueId;
         
     }
@@ -250,8 +251,8 @@ namespace FourZeroOne.Token.Unsafe
     public interface IToken
     {
         public IToken[] ArgTokens { get; }
-        public string[] HookLabels { get; }
-        public IToken UnsafeWithHookLabels(params string[] hooks);
+        public IEnumerable<string> HookLabels { get; }
+        public IToken UnsafeWithHookLabels(IEnumerable<string> labels);
         public ITask<IOption<ResObj>> UnsafeResolve(IRuntime runtime, IOption<ResObj>[] args);
     }
 

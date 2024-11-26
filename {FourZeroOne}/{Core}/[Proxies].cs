@@ -22,7 +22,7 @@ namespace FourZeroOne.Core.Proxies
             _token = token;
         }
         public Direct<TTo, R> Fix<TTo>() where TTo : IToken<R> => new(_token);
-        public override IToken<R> Realize(TOrig _, IOption<Rule.IRule> __) => _token;
+        protected override IToken<R> RealizeInternal(TOrig _, IOption<Rule.IRule> __) => _token;
 
         private readonly IToken<R> _token;
     }
@@ -34,7 +34,7 @@ namespace FourZeroOne.Core.Proxies
             _functionProxy = proxy;
             _vSelf = idSelf;
         }
-        public override IToken<r.Boxed.MetaFunction<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        protected override IToken<r.Boxed.MetaFunction<R>> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {
             return new Tokens.Fixed<r.Boxed.MetaFunction<R>>(new() { Token = _functionProxy.Realize(original, rule), SelfIdentifier = _vSelf });
         }
@@ -52,7 +52,7 @@ namespace FourZeroOne.Core.Proxies
             _vId1 = id1;
             _vSelf = idSelf;
         }
-        public override IToken<r.Boxed.MetaFunction<RArg1, ROut>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        protected override IToken<r.Boxed.MetaFunction<RArg1, ROut>> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {
             return new Tokens.Fixed<r.Boxed.MetaFunction<RArg1, ROut>>(new()
             { Token = _functionProxy.Realize(original, rule), SelfIdentifier = _vSelf, IdentifierA = _vId1 });
@@ -74,7 +74,7 @@ namespace FourZeroOne.Core.Proxies
             _vId2 = id2;
             _vSelf = idSelf;
         }
-        public override IToken<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        protected override IToken<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {
             return new Tokens.Fixed<r.Boxed.MetaFunction<RArg1, RArg2, ROut>>(new()
             { Token = _functionProxy.Realize(original, rule), SelfIdentifier = _vSelf, IdentifierA = _vId1, IdentifierB = _vId2 });
@@ -99,7 +99,7 @@ namespace FourZeroOne.Core.Proxies
             _vId2 = id2;
             _vId3 = id3;
         }
-        public override IToken<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        protected override IToken<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {
             return new Tokens.Fixed<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>(new()
             { Token = _functionProxy.Realize(original, rule), SelfIdentifier = _vSelf, IdentifierA = _vId1, IdentifierB = _vId2, IdentifierC = _vId3 });
@@ -123,7 +123,7 @@ namespace FourZeroOne.Core.Proxies
                 _address = address;
                 _objectProxy = holderProxy;
             }
-            public override IToken<r.Instructions.Assign<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
+            protected override IToken<r.Instructions.Assign<R>> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
             {
                 return new Tokens.DynamicAssign<R>(_address, _objectProxy.Realize(original, rule));
             }
@@ -143,7 +143,7 @@ namespace FourZeroOne.Core.Proxies
                     _identifier = identifier;
                     _holderProxy = proxy;
                 }
-                public override IToken<R> Realize(TOrig original, IOption<Rule.IRule> rule)
+                protected override IToken<R> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
                 {
                     return new Tokens.Component.Get<H, R>(_identifier, _holderProxy.Realize(original, rule));
                 }
@@ -161,7 +161,7 @@ namespace FourZeroOne.Core.Proxies
                     _holderProxy = holderProxy;
                     _componentProxy = componentProxy;
                 }
-                public override IToken<H> Realize(TOrig original, IOption<Rule.IRule> rule)
+                protected override IToken<H> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
                 {
                     return new Tokens.Component.With<H, R>(_identifier, _holderProxy.Realize(original, rule), _componentProxy.Realize(original, rule));
                 }
@@ -178,7 +178,7 @@ namespace FourZeroOne.Core.Proxies
                     _identifier = identifier;
                     _holderProxy = holderProxy;
                 }
-                public override IToken<H> Realize(TOrig original, IOption<Rule.IRule> rule)
+                protected override IToken<H> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
                 {
                     return new Tokens.Component.Without<H>(_identifier, _holderProxy.Realize(original, rule));
                 }
@@ -199,7 +199,7 @@ namespace FourZeroOne.Core.Proxies
         {
             _envModifiers = environment;
         }
-        public override IToken<ROut> Realize(TOrig original, IOption<Rule.IRule> rule)
+        protected override IToken<ROut> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {
             return new Tokens.SubEnvironment<ROut>(_envModifiers.Realize(original, rule), SubTokenProxy.Realize(original, rule));
         }
@@ -215,7 +215,7 @@ namespace FourZeroOne.Core.Proxies
         {
             Condition = condition;
         }
-        public override IToken<r.Boxed.MetaFunction<R>> Realize(TOrig original, IOption<Rule.IRule> rule)
+        protected override IToken<r.Boxed.MetaFunction<R>> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {
             return new Tokens.IfElse<R>(Condition.Realize(original, rule), PassProxy.Realize(original, rule), FailProxy.Realize(original, rule));
         }
@@ -223,21 +223,21 @@ namespace FourZeroOne.Core.Proxies
     // ---- [ OriginalArgs ] ----
     public sealed record OriginalArg1<TOrig, RArg> : Proxy<TOrig, RArg> where TOrig : IHasArg1<RArg> where RArg : class, ResObj
     {
-        public override IToken<RArg> Realize(TOrig original, IOption<Rule.IRule> rule)
+        protected override IToken<RArg> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {
             return RuleApplied(rule, original.Arg1);
         }
     }
     public sealed record OriginalArg2<TOrig, RArg> : Proxy<TOrig, RArg> where TOrig : IHasArg2<RArg> where RArg : class, ResObj
     {
-        public override IToken<RArg> Realize(TOrig original, IOption<Rule.IRule> rule)
+        protected override IToken<RArg> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {
             return RuleApplied(rule, original.Arg2);
         }
     }
     public sealed record OriginalArg3<TOrig, RArg> : Proxy<TOrig, RArg> where TOrig : IHasArg3<RArg> where RArg : class, ResObj
     {
-        public override IToken<RArg> Realize(TOrig original, IOption<Rule.IRule> rule)
+        protected override IToken<RArg> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {
             return RuleApplied(rule, original.Arg3);
         }
@@ -285,9 +285,10 @@ namespace FourZeroOne.Core.Proxies
         public Function(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2, IProxy<TOrig, RArg3> in3) : base(in1, in2, in3) { }
         protected override IToken<ROut> ConstructFromArgs(TOrig _, List<IToken> tokens)
         {
-            return (IToken<ROut>)
+            return ((IToken<ROut>)
                 typeof(TNew).GetConstructor(new Type[] { typeof(IToken<RArg1>), typeof(IToken<RArg2>), typeof(IToken<RArg3>) })
-                .Invoke(tokens.ToArray());
+                .Invoke(tokens.ToArray()))
+                .WithHookLabels(HookLabels);
         }
     }
     public record Combiner<TNew, TOrig, RArgs, ROut> : FunctionProxy<TOrig, ROut>
@@ -310,11 +311,76 @@ namespace FourZeroOne.Core.Proxies
         where RArg : class, ResObj
         where ROut : class, ResObj
     {
-        public override IToken<ROut> Realize(TOrig original, IOption<Rule.IRule> rule)
+        protected override IToken<ROut> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {
             return (TNew)typeof(TNew).GetConstructor(new Type[] { typeof(IEnumerable<IToken<RArg>>) })
                 .Invoke(new object[] { original.Args.Map(x => RuleApplied(rule, x)) });
         }
+    }
+    // ArgTransform retains type and HookLabels of original token.
+    // Gay and cringe that we have to re-implement RemovedHookLabels for each ArgTransform.
+    public sealed record ArgTransform<TOrig, RArg1, ROut> : Function<TOrig, TOrig, RArg1, ROut>
+        where TOrig : IToken, IFunction<RArg1, ROut>
+        where RArg1 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public IEnumerable<string> RemovedHookLabels => _hookRemovals;
+        public ArgTransform(IProxy<TOrig, RArg1> in1) : base(in1)
+        {
+            _hookRemovals = new() { Elements = [] };
+        }
+        protected override IToken<ROut> ConstructFromArgs(TOrig original, List<IToken> tokens)
+        {
+            return base.ConstructFromArgs(original, tokens).WithHookLabels(original.HookLabels.Except(_hookRemovals));
+        }
+        public ArgTransform<TOrig, RArg1, ROut> WithRemovedHookLabels(IEnumerable<string> labels)
+        {
+            return this with { _hookRemovals = new() { Elements = labels } };
+        }
+        private PSet<string> _hookRemovals;
+    }
+    public sealed record ArgTransform<TOrig, RArg1, RArg2, ROut> : Function<TOrig, TOrig, RArg1, RArg2, ROut>
+        where TOrig : IToken, IFunction<RArg1, RArg2, ROut>
+        where RArg1 : class, ResObj
+        where RArg2 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public IEnumerable<string> RemovedHookLabels => _hookRemovals;
+        public ArgTransform(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2) : base(in1, in2)
+        {
+            _hookRemovals = new() { Elements = [] };
+        }
+        protected override IToken<ROut> ConstructFromArgs(TOrig original, List<IToken> tokens)
+        {
+            return base.ConstructFromArgs(original, tokens).WithHookLabels(original.HookLabels.Except(_hookRemovals));
+        }
+        public ArgTransform<TOrig, RArg1, RArg2, ROut> WithRemovedHookLabels(IEnumerable<string> labels)
+        {
+            return this with { _hookRemovals = new() { Elements = labels } };
+        }
+        private PSet<string> _hookRemovals;
+    }
+    public sealed record ArgTransform<TOrig, RArg1, RArg2, RArg3, ROut> : Function<TOrig, TOrig, RArg1, RArg2, RArg3, ROut>
+        where TOrig : IToken, IFunction<RArg1, RArg2, RArg3, ROut>
+        where RArg1 : class, ResObj
+        where RArg2 : class, ResObj
+        where RArg3 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public IEnumerable<string> RemovedHookLabels => _hookRemovals;
+        public ArgTransform(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2, IProxy<TOrig, RArg3> in3) : base(in1, in2, in3)
+        {
+            _hookRemovals = new() { Elements = [] };
+        }
+        protected override IToken<ROut> ConstructFromArgs(TOrig original, List<IToken> tokens)
+        {
+            return base.ConstructFromArgs(original, tokens).WithHookLabels(original.HookLabels.Except(_hookRemovals));
+        }
+        public ArgTransform<TOrig, RArg1, RArg2, RArg3, ROut> WithRemovedHookLabels(IEnumerable<string> labels)
+        {
+            return this with { _hookRemovals = new() { Elements = labels } };
+        }
+        private PSet<string> _hookRemovals;
     }
     // --------
 

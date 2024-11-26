@@ -12,23 +12,33 @@ namespace FourZeroOne.Proxy
     public interface IProxy<in TOrig, out R> : Unsafe.IProxyOf<TOrig>, Unsafe.IProxy<R> where TOrig : IToken where R : class, ResObj
     {
         public IToken<R> Realize(TOrig original, IOption<Rule.IRule> realizingRule);
+        public IProxy<TOrig, R> WithHookLabels(IEnumerable<string> labels);
     }
     public abstract record Proxy<TOrig, R> : IProxy<TOrig, R> where TOrig : IToken where R : class, ResObj
     {
-        public string[] HookLabels { get; init; }
+        // HookLabels are appended to ArgTransform.
+        // This is a cringe :P
+        public IEnumerable<string> HookLabels => _hookLabels.Elements;
         public Proxy()
         {
-            HookLabels = [];
+            _hookLabels = new() { Elements = [] };
         }
-        public abstract IToken<R> Realize(TOrig original, IOption<Rule.IRule> realizingRule);
-        public IToken<R> UnsafeTypedRealize(IToken original, IOption<Rule.IRule> rule) { return Realize((TOrig)original, rule); }
-        public IToken UnsafeContextualRealize(TOrig original, IOption<Rule.IRule> rule) { return Realize(original, rule); }
+        protected abstract IToken<R> RealizeInternal(TOrig original, IOption<Rule.IRule> realizingRule);
+        public IToken<R> Realize(TOrig original, IOption<Rule.IRule> realizingRule)
+        {
+            return RealizeInternal(original, realizingRule)
+                .Mut(x => x.WithHookLabels(x.HookLabels.Also(HookLabels)));
+        }
+        public IToken<R> UnsafeTypedRealize(IToken original, IOption<Rule.IRule> rule) => Realize((TOrig)original, rule);
+        public IToken UnsafeContextualRealize(TOrig original, IOption<Rule.IRule> rule) => Realize(original, rule);
         public IToken UnsafeRealize(IToken original, IOption<Rule.IRule> rule) => UnsafeTypedRealize(original, rule);
-
+        public Unsafe.IProxy UnsafeWithHookLabels(IEnumerable<string> labels) => WithHookLabels(labels);
+        public IProxy<TOrig, R> WithHookLabels(IEnumerable<string> labels) => this with { _hookLabels = new() { Elements = labels } };
         protected static IToken<RLocal> RuleApplied<RLocal>(IOption<Rule.IRule> rule, IToken<RLocal> original) where RLocal : class, ResObj
         {
-            return rule.RemapAs(r => r.TryApplyTyped(original).Or(original)).Or(original);
+            return rule.RemapAs(r => r.TryApplyTyped(original)).Press().Or(original);
         }
+        private PSet<string> _hookLabels;
     }
 }
 namespace FourZeroOne.Proxy.Unsafe
@@ -38,8 +48,9 @@ namespace FourZeroOne.Proxy.Unsafe
     using Token;
     public interface IProxy
     {
-        public string[] HookLabels { get; }
+        public IEnumerable<string> HookLabels { get; }
         public IToken UnsafeRealize(IToken original, IOption<Rule.IRule> rule);
+        public IProxy UnsafeWithHookLabels(IEnumerable<string> labels);
     }
     public interface IProxy<out R> : IProxy where R : class, ResObj
     {
@@ -54,7 +65,12 @@ namespace FourZeroOne.Proxy.Unsafe
         where TOrig : IToken
         where R : class, ResObj
     {
-        public sealed override IToken<R> Realize(TOrig original, IOption<Rule.IRule> rule) { return ConstructFromArgs(original, MakeSubstitutions(original, rule)); }
+        protected sealed override IToken<R> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
+        {
+            var o = ConstructFromArgs(original, MakeSubstitutions(original, rule));
+            // this is a little silly.
+            return o.WithHookLabels([.. o.HookLabels.Also(HookLabels)]);
+        }
 
         protected readonly PList<IProxy> ArgProxies;
         protected abstract IToken<R> ConstructFromArgs(TOrig original, List<IToken> tokens);
