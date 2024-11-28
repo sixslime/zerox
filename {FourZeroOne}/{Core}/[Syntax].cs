@@ -291,6 +291,10 @@ namespace FourZeroOne.Core.Syntax
 
         public static t.Nolla<R> tNolla<R>(RHint<R> _) where R : class, ResObj
         { return new(); }
+        public static tM.Compose<C> tCompose<C>() where C : ICompositionType, new()
+        {
+            return new();
+        }
 
     }
     public static class MakeProxy

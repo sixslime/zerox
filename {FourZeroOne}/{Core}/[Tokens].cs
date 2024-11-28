@@ -235,51 +235,54 @@ namespace FourZeroOne.Core.Tokens
             }
         }
     }
+
+    // TODO: re-evaluate type restriction usage on this namespace
+    // not that it's bad, it just *may* be bad
     namespace Component
     {
-        public sealed record Get<H, R> : Token<R> where R : class, ResObj where H : class, IComposition<H>
+        public sealed record Get<C, R> : Token<R> where R : class, ResObj where C : ICompositionType
         {
-            public Get(IComponentIdentifier<H, R> identifier, IToken<H> holder) : base(holder)
+            public Get(IComponentIdentifier<C, R> identifier, IToken<IComposition<C>> holder) : base(holder)
             {
                 _identifier = identifier;
             }
             public override ITask<IOption<R>> Resolve(IRuntime _, IOption<ResObj>[] args)
             {
-                return args[0].RemapAs(x => ((H)x).GetComponent(_identifier)).Press().ToCompletedITask();
+                return args[0].RemapAs(x => ((IComposition<C>)x).GetComponent(_identifier)).Press().ToCompletedITask();
             }
-            private readonly IComponentIdentifier<H, R> _identifier;
+            private readonly IComponentIdentifier<C, R> _identifier;
         }
-        public sealed record With<H, R> : Token<H> where R : class, ResObj where H : class, IComposition<H>
+        public sealed record With<C, R> : Token<IComposition<C>> where R : class, ResObj where C : ICompositionType
         {
-            public With(IComponentIdentifier<H, R> identifier, IToken<H> holder, IToken<R> component) : base(holder, component)
+            public With(IComponentIdentifier<C, R> identifier, IToken<IComposition<C>> holder, IToken<R> component) : base(holder, component)
             {
                 _identifier = identifier;
             }
-            public override ITask<IOption<H>> Resolve(IRuntime _, IOption<ResObj>[] args)
+            public override ITask<IOption<IComposition<C>>> Resolve(IRuntime _, IOption<ResObj>[] args)
             {
                 return (
-                    (args[0].RemapAs(x => (H)x).Check(out var holder))
-                    ? (IOption<H>) (
+                    (args[0].RemapAs(x => (IComposition<C>)x).Check(out var holder))
+                    ? (IOption<IComposition<C>>) (
                         (args[1].RemapAs(x => (R)x).Check(out var component))
                         ? holder.WithComponents([(_identifier, component)])
                         : holder
                         ).AsSome()
-                    : new None<H>()
+                    : new None<IComposition<C>>()
                     ).ToCompletedITask();
             }
-            private readonly IComponentIdentifier<H, R> _identifier;
+            private readonly IComponentIdentifier<C, R> _identifier;
         }
-        public sealed record Without<H> : Token<H> where H : class, IComposition<H>
+        public sealed record Without<C> : Token<IComposition<C>> where C : ICompositionType
         {
-            public Without(Resolution.Unsafe.IComponentIdentifier<H> identifier, IToken<H> holder) : base(holder)
+            public Without(Resolution.Unsafe.IComponentIdentifier<C> identifier, IToken<IComposition<C>> holder) : base(holder)
             {
                 _identifier = identifier;
             }
-            public override ITask<IOption<H>> Resolve(IRuntime _, IOption<ResObj>[] args)
+            public override ITask<IOption<IComposition<C>>> Resolve(IRuntime _, IOption<ResObj>[] args)
             {
-                return args[0].RemapAs(x => (H)((H)x).WithoutComponents([_identifier])).ToCompletedITask();
+                return args[0].RemapAs(x => ((IComposition<C>)x).WithoutComponents([_identifier])).ToCompletedITask();
             }
-            private readonly Resolution.Unsafe.IComponentIdentifier<H> _identifier;
+            private readonly Resolution.Unsafe.IComponentIdentifier<C> _identifier;
         }
     }
     public record Execute<R> : Function<r.Boxed.MetaFunction<R>, R>

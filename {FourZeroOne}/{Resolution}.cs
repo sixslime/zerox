@@ -18,13 +18,21 @@ namespace FourZeroOne.Resolution
     {
         public IState ChangeState(IState context);
     }
-    public interface IComponentIdentifier<in H, out R> : Unsafe.IComponentIdentifier<H>, Unsafe.IComponentIdentifierOf<R> where H : IComposition<H> where R : IResolution { }
+    public interface IComponentIdentifier<in H, out R> : Unsafe.IComponentIdentifier<H>, Unsafe.IComponentIdentifierOf<R> where H : ICompositionType where R : IResolution { }
     // pretty fucking silly bro im not going even to even lie even.
-    public interface IComposition<Self> : Unsafe.IComposition, IResolution where Self : IComposition<Self>
+    public interface IComposition<C> : Unsafe.IComposition, IResolution where C : ICompositionType
     {
-        public IComposition<Self> WithComponents<R>(IEnumerable<(IComponentIdentifier<Self, R>,  R)> components) where R : IResolution;
-        public IComposition<Self> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<Self>> addresses);
-        public IOption<R> GetComponent<R>(IComponentIdentifier<Self, R> address) where R : IResolution;
+        public IComposition<C> WithComponents<R>(IEnumerable<(IComponentIdentifier<C, R>,  R)> components) where R : IResolution;
+        public IComposition<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses);
+        public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : IResolution;
+    }
+    /// <summary>
+    /// Types that implement must be functionally static and have an empty constructor with no init fields. <br></br>
+    /// Yup! thats how I'm doing things!
+    /// </summary>
+    public interface ICompositionType
+    {
+        public IResolution InternalResolution { get; }
     }
     public interface IMulti<out R> : IResolution where R : IResolution
     {
@@ -43,35 +51,39 @@ namespace FourZeroOne.Resolution
         public abstract IEnumerable<IInstruction> Instructions { get; }
         public virtual bool ResEqual(IResolution? other) => Equals(other);
     }
-    public abstract record Composition<Self> : Construct, IComposition<Self> where Self : IComposition<Self>
+    // the 'new()' constraint is mega stupid.
+    // this is mega stupid.
+    public sealed record Composition<C> : Construct, IComposition<C> where C : ICompositionType, new()
     {
+        public override IEnumerable<IInstruction> Instructions => _instance.InternalResolution.Instructions;
         public Composition()
         {
-            Components = new() { Elements = [] };
+            _components = new() { Elements = [] };
+            _instance = new();
         }
-
-        public IComposition<Self> WithComponents<R>(IEnumerable<(IComponentIdentifier<Self, R>, R)> components) where R : IResolution
+        public IComposition<C> WithComponents<R>(IEnumerable<(IComponentIdentifier<C, R>, R)> components) where R : IResolution
         {
-            return (IComposition<Self>)WithComponentsUnsafe(components.Map(x => ((Unsafe.IComponentIdentifier)x.Item1, (IResolution)x.Item2)));
+            return (IComposition<C>)WithComponentsUnsafe(components.Map(x => ((Unsafe.IComponentIdentifier)x.Item1, (IResolution)x.Item2)));
         }
         public Unsafe.IComposition WithComponentsUnsafe(IEnumerable<(Unsafe.IComponentIdentifier, IResolution)> components)
         {
-            return this with { Components = Components with { dElements = Q => Q.Also(components) } };
+            return this with { _components = _components with { dElements = Q => Q.Also(components) } };
         }
-        public IComposition<Self> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<Self>> addresses)
+        public IComposition<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses)
         {
-            return this with { Components = Components with { dElements = Q => Q.ExceptBy(addresses, x => x.key) } };
+            return this with { _components = _components with { dElements = Q => Q.ExceptBy(addresses, x => x.key) } };
         }
 
-        public IOption<R> GetComponent<R>(IComponentIdentifier<Self, R> address) where R : IResolution
+        public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : IResolution
         {
             return GetComponentUnsafe(address).RemapAs(x => (R)x);
         }
         public IOption<IResolution> GetComponentUnsafe(Unsafe.IComponentIdentifier address)
         {
-            return Components[address];
+            return _components[address];
         }
-        protected PMap<Unsafe.IComponentIdentifier, IResolution> Components { get; init; }
+        private PMap<Unsafe.IComponentIdentifier, IResolution> _components { get; init; }
+        private readonly C _instance;
     }
     public abstract record NoOp : Construct
     {
@@ -118,6 +130,6 @@ namespace FourZeroOne.Resolution.Unsafe
         public string Identity { get; }
     }
     public interface IComponentIdentifierOf<out R> : IComponentIdentifier where R : IResolution { }
-    public interface IComponentIdentifier<in H> : IComponentIdentifier where H : IComposition<H> { }
+    public interface IComponentIdentifier<in H> : IComponentIdentifier where H : ICompositionType { }
     public interface IStateAddress { }
 }

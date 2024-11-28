@@ -25,7 +25,7 @@ namespace FourZeroOne.Core.Macros
             protected override IProxy<r.Multi<ROut>> InternalProxy => _proxy;
             public Map(IToken<Resolution.IMulti<RIn>> values, IToken<r.Boxed.MetaFunction<RIn, ROut>> mapFunction) : base(values, mapFunction) { }
 
-            private static IProxy<Map<RIn, ROut>, r.Multi<ROut>> _proxy = MakeProxy.Statement<Map<RIn, ROut>, r.Multi<ROut>>(P =>
+            private readonly static IProxy<Map<RIn, ROut>, r.Multi<ROut>> _proxy = MakeProxy.Statement<Map<RIn, ROut>, r.Multi<ROut>>(P =>
             {
                 return
                 P.pSubEnvironment(RHint<r.Multi<ROut>>.Hint(), new()
@@ -58,11 +58,19 @@ namespace FourZeroOne.Core.Macros
         }
     }
     
+    public sealed record Compose<C> : Macro<Resolution.Composition<C>> where C : Resolution.ICompositionType, new()
+    {
+        protected override IProxy<Resolution.Composition<C>> InternalProxy => throw new NotImplementedException();
+        private readonly static IProxy<Compose<C>, Resolution.Composition<C>> _proxy = MakeProxy.Statement<Compose<C>, Resolution.Composition<C>>(P =>
+        {
+            return new Resolution.Composition<C>().tFixed().pDirect(P);
+        });
+    }
     public sealed record CatchNolla<R> : TwoArg<R, R, R> where R : class, ResObj
     {
         protected override IProxy<R> InternalProxy => _proxy;
         public CatchNolla(IToken<R> value, IToken<R> fallback) : base(value, fallback) { }
-        private static IProxy<CatchNolla<R>, R> _proxy = MakeProxy.Statement<CatchNolla<R>, R>(P =>
+        private readonly static IProxy<CatchNolla<R>, R> _proxy = MakeProxy.Statement<CatchNolla<R>, R>(P =>
         {
             return
             P.pSubEnvironment(RHint<R>.Hint(), new()
