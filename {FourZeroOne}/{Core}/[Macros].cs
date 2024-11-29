@@ -70,7 +70,7 @@ namespace FourZeroOne.Core.Macros
                 Environment = P.pOriginalA().pAsVariable(out var address).pYield(),
                 Value = P.pOriginalB().pExecuteWith(new()
                 {
-                    A = address.tRef().tGetData(RHint<D>.Hint()).pDirect(P)
+                    A = address.tRef().tReadData(RHint<D>.Hint()).pDirect(P)
                 }).pWriteTo(address.tRef().pDirect(P))
             });
         });

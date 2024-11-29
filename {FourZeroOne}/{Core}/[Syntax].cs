@@ -504,11 +504,11 @@ namespace FourZeroOne.Core.Syntax
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj
         { return new(address, subject); }
-        public static t.Data.Get<RAddress, RObj> tGetData<RAddress, RObj>(this IToken<RAddress> address, RHint<RObj> _)
+        public static t.Data.Get<RAddress, RObj> tReadData<RAddress, RObj>(this IToken<RAddress> address, RHint<RObj> _)
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj
         { return new(address); }
-        public static p.Function<t.Data.Get<RAddress, RObj>, TOrig, RAddress, RObj> pGetData<TOrig, RAddress, RObj>(this IProxy<TOrig, RAddress> address, RHint<RObj> _)
+        public static p.Function<t.Data.Get<RAddress, RObj>, TOrig, RAddress, RObj> pReadData<TOrig, RAddress, RObj>(this IProxy<TOrig, RAddress> address, RHint<RObj> _)
             where TOrig : IToken
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj
@@ -520,7 +520,15 @@ namespace FourZeroOne.Core.Syntax
             where TOrig : IToken
             where RAddress : class, Resolution.Unsafe.IStateAddress, ResObj
         { return new(address); }
-
+        public static tM.UpdateStateObject<RAddress, RObj> tUpdateData<RAddress, RObj>(this IToken<RAddress> address, IToken<r.Boxed.MetaFunction<RObj, RObj>> updateFunction)
+            where RAddress : class, IStateAddress<RObj>, ResObj
+            where RObj : class, ResObj
+        { return new(address, updateFunction); }
+        public static p.Function<tM.UpdateStateObject<RAddress, RObj>, TOrig, RAddress, r.Boxed.MetaFunction<RObj, RObj>, r.Instructions.Assign<RObj>> pUpdateData<TOrig, RAddress, RObj>(this IProxy<TOrig, RAddress> address, RHint<RObj> _, IProxy<TOrig, r.Boxed.MetaFunction<RObj, RObj>> updateFunction)
+            where TOrig : IToken
+            where RAddress : class, IStateAddress<RObj>, ResObj
+            where RObj : class, ResObj
+        { return new(address, updateFunction); }
         public static t.DynamicReference<R> tRef<R>(this DynamicAddress<R> ident) where R : class, ResObj
         { return new(ident); }
         public static t.Fixed<ro.Bool> tFixed(this bool value)
