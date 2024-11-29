@@ -53,9 +53,10 @@ namespace FourZeroOne.Core.Resolutions
             }
             public override string ToString() => $"{Address}<-{Subject}";
         }
+        /*
         namespace Merge
         {
-            public record Data<S> : Composition<Data<S>>, IInstruction where S : IStateAddress<IComposition>
+            public record Data<S> : CompositionOf<Data<S>>, IInstruction where S : IStateAddress<ICompositionOf>
             {
                 public required S Address { get; init; }
                 public override IEnumerable<IInstruction> Instructions => [this];
@@ -63,7 +64,7 @@ namespace FourZeroOne.Core.Resolutions
                 {
                     return prevState.GetObjectUnsafe(Address).CheckNone(out var subject)
                         ? prevState
-                        : prevState.WithObjectsUnsafe([(Address, ((IComposition)subject).WithComponentsUnsafe(
+                        : prevState.WithObjectsUnsafe([(Address, ((ICompositionOf)subject).WithComponentsUnsafe(
                             Components.Elements
                             .Map(x => ((x.key as _Private.MergeComponentIdentifier<S>).NullToNone(), x.val))
                             .Where(x => x.Item1.IsSome())
@@ -73,11 +74,11 @@ namespace FourZeroOne.Core.Resolutions
             }
             public static class Component
             {
-                public static _Private.MergeComponentIdentifier<S> CHANGE<S, H, R>(IComponentIdentifier<H, R> component) where S : IStateAddress<H> where H : class, IComposition<H> where R : class, ResObj => new(component);
+                public static _Private.MergeComponentIdentifier<S> CHANGE<S, H, R>(IComponentIdentifier<H, R> component) where S : IStateAddress<H> where H : class, ICompositionOf<H> where R : class, ResObj => new(component);
             }
             namespace _Private
             {
-                public record MergeComponentIdentifier<S> : IComponentIdentifier<Data<S>> where S : IStateAddress<IComposition>
+                public record MergeComponentIdentifier<S> : IComponentIdentifier<Data<S>> where S : IStateAddress<ICompositionOf>
                 {
                     public readonly IComponentIdentifier ForComponent;
                     public string Source => "CORE";
@@ -89,6 +90,7 @@ namespace FourZeroOne.Core.Resolutions
                 }
             }
         }
+        */
         public sealed record Redact : Instruction
         {
             public required IStateAddress Address { get; init; }

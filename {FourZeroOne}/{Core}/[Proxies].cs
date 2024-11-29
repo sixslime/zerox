@@ -136,7 +136,7 @@ namespace FourZeroOne.Core.Proxies
             public sealed record Get<TOrig, H, R> : Proxy<TOrig, R>
                 where TOrig : IToken
                 where R : class, ResObj
-                where H : class, IComposition<H>
+                where H : class, ICompositionOf<H>
             {
                 public Get(IComponentIdentifier<H, R> identifier, IProxy<TOrig, H> proxy)
                 {
@@ -153,7 +153,7 @@ namespace FourZeroOne.Core.Proxies
             public sealed record With<TOrig, H, R> : Proxy<TOrig, H>
                 where TOrig : IToken
                 where R : class, ResObj
-                where H : class, IComposition<H>
+                where H : class, ICompositionOf<H>
             {
                 public With(IComponentIdentifier<H, R> identifier, IProxy<TOrig, H> holderProxy, IProxy<TOrig, R> componentProxy)
                 {
@@ -171,7 +171,7 @@ namespace FourZeroOne.Core.Proxies
             }
             public sealed record Without<TOrig, H> : Proxy<TOrig, H>
                 where TOrig : IToken
-                where H : class, IComposition<H>
+                where H : class, ICompositionOf<H>
             {
                 public Without(Resolution.Unsafe.IComponentIdentifier<H> identifier, IProxy<TOrig, H> holderProxy)
                 {

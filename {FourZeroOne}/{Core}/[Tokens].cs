@@ -242,45 +242,45 @@ namespace FourZeroOne.Core.Tokens
     {
         public sealed record Get<C, R> : Token<R> where R : class, ResObj where C : ICompositionType
         {
-            public Get(IComponentIdentifier<C, R> identifier, IToken<IComposition<C>> holder) : base(holder)
+            public Get(IComponentIdentifier<C, R> identifier, IToken<ICompositionOf<C>> holder) : base(holder)
             {
                 _identifier = identifier;
             }
             public override ITask<IOption<R>> Resolve(IRuntime _, IOption<ResObj>[] args)
             {
-                return args[0].RemapAs(x => ((IComposition<C>)x).GetComponent(_identifier)).Press().ToCompletedITask();
+                return args[0].RemapAs(x => ((ICompositionOf<C>)x).GetComponent(_identifier)).Press().ToCompletedITask();
             }
             private readonly IComponentIdentifier<C, R> _identifier;
         }
-        public sealed record With<C, R> : Token<IComposition<C>> where R : class, ResObj where C : ICompositionType
+        public sealed record With<C, R> : Token<ICompositionOf<C>> where R : class, ResObj where C : ICompositionType
         {
-            public With(IComponentIdentifier<C, R> identifier, IToken<IComposition<C>> holder, IToken<R> component) : base(holder, component)
+            public With(IComponentIdentifier<C, R> identifier, IToken<ICompositionOf<C>> holder, IToken<R> component) : base(holder, component)
             {
                 _identifier = identifier;
             }
-            public override ITask<IOption<IComposition<C>>> Resolve(IRuntime _, IOption<ResObj>[] args)
+            public override ITask<IOption<ICompositionOf<C>>> Resolve(IRuntime _, IOption<ResObj>[] args)
             {
                 return (
-                    (args[0].RemapAs(x => (IComposition<C>)x).Check(out var holder))
-                    ? (IOption<IComposition<C>>) (
+                    (args[0].RemapAs(x => (ICompositionOf<C>)x).Check(out var holder))
+                    ? (IOption<ICompositionOf<C>>) (
                         (args[1].RemapAs(x => (R)x).Check(out var component))
                         ? holder.WithComponents([(_identifier, component)])
                         : holder
                         ).AsSome()
-                    : new None<IComposition<C>>()
+                    : new None<ICompositionOf<C>>()
                     ).ToCompletedITask();
             }
             private readonly IComponentIdentifier<C, R> _identifier;
         }
-        public sealed record Without<C> : Token<IComposition<C>> where C : ICompositionType
+        public sealed record Without<C> : Token<ICompositionOf<C>> where C : ICompositionType
         {
-            public Without(Resolution.Unsafe.IComponentIdentifier<C> identifier, IToken<IComposition<C>> holder) : base(holder)
+            public Without(Resolution.Unsafe.IComponentIdentifier<C> identifier, IToken<ICompositionOf<C>> holder) : base(holder)
             {
                 _identifier = identifier;
             }
-            public override ITask<IOption<IComposition<C>>> Resolve(IRuntime _, IOption<ResObj>[] args)
+            public override ITask<IOption<ICompositionOf<C>>> Resolve(IRuntime _, IOption<ResObj>[] args)
             {
-                return args[0].RemapAs(x => ((IComposition<C>)x).WithoutComponents([_identifier])).ToCompletedITask();
+                return args[0].RemapAs(x => ((ICompositionOf<C>)x).WithoutComponents([_identifier])).ToCompletedITask();
             }
             private readonly Resolution.Unsafe.IComponentIdentifier<C> _identifier;
         }

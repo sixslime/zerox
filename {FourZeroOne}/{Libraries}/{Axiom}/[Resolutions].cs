@@ -13,26 +13,22 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     {
         namespace Unit
         {
-            public record Data : Composition<Data>
-            {
-                public override IEnumerable<IInstruction> Instructions => [];
-            }
-            public record Identifier : NoOp, IStateAddress<Data>
-            {
-                public required int ID { get; init; }
-                public Identifier() { }
-            }
-            public static class Component
+            public record Data : CompositionNoOp
             {
                 public readonly static StaticComponentIdentifier<Data, ro.Number> HP = new("axiom", "hp");
                 public readonly static StaticComponentIdentifier<Data, Hex.Position> POSITION = new("axiom", "position");
                 public readonly static StaticComponentIdentifier<Data, Player.Identifier> OWNER = new("axiom", "owner");
                 public readonly static StaticComponentIdentifier<Data, r.Multi<NEffect>> EFFECTS = new("axiom", "effects");
             }
+            public record Identifier : NoOp, IStateAddress<CompositionOf<Data>>
+            {
+                public required int ID { get; init; }
+                public Identifier() { }
+            }
         }
         namespace Hex
         {
-            public sealed record Data : Composition<Data>
+            public sealed record Data : CompositionOf<Data>
             {
                 public override IEnumerable<IInstruction> Instructions => [];
             }
@@ -57,7 +53,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         }
         namespace Player
         {
-            public sealed record Data : Composition<Data>
+            public sealed record Data : CompositionOf<Data>
             {
                 public override IEnumerable<IInstruction> Instructions => [];
             }
@@ -74,7 +70,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
 
         // weirdchamp implementation of enums/flags but i think it works probably.
         // make a Multi<NEffect>
-        public record NEffect : Composition<NEffect>
+        public record NEffect : NoOp
         {
             public static readonly NEffect SLOW = new(1);
             public static readonly NEffect SILENCE = new(2);
@@ -107,7 +103,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     namespace Action
     {
         public interface IAction : ResObj { }
-        public record Data : Composition<Data>
+        public record Data : CompositionOf<Data>
         {
             public override IEnumerable<IInstruction> Instructions => throw new NotImplementedException();
         }

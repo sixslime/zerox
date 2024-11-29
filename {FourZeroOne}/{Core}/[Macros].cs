@@ -22,10 +22,10 @@ namespace FourZeroOne.Core.Macros
             where RIn : class, ResObj
             where ROut : class, ResObj
         {
-            protected override IProxy<r.Multi<ROut>> InternalProxy => _proxy;
+            protected override IProxy<r.Multi<ROut>> InternalProxy => PROXY;
             public Map(IToken<Resolution.IMulti<RIn>> values, IToken<r.Boxed.MetaFunction<RIn, ROut>> mapFunction) : base(values, mapFunction) { }
 
-            private readonly static IProxy<Map<RIn, ROut>, r.Multi<ROut>> _proxy = MakeProxy.Statement<Map<RIn, ROut>, r.Multi<ROut>>(P =>
+            private readonly static IProxy<Map<RIn, ROut>, r.Multi<ROut>> PROXY = MakeProxy.Statement<Map<RIn, ROut>, r.Multi<ROut>>(P =>
             {
                 return
                 P.pSubEnvironment(RHint<r.Multi<ROut>>.Hint(), new()
@@ -58,19 +58,36 @@ namespace FourZeroOne.Core.Macros
         }
     }
     
-    public sealed record Compose<C> : Macro<Resolution.Composition<C>> where C : Resolution.ICompositionType, new()
+    public sealed record UpdateStateObject<A, D> : TwoArg<A, r.Boxed.MetaFunction<D, D>, r.Instructions.Assign<D>> where A : class, Resolution.IStateAddress<D>, ResObj where D : class, ResObj
     {
-        protected override IProxy<Resolution.Composition<C>> InternalProxy => throw new NotImplementedException();
-        private readonly static IProxy<Compose<C>, Resolution.Composition<C>> _proxy = MakeProxy.Statement<Compose<C>, Resolution.Composition<C>>(P =>
+        public UpdateStateObject(IToken<A> in1, IToken<r.Boxed.MetaFunction<D, D>> in2) : base(in1, in2) { }
+        protected override IProxy<r.Instructions.Assign<D>> InternalProxy => PROXY;
+
+        public readonly static IProxy<UpdateStateObject<A, D>, r.Instructions.Assign<D>> PROXY = MakeProxy.Statement<UpdateStateObject<A, D>, r.Instructions.Assign<D>>(P =>
         {
-            return new Resolution.Composition<C>().tFixed().pDirect(P);
+            return P.pSubEnvironment(RHint<r.Instructions.Assign<D>>.Hint(), new()
+            {
+                Environment = P.pOriginalA().pAsVariable(out var address).pYield(),
+                Value = P.pOriginalB().pExecuteWith(new()
+                {
+                    A = address.tRef().tGetData(RHint<D>.Hint()).pDirect(P)
+                }).pWriteTo(address.tRef().pDirect(P))
+            });
+        });
+    }
+    public sealed record Compose<C> : Macro<Resolution.CompositionOf<C>> where C : Resolution.ICompositionType, new()
+    {
+        protected override IProxy<Resolution.CompositionOf<C>> InternalProxy => PROXY;
+        public readonly static IProxy<Compose<C>, Resolution.CompositionOf<C>> PROXY = MakeProxy.Statement<Compose<C>, Resolution.CompositionOf<C>>(P =>
+        {
+            return new Resolution.CompositionOf<C>().tFixed().pDirect(P);
         });
     }
     public sealed record CatchNolla<R> : TwoArg<R, R, R> where R : class, ResObj
     {
-        protected override IProxy<R> InternalProxy => _proxy;
+        protected override IProxy<R> InternalProxy => PROXY;
         public CatchNolla(IToken<R> value, IToken<R> fallback) : base(value, fallback) { }
-        private readonly static IProxy<CatchNolla<R>, R> _proxy = MakeProxy.Statement<CatchNolla<R>, R>(P =>
+        public readonly static IProxy<CatchNolla<R>, R> PROXY = MakeProxy.Statement<CatchNolla<R>, R>(P =>
         {
             return
             P.pSubEnvironment(RHint<R>.Hint(), new()

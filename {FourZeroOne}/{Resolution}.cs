@@ -20,10 +20,10 @@ namespace FourZeroOne.Resolution
     }
     public interface IComponentIdentifier<in H, out R> : Unsafe.IComponentIdentifier<H>, Unsafe.IComponentIdentifierOf<R> where H : ICompositionType where R : IResolution { }
     // pretty fucking silly bro im not going even to even lie even.
-    public interface IComposition<C> : Unsafe.IComposition, IResolution where C : ICompositionType
+    public interface ICompositionOf<C> : Unsafe.ICompositionOf, IResolution where C : ICompositionType
     {
-        public IComposition<C> WithComponents<R>(IEnumerable<(IComponentIdentifier<C, R>,  R)> components) where R : IResolution;
-        public IComposition<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses);
+        public ICompositionOf<C> WithComponents<R>(IEnumerable<(IComponentIdentifier<C, R>,  R)> components) where R : IResolution;
+        public ICompositionOf<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses);
         public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : IResolution;
     }
     /// <summary>
@@ -32,7 +32,12 @@ namespace FourZeroOne.Resolution
     /// </summary>
     public interface ICompositionType
     {
-        public IResolution InternalResolution { get; }
+        public IOption<IResolution> InternalResolution { get; }
+    }
+    public abstract record CompositionNoOp : ICompositionType
+    {
+        public IOption<IResolution> InternalResolution => _nolla;
+        private static readonly None<IResolution> _nolla = new();
     }
     public interface IMulti<out R> : IResolution where R : IResolution
     {
@@ -53,23 +58,23 @@ namespace FourZeroOne.Resolution
     }
     // the 'new()' constraint is mega stupid.
     // this is mega stupid.
-    public sealed record Composition<C> : Construct, IComposition<C> where C : ICompositionType, new()
+    public sealed record CompositionOf<C> : Construct, ICompositionOf<C> where C : ICompositionType, new()
     {
         public override IEnumerable<IInstruction> Instructions => _instance.InternalResolution.Instructions;
-        public Composition()
+        public CompositionOf()
         {
             _components = new() { Elements = [] };
             _instance = new();
         }
-        public IComposition<C> WithComponents<R>(IEnumerable<(IComponentIdentifier<C, R>, R)> components) where R : IResolution
+        public ICompositionOf<C> WithComponents<R>(IEnumerable<(IComponentIdentifier<C, R>, R)> components) where R : IResolution
         {
-            return (IComposition<C>)WithComponentsUnsafe(components.Map(x => ((Unsafe.IComponentIdentifier)x.Item1, (IResolution)x.Item2)));
+            return (ICompositionOf<C>)WithComponentsUnsafe(components.Map(x => ((Unsafe.IComponentIdentifier)x.Item1, (IResolution)x.Item2)));
         }
-        public Unsafe.IComposition WithComponentsUnsafe(IEnumerable<(Unsafe.IComponentIdentifier, IResolution)> components)
+        public Unsafe.ICompositionOf WithComponentsUnsafe(IEnumerable<(Unsafe.IComponentIdentifier, IResolution)> components)
         {
             return this with { _components = _components with { dElements = Q => Q.Also(components) } };
         }
-        public IComposition<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses)
+        public ICompositionOf<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses)
         {
             return this with { _components = _components with { dElements = Q => Q.ExceptBy(addresses, x => x.key) } };
         }
@@ -103,7 +108,7 @@ namespace FourZeroOne.Resolution
             return $"{(_id % 5).ToBase("AOEUI", "")}{(typeof(R).GetHashCode() % 441).ToBase("DHTNSYFPGCRLVWMBXKJQZ".ToLower(), "")}";
         }
     }
-    public sealed record StaticComponentIdentifier<H, R> : IComponentIdentifier<H, R> where H : IComposition<H> where R : class, IResolution
+    public sealed record StaticComponentIdentifier<H, R> : IComponentIdentifier<H, R> where H : ICompositionType where R : class, IResolution
     {
         public string Source => _source;
         public string Identity => _identifier;
@@ -119,10 +124,10 @@ namespace FourZeroOne.Resolution
 }
 namespace FourZeroOne.Resolution.Unsafe
 {
-    public interface IComposition : IResolution
+    public interface ICompositionOf : IResolution
     {
         public IOption<IResolution> GetComponentUnsafe(IComponentIdentifier address);
-        public IComposition WithComponentsUnsafe(IEnumerable<(Unsafe.IComponentIdentifier, IResolution)> components);
+        public ICompositionOf WithComponentsUnsafe(IEnumerable<(Unsafe.IComponentIdentifier, IResolution)> components);
     }
     public interface IComponentIdentifier
     { 

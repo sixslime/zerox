@@ -470,29 +470,29 @@ namespace FourZeroOne.Core.Syntax
         { return new(a, b); }
 
         public static t.Component.Get<H, C> tGetComponent<H, C>(this IToken<H> holder, IComponentIdentifier<H, C> componentIdentifier)
-            where H : class, IComposition<H>
+            where H : class, ICompositionOf<H>
             where C : class, ResObj
         { return new(componentIdentifier, holder); }
         public static p.SpecialCase.Component.Get<TOrig, H, C> pGetComponent<TOrig, H, C>(this IProxy<TOrig, H> holder, IComponentIdentifier<H, C> identifier)
             where TOrig : IToken
-            where H : class, IComposition<H>
+            where H : class, ICompositionOf<H>
             where C : class, ResObj
         { return new(identifier, holder); }
         public static t.Component.With<H, C> tWithComponent<H, C>(this IToken<H> holder, IComponentIdentifier<H, C> componentIdentifier, IToken<C> component)
-            where H : class, IComposition<H>
+            where H : class, ICompositionOf<H>
             where C : class, ResObj
         { return new(componentIdentifier, holder, component); }
         public static p.SpecialCase.Component.With<TOrig, H, C> pWithComponent<TOrig, H, C>(this IProxy<TOrig, H> holder, IComponentIdentifier<H, C> identifier, IProxy<TOrig, C> component)
             where TOrig : IToken
-            where H : class, IComposition<H>
+            where H : class, ICompositionOf<H>
             where C : class, ResObj
         { return new(identifier, holder, component); }
         public static t.Component.Without<H> tWithoutComponent<H>(this IToken<H> holder, Resolution.Unsafe.IComponentIdentifier<H> componentIdentifier)
-            where H : class, IComposition<H>
+            where H : class, ICompositionOf<H>
         { return new(componentIdentifier, holder); }
         public static p.SpecialCase.Component.Without<TOrig, H> pWithoutComponent<TOrig, H>(this IProxy<TOrig, H> holder, Resolution.Unsafe.IComponentIdentifier<H> identifier)
             where TOrig : IToken
-            where H : class, IComposition<H>
+            where H : class, ICompositionOf<H>
         { return new(identifier, holder); }
 
         public static t.Data.Insert<RAddress, RObj> tWriteTo<RAddress, RObj>(this IToken<RObj> subject, IToken<RAddress> address)
@@ -504,11 +504,11 @@ namespace FourZeroOne.Core.Syntax
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj
         { return new(address, subject); }
-        public static t.Data.Get<RAddress, RObj> tGetData<RAddress, RObj>(this IToken<RAddress> address)
+        public static t.Data.Get<RAddress, RObj> tGetData<RAddress, RObj>(this IToken<RAddress> address, RHint<RObj> _)
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj
         { return new(address); }
-        public static p.Function<t.Data.Get<RAddress, RObj>, TOrig, RAddress, RObj> pGetData<TOrig, RAddress, RObj>(this IProxy<TOrig, RAddress> address)
+        public static p.Function<t.Data.Get<RAddress, RObj>, TOrig, RAddress, RObj> pGetData<TOrig, RAddress, RObj>(this IProxy<TOrig, RAddress> address, RHint<RObj> _)
             where TOrig : IToken
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj
