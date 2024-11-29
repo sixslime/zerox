@@ -97,7 +97,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         public interface IAction : ResObj { }
         public record Data : ICompositionType
         {
-            public IEnumerable<IInstruction> Instructions => throw new NotImplementedException();
+            public ICompositionType.ResolutionFunction ResolvesTo => components => throw new NotImplementedException();
         }
     }
     /*

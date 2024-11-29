@@ -264,7 +264,7 @@ namespace FourZeroOne.Core.Tokens
                     (args[0].RemapAs(x => (ICompositionOf<C>)x).Check(out var holder))
                     ? (IOption<ICompositionOf<C>>) (
                         (args[1].RemapAs(x => (R)x).Check(out var component))
-                        ? holder.WithComponents([(_identifier, component)])
+                        ? holder.WithComponent(_identifier, component)
                         : holder
                         ).AsSome()
                     : new None<ICompositionOf<C>>()
