@@ -87,7 +87,7 @@ public class Tester
         var rule_test_2 = MakeProxy.AsRule<t.Number.Add, ro.Number>("test", P => P.pSubEnvironment(RHint<ro.Number>.Hint(), new()
         {
             Environment = P.pOriginalA().pAsVariable(out var num).pYield(),
-            Value = P.pOriginal(new()
+            Value = P.pThis(new()
             {
                 A = num.tRef().pDirect(P),
                 B = num.tRef().pDirect(P)

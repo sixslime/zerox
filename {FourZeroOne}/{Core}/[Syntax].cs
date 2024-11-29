@@ -529,6 +529,7 @@ namespace FourZeroOne.Core.Syntax
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj
         { return new(address, updateFunction); }
+
         public static t.DynamicReference<R> tRef<R>(this DynamicAddress<R> ident) where R : class, ResObj
         { return new(ident); }
         public static t.Fixed<ro.Bool> tFixed(this bool value)
@@ -547,18 +548,18 @@ namespace FourZeroOne.Core.Syntax
         public static p.OriginalArg3<TOrig, R> pOriginalC<TOrig, R>(this IOriginalHint<TOrig, Token.Unsafe.IHasArg3<R>> _) where TOrig : Token.Unsafe.IHasArg3<R> where R : class, ResObj
         { return new(); }
 
-        public static p.ArgTransform<TOrig, RArg1, ROut> pOriginal<TOrig, RArg1, RArg2, ROut>(this IOriginalHint<TOrig, Token.IFunction<RArg1, ROut>> _, Structure.Proxy.Args<TOrig, RArg1> args)
+        public static p.ArgTransform<TOrig, RArg1, ROut> pThis<TOrig, RArg1, RArg2, ROut>(this IOriginalHint<TOrig, Token.IFunction<RArg1, ROut>> _, Structure.Proxy.Args<TOrig, RArg1> args)
             where TOrig : IToken, Token.IFunction<RArg1, ROut>
             where RArg1 : class, ResObj
             where ROut : class, ResObj
         { return new(args.A); }
-        public static p.ArgTransform<TOrig, RArg1, RArg2, ROut> pOriginal<TOrig, RArg1, RArg2, ROut>(this IOriginalHint<TOrig, Token.IFunction<RArg1, RArg2, ROut>> _, Structure.Proxy.Args<TOrig, RArg1, RArg2> args)
+        public static p.ArgTransform<TOrig, RArg1, RArg2, ROut> pThis<TOrig, RArg1, RArg2, ROut>(this IOriginalHint<TOrig, Token.IFunction<RArg1, RArg2, ROut>> _, Structure.Proxy.Args<TOrig, RArg1, RArg2> args)
             where TOrig : IToken, Token.IFunction<RArg1, RArg2, ROut>
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where ROut : class, ResObj
         { return new(args.A, args.B); }
-        public static p.ArgTransform<TOrig, RArg1, RArg2, RArg3, ROut> pOriginal<TOrig, RArg1, RArg2, RArg3, ROut>(this IOriginalHint<TOrig, Token.IFunction<RArg1, RArg2, RArg3, ROut>> _, Structure.Proxy.Args<TOrig, RArg1, RArg2, RArg3> args)
+        public static p.ArgTransform<TOrig, RArg1, RArg2, RArg3, ROut> pThis<TOrig, RArg1, RArg2, RArg3, ROut>(this IOriginalHint<TOrig, Token.IFunction<RArg1, RArg2, RArg3, ROut>> _, Structure.Proxy.Args<TOrig, RArg1, RArg2, RArg3> args)
             where TOrig : IToken, Token.IFunction<RArg1, RArg2, RArg3, ROut>
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj

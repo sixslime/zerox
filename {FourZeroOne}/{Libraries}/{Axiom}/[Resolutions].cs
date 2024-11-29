@@ -28,11 +28,14 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         }
         namespace Hex
         {
-            public sealed record Data : CompositionOf<Data>
+            public sealed record Data : CompositionNoOp
             {
-                public override IEnumerable<IInstruction> Instructions => [];
+                public readonly static StaticComponentIdentifier<Data, ro.Bool> CONTROL_POINT = new("axiom", "control_point");
+                public readonly static StaticComponentIdentifier<Data, ro.Bool> OPEN = new("axiom", "open");
+                public readonly static StaticComponentIdentifier<Data, ro.Bool> WALL = new("axiom", "wall");
+                public readonly static StaticComponentIdentifier<Data, Player.Identifier> PLAYER_BASE = new("axiom", "player_base");
             }
-            public sealed record Position : NoOp, IStateAddress<Data>
+            public sealed record Position : NoOp, IStateAddress<CompositionOf<Data>>
             {
                 public required int R { get; init; }
                 public required int U { get; init; }
@@ -43,28 +46,17 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
                     return new() { R = transformFunction(R, other.R), U = transformFunction(U, other.U), D = transformFunction(D, other.D) };
                 }
             }
-            public static class Component
-            {
-                public readonly static StaticComponentIdentifier<Data, ro.Bool> CONTROL_POINT = new("axiom", "control_point");
-                public readonly static StaticComponentIdentifier<Data, ro.Bool> OPEN = new("axiom", "open");
-                public readonly static StaticComponentIdentifier<Data, ro.Bool> WALL = new("axiom", "wall");
-                public readonly static StaticComponentIdentifier<Data, Player.Identifier> PLAYER_BASE = new("axiom", "player_base");
-            }
         }
         namespace Player
         {
-            public sealed record Data : CompositionOf<Data>
+            public sealed record Data : CompositionNoOp
             {
-                public override IEnumerable<IInstruction> Instructions => [];
+                
             }
-            public sealed record Identifier : NoOp, IStateAddress<Data>
+            public sealed record Identifier : NoOp, IStateAddress<CompositionOf<Data>>
             {
                 public required int ID { get; init; }
                 public Identifier() { }
-            }
-            public static class Component
-            {
-
             }
         }
 
@@ -103,9 +95,9 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     namespace Action
     {
         public interface IAction : ResObj { }
-        public record Data : CompositionOf<Data>
+        public record Data : ICompositionType
         {
-            public override IEnumerable<IInstruction> Instructions => throw new NotImplementedException();
+            public IEnumerable<IInstruction> Instructions => throw new NotImplementedException();
         }
     }
     /*
