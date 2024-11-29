@@ -469,30 +469,30 @@ namespace FourZeroOne.Core.Syntax
         public static p.Function<t.Number.Compare.GreaterThan, TOrig, ro.Number, ro.Number, ro.Bool> pIsGreaterThan<TOrig>(this IProxy<TOrig, ro.Number> a, IProxy<TOrig, ro.Number> b) where TOrig : IToken
         { return new(a, b); }
 
-        public static t.Component.Get<H, C> tGetComponent<H, C>(this IToken<H> holder, IComponentIdentifier<H, C> componentIdentifier)
-            where H : class, ICompositionOf<H>
+        public static t.Component.Get<H, C> tGetComponent<H, C>(this IToken<ICompositionOf<H>> holder, IComponentIdentifier<H, C> componentIdentifier)
+            where H : class, ICompositionType
             where C : class, ResObj
         { return new(componentIdentifier, holder); }
-        public static p.SpecialCase.Component.Get<TOrig, H, C> pGetComponent<TOrig, H, C>(this IProxy<TOrig, H> holder, IComponentIdentifier<H, C> identifier)
+        public static p.SpecialCase.Component.Get<TOrig, H, C> pGetComponent<TOrig, H, C>(this IProxy<TOrig, ICompositionOf<H>> holder, IComponentIdentifier<H, C> identifier)
             where TOrig : IToken
-            where H : class, ICompositionOf<H>
+            where H : class, ICompositionType
             where C : class, ResObj
         { return new(identifier, holder); }
-        public static t.Component.With<H, C> tWithComponent<H, C>(this IToken<H> holder, IComponentIdentifier<H, C> componentIdentifier, IToken<C> component)
-            where H : class, ICompositionOf<H>
+        public static t.Component.With<H, C> tWithComponent<H, C>(this IToken<ICompositionOf<H>> holder, IComponentIdentifier<H, C> componentIdentifier, IToken<C> component)
+            where H : class, ICompositionType
             where C : class, ResObj
         { return new(componentIdentifier, holder, component); }
-        public static p.SpecialCase.Component.With<TOrig, H, C> pWithComponent<TOrig, H, C>(this IProxy<TOrig, H> holder, IComponentIdentifier<H, C> identifier, IProxy<TOrig, C> component)
+        public static p.SpecialCase.Component.With<TOrig, H, C> pWithComponent<TOrig, H, C>(this IProxy<TOrig, ICompositionOf<H>> holder, IComponentIdentifier<H, C> identifier, IProxy<TOrig, C> component)
             where TOrig : IToken
-            where H : class, ICompositionOf<H>
+            where H : class, ICompositionType
             where C : class, ResObj
         { return new(identifier, holder, component); }
-        public static t.Component.Without<H> tWithoutComponent<H>(this IToken<H> holder, Resolution.Unsafe.IComponentIdentifier<H> componentIdentifier)
-            where H : class, ICompositionOf<H>
+        public static t.Component.Without<H> tWithoutComponent<H>(this IToken<ICompositionOf<H>> holder, Resolution.Unsafe.IComponentIdentifier<H> componentIdentifier)
+            where H : class, ICompositionType
         { return new(componentIdentifier, holder); }
-        public static p.SpecialCase.Component.Without<TOrig, H> pWithoutComponent<TOrig, H>(this IProxy<TOrig, H> holder, Resolution.Unsafe.IComponentIdentifier<H> identifier)
+        public static p.SpecialCase.Component.Without<TOrig, H> pWithoutComponent<TOrig, H>(this IProxy<TOrig, ICompositionOf<H>> holder, Resolution.Unsafe.IComponentIdentifier<H> identifier)
             where TOrig : IToken
-            where H : class, ICompositionOf<H>
+            where H : class, ICompositionType
         { return new(identifier, holder); }
 
         public static t.Data.Insert<RAddress, RObj> tWriteTo<RAddress, RObj>(this IToken<RObj> subject, IToken<RAddress> address)

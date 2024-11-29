@@ -136,9 +136,9 @@ namespace FourZeroOne.Core.Proxies
             public sealed record Get<TOrig, H, R> : Proxy<TOrig, R>
                 where TOrig : IToken
                 where R : class, ResObj
-                where H : class, ICompositionOf<H>
+                where H : class, ICompositionType
             {
-                public Get(IComponentIdentifier<H, R> identifier, IProxy<TOrig, H> proxy)
+                public Get(IComponentIdentifier<H, R> identifier, IProxy<TOrig, ICompositionOf<H>> proxy)
                 {
                     _identifier = identifier;
                     _holderProxy = proxy;
@@ -148,42 +148,42 @@ namespace FourZeroOne.Core.Proxies
                     return new Tokens.Component.Get<H, R>(_identifier, _holderProxy.Realize(original, rule));
                 }
                 private readonly IComponentIdentifier<H, R> _identifier;
-                private readonly IProxy<TOrig, H> _holderProxy;
+                private readonly IProxy<TOrig, ICompositionOf<H>> _holderProxy;
             }
-            public sealed record With<TOrig, H, R> : Proxy<TOrig, H>
+            public sealed record With<TOrig, H, R> : Proxy<TOrig, ICompositionOf<H>>
                 where TOrig : IToken
                 where R : class, ResObj
-                where H : class, ICompositionOf<H>
+                where H : class, ICompositionType
             {
-                public With(IComponentIdentifier<H, R> identifier, IProxy<TOrig, H> holderProxy, IProxy<TOrig, R> componentProxy)
+                public With(IComponentIdentifier<H, R> identifier, IProxy<TOrig, ICompositionOf<H>> holderProxy, IProxy<TOrig, R> componentProxy)
                 {
                     _identifier = identifier;
                     _holderProxy = holderProxy;
                     _componentProxy = componentProxy;
                 }
-                protected override IToken<H> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
+                protected override IToken<ICompositionOf<H>> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
                 {
                     return new Tokens.Component.With<H, R>(_identifier, _holderProxy.Realize(original, rule), _componentProxy.Realize(original, rule));
                 }
                 private readonly IComponentIdentifier<H, R> _identifier;
-                private readonly IProxy<TOrig, H> _holderProxy;
+                private readonly IProxy<TOrig, ICompositionOf<H>> _holderProxy;
                 private readonly IProxy<TOrig, R> _componentProxy;
             }
-            public sealed record Without<TOrig, H> : Proxy<TOrig, H>
+            public sealed record Without<TOrig, H> : Proxy<TOrig, ICompositionOf<H>>
                 where TOrig : IToken
-                where H : class, ICompositionOf<H>
+                where H : class, ICompositionType
             {
-                public Without(Resolution.Unsafe.IComponentIdentifier<H> identifier, IProxy<TOrig, H> holderProxy)
+                public Without(Resolution.Unsafe.IComponentIdentifier<H> identifier, IProxy<TOrig, ICompositionOf<H>> holderProxy)
                 {
                     _identifier = identifier;
                     _holderProxy = holderProxy;
                 }
-                protected override IToken<H> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
+                protected override IToken<ICompositionOf<H>> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
                 {
                     return new Tokens.Component.Without<H>(_identifier, _holderProxy.Realize(original, rule));
                 }
                 private readonly Resolution.Unsafe.IComponentIdentifier<H> _identifier;
-                private readonly IProxy<TOrig, H> _holderProxy;
+                private readonly IProxy<TOrig, ICompositionOf<H>> _holderProxy;
             }
 
         }
