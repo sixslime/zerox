@@ -60,7 +60,7 @@ namespace FourZeroOne.Resolution
     }
     // the 'new()' constraint is mega stupid.
     // this is mega stupid.
-    public sealed record CompositionOf<C> : Construct, ICompositionOf<C> where C : ICompositionType, new()
+    public record CompositionOf<C> : Construct, ICompositionOf<C> where C : ICompositionType, new()
     {
         public override IEnumerable<IInstruction> Instructions => _instance.ResolvesTo(_components).RemapAs(x => x.Instructions).Or([]);
         public CompositionOf()

@@ -99,6 +99,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         {
             public ICompositionType.ResolutionFunction ResolvesTo => components => throw new NotImplementedException();
         }
+
     }
     /*
     namespace Action

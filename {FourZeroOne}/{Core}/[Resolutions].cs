@@ -53,44 +53,41 @@ namespace FourZeroOne.Core.Resolutions
             }
             public override string ToString() => $"{Address}<-{Subject}";
         }
-        /*
-        namespace Merge
+
+        public record Merge<H> : ICompositionType where H : ICompositionType, new()
         {
-            public record Data<S> : CompositionOf<Data<S>>, IInstruction where S : IStateAddress<ICompositionOf>
+            public ICompositionType.ResolutionFunction ResolvesTo => components =>
             {
-                public required S Address { get; init; }
-                public override IEnumerable<IInstruction> Instructions => [this];
-                public IState ChangeState(IState prevState)
-                {
-                    return prevState.GetObjectUnsafe(Address).CheckNone(out var subject)
-                        ? prevState
-                        : prevState.WithObjectsUnsafe([(Address, ((ICompositionOf)subject).WithComponentsUnsafe(
-                            Components.Elements
-                            .Map(x => ((x.key as _Private.MergeComponentIdentifier<S>).NullToNone(), x.val))
-                            .Where(x => x.Item1.IsSome())
-                            .Map(x => (x.Item1.Unwrap().ForComponent, x.val))
-                        ))]);
-                }
+                return components[SUBJECT].Check(out var sObj) && sObj is ICompositionOf<H> subject
+                    ? subject
+                        .WithComponentsUnsafe(
+                            components.Elements
+                            .Where(x => x.key is _Private.IMerger)
+                            .Map(x => (((_Private.IMerger)x.key).ForComponent, x.val)))
+                        .AsSome()
+                    : new None<ResObj>();
             }
-            public static class Component
+            public readonly static StaticComponentIdentifier<Merge<H>, ICompositionOf<H>> SUBJECT = new("CORE", "subject");
+            public static _Private.MergeComponentIdentifier<H, R> MERGE<R>(IComponentIdentifier<H, R> component) where R : class, ResObj => new(component);
+        }
+        namespace _Private
+        {
+            public interface IMerger
             {
-                public static _Private.MergeComponentIdentifier<S> CHANGE<S, H, R>(IComponentIdentifier<H, R> component) where S : IStateAddress<H> where H : class, ICompositionOf<H> where R : class, ResObj => new(component);
+                public IComponentIdentifier ForComponent { get; }
             }
-            namespace _Private
+            public record MergeComponentIdentifier<H, R> : IComponentIdentifier<Merge<H>, R>, IMerger where H : ICompositionType, new() where R : class, ResObj
             {
-                public record MergeComponentIdentifier<S> : IComponentIdentifier<Data<S>> where S : IStateAddress<ICompositionOf>
+                public IComponentIdentifier ForComponent { get; private init; }
+                public string Source => "CORE";
+                public string Identity => $"merge-{ForComponent.Identity}";
+                public MergeComponentIdentifier(IComponentIdentifier<H, R> component)
                 {
-                    public readonly IComponentIdentifier ForComponent;
-                    public string Source => "CORE";
-                    public string Identity => $"merge-{ForComponent.Identity}";
-                    public MergeComponentIdentifier(IComponentIdentifier component)
-                    {
-                        ForComponent = component;
-                    }
+                    ForComponent = component;
                 }
             }
         }
-        */
+
         public sealed record Redact : Instruction
         {
             public required IStateAddress Address { get; init; }
