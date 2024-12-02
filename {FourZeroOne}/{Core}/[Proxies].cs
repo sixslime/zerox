@@ -226,7 +226,7 @@ namespace FourZeroOne.Core.Proxies
     // Original may be a codesmell.
     public sealed record This<TOrig, R> : ThisProxy<TOrig, R> where TOrig : IToken<R> where R : class, ResObj
     {
-        This(IEnumerable<string> hookRemovals) : base(hookRemovals) { }
+        public This(IEnumerable<string> hookRemovals) : base(hookRemovals) { }
     }
     public sealed record ThisFunction<TOrig, RArg1, ROut> : ThisProxy<TOrig, ROut>
         where TOrig : IFunction<RArg1, ROut>

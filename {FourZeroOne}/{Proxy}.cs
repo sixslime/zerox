@@ -69,6 +69,7 @@ namespace FourZeroOne.Proxy.Unsafe
     // DEV: perhaps make FunctionProxy follow the same structure as TransformProxy
     public abstract record ThisProxy<TOrig, R> : Proxy<TOrig, R> where TOrig : IToken<R> where R : class, ResObj
     {
+        public IEnumerable<string> HookLabelRemovals { get => RemovedHookLabels.Elements; init => RemovedHookLabels = new() { Elements = value }; }
         protected readonly PList<IProxy> ArgProxies;
         protected readonly PSet<string> RemovedHookLabels;
         protected ThisProxy(IEnumerable<string> hookRemovals, IEnumerable<IProxy> proxies)
@@ -76,6 +77,7 @@ namespace FourZeroOne.Proxy.Unsafe
             ArgProxies = new() { Elements = proxies };
             RemovedHookLabels = new() { Elements = hookRemovals };
         }
+        // NOTE: 'hookRemovals' may be unnecessary
         protected ThisProxy(IEnumerable<string> hookRemovals, params IProxy[] proxies) : this(hookRemovals, proxies.IEnumerable()) { }
         protected override IToken<R> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {

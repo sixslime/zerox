@@ -541,8 +541,26 @@ namespace FourZeroOne.Core.Syntax
 
         public static p.Direct<TOrig, R> pDirect<TOrig, R>(this Token.IToken<R> token, OriginalHint<TOrig> _) where TOrig : IToken where R : class, ResObj
         { return new(token); }
-        public static p.Original<TOrig, R> pThis<TOrig, R>(this IOriginalHint<TOrig, IToken<R>> _) where TOrig : IToken<R> where R : class, ResObj
-        { return new(); }
+        public static p.This<TOrig, R> pThis<TOrig, R>(this IOriginalHint<TOrig, IToken<R>> _) where TOrig : IToken<R> where R : class, ResObj
+        { return new([]); }
+        public static p.ThisFunction<TOrig, RArg1, ROut> pThisWith<TOrig, RArg1, ROut>(this IOriginalHint<TOrig, IFunction<RArg1, ROut>> _, Structure.Proxy.Args<TOrig, RArg1> args)
+            where TOrig : IFunction<RArg1, ROut>
+            where RArg1 : class, ResObj
+            where ROut : class, ResObj
+        { return new(args.A, []); }
+        public static p.ThisFunction<TOrig, RArg1, RArg2, ROut> pThisWith<TOrig, RArg1, RArg2, ROut>(this IOriginalHint<TOrig, IFunction<RArg1, RArg2, ROut>> _, Structure.Proxy.Args<TOrig, RArg1, RArg2> args)
+            where TOrig : IFunction<RArg1, RArg2, ROut>
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where ROut : class, ResObj
+        { return new(args.A, args.B, []); }
+        public static p.ThisFunction<TOrig, RArg1, RArg2, RArg3, ROut> pThisWith<TOrig, RArg1, RArg2, RArg3, ROut>(this IOriginalHint<TOrig, IFunction<RArg1, RArg2, RArg3, ROut>> _, Structure.Proxy.Args<TOrig, RArg1, RArg2, RArg3> args)
+            where TOrig : IFunction<RArg1, RArg2, RArg3, ROut>
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where RArg3 : class, ResObj
+            where ROut : class, ResObj
+        { return new(args.A, args.B, args.C, []); }
         public static p.OriginalArg1<TOrig, R> pOriginalA<TOrig, R>(this IOriginalHint<TOrig, Token.Unsafe.IHasArg1<R>> _) where TOrig : Token.Unsafe.IHasArg1<R> where R : class, ResObj
         { return new(); }
         public static p.OriginalArg2<TOrig, R> pOriginalB<TOrig, R>(this IOriginalHint<TOrig, Token.Unsafe.IHasArg2<R>> _) where TOrig : Token.Unsafe.IHasArg2<R> where R : class, ResObj
