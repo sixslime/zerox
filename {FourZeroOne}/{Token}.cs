@@ -17,6 +17,7 @@ namespace FourZeroOne.Token
         // "Resolve(IOption<ResObj>[]...)"
         public IToken<R> WithHookLabels(IEnumerable<string> labels);
         public ITask<IOption<R>> Resolve(IRuntime runtime, IOption<ResObj>[] args);
+        public IToken<R> UnsafeTypedWithArgs(Unsafe.IToken[] args);
     }
     public abstract record Token<R> : IToken<R> where R : class, ResObj
     {
@@ -33,6 +34,9 @@ namespace FourZeroOne.Token
         public ITask<IOption<ResObj>> UnsafeResolve(IRuntime runtime, IOption<ResObj>[] args) { return Resolve(runtime, args); }
         public IToken<R> WithHookLabels(IEnumerable<string> labels) => this with { _hookLabels = new() { Elements = labels } };
         public Unsafe.IToken UnsafeWithHookLabels(IEnumerable<string> labels) => WithHookLabels(labels);
+        // WithArgs() is smelly
+        public Unsafe.IToken UnsafeWithArgs(Unsafe.IToken[] args) => UnsafeTypedWithArgs(args);
+        public IToken<R> UnsafeTypedWithArgs(Unsafe.IToken[] args) => this with { _argTokens = args };
         protected virtual IOption<string> CustomToString() => new None<string>();
 
         public sealed override string ToString()
@@ -254,6 +258,7 @@ namespace FourZeroOne.Token.Unsafe
         public IEnumerable<string> HookLabels { get; }
         public IToken UnsafeWithHookLabels(IEnumerable<string> labels);
         public ITask<IOption<ResObj>> UnsafeResolve(IRuntime runtime, IOption<ResObj>[] args);
+        public IToken UnsafeWithArgs(IToken[] args);
     }
 
     public interface IHasArg1<RArg> : IHasArg1 where RArg : class, ResObj

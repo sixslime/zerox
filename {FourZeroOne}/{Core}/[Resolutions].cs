@@ -66,7 +66,7 @@ namespace FourZeroOne.Core.Resolutions
                             .Map(x => (((_Private.IMerger)x.key).ForComponent, x.val)))
                         .AsSome()
                     : new None<ResObj>();
-            }
+            };
             public readonly static StaticComponentIdentifier<Merge<H>, ICompositionOf<H>> SUBJECT = new("CORE", "subject");
             public static _Private.MergeComponentIdentifier<H, R> MERGE<R>(IComponentIdentifier<H, R> component) where R : class, ResObj => new(component);
         }

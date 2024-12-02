@@ -38,6 +38,10 @@ namespace FourZeroOne.Proxy
         {
             return rule.RemapAs(r => r.TryApplyTyped(original)).Press().Or(original);
         }
+        protected static IToken RuleAppliedUnsafe(IOption<Rule.IRule> rule, IToken original)
+        {
+            return rule.RemapAs(r => r.TryApply(original)).Press().Or(original);
+        }
         private PSet<string> _hookLabels;
     }
 }
@@ -46,6 +50,7 @@ namespace FourZeroOne.Proxy.Unsafe
     using ResObj = Resolution.IResolution;
     using Token.Unsafe;
     using Token;
+
     public interface IProxy
     {
         public IEnumerable<string> HookLabels { get; }
@@ -61,6 +66,7 @@ namespace FourZeroOne.Proxy.Unsafe
         public abstract IToken UnsafeContextualRealize(TOrig original, IOption<Rule.IRule> rule);
     }
 
+    // DEV: perhaps make FunctionProxy follow the same structure as TransformProxy
     public abstract record FunctionProxy<TOrig, R> : Proxy<TOrig, R>
         where TOrig : IToken
         where R : class, ResObj
@@ -78,7 +84,7 @@ namespace FourZeroOne.Proxy.Unsafe
         {
             ArgProxies = new() { Elements = proxies };
         }
-        protected FunctionProxy(params IProxy[] proxies) : this(proxies as IEnumerable<IProxy>) { }
+        protected FunctionProxy(params IProxy[] proxies) : this(proxies.IEnumerable()) { }
         protected List<IToken> MakeSubstitutions(TOrig original, IOption<Rule.IRule> rule)
         {
             return new(ArgProxies.Elements.Map(x => x.UnsafeRealize(original, rule)));

@@ -541,31 +541,14 @@ namespace FourZeroOne.Core.Syntax
 
         public static p.Direct<TOrig, R> pDirect<TOrig, R>(this Token.IToken<R> token, OriginalHint<TOrig> _) where TOrig : IToken where R : class, ResObj
         { return new(token); }
+        public static p.Original<TOrig, R> pThis<TOrig, R>(this IOriginalHint<TOrig, IToken<R>> _) where TOrig : IToken<R> where R : class, ResObj
+        { return new(); }
         public static p.OriginalArg1<TOrig, R> pOriginalA<TOrig, R>(this IOriginalHint<TOrig, Token.Unsafe.IHasArg1<R>> _) where TOrig : Token.Unsafe.IHasArg1<R> where R : class, ResObj
         { return new(); }
         public static p.OriginalArg2<TOrig, R> pOriginalB<TOrig, R>(this IOriginalHint<TOrig, Token.Unsafe.IHasArg2<R>> _) where TOrig : Token.Unsafe.IHasArg2<R> where R : class, ResObj
         { return new(); }
         public static p.OriginalArg3<TOrig, R> pOriginalC<TOrig, R>(this IOriginalHint<TOrig, Token.Unsafe.IHasArg3<R>> _) where TOrig : Token.Unsafe.IHasArg3<R> where R : class, ResObj
         { return new(); }
-
-        public static p.ArgTransform<TOrig, RArg1, ROut> pThis<TOrig, RArg1, RArg2, ROut>(this IOriginalHint<TOrig, Token.IFunction<RArg1, ROut>> _, Structure.Proxy.Args<TOrig, RArg1> args)
-            where TOrig : IToken, Token.IFunction<RArg1, ROut>
-            where RArg1 : class, ResObj
-            where ROut : class, ResObj
-        { return new(args.A); }
-        public static p.ArgTransform<TOrig, RArg1, RArg2, ROut> pThis<TOrig, RArg1, RArg2, ROut>(this IOriginalHint<TOrig, Token.IFunction<RArg1, RArg2, ROut>> _, Structure.Proxy.Args<TOrig, RArg1, RArg2> args)
-            where TOrig : IToken, Token.IFunction<RArg1, RArg2, ROut>
-            where RArg1 : class, ResObj
-            where RArg2 : class, ResObj
-            where ROut : class, ResObj
-        { return new(args.A, args.B); }
-        public static p.ArgTransform<TOrig, RArg1, RArg2, RArg3, ROut> pThis<TOrig, RArg1, RArg2, RArg3, ROut>(this IOriginalHint<TOrig, Token.IFunction<RArg1, RArg2, RArg3, ROut>> _, Structure.Proxy.Args<TOrig, RArg1, RArg2, RArg3> args)
-            where TOrig : IToken, Token.IFunction<RArg1, RArg2, RArg3, ROut>
-            where RArg1 : class, ResObj
-            where RArg2 : class, ResObj
-            where RArg3 : class, ResObj
-            where ROut : class, ResObj
-        { return new(args.A, args.B, args.C); }
         public static t.Fixed<r.Multi<R>> t_ToConstMulti<R>(this IEnumerable<t.Fixed<R>> values) where R : class, ResObj
         { return new(new() { Values = values.Map(x => x.Resolution) }); }
     }

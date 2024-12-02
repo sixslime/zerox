@@ -221,6 +221,16 @@ namespace FourZeroOne.Core.Proxies
         }
     }
     // ---- [ OriginalArgs ] ----
+
+    // ok bro just fucking revert to 'doesnt work' commit.
+    // Original may be a codesmell.
+    public sealed record Original<TOrig, R> : Proxy<TOrig, R> where TOrig : IToken<R> where R : class, ResObj
+    {
+        protected override IToken<R> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
+        {
+            return original.UnsafeTypedWithArgs([.. original.ArgTokens.Map(x => RuleAppliedUnsafe(rule, x))]);
+        }
+    }
     public sealed record OriginalArg1<TOrig, RArg> : Proxy<TOrig, RArg> where TOrig : IHasArg1<RArg> where RArg : class, ResObj
     {
         protected override IToken<RArg> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
@@ -305,6 +315,7 @@ namespace FourZeroOne.Core.Proxies
                 .Invoke(new object[] { tokens.Map(x => (IToken<RArgs>)x) });
         }
     }
+    // DEV: *may* not need to exist.
     public sealed record CombinerTransform<TNew, TOrig, RArg, ROut> : Proxy<TOrig, ROut>
         where TOrig : IHasCombinerArgs<RArg>, IToken<ROut>
         where TNew : Token.ICombiner<RArg, ROut>
@@ -317,71 +328,7 @@ namespace FourZeroOne.Core.Proxies
                 .Invoke(new object[] { original.Args.Map(x => RuleApplied(rule, x)) });
         }
     }
-    // ArgTransform retains type and HookLabels of original token.
-    // Gay and cringe that we have to re-implement RemovedHookLabels for each ArgTransform.
-    public sealed record ArgTransform<TOrig, RArg1, ROut> : Function<TOrig, TOrig, RArg1, ROut>
-        where TOrig : IToken, IFunction<RArg1, ROut>
-        where RArg1 : class, ResObj
-        where ROut : class, ResObj
-    {
-        public IEnumerable<string> RemovedHookLabels => _hookRemovals;
-        public ArgTransform(IProxy<TOrig, RArg1> in1) : base(in1)
-        {
-            _hookRemovals = new() { Elements = [] };
-        }
-        protected override IToken<ROut> ConstructFromArgs(TOrig original, List<IToken> tokens)
-        {
-            return base.ConstructFromArgs(original, tokens).WithHookLabels(original.HookLabels.Except(_hookRemovals));
-        }
-        public ArgTransform<TOrig, RArg1, ROut> WithRemovedHookLabels(IEnumerable<string> labels)
-        {
-            return this with { _hookRemovals = new() { Elements = labels } };
-        }
-        private PSet<string> _hookRemovals;
-    }
-    public sealed record ArgTransform<TOrig, RArg1, RArg2, ROut> : Function<TOrig, TOrig, RArg1, RArg2, ROut>
-        where TOrig : IToken, IFunction<RArg1, RArg2, ROut>
-        where RArg1 : class, ResObj
-        where RArg2 : class, ResObj
-        where ROut : class, ResObj
-    {
-        public IEnumerable<string> RemovedHookLabels => _hookRemovals;
-        public ArgTransform(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2) : base(in1, in2)
-        {
-            _hookRemovals = new() { Elements = [] };
-        }
-        protected override IToken<ROut> ConstructFromArgs(TOrig original, List<IToken> tokens)
-        {
-            return base.ConstructFromArgs(original, tokens).WithHookLabels(original.HookLabels.Except(_hookRemovals));
-        }
-        public ArgTransform<TOrig, RArg1, RArg2, ROut> WithRemovedHookLabels(IEnumerable<string> labels)
-        {
-            return this with { _hookRemovals = new() { Elements = labels } };
-        }
-        private PSet<string> _hookRemovals;
-    }
-    public sealed record ArgTransform<TOrig, RArg1, RArg2, RArg3, ROut> : Function<TOrig, TOrig, RArg1, RArg2, RArg3, ROut>
-        where TOrig : IToken, IFunction<RArg1, RArg2, RArg3, ROut>
-        where RArg1 : class, ResObj
-        where RArg2 : class, ResObj
-        where RArg3 : class, ResObj
-        where ROut : class, ResObj
-    {
-        public IEnumerable<string> RemovedHookLabels => _hookRemovals;
-        public ArgTransform(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2, IProxy<TOrig, RArg3> in3) : base(in1, in2, in3)
-        {
-            _hookRemovals = new() { Elements = [] };
-        }
-        protected override IToken<ROut> ConstructFromArgs(TOrig original, List<IToken> tokens)
-        {
-            return base.ConstructFromArgs(original, tokens).WithHookLabels(original.HookLabels.Except(_hookRemovals));
-        }
-        public ArgTransform<TOrig, RArg1, RArg2, RArg3, ROut> WithRemovedHookLabels(IEnumerable<string> labels)
-        {
-            return this with { _hookRemovals = new() { Elements = labels } };
-        }
-        private PSet<string> _hookRemovals;
-    }
+    
     // --------
 
     [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]

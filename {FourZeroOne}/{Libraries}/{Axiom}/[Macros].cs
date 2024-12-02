@@ -30,7 +30,7 @@ namespace FourZeroOne.Libraries.Axiom.Macros
             private readonly static IProxy<SendAction<R>, ResObj> PROXY = MakeProxy.Statement<SendAction<R>, ResObj>(P => P.pOriginalA());
         }
         
-    } 
+    }
         // numericalmove(Units, Range, Func<Hex, Hex> modifier)
         //                               ^ Glorping crazy!
     // IField<Unit, ro.Number>
