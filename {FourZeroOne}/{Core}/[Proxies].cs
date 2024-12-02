@@ -224,12 +224,40 @@ namespace FourZeroOne.Core.Proxies
 
     // ok bro just fucking revert to 'doesnt work' commit.
     // Original may be a codesmell.
-    public sealed record Original<TOrig, R> : Proxy<TOrig, R> where TOrig : IToken<R> where R : class, ResObj
+    public sealed record This<TOrig, R> : ThisProxy<TOrig, R> where TOrig : IToken<R> where R : class, ResObj
     {
-        protected override IToken<R> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
-        {
-            return original.UnsafeTypedWithArgs([.. original.ArgTokens.Map(x => RuleAppliedUnsafe(rule, x))]);
-        }
+        This(IEnumerable<string> hookRemovals) : base(hookRemovals) { }
+    }
+    public sealed record ThisFunction<TOrig, RArg1, ROut> : ThisProxy<TOrig, ROut>
+        where TOrig : IFunction<RArg1, ROut>
+        where RArg1 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public ThisFunction(IProxy<TOrig, RArg1> in1, IEnumerable<string> hookRemovals) : base(hookRemovals, in1) { }
+    }
+    public sealed record ThisFunction<TOrig, RArg1, RArg2, ROut> : ThisProxy<TOrig, ROut>
+        where TOrig : IFunction<RArg1, RArg2, ROut>
+        where RArg1 : class, ResObj
+        where RArg2 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public ThisFunction(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2, IEnumerable<string> hookRemovals) : base(hookRemovals, in1, in2) { }
+    }
+    public sealed record ThisFunction<TOrig, RArg1, RArg2, RArg3, ROut> : ThisProxy<TOrig, ROut>
+        where TOrig : IFunction<RArg1, RArg2, RArg3, ROut>
+        where RArg1 : class, ResObj
+        where RArg2 : class, ResObj
+        where RArg3 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public ThisFunction(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2, IProxy<TOrig, RArg3> in3, IEnumerable<string> hookRemovals) : base(hookRemovals, in1, in2, in3) { }
+    }
+    public sealed record ThisCombiner<TOrig, RArgs, ROut> : ThisProxy<TOrig, ROut>
+        where TOrig : ICombiner<RArgs, ROut>
+        where RArgs : class, ResObj
+        where ROut : class, ResObj
+    {
+        public ThisCombiner(IEnumerable<IProxy<TOrig, RArgs>> args, IEnumerable<string> hookRemovals) : base(hookRemovals, args) { }
     }
     public sealed record OriginalArg1<TOrig, RArg> : Proxy<TOrig, RArg> where TOrig : IHasArg1<RArg> where RArg : class, ResObj
     {

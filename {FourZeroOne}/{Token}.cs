@@ -29,7 +29,7 @@ namespace FourZeroOne.Token
             _uniqueId = ++_assigner;
             _hookLabels = new() { Elements = [] };
         }
-        public Token(IEnumerable<Unsafe.IToken> args) : this(args.AsList().ToArray()) { }
+        public Token(IEnumerable<Unsafe.IToken> args) : this(args.ToArray()) { }
         public abstract ITask<IOption<R>> Resolve(IRuntime runtime, IOption<ResObj>[] args);
         public ITask<IOption<ResObj>> UnsafeResolve(IRuntime runtime, IOption<ResObj>[] args) { return Resolve(runtime, args); }
         public IToken<R> WithHookLabels(IEnumerable<string> labels) => this with { _hookLabels = new() { Elements = labels } };

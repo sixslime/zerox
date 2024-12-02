@@ -115,13 +115,13 @@ namespace Perfection
             while (iter1.MoveNext() && iter2.MoveNext()) yield return (iter1.Current, iter2.Current);
         }
 
-        public static IEnumerable<(T1? a, T2? b)> ZipLong<T1, T2>(this IEnumerable<T1> enumerableA, IEnumerable<T2> enumerableB)
+        public static IEnumerable<(IOption<T1> a, IOption<T2> b)> ZipLong<T1, T2>(this IEnumerable<T1> enumerableA, IEnumerable<T2> enumerableB)
         {
             var iter1 = enumerableA.GetEnumerator();
             var iter2 = enumerableB.GetEnumerator();
-            while (iter1.MoveNext() && iter2.MoveNext()) yield return (iter1.Current, iter2.Current);
-            while (iter1.MoveNext()) yield return (iter1.Current, default);
-            while (iter2.MoveNext()) yield return (default, iter2.Current);
+            while (iter1.MoveNext() && iter2.MoveNext()) yield return (iter1.Current.AsSome(), iter2.Current.AsSome());
+            while (iter1.MoveNext()) yield return (iter1.Current.AsSome(), new None<T2>());
+            while (iter2.MoveNext()) yield return (new None<T1>(), iter2.Current.AsSome());
         }
 
         public static IEnumerable<T> Skip<T>(this IEnumerable<T> enumerable, int amount)

@@ -41,7 +41,7 @@ namespace Perfection
     /// </summary>
     /// <typeparam name="I"></typeparam>
     /// <typeparam name="T"></typeparam>
-    public record PIndexedSet<I, T> : IEnumerable<T>
+    public record PIndexedSet<I, T>
     {
         protected readonly List<List<T>> _storage;
         public required IEnumerable<T> Elements
@@ -78,8 +78,6 @@ namespace Perfection
         public IOption<T> this[I index] => Count > 0 ? GetBucket(index).Find(x => IndexGenerator(x).Equals(index)).NullToNone() : new None<T>();
         public IOption<T> this[T obj] => this[IndexGenerator(obj)];
         private List<T> GetBucket(I index) => _storage[index.GetHashCode().Abs() % Modulo];
-        public IEnumerator<T> GetEnumerator() => _storage.Flatten().GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => _storage.Flatten().GetEnumerator();
         public override string ToString() => _storage.AccumulateInto("PIndexedSet:\n", (msg1, x) => msg1 +
         $"{x.AccumulateInto(">", (msg2, y) => msg2 + $" [{IndexGenerator(y)} : {y}]\n  ")}\n");
 
