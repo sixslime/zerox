@@ -50,6 +50,11 @@ namespace PROTO_ZeroxFour_1
              *      {
              *          Resolution = test_1.Use(testContext).Resolution.Mut(x => x with { Value = x.Value - 1 }); // this should be valid.
              *      }
+             *      Assert = new()
+             *      {
+             *          Resolution = x => x.ResEquals(test_1.Use(testContext).Resolution)); // even though this is bad practice, this test should still be marked as "skipped" (even after evalutaion) if 'test_1' failed.
+             *          // this means that tests should be run ENTIRELY before any output is given.
+             *      }
              *      
              * }
              */
