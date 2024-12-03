@@ -18,7 +18,6 @@ namespace PROTO_ZeroxFour_1;
 // TODO: make a dedicated testing object/mini-framework
 public class Tester
 {
-    private FourZeroOne.Runtime.IRuntime _runtime;
     //DEV: we seriously need a real testing method/mini-framework.
     public async Task Run()
     {
@@ -110,12 +109,12 @@ public class Tester
             }) with
             { HookLabelRemovals = ["test"] }
         }));
-        var token_tester = token_test_6;
+        var token_tester = token_test_3;
         FZ.IState startState = new FZ.StateModels.Minimal()
             .WithRules([rule_test_5, rule_test_4]);
-        _runtime = new FZ.Runtimes.FrameSaving.Gebug();
-
-        var o = await _runtime.Run(startState, token_tester);
+        var runtime = new FZ.Runtimes.FrameSaving.Gebug();
+        runtime.SetAutoSelections([2], [0], [2], [1]);
+        var o = await runtime.Run(startState, token_tester);
         Console.WriteLine($"FINAL: {o}");
     }
 }

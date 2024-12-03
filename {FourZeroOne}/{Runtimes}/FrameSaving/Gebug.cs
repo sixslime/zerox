@@ -7,6 +7,7 @@ using Perfection;
 using MorseCode.ITask;
 namespace FourZeroOne.Runtimes.FrameSaving
 {
+    using LookNicePls;
     public class Gebug : Runtime.FrameSaving
     {
         private IOption<int[]>[] _autoSelections = [];
@@ -14,7 +15,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
         private IOption<LinkedStack<Frame>> _currentFrame = new None<LinkedStack<Frame>>();
         private int _depth = 0;
         private bool _macroExpanding = false;
-        private int _promptIndex = 0;
+        private int _promptIndex = -1;
 
         public void SetAutoSelections(params int[]?[] selections)
         {
@@ -27,7 +28,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
         protected override void OnRunCall(IState startingState, IToken program)
         {
             _currentFrame = new None<LinkedStack<Frame>>();
-            _promptIndex = 0;
+            _promptIndex = -1;
         }
         protected override void RecieveFrame(LinkedStack<Frame> frameNode)
         {
@@ -121,7 +122,8 @@ namespace FourZeroOne.Runtimes.FrameSaving
                 return __DoRewind(autoRewind, out targetFrame);
             if (_autoSelections.Length > _promptIndex && _autoSelections[_promptIndex].Check(out var selections))
             {
-                if (!__ValidateSelections(selections)) throw new Exception($"[Gebug Runtime] Invalid auto selection: ${_promptIndex}: ${selections}");
+                if (!__ValidateSelections(selections)) throw new Exception($"[Gebug Runtime] Invalid auto selection: {_promptIndex}: {selections.LookNicePls()}");
+                Console.WriteLine($"AUTO SELECT: {selections.LookNicePls()}");
                 return __DoSelection(selections);
             }
                 
