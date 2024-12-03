@@ -84,6 +84,8 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     }
     namespace Structures
     {
+        // this could be a composition.
+        // then use a macro to resolve it into a multi
         public record HexArea : NoOp, IMulti<ax.Hex.Position>
         {
             public IEnumerable<ax.Hex.Position> Values => Offsets.Elements.Map(x => x.Transform((a, b) => a + b, Center));
@@ -97,7 +99,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         public interface IAction : ResObj { }
         public record Data : ICompositionType
         {
-            public ICompositionType.ResolutionFunction ResolvesTo => components => throw new NotImplementedException();
+            public ICompositionType.ResolutionFunction EvaluatedAs => components => throw new NotImplementedException();
         }
 
     }

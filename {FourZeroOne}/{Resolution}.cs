@@ -34,11 +34,11 @@ namespace FourZeroOne.Resolution
     public interface ICompositionType
     {
         public delegate IOption<IResolution> ResolutionFunction(PMap<Unsafe.IComponentIdentifier, IResolution> components);
-        public ResolutionFunction ResolvesTo { get; }
+        public ResolutionFunction EvaluatedAs { get; }
     }
     public abstract record CompositionNoOp : ICompositionType
     {
-        public ICompositionType.ResolutionFunction ResolvesTo => _ => _nolla;
+        public ICompositionType.ResolutionFunction EvaluatedAs => _ => _nolla;
         private static readonly None<IResolution> _nolla = new();
     }
     public interface IMulti<out R> : IResolution where R : IResolution
@@ -62,7 +62,7 @@ namespace FourZeroOne.Resolution
     // this is mega stupid.
     public record CompositionOf<C> : Construct, ICompositionOf<C> where C : ICompositionType, new()
     {
-        public override IEnumerable<IInstruction> Instructions => _instance.ResolvesTo(_components).RemapAs(x => x.Instructions).Or([]);
+        public override IEnumerable<IInstruction> Instructions => _instance.EvaluatedAs(_components).RemapAs(x => x.Instructions).Or([]);
         public CompositionOf()
         {
             _components = new() { Elements = [] };

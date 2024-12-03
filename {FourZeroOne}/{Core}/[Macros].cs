@@ -58,6 +58,8 @@ namespace FourZeroOne.Core.Macros
         }
     }
     
+    // TODO: make IfElse macro that executes the metafunction returned by the token IfElse. then rename the token IfElse to something else (and make it general maybe) :D.
+
     public sealed record UpdateStateObject<A, D> : TwoArg<A, r.Boxed.MetaFunction<D, D>, r.Instructions.Assign<D>> where A : class, Resolution.IStateAddress<D>, ResObj where D : class, ResObj
     {
         public UpdateStateObject(IToken<A> in1, IToken<r.Boxed.MetaFunction<D, D>> in2) : base(in1, in2) { }

@@ -56,7 +56,7 @@ namespace FourZeroOne.Core.Resolutions
 
         public record Merge<H> : ICompositionType where H : ICompositionType, new()
         {
-            public ICompositionType.ResolutionFunction ResolvesTo => components =>
+            public ICompositionType.ResolutionFunction EvaluatedAs => components =>
             {
                 return components[SUBJECT].Check(out var sObj) && sObj is ICompositionOf<H> subject
                     ? subject
