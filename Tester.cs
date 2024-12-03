@@ -19,6 +19,7 @@ namespace PROTO_ZeroxFour_1;
 public class Tester
 {
     private FourZeroOne.Runtime.IRuntime _runtime;
+    //DEV: we seriously need a real testing method/mini-framework.
     public async Task Run()
     {
 
@@ -48,7 +49,7 @@ public class Tester
         // the final boss.
         // prompts the user to select a number from an array 3 times, removing the selected number after each selection.
         // after all 3 selections, returns the 3 selected numbers added together.
-        // this can be achieved more easily though IOSelectMany, but it's done with IOSelectOne for demonstration of recursion.
+        // this is essentially emulating the functionality of IOSelectMany, but it's done with IOSelectOne for demonstration of recursion.
         var token_complicated = Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<ro.Number>, ro.Number>.Hint(), (selfFunc, counter, pool) =>
         {
             return counter.tRef().tIsGreaterThan(2.tFixed()).tIfTrue(RHint<ro.Number>.Hint(), new()
