@@ -24,21 +24,18 @@ namespace FourZeroOne.Rule
     /// <typeparam name="R"></typeparam>
     public record Rule<TFor, R> : IRule where TFor : IToken<R> where R : class, ResObj
     {
-        public Rule(string hook, IProxy<TFor, R> proxy)
-        {
-            _proxy = proxy;
-            _hook = hook;
-        }
+        public required IProxy<TFor, R> Proxy { get; init; }
+        public required string Hook { get; init; }
         public IToken<R> Apply(TFor original)
         {
-            return _proxy.Realize(original, this.AsSome());
+            return Proxy.Realize(original, this.AsSome());
         }
         private IOption<IToken<R>> TryApplyInternal(Token.Unsafe.IToken original)
         {
             // i don't see a better way. rules are just cheugy.
             return 
                 original is TFor match
-                && match.HookLabels.Contains(_hook)
+                && match.HookLabels.Contains(Hook)
                 && original.GetType().FindInterfaces(InterfaceFilter, ITOKEN_TYPE)
                     .Map(x => x.GenericTypeArguments[0])
                     .HasMatch(x => typeof(R).IsAssignableTo(x))
@@ -61,8 +58,6 @@ namespace FourZeroOne.Rule
         {
             return "rule";
         }
-        private readonly IProxy<TFor, R> _proxy;
-        private readonly string _hook;
         private readonly static Type ITOKEN_TYPE = typeof(IToken<ResObj>).GetGenericTypeDefinition();
         
     }

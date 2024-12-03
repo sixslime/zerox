@@ -87,7 +87,7 @@ public class Tester
         var rule_test_2 = MakeProxy.AsRule<t.Number.Add, ro.Number>("test", P => P.pSubEnvironment(RHint<ro.Number>.Hint(), new()
         {
             Environment = P.pOriginalA().pAsVariable(out var num).pYield(),
-            Value = P.pThis(new()
+            Value = P.pThisWith(new()
             {
                 A = num.tRef().pDirect(P),
                 B = num.tRef().pDirect(P)
@@ -99,9 +99,19 @@ public class Tester
             Value = num.tRef().tAdd(num.tRef()).pDirect(P)
         }));
         var rule_test_4 = MakeProxy.AsRule<FZ.Token.IToken<ro.Number>, ro.Number>("test", P => 6.tFixed().pDirect(P));
+        var rule_test_5 = MakeProxy.AsRule<t.Number.Add, ro.Number>("test", P => P.pSubEnvironment(RHint<ro.Number>.Hint(), new()
+        {
+            Environment = P.pOriginalA().pAsVariable(out var num).pYield(),
+            Value = P.pThisWith(new()
+            {
+                A = num.tRef().pDirect(P),
+                B = num.tRef().pDirect(P)
+            }) with
+            { HookLabelRemovals = ["test"] }
+        }));
         var token_tester = token_test_6;
-        FZ.IState startState = new FourZeroOne.StateModels.Minimal()
-            .WithRules([rule_test_4]);
+        FZ.IState startState = new FZ.StateModels.Minimal()
+            .WithRules([rule_test_5, rule_test_4]);
         _runtime = new FZ.Runtimes.FrameSaving.Gebug(startState, token_tester);
 
         var o = await _runtime.Run();

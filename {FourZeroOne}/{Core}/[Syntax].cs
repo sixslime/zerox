@@ -301,8 +301,8 @@ namespace FourZeroOne.Core.Syntax
     {
         public static IProxy<TOrig, ROut> Statement<TOrig, ROut>(ProxyBuilder<TOrig, ROut> statement) where TOrig : Token.IToken<ROut> where ROut : class, ResObj
         { return statement(new()); }
-        public static Rule.Rule<TOrig, ROut> AsRule<TOrig, ROut>(string hook, ProxyBuilder<TOrig, ROut> statement) where TOrig : Token.IToken<ROut> where ROut : class, ResObj
-        { return new(hook, statement(new())); }
+        public static Rule.Rule<TOrig, ROutMatch> AsRule<TOrig, ROutMatch>(string hook, ProxyBuilder<TOrig, ROutMatch> statement) where TOrig : Token.IToken<ROutMatch> where ROutMatch : class, ResObj
+        { return new() { Hook = hook, Proxy = statement(new()) }; }
     }
     public static class _Extensions
     {
