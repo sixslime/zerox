@@ -48,6 +48,7 @@ namespace FourZeroOne.Runtime
             */
             _frameStack = new None<LinkedStack<Frame>>();
             StoreFrame(program, new None<Resolved>());
+            OnRunCall(startingState, program);
             StartEval();
             return await _runThread;
         }
@@ -84,7 +85,7 @@ namespace FourZeroOne.Runtime
 
         protected const int MAX_MACRO_EXPANSION_DEPTH = 24;
 
-        protected abstract void OnRunCall();
+        protected abstract void OnRunCall(IState startingState, IToken program);
         protected abstract void RecieveToken(IToken token, int depth);
         protected abstract void RecieveResolution(IOption<ResObj> resolution, int depth);
         protected abstract void RecieveFrame(LinkedStack<Frame> frameStackNode);

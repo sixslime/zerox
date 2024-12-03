@@ -9,18 +9,25 @@ namespace FourZeroOne.Runtimes.FrameSaving
 {
     public class Gebug : Runtime.FrameSaving
     {
-        private IOption<LinkedStack<Frame>> _currentFrame;
+        private IOption<int[]>[] _autoSelections = [];
+        private IOption<int>[] _autoRewinds = [];
+        private IOption<LinkedStack<Frame>> _currentFrame = new None<LinkedStack<Frame>>();
         private int _depth = 0;
         private bool _macroExpanding = false;
-        private string DepthPad(int depth) => "| ".Yield(depth).AccumulateInto("", (msg, x) => msg + x);
-        public Gebug()
+        private int _promptIndex = 0;
+
+        public void SetAutoSelections(params int[]?[] selections)
+        {
+            _autoSelections = selections.Map(x => x.NullToNone()).ToArray();
+        }
+        public void SetAutoRewinds(params int?[] rewinds)
+        {
+            _autoRewinds = rewinds.Map(x => x.NullToNone().RemapAs(x => (int)x! /*???*/)).ToArray(); ;
+        } 
+        protected override void OnRunCall(IState startingState, IToken program)
         {
             _currentFrame = new None<LinkedStack<Frame>>();
-        }
-
-        protected override void OnRunCall()
-        {
-            throw new NotImplementedException();
+            _promptIndex = 0;
         }
         protected override void RecieveFrame(LinkedStack<Frame> frameNode)
         {
@@ -92,8 +99,14 @@ namespace FourZeroOne.Runtimes.FrameSaving
             Console.ResetColor();
             return o;
         }
+
+        
+        private static string DepthPad(int depth) => "| ".Yield(depth).AccumulateInto("", (msg, x) => msg + x);
+
         private ITask<IOption<IEnumerable<R>>> SelectionPrompt<R>(IEnumerable<R> from, int count, out IOption<LinkedStack<Frame>> targetFrame)
         {
+            _promptIndex++;
+
             targetFrame = new None<LinkedStack<Frame>>();
             R[] selectables = [.. from];
             if (selectables.Length < count) return new None<IEnumerable<R>>().ToCompletedITask();
@@ -103,6 +116,17 @@ namespace FourZeroOne.Runtimes.FrameSaving
                 .AccumulateInto($">> SELECT {count}", (msg, entry) => $"{msg}\n> [{entry.index}] - {entry.value}");
             Console.WriteLine(showString);
 
+            // AUTO SELECT/REWIND
+            if (_autoRewinds.Length > _promptIndex && _autoRewinds[_promptIndex].Check(out var autoRewind))
+                return __DoRewind(autoRewind, out targetFrame);
+            if (_autoSelections.Length > _promptIndex && _autoSelections[_promptIndex].Check(out var selections))
+            {
+                if (!__ValidateSelections(selections)) throw new Exception($"[Gebug Runtime] Invalid auto selection: ${_promptIndex}: ${selections}");
+                return __DoSelection(selections);
+            }
+                
+
+            // MANUAL USER INPUT
             while (true)
             {
                 var inputString = Console.ReadLine();
@@ -111,28 +135,40 @@ namespace FourZeroOne.Runtimes.FrameSaving
                 {
                     if (!int.TryParse(inputString[1..], out var framesBack))
                         continue;
-                    targetFrame = _currentFrame.Sequence(x => x.Unwrap().Link).ElementAt(framesBack);
-                    _currentFrame = targetFrame;
-                    return new None<IEnumerable<R>>().ToCompletedITask();
+                    return __DoRewind(framesBack, out targetFrame);
                 }
                 int[] selectionIndicies = [.. inputString.Split(" ", StringSplitOptions.RemoveEmptyEntries)
                     .Map(x => int.TryParse(x, out var value) ? value : -1)
                     .Where(x => x >= 0)];
-                if (selectionIndicies.Length != count)
+                if (!__ValidateSelections(selectionIndicies)) continue;
+                return __DoSelection(selectionIndicies);
+            }
+            bool __ValidateSelections(int[] selections)
+            {
+                if (selections.Length != count)
                 {
-                    Console.WriteLine($"{count} inputs required, {selectionIndicies.Length} given.");
+                    Console.WriteLine($"{count} inputs required, {selections.Length} given.");
                     Console.WriteLine(showString);
-                    continue;
+                    return false;
                 }
-                if (selectionIndicies.HasMatch(x => x > selectables.Length - 1))
+                if (selections.HasMatch(x => x > selectables.Length - 1))
                 {
                     Console.WriteLine($"One or more inputs is invalid.");
                     Console.WriteLine(showString);
-                    continue;
+                    return false;
                 }
-                return selectionIndicies.Map(x => selectables[x]).AsSome().ToCompletedITask();
+                return true;
             }
-
+            ITask<IOption<IEnumerable<R>>> __DoRewind(int framesBack, out IOption<LinkedStack<Frame>> targetFrame)
+            {
+                targetFrame = _currentFrame.Sequence(x => x.Unwrap().Link).ElementAt(framesBack);
+                _currentFrame = targetFrame;
+                return new None<IEnumerable<R>>().ToCompletedITask();
+            }
+            ITask<IOption<IEnumerable<R>>> __DoSelection(int[] selections)
+            {
+                return selections.Map(x => selectables[x]).AsSome().ToCompletedITask();
+            }
         }
     }
 }
