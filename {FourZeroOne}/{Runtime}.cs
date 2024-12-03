@@ -15,7 +15,7 @@ namespace FourZeroOne.Runtime
     public interface IRuntime
     {
         public IState GetState();
-        public Task<Resolved> Run();
+        public Task<Resolved> Run(IState startingState, IToken program);
         public ITask<IOption<R>> MetaExecute<R>(IToken<R> token, IEnumerable<(Resolution.Unsafe.IStateAddress, Resolved)> args) where R : class, ResObj;
         public ITask<IOption<IEnumerable<R>>> ReadSelection<R>(IEnumerable<R> from, int count) where R : class, ResObj;
     }
@@ -23,23 +23,35 @@ namespace FourZeroOne.Runtime
     public abstract class FrameSaving : IRuntime
     {
         
-        public FrameSaving(IState startingState, IToken program)
+        public FrameSaving()
         {
-            _stateStack = new LinkedStack<IState>(startingState).AsSome();
-            _operationStack = new LinkedStack<IToken>(program).AsSome();
+            _stateStack = new None<LinkedStack<IState>>();
+            _operationStack = new None<LinkedStack<IToken>>();
             _resolutionStack = new None<LinkedStack<Resolved>>();
             _runThread = ControlledFlow.Resolved((Resolved)(new None<ResObj>()));
             _frameStack = new None<LinkedStack<Frame>>();
             _appliedRuleStack = new None<LinkedStack<PList<Rule.IRule>>>();
-            StoreFrame(program, new None<Resolved>());
             _discontinueEval = false;
         }
-        public async Task<Resolved> Run()
+        public async Task<Resolved> Run(IState startingState, IToken program)
         {
+            if (!_runThread.Awaiter.IsCompleted) throw MakeInternalError("Run() was called while a previous run operation was still in progress on this instance. (FrameSaving instances can only run 1 evaluation at a time.)");
+
+            
+            _stateStack = new LinkedStack<IState>(startingState).AsSome();
+            _operationStack = new LinkedStack<IToken>(program).AsSome();
             _runThread = new ControlledFlow<Resolved>();
+            /* assert that these are already true.
+            _resolutionStack = new None<LinkedStack<Resolved>>();
+            _appliedRuleStack = new None<LinkedStack<PList<Rule.IRule>>>();
+            _discontinueEval = false;
+            */
+            _frameStack = new None<LinkedStack<Frame>>();
+            StoreFrame(program, new None<Resolved>());
             StartEval();
             return await _runThread;
         }
+
         private void ResolveRun(Resolved resolution)
         {
             _runThread.Resolve(resolution);
@@ -72,6 +84,7 @@ namespace FourZeroOne.Runtime
 
         protected const int MAX_MACRO_EXPANSION_DEPTH = 24;
 
+        protected abstract void OnRunCall();
         protected abstract void RecieveToken(IToken token, int depth);
         protected abstract void RecieveResolution(IOption<ResObj> resolution, int depth);
         protected abstract void RecieveFrame(LinkedStack<Frame> frameStackNode);
@@ -205,7 +218,7 @@ namespace FourZeroOne.Runtime
             }
 
             Debug.Assert(_resolutionStack.Check(out var finalNode) && !finalNode.Link.IsSome());
-            ResolveRun(finalNode.Value);
+            ResolveRun(PopFromStack(ref _resolutionStack).Value);
         }
         private void StoreFrame(IToken token, IOption<Resolved> resolution)
         {

@@ -113,9 +113,9 @@ public class Tester
         var token_tester = token_test_6;
         FZ.IState startState = new FZ.StateModels.Minimal()
             .WithRules([rule_test_5, rule_test_4]);
-        _runtime = new FZ.Runtimes.FrameSaving.Gebug(startState, token_tester);
+        _runtime = new FZ.Runtimes.FrameSaving.Gebug();
 
-        var o = await _runtime.Run();
+        var o = await _runtime.Run(startState, token_tester);
         Console.WriteLine($"FINAL: {o}");
     }
 }
