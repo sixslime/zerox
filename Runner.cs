@@ -12,13 +12,18 @@ namespace PROTO_ZeroxFour_1
     using Util;
     public static class Program
     {
+        public static bool Test(out int a, out int b)
+        {
+            (a, b) = (1, 1);
+            return true;
+        }
         public async static Task Main(string[] args)
         {
             var tester = new Tester();
             //game = new MyGameClass(GameSettings.StretchMode, WindowSettings.Default);
             //game.Run();
             await tester.Run();
-            /* DESIRED TESTING EXAMPLE
+            /* DESIRED TESTING SPEC
              * var tester = new Tester(testableRuntime, baseState);
              * tester.AddTest(testContext => new()
              * {
@@ -41,7 +46,6 @@ namespace PROTO_ZeroxFour_1
              * 
              * tester.AddTest(testContext => new()
              * {
-             *      
              *      Name = "use_example"
              *      // this test will be skipped if 'test_1' fails because this test uses 'test_1'
              *      Evaluate = test_1.Use(testContext).Token.tSubtract(1.tFixed()); //this re-uses the previous test's "Evaluate" token.
@@ -54,6 +58,35 @@ namespace PROTO_ZeroxFour_1
              *      {
              *          Resolution = x => x.ResEquals(test_1.Use(testContext).Resolution)); // even though this is bad practice, this test should still be marked as "skipped" (even after evalutaion) if 'test_1' failed.
              *          // this means that tests should be run ENTIRELY before any output is given.
+             *      }
+             * }).UseAs(out var test_2);
+             * 
+             *
+             * TestResult[] all_results = tester.RunAll();
+             * TestResult[] select_results = tester.RunOnly([test_1, test_2], true);
+             * TestResult[] one_result = tester.RunOnly([test_2]); // this would also implicitly evaluate test_1 (hidden).
+             * record TestResult {
+             *      Base =
+             *      {
+             *          IRuntime Runtime
+             *          IState State
+             *      }
+             *      Test =
+             *      {
+             *          <test spec>...
+             *      }
+             *      bool Passed; // true if all Assertions and Expectations are met (and no exception is thrown).
+             *      IOption<Exception> Exception;
+             *      IOption<> Eval =
+             *      {
+             *          IState State;
+             *          ResObj Resolution;
+             *          Assertions =
+             *          {
+             *              IOption<bool> Token;
+             *              IOption<bool> Resolution;
+             *              IOption<bool> State;
+             *          }
              *      }
              *      
              * }
