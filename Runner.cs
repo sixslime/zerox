@@ -25,9 +25,8 @@ namespace PROTO_ZeroxFour_1
             await tester.Run();
             /* DESIRED TESTING SPEC
              * var tester = new Tester(testableRuntime, baseState);
-             * tester.AddTest(testContext => new()
+             * var test_1 = tester.AddTest("test name", testContext => new()
              * {
-             *      Name = "basic_addition" // auto-generated if unset
              *      State = baseState => baseState; // assumed
              *      Evaluate = 5.tFixed().tAdd(10.tFixed()),
              *      Selections = [] // optional
@@ -42,7 +41,7 @@ namespace PROTO_ZeroxFour_1
              *          Resolution = x => x is ResObj;
              *          State = x => x is IState;
              *      }
-             * }).UseAs(out var test_1);
+             * });
              * 
              * tester.AddTest(testContext => new()
              * {
