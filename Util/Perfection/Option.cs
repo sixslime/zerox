@@ -62,7 +62,7 @@ namespace Perfection
                 val = ok.Value;
                 return true;
             }
-            val = default;
+            val = default!;
             return false;
         }
         public static bool CheckNone<T>(this IOption<T> option, out T val) => !Check(option, out val);
@@ -86,6 +86,18 @@ namespace Perfection
         public static T OrElse<T>(this IOption<T> option, Func<T> noneEval)
         {
             return option.Check(out var val) ? val : noneEval();
+        }
+        public static IResult<T, E> OrErr<T, E>(this IOption<T> option, E err)
+        {
+            return option.Check(out var ok)
+                ? new Ok<T, E>(ok)
+                : new Err<T, E>(err);
+        }
+        public static IResult<T, E> OrElseErr<T, E>(this IOption<T> option, Func<E> err)
+        {
+            return option.Check(out var ok)
+                ? new Ok<T, E>(ok)
+                : new Err<T, E>(err());
         }
         public static IOption<T> Press<T>(this IOption<IOption<T>> option)
         {

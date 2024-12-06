@@ -7,21 +7,30 @@ namespace FourZeroOne.Testing
 {
     using ResObj = Resolution.IResolution;
     using Token.Unsafe;
+    using Runtime;
     using Token;
-
+    
+    public class Tester
+    {
+        public required IRuntime Runtime;
+    }
     namespace Spec
     {
         public record Test<T, R> : ITest where T : IToken<R> where R : class, ResObj
         {
-            public Func<IState, IState>? State { get; init; }
+            public IState? State { get; init; }
             public required T Evaluate { get; init; }
             public int[][] Selections { get; init; } = [];
+            public Expects<T, R>? Expect { get; init; }
+            public Asserts<T, R>? Assert { get; init; }
+            public IExpects? UntypedExpect => Expect;
+            public IAsserts? UntypedAssert => Assert;
             public IToken UntypedEvaluate => Evaluate;
         }
         public record Expects<T, R> : IExpects where T : IToken<R> where R : class, ResObj
         {
             public R? Resolution { get; init; }
-            public Func<IState, IState>? State { get; init; };
+            public Func<IState, IState>? State { get; init; }
             public ResObj? UntypedResolution => Resolution;
         }
         public record Asserts<T, R> : IAsserts where T : IToken<R> where R : class, ResObj
@@ -37,9 +46,11 @@ namespace FourZeroOne.Testing
         // really dumb that i have to make these
         public interface ITest
         {
-            public Func<IState, IState>? State { get; }
+            public IState? State { get; }
             public IToken UntypedEvaluate { get; }
             public int[][] Selections { get; }
+            public IExpects? UntypedExpect { get; }
+            public IAsserts? UntypedAssert { get; }
         }
         public interface IExpects
         {
