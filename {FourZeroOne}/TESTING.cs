@@ -13,7 +13,8 @@ namespace FourZeroOne.Testing
     using Runtime;
     using Token;
 
-    public delegate Spec.ITest<R> TestStatement<out R>(Handle.Context context) where R : class, ResObj;
+    public delegate Spec.Test<R> TestStatement<R>(Handle.Context context) where R : class, ResObj;
+    public delegate Spec.ITest StoredStatement(Handle.Context context);
 
     public class Tester
     {
@@ -22,45 +23,19 @@ namespace FourZeroOne.Testing
 
         public Handle.Test<R> AddTest<R>(string name, TestStatement<R> test) where R : class, ResObj
         {
-            _storedTests.Add(new Structure.StoredTest<R>() { Name = name, Stored = test.AsErr(new Hint<IResult<Structure.FinishedTest<R>, Exception>>()) });
+            _storedTests.Add(new Structure.StoredTest()
+            {
+                Name = name,
+                Stored =
+                new StoredStatement(x => test(x)).AsErr(new Hint<IResult<Structure.FinishedTest, Exception>>())
+            });
             return new Handle.Test<R>()
             {
                 Index = _storedTests.Count - 1,
                 Source = this
             };
         }
-
-        private async Task<IResult<Structure.IFinishedTest<R>, Exception>> EvaluateTest<R>(int index) where R : class, ResObj
-        {
-            // utterly restarted
-            var test = _storedTests[index];
-            _storedTests[index] = new Structure.StoredTest<R>()
-            {
-                Name = test.Name,
-                Stored = test.Stored.Break(out var ok, out var statement)
-                ? ok.RemapOk(x => (Structure.IFinishedTest<R>)x).AsOk(new Hint<TestStatement<R>>())
-                : (await ResolveStatement<R>((TestStatement<R>)statement)).AsOk(new Hint<TestStatement<R>>())
-            });
-            return _storedTests[index].Stored.UnwrapOk().RemapOk(x => (Structure.IFinishedTest<R>)x);
-            
-        }
-        private async Task<IResult<Structure.IFinishedTest<R>, Exception>> ResolveStatement<R>(TestStatement<R> statement) where R : class, ResObj
-        {
-            // horrendous
-            var spec = statement(new() { Source = this });
-            var startState = spec.State(BaseState);
-            var result = await Runtime.Run(startState, spec.Evaluate);
-            return Result.Caught(() => new Structure.FinishedTest<R>()
-            {
-                Spec = spec,
-                RunResult = Result.Caught(() => new Structure.TestResults<R>()
-                {
-                    Resolution = result.RemapAs(x => (R)x),
-                    State = result.Check(out var x) ? startState : startState.WithResolution(x)
-                })
-            });
-        }
-        private List<Structure.IStoredTest<ResObj>> _storedTests = [];
+        private List<Structure.StoredTest> _storedTests = [];
     }
     namespace Handle
     {
@@ -81,37 +56,39 @@ namespace FourZeroOne.Testing
     }
     namespace Structure
     {
-        public record StoredTest<R> : IStoredTest<R> where R : class, ResObj
+        public record StoredTest
         {
             public required string Name { get; init; }
-            public required IResult<IResult<IFinishedTest<R>, Exception>, TestStatement<R>> Stored { get; init; }
+            public required IResult<IResult<FinishedTest, Exception>, StoredStatement> Stored { get; init; }
         }
-        public record FinishedTest<R> : IFinishedTest<R> where R : class, ResObj
+        public record FinishedTest
         {
-            public required Spec.ITest<R> Spec { get; init; }
-            public required IResult<ITestResults<R>, Exception> RunResult { get; init; }
+            public required Spec.ITest Spec { get; init; }
+            public required IResult<TestResults, Exception> RunResult { get; init; }
         }
-        public record TestResults<R> : ITestResults<R> where R : class, ResObj
+        public record TestResults
         {
-            public required IOption<R> Resolution { get; init; }
+            public required IOption<ResObj> Resolution { get; init; }
             public required IState State { get; init; }
         }
     }
     namespace Spec
     {
-        public record Test<R> : ITest<R> where  R : class, ResObj
+        public record Test<R> : ITest where  R : class, ResObj
         {
             public Func<IState, IState> State { get; init; } = x => x;
             public required IToken<R> Evaluate { get; init; }
+            public IToken<ResObj> EvaluateI => Evaluate;
             public int[][] Selections { get; init; } = [];
             public Expects<R>? Expect { get; init; }
             public Asserts? Assert { get; init; }
-            public IExpects<R>? ExpectI => Expect;
+            public IExpects? ExpectI => Expect;
             public IAsserts? AssertI => Assert;
         }
-        public record Expects<R> : IExpects<R> where R : class, ResObj
+        public record Expects<R> : IExpects where R : class, ResObj
         {
             public IOption<R>? Resolution { get; init; }
+            public IOption<ResObj>? ResolutionI => Resolution;
             public Func<IState, IState>? State { get; init; }
         }
         public record Asserts : IAsserts
@@ -122,17 +99,17 @@ namespace FourZeroOne.Testing
         }
         
         // really dumb that i have to make these
-        public interface ITest<out R> where R : class, ResObj
+        public interface ITest
         {
             public Func<IState, IState> State { get; }
-            public IToken<R> Evaluate { get; }
+            public IToken<ResObj> EvaluateI { get; }
             public int[][] Selections { get; }
-            public IExpects<R>? ExpectI { get; }
+            public IExpects? ExpectI { get; }
             public IAsserts? AssertI { get; }
         }
-        public interface IExpects<out R> where R : class, ResObj
+        public interface IExpects
         {
-            public IOption<R>? Resolution { get; }
+            public IOption<ResObj>? ResolutionI { get; }
             public Func<IState, IState>? State { get; }
         }
         public interface IAsserts
