@@ -46,7 +46,12 @@ namespace Perfection
         }
         public static IResult<T, E> AsOk<T, E>(this T value, Hint<E> _) => new Ok<T, E>(value);
         public static IResult<T, E> AsErr<T, E>(this E value, Hint<T> _) => new Err<T, E>(value);
-
+        public static IResult<T, E> Caught<T, E>(this Func<T> tryExpr, Func<Exception, E> catchExpr)
+        {
+            try { return new Ok<T, E>(tryExpr()); }
+            catch (Exception e) { return new Err<T, E>(catchExpr(e)); }
+        }
+        public static IResult<T, Exception> Caught<T>(this Func<T> tryExpr) => Caught(tryExpr, e => e);
         public static IResult<TOut, E> RemapOk<T, E, TOut>(this IResult<T, E> result, Func<T, TOut> func)
         {
             return result.Break(out var ok, out var err)
@@ -59,18 +64,29 @@ namespace Perfection
                 ? new Ok<T, EOut>(ok)
                 : new Err<T, EOut>(func(err));
         }
-        public static IResult<E, T> Inverted<T, E>(this IResult<T, E> result)
+        public static IResult<E, T> Invert<T, E>(this IResult<T, E> result)
         {
             return result.Break(out var ok, out var err)
                 ? new Err<E, T>(ok)
                 : new Ok<E, T>(err);
         }
-        public static IOption<T> DropErr<T, E>(this IResult<T, E> result)
+        public static IResult<T, E> ToOk<T, E>(this IResult<T, E> result, Func<E, T> conversion)
+        {
+            return new Ok<T, E>(result.Break(out var ok, out var err) ? ok : conversion(err));
+        }
+        public static IOption<T> TakeOk<T, E>(this IResult<T, E> result)
         {
             return result.Break(out var ok, out var _)
                 ? new Some<T>(ok)
                 : new None<T>();
         }
+        public static IOption<E> TakeErr<T, E>(this IResult<T, E> result)
+        {
+            return result.Break(out var _, out var err)
+                ? new Some<E>(err)
+                : new None<E>();
+        }
+
         public static bool IsOk<T, E>(this IResult<T, E> result) => result is IOk<T, E>;
     }
 }
