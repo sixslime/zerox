@@ -389,7 +389,7 @@ namespace FourZeroOne.Core.Syntax
         {
             return new(token);
         }
-        public static p.Function<t.Exists,TOrig, ResObj, ro.Bool> pExists<TOrig>(this IProxy<TOrig, ResObj> value) where TOrig : IToken
+        public static p.Function<t.Exists, TOrig, ResObj, ro.Bool> pExists<TOrig>(this IProxy<TOrig, ResObj> value) where TOrig : IToken
         {
             return new(value);
         }
@@ -452,15 +452,15 @@ namespace FourZeroOne.Core.Syntax
             where TOrig : IToken where RIn : class, ResObj where ROut : class, ResObj
         { return new(values, mapFunction); }
 
-        public static t.Number.Add tAdd(this IToken<ro.Number> a, IToken<ro.Number> b) 
+        public static t.Number.Add tAdd(this IToken<ro.Number> a, IToken<ro.Number> b)
         { return new(a, b); }
         public static p.Function<t.Number.Add, TOrig, ro.Number, ro.Number, ro.Number> pAdd<TOrig>(this IProxy<TOrig, ro.Number> a, IProxy<TOrig, ro.Number> b) where TOrig : IToken
         { return new(a, b); }
-        public static t.Number.Subtract tSubtract(this IToken<ro.Number> a, IToken<ro.Number> b) 
+        public static t.Number.Subtract tSubtract(this IToken<ro.Number> a, IToken<ro.Number> b)
         { return new(a, b); }
         public static p.Function<t.Number.Subtract, TOrig, ro.Number, ro.Number, ro.Number> pSubtract<TOrig>(this IProxy<TOrig, ro.Number> a, IProxy<TOrig, ro.Number> b) where TOrig : IToken
         { return new(a, b); }
-        public static t.Number.Multiply tMultiply(this IToken<ro.Number> a, IToken<ro.Number> b) 
+        public static t.Number.Multiply tMultiply(this IToken<ro.Number> a, IToken<ro.Number> b)
         { return new(a, b); }
         public static p.Function<t.Number.Multiply, TOrig, ro.Number, ro.Number, ro.Number> pMultiply<TOrig>(this IProxy<TOrig, ro.Number> a, IProxy<TOrig, ro.Number> b) where TOrig : IToken
         { return new(a, b); }
@@ -570,7 +570,7 @@ namespace FourZeroOne.Core.Syntax
         public static t.Fixed<r.Multi<R>> t_ToConstMulti<R>(this IEnumerable<t.Fixed<R>> values) where R : class, ResObj
         { return new(new() { Values = values.Map(x => x.Resolution) }); }
 
-        public static ro.Number Res(this int v) => v;
-        public static ro.Bool Res(this bool v) => v;
+        public static Some<ro.Number> Res(this int v) => new(new() { Value = v });
+        public static Some<ro.Bool> Res(this bool v) => new(new() { IsTrue = v });
     }
 }

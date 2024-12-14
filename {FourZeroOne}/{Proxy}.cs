@@ -27,7 +27,7 @@ namespace FourZeroOne.Proxy
         public IToken<R> Realize(TOrig original, IOption<Rule.IRule> realizingRule)
         {
             return RealizeInternal(original, realizingRule)
-                .dMut(x => x.WithHookLabels(x.HookLabels.Also(HookLabels)));
+                .ExprAs(x => x.WithHookLabels(x.HookLabels.Also(HookLabels)));
         }
         public IToken<R> UnsafeTypedRealize(IToken original, IOption<Rule.IRule> rule) => Realize((TOrig)original, rule);
         public IToken UnsafeContextualRealize(TOrig original, IOption<Rule.IRule> rule) => Realize(original, rule);

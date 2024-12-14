@@ -23,19 +23,40 @@ public class Tester
     public readonly static FZ.StateModels.Minimal BLANKSTATE = new() { };
     public async Task Run()
     {
-        var t1 = MkRuntime().MakeTest(NUMBER, () => new()
+        List<ITest<FZ.Runtimes.FrameSaving.Gebug, ResObj>> tests =
+        [
+            MkRuntime().MakeTest(NUMBER, async () => new() {
+                State = BLANKSTATE,
+                Evaluate = 2.tFixed().tAdd(3.tFixed()),
+                Expect = new()
+                {
+                    Resolution = 5.Res(),
+                    State = x => x
+                },
+                Assert = new()
+                {
+                    Resolution = x => true
+                }
+
+            }).Use(out var example),
+            MkRuntime().MakeTest(NUMBER, async () => new() {
+                State = BLANKSTATE,
+                Evaluate = (await example.GetToken()).tAdd(10.tFixed()),
+                Expect = new() {
+                    Resolution = ((await example.GetResolution()).Unwrap() with { dValue = Q => Q + 10}).AsSome()
+                }
+            })
+        ];
+        
+        // make better later
+        foreach (var test in tests)
         {
-            State = BLANKSTATE,
-            Evaluate = 2.tFixed().tAdd(3.tFixed()),
-            Expect = new()
-            {
-                Resolution = 5.Res().AsSome(),
-                State = x => BLANKSTATE
-            }
-        });
-        await t1.EvaluateMustPass();
+            Console.WriteLine($"-- TEST: '{test.Name}' --");
+            await test.EvaluateMustPass();
+        }
     }
 
+    private List<ITest<FZ.Runtimes.FrameSaving.Gebug, ResObj>> tests = new();
     private static FZ.Runtimes.FrameSaving.Gebug MkRuntime(params int[]?[] selections)
     {
         return new FZ.Runtimes.FrameSaving.Gebug().Mut(x => x.SetAutoSelections(selections));
@@ -44,4 +65,8 @@ public class Tester
     {
         return new FZ.Runtimes.FrameSaving.Gebug().Mut(x => { x.SetAutoSelections(selections); x.SetAutoRewinds(rewinds); });
     }
+}
+public static class TesterExtensions
+{
+
 }

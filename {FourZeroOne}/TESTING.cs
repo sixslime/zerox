@@ -13,8 +13,8 @@ namespace FourZeroOne.Testing
     using Runtime;
     using Token;
 
-    public delegate Spec.Blueprint<R> TestStatement<R>() where R : class, ResObj;
-    public delegate Spec.IBlueprint StoredStatement();
+    public delegate ITask<Spec.Blueprint<R>> TestStatement<R>() where R : class, ResObj;
+    public delegate ITask<Spec.IBlueprint> StoredStatement();
     public class TestCreationException(Exception e) : Exception("", e) { }
     public class TestEvaluateException(Exception e) : Exception("", e) { }
     public class TestFailedException(Structure.FinishedTest test) : Exception()
@@ -44,6 +44,11 @@ namespace FourZeroOne.Testing
                 where U : IRuntime where R : class, ResObj
             {
                 return test with { Name = name };
+            }
+            public static Test<U, R> Use<U, R>(this Test<U, R> test, out Test<U, R> handle) where U : IRuntime where R : class, ResObj
+            {
+                handle = test;
+                return test;
             }
         }
     }
@@ -79,7 +84,7 @@ namespace FourZeroOne.Testing
             {
                 var creation = (await Result.CatchExceptionAsync(async () =>
                 {
-                    var spec = statement();
+                    var spec = await statement();
                     return new Structure.FinishedTest()
                     {
                         Spec = spec,
@@ -112,6 +117,8 @@ namespace FourZeroOne.Testing
         public U Runtime { get; }
         public ITask<IToken<R>> GetToken();
         public ITask<IOption<R>> GetResolution();
+        public Task<Structure.FinishedTest> Evaluate();
+        public Task<Structure.FinishedTest> EvaluateMustPass();
     }
 
     namespace Structure

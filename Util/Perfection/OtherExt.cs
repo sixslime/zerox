@@ -18,7 +18,7 @@ namespace Perfection
             for (int i = list.Count; i < list.Capacity; i++) list.Add(item);
             return list;
         }
-        public static T dMut<T>(this T value, Func<T, T> transformFunction)
+        public static TOut ExprAs<T, TOut>(this T value, Func<T, TOut> transformFunction)
         {
             return transformFunction(value);
         }
