@@ -17,6 +17,14 @@ using FourZeroOne.Testing;
 using FourZeroOne.Testing.Syntax;
 namespace PROTO_ZeroxFour_1;
 
+/* NOTES
+ *# Boxed Reference Issues (captures)
+ * given 'let { a = ... } in { boxed(() => a.tRef)) }',
+ * the boxed function will have a nullptr when it's passed up.
+ * me when variable captures exist for a reason!
+ * I don't even know if capturing is feasable conceptually.
+ * The "solution" is just to be careful with boxed functions :P
+ */
 public class Tester
 {
     public readonly static RHint<ro.Number> NUMBER = new RHint<ro.Number>();
@@ -25,7 +33,7 @@ public class Tester
     {
         List<ITest<FZ.Runtimes.FrameSaving.Gebug, ResObj>> tests =
         [
-            MkRuntime().MakeTest(NUMBER, async () => new() {
+            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
                 State = BLANKSTATE,
                 Evaluate = 2.tFixed().tAdd(3.tFixed()),
                 Expect = new()
@@ -41,14 +49,62 @@ public class Tester
             .Use(out var test_0)
             .Named("2 + 3"),
 
-            MkRuntime().MakeTest(NUMBER, async () => new() {
+            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
                 State = BLANKSTATE,
                 Evaluate = (await test_0.GetToken()).tMultiply(2.tFixed()),
                 Expect = new() {
                     Resolution = ((await test_0.GetResolution()).Unwrap() with { dValue = Q => Q * 2}).AsSome()
                 }
             })
-            .Named("(Test 0) * 2")
+            .Named("(Test 0) * 2"),
+
+            MkRuntime().MakeTest(RHint<r.Multi<ro.Number>>.Hint(), async () => new() {
+                State = BLANKSTATE,
+                Evaluate = 1.Sequence(x => x + 1).Take(10).Map(x => x.tFixed()).t_ToConstMulti(),
+                Expect = new() {
+                    Resolution = 1.Sequence(x => x + 1).Take(10).Map(x => x.Res()).Res()
+                }
+            })
+            .Use(out var ten_arr)
+            .Named("[1..10]"),
+
+            MkRuntime().MakeTest(RHint<r.Multi<ro.Number>>.Hint(), async () => new() {
+                State = BLANKSTATE,
+                Evaluate = 1.Sequence(x => x + 1).Take(4).Map(x => x.tFixed()).tToMulti(),
+                Expect = new() {
+                    Resolution = 1.Sequence(x => x + 1).Take(4).Map(x => x.Res()).Res()
+                }
+            })
+            .Named("[1..4] with Yield"),
+
+            MkRuntime([8]).MakeTest(RHint<ro.Number>.Hint(), async () => new() {
+                State = BLANKSTATE,
+                Evaluate = (await ten_arr.GetToken()).tIOSelectOne(),
+                Expect = new() {
+                    Resolution = (await ten_arr.GetResolution()).Unwrap().Values.ElementAt(8).AsSome()
+                }
+            })
+            .Use(out var select_one)
+            .Named("SelectOne"),
+
+            MkRuntime([8, 6, 1]).MakeTest(RHint<r.Multi<ro.Number>>.Hint(), async () => new() {
+                State = BLANKSTATE,
+                Evaluate = (await ten_arr.GetToken()).tIOSelectMany(3.tFixed()),
+                Expect = new() {
+                    Resolution = (await ten_arr.GetResolution()).Unwrap().Values.ExprAs(arr => Iter.Over(8, 6, 1).Map(x => arr.ElementAt(x).AsSome())).Res()
+                }
+            })
+            .Named("SelectMany"),
+
+            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), hint => async () => new() {
+                State = BLANKSTATE,
+                Evaluate = Core.tSubEnvironment(hint, new() {
+                    Environment = 
+                })
+                Expect = new() {
+                    Resolution = ((await test_0.GetResolution()).Unwrap() with { dValue = Q => Q * 2}).AsSome()
+                }
+            })
         ];
         
         // make better later

@@ -40,6 +40,11 @@ namespace FourZeroOne.Testing
             {
                 return new() { Name = "(unnamed test)", Runtime = runtime, Statement = statement };
             }
+            public static Test<U, R> MakeTest<U, R>(this U runtime, RHint<R> hint, Func<RHint<R>, TestStatement<R>> hintedStatement)
+                where U : IRuntime where R : class, ResObj
+            {
+                return new() { Name = "(unnamed test)", Runtime = runtime, Statement = hintedStatement(hint) };
+            }
             public static Test<U, R> Named<U, R>(this Test<U, R> test, string name)
                 where U : IRuntime where R : class, ResObj
             {

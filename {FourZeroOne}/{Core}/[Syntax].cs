@@ -572,5 +572,9 @@ namespace FourZeroOne.Core.Syntax
 
         public static Some<ro.Number> Res(this int v) => new(new() { Value = v });
         public static Some<ro.Bool> Res(this bool v) => new(new() { IsTrue = v });
+        public static Some<r.Multi<R>> Res<R>(this IEnumerable<IOption<R>> v) where R : class, ResObj
+        {
+            return new(new() { Values = v.FilterMap(x => x) });
+        }
     }
 }
