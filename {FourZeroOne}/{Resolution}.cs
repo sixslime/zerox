@@ -12,7 +12,6 @@ namespace FourZeroOne.Resolution
     public interface IResolution
     {
         public IEnumerable<IInstruction> Instructions { get; }
-        public bool ResEqual(IResolution? other);
     }
     public interface IInstruction : IResolution
     {
@@ -56,7 +55,6 @@ namespace FourZeroOne.Resolution
     public abstract record Construct : IResolution
     {
         public abstract IEnumerable<IInstruction> Instructions { get; }
-        public virtual bool ResEqual(IResolution? other) => Equals(other);
     }
     // the 'new()' constraint is mega stupid.
     // this is mega stupid.

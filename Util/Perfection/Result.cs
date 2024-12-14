@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using MorseCode.ITask;
 #nullable enable
 namespace Perfection
 {
@@ -46,12 +46,16 @@ namespace Perfection
         }
         public static IResult<T, E> AsOk<T, E>(this T value, Hint<E> _) => new Ok<T, E>(value);
         public static IResult<T, E> AsErr<T, E>(this E value, Hint<T> _) => new Err<T, E>(value);
-        public static IResult<T, E> Caught<T, E>(this Func<T> tryExpr, Func<Exception, E> catchExpr)
+        public static IResult<T, Exception> CatchException<T>(this Func<T> tryExpr)
         {
-            try { return new Ok<T, E>(tryExpr()); }
-            catch (Exception e) { return new Err<T, E>(catchExpr(e)); }
+            try { return new Ok<T, Exception>(tryExpr()); }
+            catch (Exception e) { return new Err<T, Exception>(e); }
         }
-        public static IResult<T, Exception> Caught<T>(this Func<T> tryExpr) => Caught(tryExpr, e => e);
+        public static async Task<IResult<T, Exception>> CatchExceptionAsync<T>(this Func<ITask<T>> tryExpr)
+        {
+            try { return new Ok<T, Exception>(await tryExpr()); }
+            catch (Exception e) { return new Err<T, Exception>(e); }
+        }
         public static IResult<TOut, E> RemapOk<T, E, TOut>(this IResult<T, E> result, Func<T, TOut> func)
         {
             return result.Break(out var ok, out var err)
@@ -70,9 +74,13 @@ namespace Perfection
                 ? new Err<E, T>(ok)
                 : new Ok<E, T>(err);
         }
-        public static IResult<T, E> ToOk<T, E>(this IResult<T, E> result, Func<E, T> conversion)
+        public static IResult<T, E> ToOk<T, E>(this IResult<T, E> _, T value)
         {
-            return new Ok<T, E>(result.Break(out var ok, out var err) ? ok : conversion(err));
+            return new Ok<T, E>(value);
+        }
+        public static IResult<T, E> ToErr<T, E>(this IResult<T, E> _, E value)
+        {
+            return new Err<T, E>(value);
         }
         public static IOption<T> TakeOk<T, E>(this IResult<T, E> result)
         {

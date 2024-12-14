@@ -153,7 +153,7 @@ namespace FourZeroOne.Core.Tokens
                 var o = iter.Current.Values;
                 while (iter.MoveNext())
                 {
-                    o = o.Where(x => iter.Current.Values.HasMatch(y => x.Equals(y)));
+                    o = o.Where(x => iter.Current.Values.HasMatch(y => x.Equals((object)y)));
                 }
                 return new() { Values = o };
             }
@@ -168,7 +168,7 @@ namespace FourZeroOne.Core.Tokens
             public Exclusion(IToken<IMulti<R>> from, IToken<IMulti<R>> exclude) : base(from, exclude) { }
             protected override r.Multi<R> EvaluatePure(IMulti<R> in1, IMulti<R> in2)
             {
-                return new() { Values = in1.Values.Where(x => !in2.Values.HasMatch(y => y.ResEqual(x))) };
+                return new() { Values = in1.Values.Where(x => !in2.Values.HasMatch(y => y.Equals(x))) };
             }
             protected override IOption<string> CustomToString() => $"{Arg1} - {Arg2}".AsSome();
 

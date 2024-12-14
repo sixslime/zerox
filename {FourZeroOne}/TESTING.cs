@@ -13,47 +13,81 @@ namespace FourZeroOne.Testing
     using Runtime;
     using Token;
 
-    public delegate Spec.Test<R> TestStatement<R>(Handle.Context context) where R : class, ResObj;
-    public delegate Spec.ITest StoredStatement(Handle.Context context);
-
-    public class Tester
+    public delegate Spec.Test<R> TestStatement<R>(IRuntime runtime) where R : class, ResObj;
+    public delegate Spec.ITest StoredStatement(IRuntime runtime);
+    public class TestCreationException(Exception e) : Exception("", e) { }
+    public class TestEvaluateException(Exception e) : Exception("", e) { }
+    public class TestFailedException(Structure.FinishedTest test) : Exception()
     {
+        public Structure.FinishedTest FailedTest = test;
+    }
+
+    public record Test<R> : ITest<R> where R : class, ResObj
+    {
+        public required string Name { get; init; }
         public required IRuntime Runtime { get; init; }
-        public required IState BaseState { get; init; }
+        public required TestStatement<R> Statement { init { _value = new Err<IResult<Structure.FinishedTest, TestCreationException>, StoredStatement>(x => value(x)); } }
 
-        public Handle.Test<R> AddTest<R>(string name, TestStatement<R> test) where R : class, ResObj
+        public async ITask<IToken<R>> GetToken()
         {
-            _storedTests.Add(new Structure.StoredTest()
-            {
-                Name = name,
-                Stored =
-                new StoredStatement(x => test(x)).AsErr(new Hint<IResult<Structure.FinishedTest, Exception>>())
-            });
-            return new Handle.Test<R>()
-            {
-                Index = _storedTests.Count - 1,
-                Source = this
-            };
+            return (IToken<R>)(await EvaluateMustPass()).Spec.EvaluateI;
         }
-        private List<Structure.StoredTest> _storedTests = [];
+        public async ITask<IOption<R>> GetResolution()
+        {
+            return (await EvaluateMustPass()).RunResult.Break(out var results, out var exc)
+                ? results.Resolution.RemapAs(x => (R)x)
+                : throw exc;
+        }
+        public async Task<Structure.FinishedTest> EvaluateMustPass()
+        {
+            var o = await Evaluate();
+            return o.Passed ? o : throw new TestFailedException(o);
+        }
+        public async Task<Structure.FinishedTest> Evaluate()
+        {
+            if (_value.Break(out var cached, out var statement))
+            {
+                return cached.Break(out var test, out var exception) ? test : throw exception;
+            }
+            else
+            {
+                var creation = (await Result.CatchExceptionAsync(async () =>
+                {
+                    var spec = statement(Runtime);
+                    return new Structure.FinishedTest()
+                    {
+                        Spec = spec,
+                        RunResult = (await Result.CatchExceptionAsync(async () =>
+                        {
+                            var r = await Runtime.Run(spec.State, spec.EvaluateI);
+                            return new Structure.TestResults
+                            {
+                                Resolution = r,
+                                State = r.Check(out var some) ? spec.State.WithResolution(some) : spec.State
+                            };
+                        })).RemapErr(x => new TestEvaluateException(x))
+                    };
+                }
+                )).RemapErr(x => new TestCreationException(x));
+
+                _value = _value.ToOk(creation);
+                return creation.Break(out var finished, out var exc)
+                    ? finished
+                    : throw exc;
+            }
+
+        }
+               
+        private IResult<IResult<Structure.FinishedTest, TestCreationException>, StoredStatement> _value;
     }
-    namespace Handle
+    public interface ITest<out R> where R : class, ResObj
     {
-        public record Context
-        {
-            public required Tester Source { get; init; }
-        }
-        public record Test<R> : ITest<R> where R : class, ResObj
-        {
-            public required int Index { get; init; }
-            public required Tester Source { get; init; }
-        }
-        public interface ITest<out R>
-        {
-            public int Index { get; }
-            public Tester Source { get; }
-        }
+        public string Name { get; init; }
+        public IRuntime Runtime { get; init; }
+        public ITask<IToken<R>> GetToken();
+        public ITask<IOption<R>> GetResolution();
     }
+
     namespace Structure
     {
         public record StoredTest
@@ -64,7 +98,23 @@ namespace FourZeroOne.Testing
         public record FinishedTest
         {
             public required Spec.ITest Spec { get; init; }
-            public required IResult<TestResults, Exception> RunResult { get; init; }
+            public required IResult<TestResults, TestEvaluateException> RunResult { get; init; }
+            public bool Passed { get
+                {
+                    return RunResult.Break(out var results, out var exc)
+                        ? NullPass(Spec.AssertI, assert =>
+                                NullPass(assert.State, f => f(Spec.State)(results.State)) &&
+                                NullPass(assert.Token, p => p(Spec.EvaluateI)) &&
+                                NullPass(assert.Resolution, p => p(results.Resolution))) &&
+                            NullPass(Spec.ExpectI, expect =>
+                                NullPass(expect.ResolutionI, x => x.Equals(results.Resolution)) &&
+                                NullPass(expect.State, f => f(Spec.State).Equals(results.State)))
+                        : throw exc;
+                } }
+            private static bool NullPass<T>(T? v, Predicate<T> pred)
+            {
+                return v is null || pred(v);
+            }
         }
         public record TestResults
         {
@@ -76,7 +126,7 @@ namespace FourZeroOne.Testing
     {
         public record Test<R> : ITest where  R : class, ResObj
         {
-            public Func<IState, IState> State { get; init; } = x => x;
+            public required IState State { get; init; } 
             public required IToken<R> Evaluate { get; init; }
             public IToken<ResObj> EvaluateI => Evaluate;
             public int[][] Selections { get; init; } = [];
@@ -94,14 +144,14 @@ namespace FourZeroOne.Testing
         public record Asserts : IAsserts
         {
             public Predicate<IToken>? Token { get; init; }
-            public Predicate<ResObj>? Resolution { get; init; }
-            public Predicate<IState>? State { get; init; }
+            public Predicate<IOption<ResObj>>? Resolution { get; init; }
+            public Func<IState, Predicate<IState>>? State { get; init; }
         }
         
         // really dumb that i have to make these
         public interface ITest
         {
-            public Func<IState, IState> State { get; }
+            public IState State { get; }
             public IToken<ResObj> EvaluateI { get; }
             public int[][] Selections { get; }
             public IExpects? ExpectI { get; }
@@ -114,9 +164,9 @@ namespace FourZeroOne.Testing
         }
         public interface IAsserts
         {
-            public Predicate<ResObj>? Resolution { get; }
+            public Predicate<IOption<ResObj>>? Resolution { get; }
             public Predicate<IToken>? Token { get; }
-            public Predicate<IState>? State { get; }
+            public Func<IState, Predicate<IState>>? State { get; }
         }
     }
     

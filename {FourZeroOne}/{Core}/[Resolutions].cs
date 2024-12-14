@@ -180,10 +180,10 @@ namespace FourZeroOne.Core.Resolutions
         public int Count => _list.Count;
         public required IEnumerable<R> Values { get => _list.Elements; init => _list = new() { Elements = value }; }
         public Updater<IEnumerable<R>> dValues { init => Values = value(Values); }
-        public override bool ResEqual(ResObj? other)
+        public override bool Equals(ResObj? other)
         {
             if (other is not IMulti<R> othermulti) return false;
-            foreach (var (a, b) in Values.ZipLong(othermulti.Values)) if (a.CheckNone(out var av) || b.CheckNone(out var bv) || !av.ResEqual(bv)) return false;
+            foreach (var (a, b) in Values.ZipLong(othermulti.Values)) if (a.CheckNone(out var av) || b.CheckNone(out var bv) || !av.Equals(bv)) return false;
             return true;
         }
 
