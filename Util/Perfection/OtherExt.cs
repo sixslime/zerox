@@ -18,9 +18,14 @@ namespace Perfection
             for (int i = list.Count; i < list.Capacity; i++) list.Add(item);
             return list;
         }
-        public static T Mut<T>(this T value, Func<T, T> transformFunction)
+        public static T dMut<T>(this T value, Func<T, T> transformFunction)
         {
             return transformFunction(value);
+        }
+        public static T Mut<T>(this T value, Action<T> mutFunction)
+        {
+            mutFunction(value);
+            return value;
         }
     }
     public static class Integer

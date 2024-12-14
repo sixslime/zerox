@@ -22,10 +22,11 @@ namespace FourZeroOne.Testing
         public Structure.FinishedTest FailedTest = test;
     }
 
-    public record Test<R> : ITest<R> where R : class, ResObj
+    // kinda weirdchamp that each test has its own individual runtime, but ig its alr maybe.
+    public record Test<U, R> : ITest<U, R> where U : IRuntime where R : class, ResObj
     {
         public required string Name { get; init; }
-        public required IRuntime Runtime { get; init; }
+        public required U Runtime { get; init; }
         public required TestStatement<R> Statement { init { _value = new Err<IResult<Structure.FinishedTest, TestCreationException>, StoredStatement>(x => value(x)); } }
 
         public async ITask<IToken<R>> GetToken()
@@ -80,10 +81,10 @@ namespace FourZeroOne.Testing
                
         private IResult<IResult<Structure.FinishedTest, TestCreationException>, StoredStatement> _value;
     }
-    public interface ITest<out R> where R : class, ResObj
+    public interface ITest<out U, out R> where U : IRuntime where R : class, ResObj
     {
-        public string Name { get; init; }
-        public IRuntime Runtime { get; init; }
+        public string Name { get; }
+        public U Runtime { get; }
         public ITask<IToken<R>> GetToken();
         public ITask<IOption<R>> GetResolution();
     }
