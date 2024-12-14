@@ -378,11 +378,11 @@ namespace FourZeroOne.Core.Tokens
         protected override IOption<string> CustomToString() => $"<${Arg1} ${Arg2} ${Arg3}>".AsSome();
     }
     
-    public record SubEnvironment<ROut> : PureFunction<IMulti<ResObj>, ROut, ROut>
+    public record SubEnvironment<ROut> : PureFunction<ResObj, ROut, ROut>
         where ROut : class, ResObj
     {
-        public SubEnvironment(IToken<IMulti<ResObj>> envModifiers, IToken<ROut> evalToken) : base(envModifiers, evalToken) { }
-        protected override ROut EvaluatePure(IMulti<ResObj> _, ROut in2)
+        public SubEnvironment(IToken<ResObj> envModifiers, IToken<ROut> evalToken) : base(envModifiers, evalToken) { }
+        protected override ROut EvaluatePure(ResObj _, ROut in2)
         {
             return in2;
         }

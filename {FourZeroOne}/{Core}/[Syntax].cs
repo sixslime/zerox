@@ -76,7 +76,7 @@ namespace FourZeroOne.Core.Syntax
 
             public sealed record SubEnvironment<R> where R : class, ResObj
             {
-                public required IToken<IMulti<ResObj>> Environment { get; init; }
+                public required IToken<ResObj> Environment { get; init; }
                 public required IToken<R> Value { get; init; }
             }
         }
@@ -115,7 +115,7 @@ namespace FourZeroOne.Core.Syntax
 
             public sealed record SubEnvironment<TOrig, R> where TOrig : IToken where R : class, ResObj
             {
-                public required IProxy<TOrig, IMulti<ResObj>> Environment { get; init; }
+                public required IProxy<TOrig, ResObj> Environment { get; init; }
                 public required IProxy<TOrig, R> Value { get; init; }
             }
         }
@@ -126,7 +126,7 @@ namespace FourZeroOne.Core.Syntax
     {
         public static t.SubEnvironment<R> tSubEnvironment<R>(RHint<R> _, Structure.Token.SubEnvironment<R> block) where R : class, ResObj
         { return new(block.Environment, block.Value); }
-        public static p.Function<t.SubEnvironment<R>, TOrig, IMulti<ResObj>, R, R> pSubEnvironment<TOrig, R>(this OriginalHint<TOrig> _, RHint<R> __, Structure.Proxy.SubEnvironment<TOrig, R> block) where TOrig : IToken where R : class, ResObj
+        public static p.Function<t.SubEnvironment<R>, TOrig, ResObj, R, R> pSubEnvironment<TOrig, R>(this OriginalHint<TOrig> _, RHint<R> __, Structure.Proxy.SubEnvironment<TOrig, R> block) where TOrig : IToken where R : class, ResObj
         {
             return new(block.Environment, block.Value);
         }
