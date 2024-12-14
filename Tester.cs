@@ -37,22 +37,25 @@ public class Tester
                 {
                     Resolution = x => true
                 }
+            })
+            .Use(out var test_0)
+            .Named("2 + 3"),
 
-            }).Use(out var example),
             MkRuntime().MakeTest(NUMBER, async () => new() {
                 State = BLANKSTATE,
-                Evaluate = (await example.GetToken()).tAdd(10.tFixed()),
+                Evaluate = (await test_0.GetToken()).tMultiply(2.tFixed()),
                 Expect = new() {
-                    Resolution = ((await example.GetResolution()).Unwrap() with { dValue = Q => Q + 10}).AsSome()
+                    Resolution = ((await test_0.GetResolution()).Unwrap() with { dValue = Q => Q * 2}).AsSome()
                 }
             })
+            .Named("(Test 0) * 2")
         ];
         
         // make better later
-        foreach (var test in tests)
+        for (int i = 0;  i < tests.Count; i++)
         {
-            Console.WriteLine($"-- TEST: '{test.Name}' --");
-            await test.EvaluateMustPass();
+            Console.WriteLine($"--[{i}] TEST: \"{tests[i].Name}\" --");
+            await tests[i].EvaluateMustPass();
         }
     }
 
