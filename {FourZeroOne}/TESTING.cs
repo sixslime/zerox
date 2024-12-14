@@ -13,7 +13,7 @@ namespace FourZeroOne.Testing
     using Runtime;
     using Token;
 
-    public delegate Spec.Test<R> TestStatement<R>(IRuntime runtime) where R : class, ResObj;
+    public delegate Spec.Blueprint<R> TestStatement<R>(IRuntime runtime) where R : class, ResObj;
     public delegate Spec.ITest StoredStatement(IRuntime runtime);
     public class TestCreationException(Exception e) : Exception("", e) { }
     public class TestEvaluateException(Exception e) : Exception("", e) { }
@@ -21,7 +21,26 @@ namespace FourZeroOne.Testing
     {
         public Structure.FinishedTest FailedTest = test;
     }
-
+    namespace Syntax
+    {
+        namespace Structure
+        {
+            public record Block<U, R> where U : IRuntime where R : class, ResObj
+            {
+                public required string Name { get; init; }
+                public required U Runtime { get; init; }
+                public required TestStatement<R> Statement { get; init; }
+            }
+        }
+        public static class Test
+        {
+            public static Test<U, R> Make<U, R>(Structure.Block<U, R> block) where U : IRuntime where R : class, ResObj
+            {
+                return new() { Name = block.Name, Runtime = block.Runtime, Statement = block.Statement };
+            }
+            public static Test<U, R> AsTest<U, R>(this IToken<R>, )
+        }
+    }
     // kinda weirdchamp that each test has its own individual runtime, but ig its alr maybe.
     public record Test<U, R> : ITest<U, R> where U : IRuntime where R : class, ResObj
     {
@@ -125,7 +144,7 @@ namespace FourZeroOne.Testing
     }
     namespace Spec
     {
-        public record Test<R> : ITest where  R : class, ResObj
+        public record Blueprint<R> : ITest where  R : class, ResObj
         {
             public required IState State { get; init; } 
             public required IToken<R> Evaluate { get; init; }
