@@ -19,8 +19,29 @@ namespace PROTO_ZeroxFour_1;
 
 public class Tester
 {
+    public readonly static RHint<ro.Number> NUMBER = new RHint<ro.Number>();
+    public readonly static FZ.StateModels.Minimal BLANKSTATE = new() { };
     public async Task Run()
     {
-        Test.Make(new() { })
+        var t1 = MkRuntime().MakeTest(NUMBER, () => new()
+        {
+            State = BLANKSTATE,
+            Evaluate = 2.tFixed().tAdd(3.tFixed()),
+            Expect = new()
+            {
+                Resolution = 5.Res().AsSome(),
+                State = x => BLANKSTATE
+            }
+        });
+        await t1.EvaluateMustPass();
+    }
+
+    private static FZ.Runtimes.FrameSaving.Gebug MkRuntime(params int[]?[] selections)
+    {
+        return new FZ.Runtimes.FrameSaving.Gebug().Mut(x => x.SetAutoSelections(selections));
+    }
+    private static FZ.Runtimes.FrameSaving.Gebug MkRuntime(int[]?[] selections, int?[] rewinds)
+    {
+        return new FZ.Runtimes.FrameSaving.Gebug().Mut(x => { x.SetAutoSelections(selections); x.SetAutoRewinds(rewinds); });
     }
 }

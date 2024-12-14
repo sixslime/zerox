@@ -75,9 +75,13 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
             {
                 EffectID = effectId;
             }
-            public override bool Equals(IResolution? other)
+            public virtual bool Equals(NEffect? other)
             {
                 return other is NEffect effect && effect.EffectID == EffectID;
+            }
+            public override int GetHashCode()
+            {
+                return EffectID;
             }
         }
 

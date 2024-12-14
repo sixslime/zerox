@@ -569,5 +569,8 @@ namespace FourZeroOne.Core.Syntax
         { return new(); }
         public static t.Fixed<r.Multi<R>> t_ToConstMulti<R>(this IEnumerable<t.Fixed<R>> values) where R : class, ResObj
         { return new(new() { Values = values.Map(x => x.Resolution) }); }
+
+        public static ro.Number Res(this int v) => v;
+        public static ro.Bool Res(this bool v) => v;
     }
 }

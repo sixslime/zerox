@@ -13,8 +13,8 @@ namespace FourZeroOne.Testing
     using Runtime;
     using Token;
 
-    public delegate Spec.Blueprint<R> TestStatement<R>(IRuntime runtime) where R : class, ResObj;
-    public delegate Spec.ITest StoredStatement(IRuntime runtime);
+    public delegate Spec.Blueprint<R> TestStatement<R>() where R : class, ResObj;
+    public delegate Spec.IBlueprint StoredStatement();
     public class TestCreationException(Exception e) : Exception("", e) { }
     public class TestEvaluateException(Exception e) : Exception("", e) { }
     public class TestFailedException(Structure.FinishedTest test) : Exception()
@@ -23,6 +23,7 @@ namespace FourZeroOne.Testing
     }
     namespace Syntax
     {
+        using Core.Syntax;
         namespace Structure
         {
             public record Block<U, R> where U : IRuntime where R : class, ResObj
@@ -34,11 +35,16 @@ namespace FourZeroOne.Testing
         }
         public static class Test
         {
-            public static Test<U, R> Make<U, R>(Structure.Block<U, R> block) where U : IRuntime where R : class, ResObj
+            public static Test<U, R> MakeTest<U, R>(this U runtime, RHint<R> _, TestStatement<R> statement)
+                where U : IRuntime where R : class, ResObj
             {
-                return new() { Name = block.Name, Runtime = block.Runtime, Statement = block.Statement };
+                return new() { Name = "(unnamed test)", Runtime = runtime, Statement = statement };
             }
-            public static Test<U, R> AsTest<U, R>(this IToken<R>, )
+            public static Test<U, R> Named<U, R>(this Test<U, R> test, string name)
+                where U : IRuntime where R : class, ResObj
+            {
+                return test with { Name = name };
+            }
         }
     }
     // kinda weirdchamp that each test has its own individual runtime, but ig its alr maybe.
@@ -46,7 +52,7 @@ namespace FourZeroOne.Testing
     {
         public required string Name { get; init; }
         public required U Runtime { get; init; }
-        public required TestStatement<R> Statement { init { _value = new Err<IResult<Structure.FinishedTest, TestCreationException>, StoredStatement>(x => value(x)); } }
+        public required TestStatement<R> Statement { init { _value = new Err<IResult<Structure.FinishedTest, TestCreationException>, StoredStatement>(() => value()); } }
 
         public async ITask<IToken<R>> GetToken()
         {
@@ -73,7 +79,7 @@ namespace FourZeroOne.Testing
             {
                 var creation = (await Result.CatchExceptionAsync(async () =>
                 {
-                    var spec = statement(Runtime);
+                    var spec = statement();
                     return new Structure.FinishedTest()
                     {
                         Spec = spec,
@@ -117,7 +123,7 @@ namespace FourZeroOne.Testing
         }
         public record FinishedTest
         {
-            public required Spec.ITest Spec { get; init; }
+            public required Spec.IBlueprint Spec { get; init; }
             public required IResult<TestResults, TestEvaluateException> RunResult { get; init; }
             public bool Passed { get
                 {
@@ -144,7 +150,7 @@ namespace FourZeroOne.Testing
     }
     namespace Spec
     {
-        public record Blueprint<R> : ITest where  R : class, ResObj
+        public record Blueprint<R> : IBlueprint where  R : class, ResObj
         {
             public required IState State { get; init; } 
             public required IToken<R> Evaluate { get; init; }
@@ -169,7 +175,7 @@ namespace FourZeroOne.Testing
         }
         
         // really dumb that i have to make these
-        public interface ITest
+        public interface IBlueprint
         {
             public IState State { get; }
             public IToken<ResObj> EvaluateI { get; }
