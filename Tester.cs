@@ -103,16 +103,23 @@ public class Tester
             })
             .Named("Selection Squared"),
 
+
+            // does exactly what the previous test does, but with a MetaFunction
+
             MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
                 State = BLANK_STARTING_STATE,
-                Evaluate = Core.tSubEnvironment(RHint<ro.Number>.Hint(), new() {
-                    Environment = Core.
-                }),
+                //                                 ┌[same structure as delegate Func<...>]
+                Evaluate = Core.tMetaFunction(RHint<ro.Number, ro.Number>.Hint(), x => x.tRef().tMultiply(x.tRef()))
+                //                                                                  └[MetaFunction definition]
+                //   ┌[execute the MetaFunction with it's required arg]
+                    .tExecuteWith(new() {
+                        A = Iter.Over(2, 4, 6).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne()
+                    }),
                 Assert = new() {
                     Resolution = x => x is Some<ro.Number> num && num.Unwrap().Value.ExprAs(n => n == 4 || n == 16 || n == 36),
                 }
             })
-            .Named("Selection Squared")
+            .Named("Selection Squared MetaFunction")
         ];
 
         // make better later
@@ -155,4 +162,7 @@ public class Tester
  * me when variable captures exist for a reason!
  * I don't even know if capturing is feasable conceptually.
  * The "solution" is just to be careful with boxed functions :P
+ * 
+ *# There seems to be buggyness with rewinding and metafunctions/tests(?)
+ * requires further investigation.
  */
