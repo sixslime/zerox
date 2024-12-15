@@ -436,20 +436,6 @@ namespace FourZeroOne.Core.Tokens
         protected override IOption<string> CustomToString() => $"if {Arg1} then {Arg2} else {Arg3}".AsSome();
     }
  
-    public sealed record AddRule : PureValue<r.Instructions.RuleAdd>
-    {
-        public AddRule(Rule.IRule rule)
-        {
-            _rule = rule;
-        }
-
-        protected override r.Instructions.RuleAdd EvaluatePure()
-        {
-            return new r.Instructions.RuleAdd() { Rule = _rule };
-        }
-
-        private readonly Rule.IRule _rule;
-    }
     public sealed record Fixed<R> : PureValue<R> where R : class, ResObj
     {
         public readonly R Resolution;

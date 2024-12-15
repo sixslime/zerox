@@ -536,6 +536,10 @@ namespace FourZeroOne.Core.Syntax
         { return new(value); }
         public static t.Fixed<ro.Number> tFixed(this int value)
         { return new(value); }
+        public static t.Fixed<r.Instructions.RuleAdd> tFixed(this Rule.IRule value)
+        {
+            return new(new() { Rule = value });
+        }
         public static t.Fixed<R> tFixed<R>(this R value) where R : class, ResObj
         { return new(value); }
 
