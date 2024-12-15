@@ -1,4 +1,4 @@
-
+﻿
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,6 +17,137 @@ using FourZeroOne.Testing;
 using FourZeroOne.Testing.Syntax;
 namespace PROTO_ZeroxFour_1;
 
+
+public class Tester
+{
+    public readonly static FZ.StateModels.Minimal BLANK_STARTING_STATE = new() { };
+    public async Task Run()
+    {
+        Dictionary<string, List<ITest<FZ.Runtimes.FrameSaving.Gebug, ResObj>>> testGroups = new();
+
+        /* Welcome.
+         * I understand that reading lots of code is not fun, so this demo is quick and uncomprehensive (~5-10 min)
+         * This demo is expressed as a series of tests.
+         * 
+         * Important notes:
+         * - A Token evaluates it's arguements left-to-right to 'Resolutions', then evaluates itself to a Resolution.
+         * - A Resolution may change the 'State' of the program.
+         *  - The change is only present to evaluations of depth >= it's own.
+         * - methods that start with lowercase:
+         *  - 't' return Tokens.
+         *  - 'r' return Resolutions.
+         *  - 'p' return Proxies (will be explained when encountered).
+         */
+
+        testGroups["Demo"] =
+        [
+            //                         ┌['ro.Number' is the Resolution-type that this test expects]
+            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                //            ┌['tFixed' creates a constant Token, containing a "fixed" Resolution]
+                Evaluate = 10.tFixed().tAdd(5.tFixed()),
+                Expect = new() {
+                    Resolution = new ro.Number() { Value = 15 }.AsSome()
+                    //                                          └[Resolutions can be 'None', so need to wrap "raw" Resolution in 'Some']
+                }
+            })
+            .Named("10 + 5"),
+
+
+            //                         ┌[an "array" of numbers]
+            MkRuntime().MakeTest(RHint<r.Multi<ro.Number>>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                //                       ┌['RHint' is explicitly required in some places because C# type inference isn't perfect]
+                Evaluate = Core.tMultiOf(RHint<ro.Number>.Hint(), [
+                    1.tFixed(),
+                    2.tFixed(),
+                    3.tFixed(),
+                    2.tFixed().tAdd(2.tFixed())
+                    ]),
+
+                Expect = new() {
+                    Resolution = new r.Multi<ro.Number>() {Values = [1, 2, 3, 4]}.AsSome()
+                }
+            })
+            .Named("1..4 array")
+            .Use(out var array_test),
+            // └[create a handle to this test for use in others]
+
+
+            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                //                ┌[use the Resolution of the previous test]
+                Evaluate = (await array_test.GetResolution()).Unwrap().tFixed().tIOSelectOne(),
+                //                                                              └[prompt user to select one element]
+                Assert = new() {
+                    Resolution = x => x is Some<ro.Number> num && num.Unwrap().Value > 0,
+                }
+            })
+            .Named("Selection"),
+
+
+            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                //              ┌[simply evaluates 'Environment', then evaluates and returns 'Value']
+                Evaluate = Core.tSubEnvironment(RHint<ro.Number>.Hint(), new() {
+                    Environment = Iter.Over(2, 4, 6).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne()
+                        .tAsVariable(out var selection),
+                //       └[modifies the State, storing the evaluated Resolution, with 'selection' pointing to it]
+                //                    ┌[refer to the stored Resolution]
+                    Value = selection.tRef().tMultiply(selection.tRef())
+                //                                               └[refer to it again]
+                }),
+                Assert = new() {
+                    Resolution = x => x is Some<ro.Number> num && num.Unwrap().Value.ExprAs(n => n == 4 || n == 16 || n == 36),
+                }
+            })
+            .Named("Selection Squared"),
+
+            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = Core.tSubEnvironment(RHint<ro.Number>.Hint(), new() {
+                    Environment = Core.
+                }),
+                Assert = new() {
+                    Resolution = x => x is Some<ro.Number> num && num.Unwrap().Value.ExprAs(n => n == 4 || n == 16 || n == 36),
+                }
+            })
+            .Named("Selection Squared")
+        ];
+
+        // make better later
+        foreach (var testGroup in testGroups)
+        {
+            var groupList = testGroup.Value;
+            Console.WriteLine($"=== GROUP: \"{testGroup.Key}\" ===");
+            for (int i = 0; i < groupList.Count; i++)
+            {
+                Console.WriteLine($"--[{i}] TEST: \"{groupList[i].Name}\" --");
+                await groupList[i].EvaluateMustPass();
+            }
+            
+        }
+    }
+    /// <summary>
+    /// Creates a basic Runtime, with the option to specify auto-selections.
+    /// </summary>
+    /// <param name="selections"></param>
+    /// <returns></returns>
+    private static FZ.Runtimes.FrameSaving.Gebug MkRuntime(params int[]?[] selections)
+    {
+        return new FZ.Runtimes.FrameSaving.Gebug().Mut(x => x.SetAutoSelections(selections));
+    }
+    /// <summary>
+    /// Creates a basic Runtime, with the option to specify auto-selections and auto-rewinds.
+    /// </summary>
+    /// <param name="selections"></param>
+    /// <returns></returns>
+    private static FZ.Runtimes.FrameSaving.Gebug MkRuntime(int[]?[] selections, int?[] rewinds)
+    {
+        return new FZ.Runtimes.FrameSaving.Gebug().Mut(x => { x.SetAutoSelections(selections); x.SetAutoRewinds(rewinds); });
+    }
+}
+
 /* NOTES
  *# Boxed Reference Issues (captures)
  * given 'let { a = ... } in { boxed(() => a.tRef)) }',
@@ -25,107 +156,3 @@ namespace PROTO_ZeroxFour_1;
  * I don't even know if capturing is feasable conceptually.
  * The "solution" is just to be careful with boxed functions :P
  */
-public class Tester
-{
-    public readonly static RHint<ro.Number> NUMBER = new RHint<ro.Number>();
-    public readonly static FZ.StateModels.Minimal BLANKSTATE = new() { };
-    public async Task Run()
-    {
-        List<ITest<FZ.Runtimes.FrameSaving.Gebug, ResObj>> tests =
-        [
-            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
-                State = BLANKSTATE,
-                Evaluate = 2.tFixed().tAdd(3.tFixed()),
-                Expect = new()
-                {
-                    Resolution = 5.Res(),
-                    State = x => x
-                },
-                Assert = new()
-                {
-                    Resolution = x => true
-                }
-            })
-            .Use(out var test_0)
-            .Named("2 + 3"),
-
-            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
-                State = BLANKSTATE,
-                Evaluate = (await test_0.GetToken()).tMultiply(2.tFixed()),
-                Expect = new() {
-                    Resolution = ((await test_0.GetResolution()).Unwrap() with { dValue = Q => Q * 2}).AsSome()
-                }
-            })
-            .Named("(Test 0) * 2"),
-
-            MkRuntime().MakeTest(RHint<r.Multi<ro.Number>>.Hint(), async () => new() {
-                State = BLANKSTATE,
-                Evaluate = 1.Sequence(x => x + 1).Take(10).Map(x => x.tFixed()).t_ToConstMulti(),
-                Expect = new() {
-                    Resolution = 1.Sequence(x => x + 1).Take(10).Map(x => x.Res()).Res()
-                }
-            })
-            .Use(out var ten_arr)
-            .Named("[1..10]"),
-
-            MkRuntime().MakeTest(RHint<r.Multi<ro.Number>>.Hint(), async () => new() {
-                State = BLANKSTATE,
-                Evaluate = 1.Sequence(x => x + 1).Take(4).Map(x => x.tFixed()).tToMulti(),
-                Expect = new() {
-                    Resolution = 1.Sequence(x => x + 1).Take(4).Map(x => x.Res()).Res()
-                }
-            })
-            .Named("[1..4] with Yield"),
-
-            MkRuntime([8]).MakeTest(RHint<ro.Number>.Hint(), async () => new() {
-                State = BLANKSTATE,
-                Evaluate = (await ten_arr.GetToken()).tIOSelectOne(),
-                Expect = new() {
-                    Resolution = (await ten_arr.GetResolution()).Unwrap().Values.ElementAt(8).AsSome()
-                }
-            })
-            .Use(out var select_one)
-            .Named("SelectOne"),
-
-            MkRuntime([8, 6, 1]).MakeTest(RHint<r.Multi<ro.Number>>.Hint(), async () => new() {
-                State = BLANKSTATE,
-                Evaluate = (await ten_arr.GetToken()).tIOSelectMany(3.tFixed()),
-                Expect = new() {
-                    Resolution = (await ten_arr.GetResolution()).Unwrap().Values.ExprAs(arr => Iter.Over(8, 6, 1).Map(x => arr.ElementAt(x).AsSome())).Res()
-                }
-            })
-            .Named("SelectMany"),
-
-            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), hint => async () => new() {
-                State = BLANKSTATE,
-                Evaluate = Core.tSubEnvironment(hint, new() {
-                    Environment = 
-                })
-                Expect = new() {
-                    Resolution = ((await test_0.GetResolution()).Unwrap() with { dValue = Q => Q * 2}).AsSome()
-                }
-            })
-        ];
-        
-        // make better later
-        for (int i = 0;  i < tests.Count; i++)
-        {
-            Console.WriteLine($"--[{i}] TEST: \"{tests[i].Name}\" --");
-            await tests[i].EvaluateMustPass();
-        }
-    }
-
-    private List<ITest<FZ.Runtimes.FrameSaving.Gebug, ResObj>> tests = new();
-    private static FZ.Runtimes.FrameSaving.Gebug MkRuntime(params int[]?[] selections)
-    {
-        return new FZ.Runtimes.FrameSaving.Gebug().Mut(x => x.SetAutoSelections(selections));
-    }
-    private static FZ.Runtimes.FrameSaving.Gebug MkRuntime(int[]?[] selections, int?[] rewinds)
-    {
-        return new FZ.Runtimes.FrameSaving.Gebug().Mut(x => { x.SetAutoSelections(selections); x.SetAutoRewinds(rewinds); });
-    }
-}
-public static class TesterExtensions
-{
-
-}
