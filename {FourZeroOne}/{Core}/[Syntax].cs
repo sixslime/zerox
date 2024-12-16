@@ -536,12 +536,12 @@ namespace FourZeroOne.Core.Syntax
         { return new(value); }
         public static t.Fixed<ro.Number> tFixed(this int value)
         { return new(value); }
-        public static t.Fixed<r.Instructions.RuleAdd> tFixed(this Rule.IRule value)
+        public static t.Fixed<R> tFixed<R>(this R value) where R : class, ResObj
+        { return new(value); }
+        public static t.Fixed<r.Instructions.RuleAdd> tAddRule(this Rule.IRule value)
         {
             return new(new() { Rule = value });
         }
-        public static t.Fixed<R> tFixed<R>(this R value) where R : class, ResObj
-        { return new(value); }
 
         public static p.Direct<TOrig, R> pDirect<TOrig, R>(this Token.IToken<R> token, OriginalHint<TOrig> _) where TOrig : IToken where R : class, ResObj
         { return new(token); }
