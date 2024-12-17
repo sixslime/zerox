@@ -326,7 +326,7 @@ namespace FourZeroOne.Core.Proxies
             return ((IToken<ROut>)
                 typeof(TNew).GetConstructor(new Type[] { typeof(IToken<RArg1>), typeof(IToken<RArg2>), typeof(IToken<RArg3>) })
                 .Invoke(tokens.ToArray()))
-                .WithHookLabels(HookLabels);
+                .WithHooks(HookLabels);
         }
     }
     public record Combiner<TNew, TOrig, RArgs, ROut> : FunctionProxy<TOrig, ROut>

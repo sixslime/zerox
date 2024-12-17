@@ -25,9 +25,10 @@ public class Tester
     {
         Dictionary<string, List<ITest<FZ.Runtimes.FrameSaving.Gebug, ResObj>>> testGroups = new();
 
-        /* Welcome.
-         * I understand that reading lots of code is not fun, so this demo is quick and uncomprehensive (~5-10 min)
-         * This demo is expressed as a series of tests.
+
+        /* Intro Demo (~5-10 min)
+         * This demo covers everything important in a breif manner.
+         * Demos are expressed through series' of tests.
          * 
          * Important notes:
          * - A Token evaluates it's arguements left-to-right to 'Resolutions', then evaluates itself to a Resolution.
@@ -37,9 +38,10 @@ public class Tester
          *  - 't' return Tokens.
          *  - 'r' return Resolutions.
          *  - 'p' return Proxies (will be explained when encountered).
+         * - when "prompted" to select, enter the index number of the desired element.
          */
 
-        testGroups["Demo"] =
+        testGroups["Intro Demo"] =
         [
             //                         ┌['ro.Number' is the Resolution-type that this test expects]
             MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
@@ -57,7 +59,7 @@ public class Tester
             //                         ┌[an "array" of numbers]
             MkRuntime().MakeTest(RHint<r.Multi<ro.Number>>.Hint(), async () => new() {
                 State = BLANK_STARTING_STATE,
-                //                       ┌['RHint' is explicitly required in some places because C# type inference isn't perfect]
+                //                       ┌['RHint' is in general specifies Resolution-type where it can't be inferred]
                 Evaluate = Core.tMultiOf(RHint<ro.Number>.Hint(), [
                     1.tFixed(),
                     2.tFixed(),
@@ -74,7 +76,7 @@ public class Tester
             // └[create a handle to this test for use in others]
 
 
-            MkRuntime([0]).MakeTest(RHint<ro.Number>.Hint(), async () => new() {
+            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
                 State = BLANK_STARTING_STATE,
                 //                ┌[use the Resolution of the previous test]
                 Evaluate = (await array_test.GetResolution()).Unwrap().tFixed().tIOSelectOne(),
@@ -86,7 +88,7 @@ public class Tester
             .Named("Selection"),
 
 
-            MkRuntime([0]).MakeTest(RHint<ro.Number>.Hint(), async () => new() {
+            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
                 State = BLANK_STARTING_STATE,
                 //              ┌[simply evaluates 'Environment', then evaluates and returns 'Value']
                 Evaluate = Core.tSubEnvironment(RHint<ro.Number>.Hint(), new() {
@@ -105,8 +107,8 @@ public class Tester
             .Named("Selection Squared"),
 
 
-            // ## does exactly what the previous test does, but with a MetaFunction ##
-            MkRuntime([0]).MakeTest(RHint<ro.Number>.Hint(), async () => new() {
+            // ## functionally equivalent to the previous test, but with a MetaFunction ##
+            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
                 State = BLANK_STARTING_STATE,
                 //                                 ┌[same structure as Func<...> delegate]
                 Evaluate = Core.tMetaFunction(RHint<ro.Number, ro.Number>.Hint(), x => x.tRef().tMultiply(x.tRef()))
@@ -152,10 +154,9 @@ public class Tester
                         P.pOriginalA().pSubtract(P.pOriginalB()).pAdd(1.tFixed().pDirect(P)))
                     .tAddRule(),
                 //   └[Resolution will add Rule to the State]
-
                     Value = Core.tMultiOf(RHint<ro.Number>.Hint(), [
                     //              ┌[affected by Rule, has "my_hook" Hook]
-                        10.tFixed().tAdd(5.tFixed()).WithHookLabels(["my_hook"]),
+                        10.tFixed().tAdd(5.tFixed()).WithHooks(["my_hook"]),
                     //              ┌[unaffected by Rule]
                         10.tFixed().tAdd(5.tFixed())
                     ])
@@ -165,20 +166,96 @@ public class Tester
                     Resolution = Iter.Over(6.rAsRes(), 15.rAsRes()).rAsRes()
                 }
             })
-            .Named("Rule Introduction")
+            .Named("Rule")
         ];
 
+        /* Advanced Demo (~10 min)
+         * This demo covers everything the Intro doesn't, and includes more advanced and real(ish) use cases.
+         * It also makes full use of shorthands and testing features.
+         *
+         * 
+         * - when prompted to select multiple elements, type index numbers with spaces. ex: "1 2 4"
+         */
+
+        testGroups["Advanced Demo"] =
+        [
+        //  ┌['MkRuntimeWithAuto' makes a Test with auto-selections]
+            MkRuntimeWithAuto([[1], [4, 3, 2, 0]]).MakeTest(RHint<r.Multi<ro.Number>>.Hint(), async () => new() {
+            //                 └[replace element with 'null' to send prompt to user]
+                State = BLANK_STARTING_STATE,
+                Evaluate = Iter.Over(1, 2, 3, 4, 5).Map(x => x.tFixed()).t_ToConstMulti()
+                //   ┌[first prompt to select 2 or 4, then prompt to select *that* number of elements from the list above]
+                    .tIOSelectMany(Iter.Over(2, 4).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne()),
+                Assert = new() {
+                    Resolution = x => x is Some<r.Multi<ro.Number>> selection && selection.Unwrap().Count is 2 or 4
+                }
+            })
+            .Named("tIOSelectMany Token"),
+
+
+            // ## Effectively equivalent to the previous test, but implemented using recursion and 'tIOSelectOne' ##
+            //                                                        ┌[would be annoying to specify this hint-type repeatedly]
+            MkRuntimeWithAuto([[1], [4], [3], [2], [0]]).MakeTest(RHint<r.Multi<ro.Number>>.Hint(), hint => async () => new() {
+            //                                                                                          └['hint' is simply the hint-type of this test]
+                State = BLANK_STARTING_STATE,
+                Evaluate = Core.tSubEnvironment(hint, new() {
+                    Environment = Iter.Over(2, 4).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne().tAsVariable(out var firstSelection),
+                    //           ┌[includes a pointer to itself as first arguement in it's definition]
+                    Value = Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<ro.Number>, r.Multi<ro.Number>>.Hint(),
+                //   ┌['thisFunc' points to this MetaFunction]
+                    (thisFunc, argA, argB) =>
+                        firstSelection.tRef().tIsGreaterThan(argA.tRef())
+                        .tIfTrue(hint, new()
+                        {
+                            Then = Core.tSubEnvironment(hint, new()
+                            {
+                                Environment = argB.tRef().tIOSelectOne().tAsVariable(out var partialSelection).tYield(),
+                                //                              ┌['tYield' converts a value to single-element list]
+                                Value = partialSelection.tRef().tYield()
+                                .tUnion(thisFunc.tRef().tExecuteWith(new()
+                                {
+                                //  ┌[count of selections/recursions that have occured]
+                                    A = argA.tRef().tAdd(1.tFixed()),
+                                //  ┌[the next pool of elements to select from]
+                                    B = argB.tRef().tWithout(partialSelection.tRef().tYield())
+                                //                  └['tWithout' is like LINQ 'Except']
+                                }))
+                            }).tMetaBoxed(),
+                        //  ┌[evaluate to Nolla (None) if the recursion count has surpassed 'firstSelection' value]
+                            Else = Core.tNolla(hint).tMetaBoxed()
+                        //              └[the Union Token ('tUnion') treats Nolla like an empty list]
+                        })
+                        .tExecute())
+                //   ┌[initial call of recursive function]
+                    .tExecuteWith(new()
+                    {
+                        A = 0.tFixed(),
+                        B = Iter.Over(1, 2, 3, 4, 5).Map(x => x.tFixed()).t_ToConstMulti()
+                    })
+                }),
+                Assert = new() {
+                    Resolution = x => x is Some<r.Multi<ro.Number>> selection && selection.Unwrap().Count is 2 or 4
+                }
+            })
+            .Named("Select Many Through Recursion"),
+
+        ];
         // make better later
         foreach (var testGroup in testGroups)
         {
             var groupList = testGroup.Value;
             Console.WriteLine($"=== GROUP: \"{testGroup.Key}\" ===");
+            if (testGroup.Key != "Advanced Demo")
+            {
+                Console.WriteLine("(SKIPPED)");
+                continue;
+            }
             for (int i = 0; i < groupList.Count; i++)
             {
                 Console.WriteLine($"--[{i}] TEST: \"{groupList[i].Name}\" --");
                 await groupList[i].EvaluateMustPass();
             }
-            
+
         }
     }
     /// <summary>
@@ -186,16 +263,20 @@ public class Tester
     /// </summary>
     /// <param name="selections"></param>
     /// <returns></returns>
-    private static FZ.Runtimes.FrameSaving.Gebug MkRuntime(params int[]?[] selections)
+    private static FZ.Runtimes.FrameSaving.Gebug MkRuntime()
     {
-        return new FZ.Runtimes.FrameSaving.Gebug().Mut(x => x.SetAutoSelections(selections));
+        return MkRuntimeWithAuto([]);
+    }
+    private static FZ.Runtimes.FrameSaving.Gebug MkRuntimeWithAuto(int[]?[] selections)
+    {
+        return MkRuntimeWithAuto(selections, []);
     }
     /// <summary>
     /// Creates a basic Runtime, with the option to specify auto-selections and auto-rewinds.
     /// </summary>
     /// <param name="selections"></param>
     /// <returns></returns>
-    private static FZ.Runtimes.FrameSaving.Gebug MkRuntime(int[]?[] selections, int?[] rewinds)
+    private static FZ.Runtimes.FrameSaving.Gebug MkRuntimeWithAuto(int[]?[] selections, int?[] rewinds)
     {
         return new FZ.Runtimes.FrameSaving.Gebug().Mut(x => { x.SetAutoSelections(selections); x.SetAutoRewinds(rewinds); });
     }

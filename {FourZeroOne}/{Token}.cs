@@ -15,7 +15,7 @@ namespace FourZeroOne.Token
     {
         // "ToNodes(IRuntime runtime)".
         // "Resolve(IOption<ResObj>[]...)"
-        public IToken<R> WithHookLabels(IEnumerable<string> labels);
+        public IToken<R> WithHooks(IEnumerable<string> labels);
         public ITask<IOption<R>> Resolve(IRuntime runtime, IOption<ResObj>[] args);
         public IToken<R> UnsafeTypedWithArgs(Unsafe.IToken[] args);
     }
@@ -32,8 +32,8 @@ namespace FourZeroOne.Token
         public Token(IEnumerable<Unsafe.IToken> args) : this(args.ToArray()) { }
         public abstract ITask<IOption<R>> Resolve(IRuntime runtime, IOption<ResObj>[] args);
         public ITask<IOption<ResObj>> UnsafeResolve(IRuntime runtime, IOption<ResObj>[] args) { return Resolve(runtime, args); }
-        public IToken<R> WithHookLabels(IEnumerable<string> labels) => this with { _hookLabels = new() { Elements = labels } };
-        public Unsafe.IToken UnsafeWithHookLabels(IEnumerable<string> labels) => WithHookLabels(labels);
+        public IToken<R> WithHooks(IEnumerable<string> labels) => this with { _hookLabels = new() { Elements = labels } };
+        public Unsafe.IToken UnsafeWithHookLabels(IEnumerable<string> labels) => WithHooks(labels);
         // WithArgs() is smelly
         public Unsafe.IToken UnsafeWithArgs(Unsafe.IToken[] args) => UnsafeTypedWithArgs(args);
         public IToken<R> UnsafeTypedWithArgs(Unsafe.IToken[] args) => this with { _argTokens = args };

@@ -27,7 +27,7 @@ namespace FourZeroOne.Proxy
         public IToken<R> Realize(TOrig original, IOption<Rule.IRule> realizingRule)
         {
             return RealizeInternal(original, realizingRule)
-                .ExprAs(x => x.WithHookLabels(x.HookLabels.Also(HookLabels)));
+                .ExprAs(x => x.WithHooks(x.HookLabels.Also(HookLabels)));
         }
         public IToken<R> UnsafeTypedRealize(IToken original, IOption<Rule.IRule> rule) => Realize((TOrig)original, rule);
         public IToken UnsafeContextualRealize(TOrig original, IOption<Rule.IRule> rule) => Realize(original, rule);
@@ -86,7 +86,7 @@ namespace FourZeroOne.Proxy.Unsafe
                 .Map(optPair => optPair.a.RemapAs(argProxy => argProxy.UnsafeRealize(original, rule))
                         .Or(RuleAppliedUnsafe(rule, optPair.b.Unwrap())))
                 .ToArray())
-            .WithHookLabels(original.HookLabels.Except(RemovedHookLabels.Elements));
+            .WithHooks(original.HookLabels.Except(RemovedHookLabels.Elements));
         }
     }
     public abstract record FunctionProxy<TOrig, R> : Proxy<TOrig, R>
@@ -97,7 +97,7 @@ namespace FourZeroOne.Proxy.Unsafe
         {
             var o = ConstructFromArgs(original, MakeSubstitutions(original, rule));
             // this is a little silly.
-            return o.WithHookLabels([.. o.HookLabels.Also(HookLabels)]);
+            return o.WithHooks([.. o.HookLabels.Also(HookLabels)]);
         }
 
         protected readonly PList<IProxy> ArgProxies;

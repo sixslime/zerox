@@ -141,6 +141,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
                 }
                 int[] selectionIndicies = [.. inputString.Split(" ", StringSplitOptions.RemoveEmptyEntries)
                     .Map(x => int.TryParse(x, out var value) ? value : -1)
+                    .Distinct()
                     .Where(x => x >= 0)];
                 if (!__ValidateSelections(selectionIndicies)) continue;
                 return __DoSelection(selectionIndicies);

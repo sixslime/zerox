@@ -430,6 +430,10 @@ namespace FourZeroOne.Core.Syntax
         { return new(t.Map(x => x.tYield())); }
         public static p.Combiner<t.Multi.Union<R>, TOrig, IMulti<R>, r.Multi<R>> pToMulti<TOrig, R>(this IEnumerable<IProxy<TOrig, R>> values) where TOrig : IToken where R : class, ResObj
         { return new(values.Map(x => x.pYield())); }
+        public static t.Multi.Union<R> tUnion<R>(this IToken<IMulti<R>> left, IToken<IMulti<R>> right) where R : class, ResObj
+        { return new([left, right]); }
+        public static p.Combiner<t.Multi.Union<R>, TOrig, IMulti<R>, r.Multi<R>> pUnion<TOrig, R>(this IProxy<TOrig, IMulti<R>> left, IProxy<TOrig, IMulti<R>> right) where TOrig : IToken where R : class, ResObj
+        { return new([left, right]); }
         public static t.Multi.Union<R> tFlatten<R>(this IEnumerable<IToken<IMulti<R>>> t) where R : class, ResObj
         { return new(t); }
         public static p.Combiner<t.Multi.Union<R>, TOrig, IMulti<R>, r.Multi<R>> pFlatten<TOrig, R>(this IEnumerable<IProxy<TOrig, IMulti<R>>> values) where TOrig : IToken where R : class, ResObj
