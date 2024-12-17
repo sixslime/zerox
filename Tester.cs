@@ -18,6 +18,7 @@ using FourZeroOne.Testing.Syntax;
 namespace PROTO_ZeroxFour_1;
 
 
+// this file stresses VisualStudio alot, too bad.
 public class Tester
 {
     public readonly static FZ.StateModels.Minimal BLANK_STARTING_STATE = new() { };
@@ -298,9 +299,9 @@ public class Tester
                 Evaluate = Core.tMultiOf(RHint<r.Instructions.Assign<ro.Number>>.Hint(),
                 [
                 //              ┌[stores the variable in the State, output pointer is just unused]
-                    11.tFixed().tAsVariable(out var _),
-                    22.tFixed().tAsVariable(out var _),
-                    33.tFixed().tAsVariable(out var _),
+                    11.tFixed().tAsVariable(out _),
+                    22.tFixed().tAsVariable(out _),
+                    33.tFixed().tAsVariable(out _),
                 ]),
                 Assert = new() {
                     State = startState => endState => endState.Objects.Count() - startState.Objects.Count() == 3
@@ -406,12 +407,12 @@ public class Tester
                     Environment = MakeProxy.AsRule<t.Fixed<ro.Number>, ro.Number>("duplicate_me", P =>
             //        ┌['pThis' refers to the original Token itself, preserving Hooks]
                     P.pThis().pAdd(P.pThis())).tAddRule()
-            //       ┌[create 4 duplicates of this rule]
+            //       ┌[enumerator that yields this Token 4 times]
                     .Yield(4).t_ToConstMulti(),
                     Value = 1.tFixed().WithHooks("duplicate_me")
                 }),
                 Expect = new() {
-                    Resolution = 8.rAsRes()
+                    Resolution = 16.rAsRes()
                 }
             })
         ];
@@ -428,7 +429,8 @@ public class Tester
             for (int i = 0; i < groupList.Count; i++)
             {
                 Console.WriteLine($"--[{i}] TEST: \"{groupList[i].Name}\" --");
-                await groupList[i].EvaluateMustPass();
+                _ = await groupList[i].EvaluateMustPass();
+                
             }
 
         }
