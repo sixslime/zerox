@@ -191,8 +191,7 @@ namespace FourZeroOne.Core.Resolutions
         private readonly PList<R> _list;
         public override string ToString()
         {
-            List<R> argList = [.. _list.Elements];
-            return $"[{argList[0]}{argList[1..].AccumulateInto("", (msg, v) => $"{msg}, {v}")}]";
+            return $"[{string.Join(", ", _list.Elements.Map(x => x.ToString()))}]";
         }
     }
 }

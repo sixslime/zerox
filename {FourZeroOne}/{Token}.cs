@@ -32,6 +32,7 @@ namespace FourZeroOne.Token
         public Token(IEnumerable<Unsafe.IToken> args) : this(args.ToArray()) { }
         public abstract ITask<IOption<R>> Resolve(IRuntime runtime, IOption<ResObj>[] args);
         public ITask<IOption<ResObj>> UnsafeResolve(IRuntime runtime, IOption<ResObj>[] args) { return Resolve(runtime, args); }
+        public IToken<R> WithHooks(params string[] labels) => WithHooks(labels.IEnumerable());
         public IToken<R> WithHooks(IEnumerable<string> labels) => this with { _hookLabels = new() { Elements = labels } };
         public Unsafe.IToken UnsafeWithHookLabels(IEnumerable<string> labels) => WithHooks(labels);
         // WithArgs() is smelly

@@ -25,6 +25,7 @@ namespace FourZeroOne.Core.Macros
             protected override IProxy<r.Multi<ROut>> InternalProxy => PROXY;
             public Map(IToken<Resolution.IMulti<RIn>> values, IToken<r.Boxed.MetaFunction<RIn, ROut>> mapFunction) : base(values, mapFunction) { }
 
+            // DEV - Consider not storing the map function as a variable, so that the Token *does* re-evaluate every iteration.
             private readonly static IProxy<Map<RIn, ROut>, r.Multi<ROut>> PROXY = MakeProxy.Statement<Map<RIn, ROut>, r.Multi<ROut>>(P =>
             {
                 return
@@ -47,7 +48,7 @@ namespace FourZeroOne.Core.Macros
                             Core.tUnion<ROut>(RHint<ROut>.Hint(),
                             [
                                 mapFunction.tRef().tExecuteWith(new() { A = enumerable.tRef().tGetIndex(i.tRef()) }).tYield(),
-                            selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tFixed()) })
+                                selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tFixed()) })
                             ]).tMetaBoxed()
 
                         }).tExecute();

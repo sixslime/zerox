@@ -164,6 +164,8 @@ namespace FourZeroOne.Runtime
                 }
                 
                 var ruledToken = ApplyRules(operationNode.Value, rulesToApply, out var appliedRules);
+
+                // we need to change the "Except", 
                 rulesToApply = rulesToApply.Except(appliedRules.Elements.Map(x => x.rule));
 
                 for (int macroExpansions = 0; ruledToken is Macro.Unsafe.IMacro macro; macroExpansions++)

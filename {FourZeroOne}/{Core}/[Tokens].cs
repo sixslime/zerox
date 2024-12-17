@@ -140,6 +140,7 @@ namespace FourZeroOne.Core.Tokens
             protected override IOption<string> CustomToString()
             {
                 List<IToken<IMulti<R>>> argList = [.. Args];
+                return $"[{string.Join(", ", Args.Map(x => x.ToString()))}]".AsSome();
                 return $"[{argList[0]}{argList[1..].AccumulateInto("", (msg, v) => $"{msg}, {v}")}]".AsSome();
             }
         }
