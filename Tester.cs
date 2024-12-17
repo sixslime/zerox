@@ -121,7 +121,7 @@ public class Tester
                     Resolution = x => x is Some<ro.Number> num && num.Unwrap().Value.ExprAs(n => n == 4 || n == 16 || n == 36),
                 }
             })
-            .Named("Selection Squared MetaFunction"),
+            .Named("MetaFunction Introduction"),
 
 
             MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
@@ -140,7 +140,7 @@ public class Tester
                     Resolution = 9999.rAsRes()
                 }
             })
-            .Named("Basic 'if'"),
+            .Named("Basic \"If\""),
 
 
             // ## 'Rules' are evaluation-time Token replacements ##
@@ -169,19 +169,21 @@ public class Tester
             .Named("Rule")
         ];
 
-        /* Advanced Demo (~10 min)
-         * This demo covers everything the Intro doesn't, and includes more advanced and real(ish) use cases.
+        /* Advanced Examples (~10 min)
+         * This series of tests covers everything the Intro Demo doesn't and includes tokens with realistic complexity
          * It also makes full use of shorthands and testing features.
          *
-         * 
-         * - when prompted to select multiple elements, type index numbers with spaces. ex: "1 2 4"
+         * Important Notes:
+         * - These tests make use of auto-selections for convenience.
+         * - When prompted to make a manual selection, you may enter '<' followed by number to "rewind" that many 'Frames'. ex: "<7"
+         *  - A Frame is saved whenever a Token evaluates to a Resolution (green text).
          */
 
-        testGroups["Advanced Demo"] =
+        testGroups["Advanced Examples"] =
         [
         //  ┌['MkRuntimeWithAuto' makes a Test with auto-selections]
             MkRuntimeWithAuto([[1], [4, 3, 2, 0]]).MakeTest(RHint<r.Multi<ro.Number>>.Hint(), async () => new() {
-            //                 └[replace element with 'null' to send prompt to user]
+            //                 └[replace an element with 'null' to send that prompt to user. ex:'[null, [4, 3, 2, 0]]']
                 State = BLANK_STARTING_STATE,
                 Evaluate = Iter.Over(1, 2, 3, 4, 5).Map(x => x.tFixed()).t_ToConstMulti()
                 //   ┌[first prompt to select 2 or 4, then prompt to select *that* number of elements from the list above]
@@ -190,7 +192,7 @@ public class Tester
                     Resolution = x => x is Some<r.Multi<ro.Number>> selection && selection.Unwrap().Count is 2 or 4
                 }
             })
-            .Named("tIOSelectMany Token"),
+            .Named("Select Many"),
 
 
             // ## Effectively equivalent to the previous test, but implemented using recursion and 'tIOSelectOne' ##
@@ -237,15 +239,96 @@ public class Tester
                     Resolution = x => x is Some<r.Multi<ro.Number>> selection && selection.Unwrap().Count is 2 or 4
                 }
             })
-            .Named("Select Many Through Recursion"),
+            .Named("Recursion Introduction")
+            .Use(out var recursion_test),
 
+            //                                                                ┌[rewind 63 Frames (back to 2nd selection) on 5th selection prompt]
+            MkRuntimeWithAuto([[1], [4], [3], [2], null, [0], [0], [0], [1]], [null, null, null, null, 63])
+            //                                     └[rewind happens when this selection would be made; this auto-selection is skipped]
+            .MakeTest(RHint<r.Multi<ro.Number>>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = (await recursion_test.GetToken()),
+                Assert = new() {
+                    Resolution = x => x is Some<r.Multi<ro.Number>> selection && selection.Unwrap().Count is 2 or 4
+                }
+            })
+            .Named("Rewind Introduction"),
+
+
+            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), hint => async () => new() {
+                State = BLANK_STARTING_STATE,
+            //                                    ┌[with three exceptions (shown in next example), a Token evaluates to Nolla if *any* of it's arguements do]
+                Evaluate = 100.tFixed().tAdd(Core.tNolla(hint)).tIsGreaterThan(200.tFixed()).tIfTrue(hint, new() {
+            //                                    └['tNolla'=Nolla -> 'tAdd'=Nolla -> 'tIsGreaterThan'=Nolla -> 'tIfTrue'=Nolla -> 'tExecute'=Nolla]
+                    Then = 1.tFixed().tMetaBoxed(),
+                    Else = 0.tFixed().tMetaBoxed(),
+                }).tExecute(),
+                Expect = new() {
+            //                       ┌['None' represents Nolla; Nolla is typed]
+                    Resolution = new None<ro.Number>()
+                }
+            })
+            .Named("Nolla Propagation"),
+
+
+            MkRuntime().MakeTest(RHint<r.Multi<ro.Bool>>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                //              ┌[Union Tokens treat Nolla as empty sets]
+                Evaluate = Core.tMultiOf(RHint<ro.Bool>.Hint(),
+            //                  └['tMultiOf', 'tToMulti', 'tUnion', and 'tFlatten' all construct Union Tokens]
+                [
+                //             ┌['tExists' evaluates False iff it's arguement evaluates to Nolla]
+                    1.tFixed().tExists(),
+                //              ┌[the arguement for 'tExists' can be of any ResolutionType]
+                    Core.tNolla(RHint<ResObj>.Hint()).tExists(),
+                //                    └['ResObj' is equiv. to C# 'object']
+                    Core.tNolla(RHint<ro.Bool>.Hint())
+                ]),
+                Expect = new() {
+                    Resolution = Iter.Over(true, false).Map(x => x.rAsRes()).rAsRes()
+                }
+            })
+            .Named("Nolla Catch Methods"),
+
+
+            //                         ┌[when a 'r.Multi' Resolution evaluates, all Resolutions within are applied in-order]
+            MkRuntime().MakeTest(RHint<r.Multi<r.Instructions.Assign<ro.Number>>>.Hint(), hint => async () => new() {
+            //                         └[in this case, the r.Multi of variable assignments stores multiple variables]
+                State = BLANK_STARTING_STATE,
+                Evaluate = Core.tMultiOf(RHint<r.Instructions.Assign<ro.Number>>.Hint(),
+                [
+                //              ┌[stores the variable in the State, output pointer is just unused]
+                    11.tFixed().tAsVariable(out var _),
+                    22.tFixed().tAsVariable(out var _),
+                    33.tFixed().tAsVariable(out var _),
+                ]),
+                Assert = new() {
+                    State = startState => endState => endState.Objects.Count() - startState.Objects.Count() == 3
+                }
+            })
+            .Named("Multi Resolution"),
+
+            /*
+            MkRuntime().MakeTest(RHint<r.Multi<ro.Number>>.Hint(), hint => async () => new() {
+                State = BLANK_STARTING_STATE,
+                //              
+                Evaluate = Core.tSubEnvironment(hint, new() {
+                    Environment = Iter.Over(5, 10, 15, 20).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne()
+                    .tAsVariable()
+                }),
+                Expect = new() {
+                    Resolution = Iter.Over(true, false).Map(x => x.rAsRes()).rAsRes()
+                }
+            })
+            .Named("Nolla Resolution"),
+            */
         ];
         // make better later
         foreach (var testGroup in testGroups)
         {
             var groupList = testGroup.Value;
             Console.WriteLine($"=== GROUP: \"{testGroup.Key}\" ===");
-            if (testGroup.Key != "Advanced Demo")
+            if (testGroup.Key != "Advanced Examples")
             {
                 Console.WriteLine("(SKIPPED)");
                 continue;

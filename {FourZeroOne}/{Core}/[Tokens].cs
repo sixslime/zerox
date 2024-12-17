@@ -117,6 +117,7 @@ namespace FourZeroOne.Core.Tokens
     namespace Multi
     {
         
+        // FIXME: probably should just eval to Nolla if either arg is Nolla
         public sealed record Contains<R> : Function<IMulti<R>, R, ro.Bool> where R : class, ResObj
         {
             public Contains(IToken<IMulti<R>> multi, IToken<R> element) : base(multi, element) { }
