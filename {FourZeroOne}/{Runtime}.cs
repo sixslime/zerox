@@ -154,6 +154,7 @@ namespace FourZeroOne.Runtime
             {
                 // _stateStack should never be empty, depth 0 is the starting state.
                 var currentStateNode = _stateStack.Unwrap();
+                // DEV: RuleContainer exists so 'Except' only excludes the exact rule that was applied if there exists duplicates.
                 var rulesToApply = currentStateNode.Value.Rules.Enumerate().Map(x => new RuleContainer(x.index, x.value));
 
                 if (_appliedRuleStack.Check(out var appliedRuleNode))
