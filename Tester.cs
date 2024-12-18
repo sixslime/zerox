@@ -421,20 +421,20 @@ public class Tester
         foreach (var testGroup in testGroups)
         {
             var groupList = testGroup.Value;
-            Console.WriteLine($"=== GROUP: \"{testGroup.Key}\" ===");
-            if (testGroup.Key != "Advanced Examples")
-            {
-                Console.WriteLine("(SKIPPED)");
-                continue;
-            }
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine($"\n=== GROUP: \"{testGroup.Key}\" ===");
+            Console.ResetColor();
             for (int i = 0; i < groupList.Count; i++)
             {
-                Console.WriteLine($"--[{i}] TEST: \"{groupList[i].Name}\" --");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($"\n--[{i}] TEST: \"{groupList[i].Name}\" --\n");
+                Console.ResetColor();
                 _ = await groupList[i].EvaluateMustPass();
                 
             }
 
         }
+        Console.WriteLine("FINISHED.");
     }
     /// <summary>
     /// Creates a basic Runtime, with the option to specify auto-selections.
