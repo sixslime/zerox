@@ -44,14 +44,18 @@ public class Tester
 
         testGroups["Intro Demo"] =
         [
-            //                         ┌['ro.Number' is the Resolution-type that this test expects]
+            //          ┌[make a test that expects a final Resolution-type of 'ro.Number']
             MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
+            //  ┌[starting State]
                 State = BLANK_STARTING_STATE,
-                //            ┌['tFixed' creates a constant Token, containing a "fixed" Resolution]
+                //      └['BLANK_STARTING_STATE' is an empty State]
+            //  ┌[the Token being evaluated]
                 Evaluate = 10.tFixed().tAdd(5.tFixed()),
+                //            └['tFixed' creates a constant Token, containing a "fixed" Resolution]
+            //  ┌[results to expect (to be equal to)]
                 Expect = new() {
+                    //                                          ┌[Resolutions can be 'None', so need to wrap "raw" Resolution in 'Some']
                     Resolution = new ro.Number() { Value = 15 }.AsSome()
-                    //                                          └[Resolutions can be 'None', so need to wrap "raw" Resolution in 'Some']
                 }
             })
             .Named("10+5"),
@@ -69,12 +73,13 @@ public class Tester
                     ]),
 
                 Expect = new() {
+                    //                                              ┌[ints implicitly cast to 'ro.Number']
                     Resolution = new r.Multi<ro.Number>() {Values = [1, 2, 3, 4]}.AsSome()
                 }
             })
             .Named("1..4 Multi")
             .Use(out var array_test),
-            // └[create a handle to this test for use in others]
+        //   └[create a handle to this test for use in others]
 
 
             MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
@@ -83,7 +88,7 @@ public class Tester
                 Evaluate = (await array_test.GetResolution()).Unwrap().tFixed().tIOSelectOne(),
                 //                                                              └[prompt user to select one element]
                 Assert = new() {
-                    Resolution = x => x is Some<ro.Number> num && num.Unwrap().Value > 0,
+                    Resolution = x => x is Some<ro.Number> num && num.Unwrap().Value is 1 or 2 or 3 or 4
                 }
             })
             .Named("selection"),
@@ -96,13 +101,13 @@ public class Tester
                 //                                                        ┌[non-essential shorthand for creating an array of fixed Resolutions]
                     Environment = Iter.Over(2, 4, 6).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne()
                         .tAsVariable(out var selection),
-                //       └[modifies the State, storing the evaluated Resolution with 'selection' pointing to it]
-                //                    ┌[refer to the stored Resolution]
+                    //   └[modifies the State, storing the evaluated Resolution with 'selection' pointing to it]
+                    //                ┌[refer to the stored Resolution]
                     Value = selection.tRef().tMultiply(selection.tRef())
-                //                                               └[refer to it again]
+                    //                                           └[refer to it again]
                 }),
                 Assert = new() {
-                    Resolution = x => x is Some<ro.Number> num && num.Unwrap().Value.ExprAs(n => n == 4 || n == 16 || n == 36),
+                    Resolution = x => x is Some<ro.Number> num && num.Unwrap().Value is 4 or 16 or 36
                 }
             })
             .Named("selection squared"),
@@ -133,10 +138,10 @@ public class Tester
                     Then = 9999.tFixed().tMetaBoxed(),
                     Else = (await array_test.GetToken()).tIOSelectOne().tMetaBoxed()
                 })
-            //   ┌['Then' and 'Else' are always greedily evaluated, regardless of boolean outcome]
-                .tExecute(),
-            //   └["wrapping" them in MetaFunctions then only executing the result emulates lazy evaluation]
-            //    (if 'Then' and 'Else' were not MetaFunctions, the user would be prompted for selection regardless of boolean outcome)
+                //   ┌['Then' and 'Else' are always greedily evaluated, regardless of boolean outcome]
+                    .tExecute(),
+                //   └["wrapping" them in MetaFunctions then only executing the result emulates lazy evaluation]
+                //    (if 'Then' and 'Else' were not MetaFunctions, the user would be prompted for selection regardless of boolean outcome)
                 Expect = new() {
                     Resolution = 9999.rAsRes()
                 }
@@ -151,19 +156,20 @@ public class Tester
                 State = BLANK_STARTING_STATE,
                 Evaluate = Core.tSubEnvironment(RHint<r.Multi<ro.Number>>.Hint(), new() {
                 //                ┌[constructs Rule: replace '(A+B)' with '((A-B)+1)', given '(A+B)' has the Hook 'my_hook']
-                    Environment = MakeProxy.AsRule<t.Number.Add, ro.Number>("my_hook", P =>
-                        P.pOriginalA().pSubtract(P.pOriginalB()).pAdd(1.tFixed().pDirect(P)))
-                    .tAddRule(),
-                //   └[Resolution will add Rule to the State]
+                    Environment = MakeProxy.AsRule<t.Number.Add, ro.Number>("my_hook",
+                        P =>
+                            P.pOriginalA().pSubtract(P.pOriginalB()).pAdd(1.tFixed().pDirect(P)))
+                        .tAddRule(),
+                    //   └[Resolution will add Rule to the State]
                     Value = Core.tMultiOf(RHint<ro.Number>.Hint(), [
-                    //              ┌[affected by Rule, has "my_hook" Hook]
+                        //          ┌[affected by Rule, has "my_hook" Hook]
                         10.tFixed().tAdd(5.tFixed()).WithHooks("my_hook"),
-                    //              ┌[unaffected by Rule]
+                        //          ┌[unaffected by Rule]
                         10.tFixed().tAdd(5.tFixed())
                     ])
                 }),
                 Expect = new() {
-                //               ┌[[6, 15]]
+                    //           ┌[[6, 15]]
                     Resolution = Iter.Over(6.rAsRes(), 15.rAsRes()).rAsRes()
                 }
             })
@@ -205,29 +211,29 @@ public class Tester
                     Environment = Iter.Over(2, 4).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne().tAsVariable(out var firstSelection),
                     //           ┌[includes a pointer to itself as first arguement in it's definition]
                     Value = Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<ro.Number>, r.Multi<ro.Number>>.Hint(),
-                //   ┌['thisFunc' points to this MetaFunction]
-                    (thisFunc, argA, argB) =>
-                        firstSelection.tRef().tIsGreaterThan(argA.tRef())
-                        .tIfTrue(hint, new()
-                        {
-                            Then = Core.tSubEnvironment(hint, new()
+                    //   ┌['thisFunc' points to this MetaFunction]
+                        (thisFunc, argA, argB) =>
+                            firstSelection.tRef().tIsGreaterThan(argA.tRef())
+                            .tIfTrue(hint, new()
                             {
-                                Environment = argB.tRef().tIOSelectOne().tAsVariable(out var partialSelection).tYield(),
-                                //                              ┌['tYield' converts a value to single-element list]
-                                Value = partialSelection.tRef().tYield()
-                                .tUnion(thisFunc.tRef().tExecuteWith(new()
+                                Then = Core.tSubEnvironment(hint, new()
                                 {
-                                //  ┌[count of selections/recursions that have occured]
-                                    A = argA.tRef().tAdd(1.tFixed()),
-                                //  ┌[the next pool of elements to select from]
-                                    B = argB.tRef().tWithout(partialSelection.tRef().tYield())
-                                //                  └['tWithout' is like LINQ 'Except']
-                                }))
-                            }).tMetaBoxed(),
-                        //  ┌[evaluate to Nolla (None) if the recursion count has surpassed 'firstSelection' value]
-                            Else = Core.tNolla(hint).tMetaBoxed()
-                        //              └[the Union Token ('tUnion') treats Nolla like an empty list]
-                        })
+                                    Environment = argB.tRef().tIOSelectOne().tAsVariable(out var partialSelection).tYield(),
+                                    //                              ┌['tYield' converts a value to single-element list]
+                                    Value = partialSelection.tRef().tYield()
+                                    .tUnion(thisFunc.tRef().tExecuteWith(new()
+                                    {
+                                    //  ┌[count of selections/recursions that have occured]
+                                        A = argA.tRef().tAdd(1.tFixed()),
+                                    //  ┌[the next pool of elements to select from]
+                                        B = argB.tRef().tWithout(partialSelection.tRef().tYield())
+                                    //                  └['tWithout' is like LINQ 'Except']
+                                    }))
+                                }).tMetaBoxed(),
+                            //  ┌[evaluate to Nolla (None) if the recursion count has surpassed 'firstSelection' value]
+                                Else = Core.tNolla(hint).tMetaBoxed()
+                                //          └[the Union Token ('tUnion') treats Nolla like an empty list]
+                            })
                         .tExecute())
                 //   ┌[initial call of recursive function]
                     .tExecuteWith(new()
@@ -258,14 +264,14 @@ public class Tester
 
             MkRuntime().MakeTest(RHint<ro.Number>.Hint(), hint => async () => new() {
                 State = BLANK_STARTING_STATE,
-            //                                    ┌[with two exceptions (shown in next example), a Token evaluates to Nolla if *any* of it's arguements do]
+                //                                ┌[with two exceptions (shown in next example), a Token evaluates to Nolla if *any* of it's arguements do]
                 Evaluate = 100.tFixed().tAdd(Core.tNolla(hint)).tIsGreaterThan(200.tFixed()).tIfTrue(hint, new() {
-            //                                    └['tNolla'=Nolla -> 'tAdd'=Nolla -> 'tIsGreaterThan'=Nolla -> 'tIfTrue'=Nolla -> 'tExecute'=Nolla]
+                //                                └['tNolla'=Nolla -> 'tAdd'=Nolla -> 'tIsGreaterThan'=Nolla -> 'tIfTrue'=Nolla -> 'tExecute'=Nolla]
                     Then = 1.tFixed().tMetaBoxed(),
                     Else = 0.tFixed().tMetaBoxed(),
                 }).tExecute(),
                 Expect = new() {
-            //                       ┌['None' represents Nolla; Nolla is typed]
+                    //               ┌['None' represents Nolla; Nolla is typed]
                     Resolution = new None<ro.Number>()
                 }
             })
@@ -276,7 +282,7 @@ public class Tester
                 State = BLANK_STARTING_STATE,
                 //              ┌[Union Tokens treat Nolla as empty sets]
                 Evaluate = Core.tMultiOf(RHint<ro.Bool>.Hint(),
-            //                  └['tMultiOf', 'tToMulti', 'tUnion', and 'tFlatten' all construct Union Tokens]
+                //              └['tMultiOf', 'tToMulti', 'tUnion', and 'tFlatten' all construct Union Tokens]
                 [
                 //             ┌['tExists' evaluates False iff it's arguement evaluates to Nolla]
                     1.tFixed().tExists(),
@@ -321,12 +327,12 @@ public class Tester
                         Iter.Over(0, 1, 2, 4).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne()
                             .tAsVariable(out var selectedNum),
                     ]),
-            //                   ┌[iteration is only possible through recursion]
+                    //           ┌[iteration is only possible through recursion]
                     Value = Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<ro.Number>>.Hint(),
                     (thisFunc, i) =>
                     i.tRef().tIsGreaterThan(baseArray.tRef().tCount()).tIfTrue(hint, new() {
                         Then = Core.tMultiOf(RHint<ro.Number>.Hint(), []).tMetaBoxed(),
-            //                                  ┌[indexing starts at 1; cry about it]
+                        //                      ┌[indexing starts at 1; cry about it]
                         Else = baseArray.tRef().tGetIndex(i.tRef()).tMultiply(selectedNum.tRef())
                         .tYield().tUnion(thisFunc.tRef().tExecuteWith(new() {
                             A = i.tRef().tAdd(1.tFixed())
@@ -361,9 +367,9 @@ public class Tester
                         Iter.Over(0, 1, 2, 4).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne()
                             .tAsVariable(out var selectedNum),
                     ]),
-            //                               ┌[some Tokens such as 'tMap' are 'Macros', which expand into other Tokens on evaluation]
+                    //                       ┌[some Tokens such as 'tMap' are 'Macros', which expand into other Tokens on evaluation]
                     Value = baseArray.tRef().tMap(x => x.tRef().tMultiply(selectedNum.tRef()))
-            //                               └[the previous test reflects how 'tMap' is implemented]
+                    //                       └[the previous test reflects how 'tMap' is implemented]
                 }),
                 Assert = new() {
                     Resolution = res => res is Some<r.Multi<ro.Number>> result &&
@@ -383,15 +389,15 @@ public class Tester
             MkRuntimeWithAuto([[0], [1]]).MakeTest(RHint<ro.Number>.Hint(), hint => async () => new() {
                 State = BLANK_STARTING_STATE,
                 Evaluate = Core.tSubEnvironment(hint, new() {
-                    Environment = MakeProxy.AsRule<t.Number.Multiply, ro.Number>("hook", P =>
-            //        ┌[will fully evaluate argA Token]
-                    P.pOriginalA().pMultiply(P.pOriginalA())).tAddRule(),
-            //                                 └[will fully evaluate argA Token (again)]
-            //                                                                    ┌[argA of 'tMultiply']
+                    Environment = MakeProxy.AsRule<t.Number.Multiply, ro.Number>("hook",
+                        P =>
+                        //    ┌[will fully evaluate argA Token]
+                            P.pOriginalA().pMultiply(P.pOriginalA())).tAddRule(),
+                        //                             └[will fully evaluate argA Token (again)]
+                    //                                                            ┌[argA of 'tMultiply']
                     Value = Iter.Over(4, 8).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne()
-                    .tMultiply(
-            //             ┌[argB of 'tMultiply']
-                        10.tFixed()).WithHooks("hook")
+                    //                ┌[argB of 'tMultiply']
+                        .tMultiply(10.tFixed()).WithHooks("hook")
                 }),
                 Assert = new() {
                     Resolution = res => res is Some<ro.Number> result &&
@@ -404,11 +410,12 @@ public class Tester
             MkRuntime().MakeTest(RHint<ro.Number>.Hint(), hint => async () => new() {
                 State = BLANK_STARTING_STATE,
                 Evaluate = Core.tSubEnvironment(hint, new() {
-                    Environment = MakeProxy.AsRule<t.Fixed<ro.Number>, ro.Number>("duplicate_me", P =>
-            //        ┌['pThis' refers to the original Token itself, preserving Hooks]
-                    P.pThis().pAdd(P.pThis())).tAddRule()
-            //                ┌[when evaluated, 4 copies of the above Rule will be added to State]
-                    .Yield(4).t_ToConstMulti(),
+                    Environment = MakeProxy.AsRule<t.Fixed<ro.Number>, ro.Number>("duplicate_me",
+                        P =>
+                        //    ┌['pThis' refers to the original Token itself, preserving Hooks]
+                            P.pThis().pAdd(P.pThis())).tAddRule()
+                        //            ┌[when evaluated, 4 copies of the above Rule will be added to State]
+                            .Yield(4).t_ToConstMulti(),
                     Value = 1.tFixed().WithHooks("duplicate_me")
                 }),
                 Expect = new() {
