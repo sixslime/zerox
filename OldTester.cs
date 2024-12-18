@@ -80,8 +80,8 @@ public class OldTester
             B = token_complicated
         });
         var token_test_4 = token_tutorial_2.tMap(x => x.tRef().tMultiply(2.tFixed()));
-        var token_test_5 = 5.tFixed().tWithHooks("test").tAdd(10.tFixed().tWithHooks("test"));
-        var token_test_6 = token_test_5.tWithHooks("test");
+        var token_test_5 = 5.tFixed().WithHooks("test").tAdd(10.tFixed().WithHooks("test"));
+        var token_test_6 = token_test_5.WithHooks("test");
 
         var rule_test_1 = MakeProxy.AsRule<t.Number.Add, ro.Number>("test", P => P.pOriginalA().pSubtract(P.pOriginalB()));
         var rule_test_2 = MakeProxy.AsRule<t.Number.Add, ro.Number>("test", P => P.pSubEnvironment(RHint<ro.Number>.Hint(), new()
@@ -107,7 +107,7 @@ public class OldTester
                 A = num.tRef().pDirect(P),
                 B = num.tRef().pDirect(P)
             }) with
-            { HookLabelRemovals = ["test"] }
+            { HookRemovals = ["test"] }
         }));
         var token_tester = token_test_3;
         FZ.IState startState = new FZ.StateModels.Minimal()

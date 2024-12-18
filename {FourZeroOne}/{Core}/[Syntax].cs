@@ -306,14 +306,6 @@ namespace FourZeroOne.Core.Syntax
     }
     public static class _Extensions
     {
-        public static TT tWithHooks<TT>(this TT token, params string[] hooks) where TT : class, IToken
-        {
-            return (TT)token.UnsafeWithHookLabels(hooks);
-        }
-        public static P pWithHooks<P>(this P proxy, params string[] hooks) where P : class, Proxy.Unsafe.IProxy
-        {
-            return (P)proxy.UnsafeWithHookLabels(hooks);
-        }
         public static t.IO.Select.One<R> tIOSelectOne<R>(this IToken<IMulti<R>> source) where R : class, ResObj
         { return new(source); }
         public static p.Function<t.IO.Select.One<R>, TOrig, IMulti<R>, R> pIOSelectOne<TOrig, R>(this IProxy<TOrig, IMulti<R>> source) where TOrig : IToken where R : class, ResObj

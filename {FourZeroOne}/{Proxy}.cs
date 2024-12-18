@@ -12,7 +12,7 @@ namespace FourZeroOne.Proxy
     public interface IProxy<in TOrig, out R> : Unsafe.IProxyOf<TOrig>, Unsafe.IProxy<R> where TOrig : IToken where R : class, ResObj
     {
         public IToken<R> Realize(TOrig original, IOption<Rule.IRule> realizingRule);
-        public IProxy<TOrig, R> WithHookLabels(IEnumerable<string> labels);
+        public IProxy<TOrig, R> WithHooks(IEnumerable<string> labels);
     }
     public abstract record Proxy<TOrig, R> : IProxy<TOrig, R> where TOrig : IToken where R : class, ResObj
     {
@@ -32,8 +32,9 @@ namespace FourZeroOne.Proxy
         public IToken<R> UnsafeTypedRealize(IToken original, IOption<Rule.IRule> rule) => Realize((TOrig)original, rule);
         public IToken UnsafeContextualRealize(TOrig original, IOption<Rule.IRule> rule) => Realize(original, rule);
         public IToken UnsafeRealize(IToken original, IOption<Rule.IRule> rule) => UnsafeTypedRealize(original, rule);
-        public Unsafe.IProxy UnsafeWithHookLabels(IEnumerable<string> labels) => WithHookLabels(labels);
-        public IProxy<TOrig, R> WithHookLabels(IEnumerable<string> labels) => this with { _hookLabels = new() { Elements = labels } };
+        public Unsafe.IProxy UnsafeWithHooks(IEnumerable<string> labels) => WithHooks(labels);
+        public IProxy<TOrig, R> WithHooks(params string[] labels) => WithHooks(labels.IEnumerable());
+        public IProxy<TOrig, R> WithHooks(IEnumerable<string> labels) => this with { _hookLabels = new() { Elements = labels } };
         protected static IToken<RLocal> RuleApplied<RLocal>(IOption<Rule.IRule> rule, IToken<RLocal> original) where RLocal : class, ResObj
         {
             return rule.RemapAs(r => r.TryApplyTyped(original)).Press().Or(original);
@@ -55,7 +56,7 @@ namespace FourZeroOne.Proxy.Unsafe
     {
         public IEnumerable<string> HookLabels { get; }
         public IToken UnsafeRealize(IToken original, IOption<Rule.IRule> rule);
-        public IProxy UnsafeWithHookLabels(IEnumerable<string> labels);
+        public IProxy UnsafeWithHooks(IEnumerable<string> labels);
     }
     public interface IProxy<out R> : IProxy where R : class, ResObj
     {
@@ -69,7 +70,7 @@ namespace FourZeroOne.Proxy.Unsafe
     // DEV: perhaps make FunctionProxy follow the same structure as TransformProxy
     public abstract record ThisProxy<TOrig, R> : Proxy<TOrig, R> where TOrig : IToken<R> where R : class, ResObj
     {
-        public IEnumerable<string> HookLabelRemovals { get => RemovedHookLabels.Elements; init => RemovedHookLabels = new() { Elements = value }; }
+        public IEnumerable<string> HookRemovals { get => RemovedHookLabels.Elements; init => RemovedHookLabels = new() { Elements = value }; }
         protected readonly PList<IProxy> ArgProxies;
         protected readonly PSet<string> RemovedHookLabels;
         protected ThisProxy(IEnumerable<string> hookRemovals, IEnumerable<IProxy> proxies)

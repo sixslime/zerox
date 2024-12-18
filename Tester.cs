@@ -398,7 +398,7 @@ public class Tester
                         (result.Unwrap().Value is 4*4 or 4*8 or 8*8)
                 }
             })
-            .Named("Token duplication through proxies"),
+            .Named("Token duplication with Proxy/Rule"),
 
 
             MkRuntime().MakeTest(RHint<ro.Number>.Hint(), hint => async () => new() {
@@ -407,7 +407,7 @@ public class Tester
                     Environment = MakeProxy.AsRule<t.Fixed<ro.Number>, ro.Number>("duplicate_me", P =>
             //        ┌['pThis' refers to the original Token itself, preserving Hooks]
                     P.pThis().pAdd(P.pThis())).tAddRule()
-            //       ┌[enumerator that yields this Token 4 times]
+            //                ┌[when evaluated, 4 copies of the above Rule will be added to State]
                     .Yield(4).t_ToConstMulti(),
                     Value = 1.tFixed().WithHooks("duplicate_me")
                 }),
@@ -415,6 +415,7 @@ public class Tester
                     Resolution = 16.rAsRes()
                 }
             })
+            .Named("Rules in sequence")
         ];
         // make better later
         foreach (var testGroup in testGroups)
