@@ -8,6 +8,9 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     using ro = Core.Resolutions.Objects;
     using ax = GameObjects;
     using Resolution;
+    using FourZeroOne.Proxy;
+    using FourZeroOne.Core.Macros;
+    using FourZeroOne.Core.Resolutions;
 
     namespace GameObjects
     {
@@ -28,7 +31,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         }
         namespace Hex
         {
-            public sealed record Data : CompositionNoOp
+            public sealed record Data : ICompositionType
             {
                 public readonly static StaticComponentIdentifier<Data, ro.Bool> CONTROL_POINT = new("axiom", "control_point");
                 public readonly static StaticComponentIdentifier<Data, ro.Bool> OPEN = new("axiom", "open");
@@ -49,7 +52,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         }
         namespace Player
         {
-            public sealed record Data : CompositionNoOp
+            public sealed record Data : ICompositionType
             {
                 
             }
@@ -101,9 +104,9 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     namespace Action
     {
         public interface IAction : ResObj { }
-        public record Data : ICompositionType
+        public record Data : IDecomposableType<Data>
         {
-            public ICompositionType.ResolutionFunction EvaluatedAs => components => throw new NotImplementedException();
+            public IProxy<Decompose<Data>, Multi<ResObj>> DecompositionProxy => throw new NotImplementedException();
         }
 
     }

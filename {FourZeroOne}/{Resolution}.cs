@@ -30,15 +30,10 @@ namespace FourZeroOne.Resolution
     /// Types that implement must be functionally static and have an empty constructor with no init fields. <br></br>
     /// Yup! thats how I'm doing things!
     /// </summary>
-    public interface ICompositionType
+    public interface ICompositionType { }
+    public interface IDecomposableType<Self> : ICompositionType where Self : IDecomposableType<Self>
     {
-        public delegate IOption<IResolution> ResolutionFunction(PMap<Unsafe.IComponentIdentifier, IResolution> components);
-        public ResolutionFunction EvaluatedAs { get; }
-    }
-    public abstract record CompositionNoOp : ICompositionType
-    {
-        public ICompositionType.ResolutionFunction EvaluatedAs => _ => _nolla;
-        private static readonly None<IResolution> _nolla = new();
+        public Proxy.IProxy<Core.Macros.Decompose<Self>, Core.Resolutions.Multi<IResolution>> DecompositionProxy { get; }
     }
     public interface IMulti<out R> : IResolution where R : IResolution
     {
@@ -58,13 +53,11 @@ namespace FourZeroOne.Resolution
     }
     // the 'new()' constraint is mega stupid.
     // this is mega stupid.
-    public record CompositionOf<C> : Construct, ICompositionOf<C> where C : ICompositionType, new()
+    public record CompositionOf<C> : NoOp, ICompositionOf<C> where C : ICompositionType, new()
     {
-        public override IEnumerable<IInstruction> Instructions => _instance.EvaluatedAs(_components).RemapAs(x => x.Instructions).Or([]);
         public CompositionOf()
         {
             _components = new() { Elements = [] };
-            _instance = new();
         }
         // UNBELIEVABLY stupid
         public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : IResolution => (ICompositionOf<C>)WithComponentsUnsafe(((Unsafe.IComponentIdentifier)identifier, (IResolution)data).Yield());
@@ -86,7 +79,6 @@ namespace FourZeroOne.Resolution
             return _components[address];
         }
         private PMap<Unsafe.IComponentIdentifier, IResolution> _components { get; init; }
-        private readonly C _instance;
     }
     public abstract record NoOp : Construct
     {

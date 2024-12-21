@@ -15,6 +15,7 @@ namespace FourZeroOne.Core.Macros
     using FourZeroOne.Proxy;
     using Syntax;
     using FourZeroOne.Proxy.Unsafe;
+    using FourZeroOne.Core.Resolutions;
 
     namespace Multi
     {
@@ -59,8 +60,13 @@ namespace FourZeroOne.Core.Macros
         }
     }
     
-    // TODO: make IfElse macro that executes the metafunction returned by the token IfElse. then rename the token IfElse to something else (and make it general maybe) :D.
+    public sealed record Decompose<D> : OneArg<Resolution.ICompositionOf<D>, r.Multi<ResObj>> where D : Resolution.IDecomposableType<D>, new()
+    {
+        public Decompose(IToken<Resolution.ICompositionOf<D>> composition) : base(composition) { }
 
+        // this is nightmare fuel.
+        protected override IProxy<Multi<ResObj>> InternalProxy => new D().DecompositionProxy;
+    }
     public sealed record UpdateStateObject<A, D> : TwoArg<A, r.Boxed.MetaFunction<D, D>, r.Instructions.Assign<D>> where A : class, Resolution.IStateAddress<D>, ResObj where D : class, ResObj
     {
         public UpdateStateObject(IToken<A> in1, IToken<r.Boxed.MetaFunction<D, D>> in2) : base(in1, in2) { }
