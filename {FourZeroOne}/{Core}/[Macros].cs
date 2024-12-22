@@ -114,6 +114,7 @@ namespace FourZeroOne.Core.Macros
                 .pExecute()
             });
         });
+        protected override IOption<string> CustomToString() => $"{Arg1} or {Arg2}".AsSome();
     }
 
 }

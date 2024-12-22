@@ -286,7 +286,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 return args[0].RemapAs(x => ((ICompositionOf<C>)x).WithoutComponents([_identifier])).ToCompletedITask();
             }
-            protected override IOption<string> CustomToString() => $"{ArgTokens[0]}:{{X {_identifier}}}".AsSome();
+            protected override IOption<string> CustomToString() => $"{ArgTokens[0]}:{{{_identifier} X}}".AsSome();
             private readonly Resolution.Unsafe.IComponentIdentifier<C> _identifier;
         }
     }
