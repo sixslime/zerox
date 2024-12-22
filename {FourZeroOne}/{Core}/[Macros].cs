@@ -84,13 +84,14 @@ namespace FourZeroOne.Core.Macros
             });
         });
     }
-    public sealed record Compose<C> : Macro<Resolution.CompositionOf<C>> where C : Resolution.ICompositionType, new()
+    public sealed record Compose<C> : Macro<Resolution.ICompositionOf<C>> where C : Resolution.ICompositionType, new()
     {
-        protected override IProxy<Resolution.CompositionOf<C>> InternalProxy => PROXY;
-        public readonly static IProxy<Compose<C>, Resolution.CompositionOf<C>> PROXY = MakeProxy.Statement<Compose<C>, Resolution.CompositionOf<C>>(P =>
+        protected override IProxy<Resolution.ICompositionOf<C>> InternalProxy => PROXY;
+        public readonly static IProxy<Compose<C>, Resolution.ICompositionOf<C>> PROXY = MakeProxy.Statement<Compose<C>, Resolution.ICompositionOf<C>>(P =>
         {
             return new Resolution.CompositionOf<C>().tFixed().pDirect(P);
         });
+        protected override IOption<string> CustomToString() => $"{typeof(C).Namespace!.Split(".")[^1]}.{typeof(C).Name}".AsSome();
     }
     public sealed record CatchNolla<R> : TwoArg<R, R, R> where R : class, ResObj
     {

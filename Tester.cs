@@ -9,10 +9,14 @@ using FZ = FourZeroOne;
 using ResObj = FourZeroOne.Resolution.IResolution;
 using r = FourZeroOne.Core.Resolutions;
 using a = FourZeroOne.Libraries.Axiom;
+using ar = FourZeroOne.Libraries.Axiom.Resolutions;
+using ax = FourZeroOne.Libraries.Axiom.Resolutions.GameObjects;
 using ro = FourZeroOne.Core.Resolutions.Objects;
 using System.Threading.Tasks;
 using Perfection;
 using ControlledFlows;
+using FourZeroOne.Resolution;
+using FourZeroOne.Token;
 using FourZeroOne.Testing;
 using FourZeroOne.Testing.Syntax;
 namespace PROTO_ZeroxFour_1;
@@ -41,7 +45,6 @@ public class Tester
          *  - 'p' return Proxies (will be explained when encountered).
          * - when "prompted" to select, enter the index number of the desired element.
          */
-
         testGroups["Intro Demo"] =
         [
             //          ┌[make a test that expects a final Resolution-type of 'ro.Number']
@@ -185,7 +188,6 @@ public class Tester
          * - When prompted to make a manual selection, you may enter '<' followed by number to "rewind" that many 'Frames'. ex: "<7"
          *  - A Frame is saved whenever a Token evaluates to a Resolution (green text).
          */
-
         testGroups["Advanced Examples"] =
         [
         //  ┌['MkRuntimeWithAuto' makes a Test with auto-selections]
@@ -424,6 +426,34 @@ public class Tester
             })
             .Named("Rules in sequence")
         ];
+
+        testGroups["Components"] =
+        [
+            MkRuntime().MakeTest(RHint<ICompositionOf<ax.Unit.Data>>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = Core.tCompose<ax.Unit.Data>()
+                    .tWithComponent(ax.Unit.Data.HP, 5.tFixed())
+                    .tWithComponent(ax.Unit.Data.OWNER, new ax.Player.Address() {ID = 1}.tFixed())
+            })
+            .Use(out var base_unit),
+
+            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = (await base_unit.GetToken())
+                .tGetComponent(ax.Unit.Data.HP)
+            }),
+
+            MkRuntime().MakeTest(RHint<ICompositionOf<ax.Unit.Data>>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = (await base_unit.GetToken())
+                .tWithoutComponent(ax.Unit.Data.HP)
+            })
+        ];
+
+        // skips
+        testGroups.Remove("Intro Demo");
+        testGroups.Remove("Advanced Examples");
+
         // make better later
         foreach (var testGroup in testGroups)
         {
@@ -431,6 +461,7 @@ public class Tester
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine($"\n=== GROUP: \"{testGroup.Key}\" ===");
             Console.ResetColor();
+
             for (int i = 0; i < groupList.Count; i++)
             {
                 Console.ForegroundColor = ConsoleColor.White;

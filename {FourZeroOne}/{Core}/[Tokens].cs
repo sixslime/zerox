@@ -252,6 +252,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 return args[0].RemapAs(x => ((ICompositionOf<C>)x).GetComponent(_identifier)).Press().ToCompletedITask();
             }
+            protected override IOption<string> CustomToString() => $"{ArgTokens[0]}->{_identifier}".AsSome();
             private readonly IComponentIdentifier<C, R> _identifier;
         }
         public sealed record With<C, R> : Token<ICompositionOf<C>> where R : class, ResObj where C : ICompositionType
@@ -272,6 +273,7 @@ namespace FourZeroOne.Core.Tokens
                     : new None<ICompositionOf<C>>()
                     ).ToCompletedITask();
             }
+            protected override IOption<string> CustomToString() => $"{ArgTokens[0]}:{{{_identifier}={ArgTokens[1]}}}".AsSome();
             private readonly IComponentIdentifier<C, R> _identifier;
         }
         public sealed record Without<C> : Token<ICompositionOf<C>> where C : ICompositionType
@@ -284,6 +286,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 return args[0].RemapAs(x => ((ICompositionOf<C>)x).WithoutComponents([_identifier])).ToCompletedITask();
             }
+            protected override IOption<string> CustomToString() => $"{ArgTokens[0]}:{{X {_identifier}}}".AsSome();
             private readonly Resolution.Unsafe.IComponentIdentifier<C> _identifier;
         }
     }

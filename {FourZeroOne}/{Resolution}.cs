@@ -78,6 +78,10 @@ namespace FourZeroOne.Resolution
         {
             return _components[address];
         }
+        public override string ToString()
+        {
+            return $"{typeof(C).Namespace!.Split(".")[^1]}.{typeof(C).Name}:{{{string.Join(" ", _components.Elements.Map(x => $"{x.key}={x.val}"))}}}";
+        }
         private PMap<Unsafe.IComponentIdentifier, IResolution> _components { get; init; }
     }
     public abstract record NoOp : Construct

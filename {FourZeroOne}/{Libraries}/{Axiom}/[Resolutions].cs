@@ -20,13 +20,17 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
             {
                 public readonly static StaticComponentIdentifier<Data, ro.Number> HP = new("axiom", "hp");
                 public readonly static StaticComponentIdentifier<Data, Hex.Position> POSITION = new("axiom", "position");
-                public readonly static StaticComponentIdentifier<Data, Player.Identifier> OWNER = new("axiom", "owner");
+                public readonly static StaticComponentIdentifier<Data, Player.Address> OWNER = new("axiom", "owner");
                 public readonly static StaticComponentIdentifier<Data, r.Multi<NEffect>> EFFECTS = new("axiom", "effects");
             }
-            public record Identifier : NoOp, IStateAddress<CompositionOf<Data>>
+            public record Address : NoOp, IStateAddress<CompositionOf<Data>>
             {
                 public required int ID { get; init; }
-                public Identifier() { }
+                public Address() { }
+                public override string ToString()
+                {
+                    return $"@unit{ID}";
+                }
             }
         }
         namespace Hex
@@ -36,7 +40,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
                 public readonly static StaticComponentIdentifier<Data, ro.Bool> CONTROL_POINT = new("axiom", "control_point");
                 public readonly static StaticComponentIdentifier<Data, ro.Bool> OPEN = new("axiom", "open");
                 public readonly static StaticComponentIdentifier<Data, ro.Bool> WALL = new("axiom", "wall");
-                public readonly static StaticComponentIdentifier<Data, Player.Identifier> PLAYER_BASE = new("axiom", "player_base");
+                public readonly static StaticComponentIdentifier<Data, Player.Address> PLAYER_BASE = new("axiom", "player_base");
             }
             public sealed record Position : NoOp, IStateAddress<CompositionOf<Data>>
             {
@@ -48,6 +52,10 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
                 {
                     return new() { R = transformFunction(R, other.R), U = transformFunction(U, other.U), D = transformFunction(D, other.D) };
                 }
+                public override string ToString()
+                {
+                    return $"@hex{R}.{U}.{D}";
+                }
             }
         }
         namespace Player
@@ -56,10 +64,14 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
             {
                 
             }
-            public sealed record Identifier : NoOp, IStateAddress<CompositionOf<Data>>
+            public sealed record Address : NoOp, IStateAddress<CompositionOf<Data>>
             {
                 public required int ID { get; init; }
-                public Identifier() { }
+                public Address() { }
+                public override string ToString()
+                {
+                    return $"@player{ID}";
+                }
             }
         }
 

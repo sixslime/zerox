@@ -54,19 +54,9 @@ namespace FourZeroOne.Core.Resolutions
             public override string ToString() => $"{Address}<-{Subject}";
         }
 
+        // unused for now(?)
         public record Merge<H> : ICompositionType where H : ICompositionType, new()
         {
-            public ICompositionType.ResolutionFunction EvaluatedAs => components =>
-            {
-                return components[SUBJECT].Check(out var sObj) && sObj is ICompositionOf<H> subject
-                    ? subject
-                        .WithComponentsUnsafe(
-                            components.Elements
-                            .Where(x => x.key is _Private.IMerger)
-                            .Map(x => (((_Private.IMerger)x.key).ForComponent, x.val)))
-                        .AsSome()
-                    : new None<ResObj>();
-            };
             public readonly static StaticComponentIdentifier<Merge<H>, ICompositionOf<H>> SUBJECT = new("CORE", "subject");
             public static _Private.MergeComponentIdentifier<H, R> MERGE<R>(IComponentIdentifier<H, R> component) where R : class, ResObj => new(component);
         }
