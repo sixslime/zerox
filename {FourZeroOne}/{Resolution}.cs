@@ -33,7 +33,7 @@ namespace FourZeroOne.Resolution
     public interface ICompositionType { }
     public interface IDecomposableType<Self> : ICompositionType where Self : IDecomposableType<Self>, new()
     {
-        public Proxy.IProxy<Core.Macros.Decompose<Self>, Core.Resolutions.Multi<IResolution>> DecompositionProxy { get; }
+        public Proxy.IProxy<Core.Macros.Decompose<Self>, IResolution> DecompositionProxy { get; }
     }
     public interface IMulti<out R> : IResolution where R : IResolution
     {

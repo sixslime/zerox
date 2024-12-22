@@ -263,10 +263,9 @@ namespace FourZeroOne.Core.Tokens
             }
             public override ITask<IOption<ICompositionOf<C>>> Resolve(IRuntime _, IOption<ResObj>[] args)
             {
-                return (
-                    (args[0].RemapAs(x => (ICompositionOf<C>)x).Check(out var holder))
-                    ? (IOption<ICompositionOf<C>>) (
-                        (args[1].RemapAs(x => (R)x).Check(out var component))
+                return
+                    (args[0].RemapAs(x => (ICompositionOf<C>)x).Check(out var holder)
+                    ?  (args[1].RemapAs(x => (R)x).Check(out var component)
                         ? holder.WithComponent(_identifier, component)
                         : holder
                         ).AsSome()
@@ -288,6 +287,15 @@ namespace FourZeroOne.Core.Tokens
             }
             protected override IOption<string> CustomToString() => $"{ArgTokens[0]}:{{{_identifier} X}}".AsSome();
             private readonly Resolution.Unsafe.IComponentIdentifier<C> _identifier;
+        }
+        // move this to axiom, simplify the Merge component to actually just pure merge (no address), then in Axiom, create "action" which includes a Merge as a component, aswell as the address.
+        // guys, were making progress, i swear.
+        public sealed record DoMerge<A, C> : Function<ICompositionOf<r.CompTypes.Merge<A, C>>, ResObj> where A : class, IStateAddress<ICompositionOf<C>>, ResObj where C : ICompositionType
+        {
+            protected override ITask<IOption<ResObj>> Evaluate(IRuntime runtime, IOption<ICompositionOf<r.CompTypes.Merge<A, C>>> in1)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
     public record Execute<R> : Function<r.Boxed.MetaFunction<R>, R>

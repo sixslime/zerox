@@ -118,7 +118,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
         public interface IAction<Self> : IDecomposableType<Self> where Self : IAction<Self>, new() { }
         public record Data : IDecomposableType<Data>
         {
-            public IProxy<Decompose<Data>, Multi<ResObj>> DecompositionProxy => throw new NotImplementedException();
+            public IProxy<Decompose<Data>, ResObj> DecompositionProxy => throw new NotImplementedException();
         }
 
     }

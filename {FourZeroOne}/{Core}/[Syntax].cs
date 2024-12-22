@@ -492,7 +492,7 @@ namespace FourZeroOne.Core.Syntax
         { return new(identifier, holder); }
         public static tM.Decompose<D> tDecompose<D>(this IToken<ICompositionOf<D>> composition) where D : IDecomposableType<D>, new()
         { return new(composition); }
-        public static p.Function<tM.Decompose<D>, TOrig, ICompositionOf<D>, r.Multi<ResObj>> pDecompose<TOrig, D>(this IProxy<TOrig, ICompositionOf<D>> composition) where D : IDecomposableType<D>, new() where TOrig : IToken
+        public static p.Function<tM.Decompose<D>, TOrig, ICompositionOf<D>, ResObj> pDecompose<TOrig, D>(this IProxy<TOrig, ICompositionOf<D>> composition) where D : IDecomposableType<D>, new() where TOrig : IToken
         { return new(composition); }
 
 

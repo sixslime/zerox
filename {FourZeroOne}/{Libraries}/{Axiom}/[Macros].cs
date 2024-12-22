@@ -23,6 +23,8 @@ namespace FourZeroOne.Libraries.Axiom.Macros
     {
         // yes, this is good. this means that "gameactions" (and other action structures) are defined in resolutions
         // do we even need hooks man
+
+        /* we aint even need this
         public sealed record SendAction<A> : OneArg<ICompositionOf<A>, r.Multi<ResObj>> where A : class, ar.Action.IAction<A>, new()
         {
             public SendAction(IToken<ICompositionOf<A>> action) : base(action) { }
@@ -30,6 +32,7 @@ namespace FourZeroOne.Libraries.Axiom.Macros
             public readonly static IProxy<SendAction<A>, r.Multi<ResObj>> PROXY =
                 MakeProxy.Statement<SendAction<A>, r.Multi<ResObj>>(P => P.pOriginalA().pDecompose());
         }
+        */
         
     }
         // numericalmove(Units, Range, Func<Hex, Hex> modifier)

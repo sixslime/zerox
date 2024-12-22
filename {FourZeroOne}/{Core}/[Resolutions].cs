@@ -42,6 +42,9 @@ namespace FourZeroOne.Core.Resolutions
     }
     namespace Instructions
     {
+        using FourZeroOne.Core.Macros;
+        using FourZeroOne.Proxy;
+        using FourZeroOne.Core.Syntax;
         using Objects;
         public sealed record Assign<D> : Instruction where D : class, ResObj
         {
@@ -53,30 +56,7 @@ namespace FourZeroOne.Core.Resolutions
             }
             public override string ToString() => $"{Address}<-{Subject}";
         }
-
-        // unused for now(?)
-        public record Merge<H> : ICompositionType where H : ICompositionType, new()
-        {
-            public readonly static StaticComponentIdentifier<Merge<H>, ICompositionOf<H>> SUBJECT = new("CORE", "subject");
-            public static _Private.MergeComponentIdentifier<H, R> MERGE<R>(IComponentIdentifier<H, R> component) where R : class, ResObj => new(component);
-        }
-        namespace _Private
-        {
-            public interface IMerger
-            {
-                public IComponentIdentifier ForComponent { get; }
-            }
-            public record MergeComponentIdentifier<H, R> : IComponentIdentifier<Merge<H>, R>, IMerger where H : ICompositionType, new() where R : class, ResObj
-            {
-                public IComponentIdentifier ForComponent { get; private init; }
-                public string Source => "CORE";
-                public string Identity => $"merge-{ForComponent.Identity}";
-                public MergeComponentIdentifier(IComponentIdentifier<H, R> component)
-                {
-                    ForComponent = component;
-                }
-            }
-        }
+        
 
         public sealed record Redact : Instruction
         {
@@ -92,6 +72,10 @@ namespace FourZeroOne.Core.Resolutions
             public override IState ChangeState(IState state)
             {
                 return state.WithRules([Rule]);
+            }
+            public override string ToString()
+            {
+                return $"<?>+{Rule}";
             }
         }
     }
@@ -162,6 +146,34 @@ namespace FourZeroOne.Core.Resolutions
             public override string ToString() => $"<{Arg1},{Arg2},{Arg3}>";
         }
 
+    }
+    namespace CompTypes
+    {
+        // requires a special "Merge" token to be created, cannot be regularly decomposed
+        // move this to axiom, make it a decomposition type AND an instruction. it should
+        public record Merge<A, H> : ICompositionType, _Private.IMerge<H> where H : ICompositionType where A : class, IStateAddress<ICompositionOf<H>>, ResObj
+        {
+
+            public readonly static StaticComponentIdentifier<Merge<A, H>, A> ADDRESS = new("CORE", "address");
+            public readonly static StaticComponentIdentifier<Merge<A, H>, ICompositionOf<H>> PREV_DATA = new("CORE", "prev");
+            public static _Private.MergeComponentIdentifier<H, R> MERGE<R>(IComponentIdentifier<H, R> component) where R : class, ResObj => new(component);
+
+        }
+        namespace _Private
+        {
+            // ??
+            public interface IMerge<H> : ICompositionType where H : ICompositionType { }
+            public record MergeComponentIdentifier<H, R> : IComponentIdentifier<IMerge<H>, R> where H : ICompositionType where R : class, ResObj
+            {
+                public IComponentIdentifier<H, R> ForComponent { get; private init; }
+                public string Source => "CORE";
+                public string Identity => $"merge-{ForComponent.Identity}";
+                public MergeComponentIdentifier(IComponentIdentifier<H, R> component)
+                {
+                    ForComponent = component;
+                }
+            }
+        }
     }
 
     public sealed record Multi<R> : Construct, IMulti<R> where R : class, ResObj

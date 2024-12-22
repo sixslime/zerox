@@ -60,12 +60,12 @@ namespace FourZeroOne.Core.Macros
         }
     }
     
-    public sealed record Decompose<D> : OneArg<Resolution.ICompositionOf<D>, r.Multi<ResObj>> where D : Resolution.IDecomposableType<D>, new()
+    public sealed record Decompose<D> : OneArg<Resolution.ICompositionOf<D>, ResObj> where D : Resolution.IDecomposableType<D>, new()
     {
         public Decompose(IToken<Resolution.ICompositionOf<D>> composition) : base(composition) { }
 
         // this is nightmare fuel.
-        protected override IProxy<Multi<ResObj>> InternalProxy => new D().DecompositionProxy;
+        protected override IProxy<ResObj> InternalProxy => new D().DecompositionProxy;
     }
     public sealed record UpdateStateObject<A, D> : TwoArg<A, r.Boxed.MetaFunction<D, D>, r.Instructions.Assign<D>> where A : class, Resolution.IStateAddress<D>, ResObj where D : class, ResObj
     {
