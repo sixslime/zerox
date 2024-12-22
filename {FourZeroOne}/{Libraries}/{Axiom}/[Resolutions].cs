@@ -16,7 +16,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     {
         namespace Unit
         {
-            public record Data : CompositionNoOp
+            public record Data : ICompositionType
             {
                 public readonly static StaticComponentIdentifier<Data, ro.Number> HP = new("axiom", "hp");
                 public readonly static StaticComponentIdentifier<Data, Hex.Position> POSITION = new("axiom", "position");
@@ -103,7 +103,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     }
     namespace Action
     {
-        public interface IAction : ResObj { }
+        public interface IAction<Self> : IDecomposableType<Self> where Self : IAction<Self>, new() { }
         public record Data : IDecomposableType<Data>
         {
             public IProxy<Decompose<Data>, Multi<ResObj>> DecompositionProxy => throw new NotImplementedException();
