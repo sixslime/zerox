@@ -299,9 +299,7 @@ namespace FourZeroOne.Core.Tokens
                 return in1.RemapAs(merger => merger.GetComponent(r.CompTypes.Merge<C>.SUBJECT)
                     .RemapAs(subject =>
                         (ICompositionOf<C>)subject.WithComponentsUnsafe(merger.ComponentsUnsafe.Elements
-                            .Map(x => (x.key as r.CompTypes._Private.IMergeIdentifier, x.val))
-                            .Where(x => x.Item1 is not null)
-                            .Map(x => (x.Item1!.ForComponentUnsafe, x.val)))))
+                            .FilterMap(x => (x.key as r.CompTypes._Private.IMergeIdentifier).NullToNone().RemapAs(y => (y.ForComponentUnsafe, x.val))))))
                     .Press().ToCompletedITask();
             }
         }
