@@ -74,6 +74,12 @@ namespace FourZeroOne.Testing
                 ? results.Resolution.RemapAs(x => (R)x)
                 : throw exc;
         }
+        public async ITask<IState> GetPostState()
+        {
+            return (await EvaluateMustPass()).RunResult.Break(out var results, out var exc)
+                ? results.State
+                : throw exc;
+        }
         public async Task<Structure.FinishedTest> EvaluateMustPass()
         {
             var o = await Evaluate();
@@ -122,6 +128,7 @@ namespace FourZeroOne.Testing
         public U Runtime { get; }
         public ITask<IToken<R>> GetToken();
         public ITask<IOption<R>> GetResolution();
+        public ITask<IState> GetPostState();
         public Task<Structure.FinishedTest> Evaluate();
         public Task<Structure.FinishedTest> EvaluateMustPass();
     }

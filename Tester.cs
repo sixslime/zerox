@@ -461,7 +461,7 @@ public class Tester
             MkRuntime().MakeTest(RHint<r.Multi<ICompositionOf<ax.Unit.Data>>>.Hint(), hint => async () => new() {
                 State = BLANK_STARTING_STATE,
                 Evaluate = Core.tSubEnvironment(hint, new() {
-                    Environment = (await unit_merge.GetToken()).tAsVariable(out var merger),
+                    Environment = (await unit_merge.GetResolution()).Unwrap().tFixed().tAsVariable(out var merger),
                     Value = Core.tMultiOf(RHint<ICompositionOf<ax.Unit.Data>>.Hint(),
                     [
                         merger.tRef().tGetComponent(r.MergeSpec<ax.Unit.Data>.SUBJECT),
