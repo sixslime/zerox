@@ -10,7 +10,7 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     using Resolution;
     using FourZeroOne.Proxy;
     using FourZeroOne.Core.Macros;
-    using FourZeroOne.Core.Resolutions;
+    using Core.Syntax;
 
     namespace GameObjects
     {
@@ -116,9 +116,17 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     namespace Action
     {
         public interface IAction<Self> : IDecomposableType<Self> where Self : IAction<Self>, new() { }
-        public record Data : IDecomposableType<Data>
+        public record Change<A, C> : IDecomposableType<Change<A, C>> where A : class, IStateAddress<ICompositionOf<C>>, ResObj where C : ICompositionType
         {
-            public IProxy<Decompose<Data>, ResObj> DecompositionProxy => throw new NotImplementedException();
+            public IProxy<Decompose<Change<A, C>>, ResObj> DecompositionProxy => MakeProxy.Statement<Decompose<Change<A,C>>, ResObj>(
+                P =>
+                    P.pSubEnvironment(RHint<ResObj>.Hint(), new()
+                    {
+                        Environment = P.pOriginalA().pAsVariable(out var changeObj),
+                        Value = changeObj.tRef().
+                    })
+            public readonly static StaticComponentIdentifier<Change<A, C>, A> ADDRESS = new("axiom", "address");
+            public readonly static StaticComponentIdentifier<Change<A, C>, ICompositionOf<r.MergeSpec<C>>> CHANGE = new("axiom", "change");
         }
 
     }
