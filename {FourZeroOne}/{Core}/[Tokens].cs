@@ -290,13 +290,19 @@ namespace FourZeroOne.Core.Tokens
         }
         // move this to axiom, simplify the Merge component to actually just pure merge (no address), then in Axiom, create "action" which includes a Merge as a component, aswell as the address.
         // guys, were making progress, i swear.
-        public sealed record DoMerge<C> : PureFunction<ICompositionOf<r.CompTypes.Merge<C>>, ICompositionOf<C>> where C : ICompositionType
+        public sealed record DoMerge<C> : Function<ICompositionOf<r.CompTypes.Merge<C>>, ICompositionOf<C>> where C : ICompositionType
         {
             public DoMerge(IToken<ICompositionOf<r.CompTypes.Merge<C>>> in1) : base(in1) { }
-            protected override ICompositionOf<C> EvaluatePure(ICompositionOf<r.CompTypes.Merge<C>> merger)
+
+            protected override ITask<IOption<ICompositionOf<C>>> Evaluate(IRuntime runtime, IOption<ICompositionOf<r.CompTypes.Merge<C>>> in1)
             {
-                return merger.GetComponent(r.CompTypes.Merge<C>.SUBJECT).RemapAs(subject =>
-                    subject.WithComponentsUnsafe(merger.ComponentsUnsafe))
+                return in1.RemapAs(merger => merger.GetComponent(r.CompTypes.Merge<C>.SUBJECT)
+                    .RemapAs(subject =>
+                        (ICompositionOf<C>)subject.WithComponentsUnsafe(merger.ComponentsUnsafe.Elements
+                            .Map(x => (x.key as r.CompTypes._Private.IMergeIdentifier, x.val))
+                            .Where(x => x.Item1 is not null)
+                            .Map(x => (x.Item1!.ForComponentUnsafe, x.val)))))
+                    .Press().ToCompletedITask();
             }
         }
     }
