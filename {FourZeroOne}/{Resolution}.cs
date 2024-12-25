@@ -22,6 +22,7 @@ namespace FourZeroOne.Resolution
     // DEV: MAY NOT ACTUALLY BE 'out' COMPATIBLE
     public interface ICompositionOf<out C> : Unsafe.ICompositionOf, IResolution where C : ICompositionType
     {
+        public PMap<Unsafe.IComponentIdentifier, IResolution> ComponentsUnsafe { get; }
         public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : IResolution;
         public ICompositionOf<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses);
         public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : IResolution;
@@ -55,19 +56,20 @@ namespace FourZeroOne.Resolution
     // this is mega stupid.
     public record CompositionOf<C> : NoOp, ICompositionOf<C> where C : ICompositionType, new()
     {
+        public PMap<Unsafe.IComponentIdentifier, IResolution> ComponentsUnsafe { get; private init; }
         public CompositionOf()
         {
-            _components = new() { Elements = [] };
+            ComponentsUnsafe = new() { Elements = [] };
         }
         // UNBELIEVABLY stupid
         public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : IResolution => (ICompositionOf<C>)WithComponentsUnsafe(((Unsafe.IComponentIdentifier)identifier, (IResolution)data).Yield());
         public Unsafe.ICompositionOf WithComponentsUnsafe(IEnumerable<(Unsafe.IComponentIdentifier, IResolution)> components)
         {
-            return this with { _components = _components with { dElements = Q => Q.Also(components) } };
+            return this with { ComponentsUnsafe = ComponentsUnsafe with { dElements = Q => Q.Also(components) } };
         }
         public ICompositionOf<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses)
         {
-            return this with { _components = _components with { dElements = Q => Q.ExceptBy(addresses, x => x.key) } };
+            return this with { ComponentsUnsafe = ComponentsUnsafe with { dElements = Q => Q.ExceptBy(addresses, x => x.key) } };
         }
 
         public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : IResolution
@@ -76,13 +78,12 @@ namespace FourZeroOne.Resolution
         }
         public IOption<IResolution> GetComponentUnsafe(Unsafe.IComponentIdentifier address)
         {
-            return _components[address];
+            return ComponentsUnsafe[address];
         }
         public override string ToString()
         {
-            return $"{typeof(C).Namespace!.Split(".")[^1]}.{typeof(C).Name}:{{{string.Join(" ", _components.Elements.Map(x => $"{x.key}={x.val}"))}}}";
+            return $"{typeof(C).Namespace!.Split(".")[^1]}.{typeof(C).Name}:{{{string.Join(" ", ComponentsUnsafe.Elements.Map(x => $"{x.key}={x.val}"))}}}";
         }
-        private PMap<Unsafe.IComponentIdentifier, IResolution> _components { get; init; }
     }
     public abstract record NoOp : Construct
     {

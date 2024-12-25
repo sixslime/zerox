@@ -151,21 +151,24 @@ namespace FourZeroOne.Core.Resolutions
     {
         // requires a special "Merge" token to be created, cannot be regularly decomposed
         // move this to axiom, make it a decomposition type AND an instruction. it should
-        public record Merge<A, H> : ICompositionType, _Private.IMerge<H> where H : ICompositionType where A : class, IStateAddress<ICompositionOf<H>>, ResObj
+        public record Merge<H> : ICompositionType where H : ICompositionType
         {
 
-            public readonly static StaticComponentIdentifier<Merge<A, H>, A> ADDRESS = new("CORE", "address");
-            public readonly static StaticComponentIdentifier<Merge<A, H>, ICompositionOf<H>> PREV_DATA = new("CORE", "prev");
+            public readonly static StaticComponentIdentifier<Merge<H>, ICompositionOf<H>> SUBJECT = new("CORE", "subject");
             public static _Private.MergeComponentIdentifier<H, R> MERGE<R>(IComponentIdentifier<H, R> component) where R : class, ResObj => new(component);
 
         }
         namespace _Private
         {
             // ??
-            public interface IMerge<H> : ICompositionType where H : ICompositionType { }
-            public record MergeComponentIdentifier<H, R> : IComponentIdentifier<IMerge<H>, R> where H : ICompositionType where R : class, ResObj
+            public interface IMerger
+            {
+                public IComponentIdentifier ForComponentUnsafe { get; }
+            }
+            public record MergeComponentIdentifier<H, R> : IMerger, IComponentIdentifier<Merge<H>, R> where H : ICompositionType where R : class, ResObj
             {
                 public IComponentIdentifier<H, R> ForComponent { get; private init; }
+                public IComponentIdentifier ForComponentUnsafe => ForComponent;
                 public string Source => "CORE";
                 public string Identity => $"merge-{ForComponent.Identity}";
                 public MergeComponentIdentifier(IComponentIdentifier<H, R> component)
