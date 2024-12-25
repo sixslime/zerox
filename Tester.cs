@@ -447,7 +447,28 @@ public class Tester
                 State = BLANK_STARTING_STATE,
                 Evaluate = (await base_unit.GetToken())
                 .tWithoutComponent(ax.Unit.Data.HP)
+            }),
+
+            MkRuntime().MakeTest(RHint<ICompositionOf<r.MergeSpec<ax.Unit.Data>>>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = (await base_unit.GetToken())
+                .t_ComposeMerge()
+                .t_Merge(ax.Unit.Data.HP, 99.tFixed())
+                .t_Merge(ax.Unit.Data.OWNER, new ax.Player.Address() { ID = 99 }.tFixed())
             })
+            .Use(out var unit_merge),
+
+            MkRuntime().MakeTest(RHint<r.Multi<ICompositionOf<ax.Unit.Data>>>.Hint(), hint => async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = Core.tSubEnvironment(hint, new() {
+                    Environment = (await unit_merge.GetToken()).tAsVariable(out var merger),
+                    Value = Core.tMultiOf(RHint<ICompositionOf<ax.Unit.Data>>.Hint(),
+                    [
+                        merger.tRef().tGetComponent(r.MergeSpec<ax.Unit.Data>.SUBJECT),
+                        merger.tRef().tApplied()
+                    ])
+                })
+            }),
         ];
 
         // skips

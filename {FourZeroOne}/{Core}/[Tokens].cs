@@ -290,18 +290,20 @@ namespace FourZeroOne.Core.Tokens
         }
         // move this to axiom, simplify the Merge component to actually just pure merge (no address), then in Axiom, create "action" which includes a Merge as a component, aswell as the address.
         // guys, were making progress, i swear.
-        public sealed record DoMerge<C> : Function<ICompositionOf<r.CompTypes.Merge<C>>, ICompositionOf<C>> where C : ICompositionType
+        public sealed record DoMerge<C> : Function<ICompositionOf<r.MergeSpec<C>>, ICompositionOf<C>> where C : ICompositionType
         {
-            public DoMerge(IToken<ICompositionOf<r.CompTypes.Merge<C>>> in1) : base(in1) { }
+            public DoMerge(IToken<ICompositionOf<r.MergeSpec<C>>> in1) : base(in1) { }
 
-            protected override ITask<IOption<ICompositionOf<C>>> Evaluate(IRuntime runtime, IOption<ICompositionOf<r.CompTypes.Merge<C>>> in1)
+            protected override ITask<IOption<ICompositionOf<C>>> Evaluate(IRuntime runtime, IOption<ICompositionOf<r.MergeSpec<C>>> in1)
             {
-                return in1.RemapAs(merger => merger.GetComponent(r.CompTypes.Merge<C>.SUBJECT)
+                return in1.RemapAs(merger => merger.GetComponent(r.MergeSpec<C>.SUBJECT)
                     .RemapAs(subject =>
-                        (ICompositionOf<C>)subject.WithComponentsUnsafe(merger.ComponentsUnsafe.Elements
-                            .FilterMap(x => (x.key as r.CompTypes._Private.IMergeIdentifier).NullToNone().RemapAs(y => (y.ForComponentUnsafe, x.val))))))
-                    .Press().ToCompletedITask();
+                        (ICompositionOf<C>)subject.WithComponentsUnsafe(
+                            merger.ComponentsUnsafe.Elements
+                            .FilterMap(x => (x.key as r._Private.IMergeIdentifier).NullToNone().RemapAs(y => (y.ForComponentUnsafe, x.val))))))
+                .Press().ToCompletedITask();
             }
+            protected override IOption<string> CustomToString() => $">{Arg1}".AsSome();
         }
     }
     public record Execute<R> : Function<r.Boxed.MetaFunction<R>, R>

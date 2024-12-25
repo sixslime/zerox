@@ -495,7 +495,29 @@ namespace FourZeroOne.Core.Syntax
         public static p.Function<tM.Decompose<D>, TOrig, ICompositionOf<D>, ResObj> pDecompose<TOrig, D>(this IProxy<TOrig, ICompositionOf<D>> composition) where D : IDecomposableType<D>, new() where TOrig : IToken
         { return new(composition); }
 
-
+        public static t.Component.With<r.MergeSpec<H>, ICompositionOf<H>> t_ComposeMerge<H>(this IToken<ICompositionOf<H>> subject)
+    where H : class, ICompositionType
+        { return Core.tCompose<r.MergeSpec<H>>().tWithComponent(r.MergeSpec<H>.SUBJECT, subject); }
+        public static p.SpecialCase.Component.With<TOrig, r.MergeSpec<H>, ICompositionOf<H>> p_ComposeMerge<TOrig, H>(this IProxy<TOrig, ICompositionOf<H>> subject)
+            where TOrig : IToken
+            where H : class, ICompositionType
+        { return new(r.MergeSpec<H>.SUBJECT, new p.Direct<TOrig, ICompositionOf<r.MergeSpec<H>>>(Core.tCompose<r.MergeSpec<H>>()), subject); }
+        public static t.Component.With<r.MergeSpec<H>, C> t_Merge<H, C>(this IToken<ICompositionOf<r.MergeSpec<H>>> mergeObject, IComponentIdentifier<H, C> mergingIdentifier, IToken<C> component)
+            where H : class, ICompositionType
+            where C : class, ResObj
+        { return mergeObject.tWithComponent(r.MergeSpec<H>.MERGE(mergingIdentifier), component); }
+        public static p.SpecialCase.Component.With<TOrig, r.MergeSpec<H>, C> p_Merge<TOrig, H, C>(this IProxy<TOrig, ICompositionOf<r.MergeSpec<H>>> mergeObject, IComponentIdentifier<H, C> mergingIdentifier, IProxy<TOrig, C> component)
+            where TOrig : IToken
+            where H : class, ICompositionType
+            where C : class, ResObj
+        { return mergeObject.pWithComponent(r.MergeSpec<H>.MERGE(mergingIdentifier), component); }
+        public static t.Component.DoMerge<H> tApplied<H>(this IToken<ICompositionOf<r.MergeSpec<H>>> mergeObject)
+            where H : ICompositionType
+        { return new(mergeObject); }
+        public static p.Function<t.Component.DoMerge<H>, TOrig, ICompositionOf<r.MergeSpec<H>>, ICompositionOf<H>> pApplied<TOrig, H>(this IProxy<TOrig, ICompositionOf<r.MergeSpec<H>>> mergeObject)
+            where TOrig : IToken
+            where H : class, ICompositionType
+        { return new(mergeObject); }
         public static t.Data.Insert<RAddress, RObj> tWriteTo<RAddress, RObj>(this IToken<RObj> subject, IToken<RAddress> address)
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj

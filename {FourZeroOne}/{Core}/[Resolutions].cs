@@ -147,35 +147,31 @@ namespace FourZeroOne.Core.Resolutions
         }
 
     }
-    namespace CompTypes
+    public record MergeSpec<H> : ICompositionType where H : ICompositionType
     {
-        // requires a special "Merge" token to be created, cannot be regularly decomposed
-        // move this to axiom, make it a decomposition type AND an instruction. it should
-        public record Merge<H> : ICompositionType where H : ICompositionType
+
+        public readonly static StaticComponentIdentifier<MergeSpec<H>, ICompositionOf<H>> SUBJECT = new("CORE", "subject");
+        public static _Private.MergeComponentIdentifier<H, R> MERGE<R>(IComponentIdentifier<H, R> component) where R : class, ResObj => new(component);
+
+    }
+    namespace _Private
+    {
+        // ??
+        public interface IMergeIdentifier
         {
-
-            public readonly static StaticComponentIdentifier<Merge<H>, ICompositionOf<H>> SUBJECT = new("CORE", "subject");
-            public static _Private.MergeComponentIdentifier<H, R> MERGE<R>(IComponentIdentifier<H, R> component) where R : class, ResObj => new(component);
-
+            public IComponentIdentifier ForComponentUnsafe { get; }
         }
-        namespace _Private
+        public record MergeComponentIdentifier<H, R> : IMergeIdentifier, IComponentIdentifier<MergeSpec<H>, R> where H : ICompositionType where R : class, ResObj
         {
-            // ??
-            public interface IMergeIdentifier
+            public IComponentIdentifier<H, R> ForComponent { get; private init; }
+            public IComponentIdentifier ForComponentUnsafe => ForComponent;
+            public string Source => "CORE";
+            public string Identity => $"merge-{ForComponent.Identity}";
+            public MergeComponentIdentifier(IComponentIdentifier<H, R> component)
             {
-                public IComponentIdentifier ForComponentUnsafe { get; }
+                ForComponent = component;
             }
-            public record MergeComponentIdentifier<H, R> : IMergeIdentifier, IComponentIdentifier<Merge<H>, R> where H : ICompositionType where R : class, ResObj
-            {
-                public IComponentIdentifier<H, R> ForComponent { get; private init; }
-                public IComponentIdentifier ForComponentUnsafe => ForComponent;
-                public string Source => "CORE";
-                public string Identity => $"merge-{ForComponent.Identity}";
-                public MergeComponentIdentifier(IComponentIdentifier<H, R> component)
-                {
-                    ForComponent = component;
-                }
-            }
+            public override string ToString() => $"{ForComponent.Identity}*";
         }
     }
 
