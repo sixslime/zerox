@@ -219,6 +219,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 return in1.RemapAs(x => runtime.GetState().GetObject(x)).Press().ToCompletedITask();
             }
+            protected override IOption<string> CustomToString() => $"*{Arg1}".AsSome();
         }
         public sealed record Insert<RAddress, RObj> : PureFunction<RAddress, RObj, r.Instructions.Assign<RObj>> where RAddress : class, IStateAddress<RObj>, ResObj where RObj : class, ResObj
         {
@@ -227,6 +228,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 return new() { Address = in1, Subject = in2 };
             }
+            protected override IOption<string> CustomToString() => $"{Arg1} <== {Arg2}".AsSome();
         }
         public sealed record Remove<RAddress> : PureFunction<RAddress, r.Instructions.Redact> where RAddress : class, Resolution.Unsafe.IStateAddress, ResObj
         {
@@ -235,6 +237,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 return new() { Address = in1 };
             }
+            protected override IOption<string> CustomToString() => $"{Arg1} <=X".AsSome();
         }
     }
 
@@ -290,20 +293,19 @@ namespace FourZeroOne.Core.Tokens
         }
         // move this to axiom, simplify the Merge component to actually just pure merge (no address), then in Axiom, create "action" which includes a Merge as a component, aswell as the address.
         // guys, were making progress, i swear.
-        public sealed record DoMerge<C> : Function<ICompositionOf<r.MergeSpec<C>>, ICompositionOf<C>> where C : ICompositionType
+        public sealed record DoMerge<C> : Function<ICompositionOf<C>, ICompositionOf<r.MergeSpec<C>>, ICompositionOf<C>> where C : ICompositionType
         {
-            public DoMerge(IToken<ICompositionOf<r.MergeSpec<C>>> in1) : base(in1) { }
+            public DoMerge(IToken<ICompositionOf<C>> in1, IToken<ICompositionOf<r.MergeSpec<C>>> in2) : base(in1, in2) { }
 
-            protected override ITask<IOption<ICompositionOf<C>>> Evaluate(IRuntime runtime, IOption<ICompositionOf<r.MergeSpec<C>>> in1)
+            protected override ITask<IOption<ICompositionOf<C>>> Evaluate(IRuntime runtime, IOption<ICompositionOf<C>> in1, IOption<ICompositionOf<r.MergeSpec<C>>> in2)
             {
-                return in1.RemapAs(merger => merger.GetComponent(r.MergeSpec<C>.SUBJECT)
-                    .RemapAs(subject =>
-                        (ICompositionOf<C>)subject.WithComponentsUnsafe(
+                return (in1.Check(out var subject) & in2.Check(out var merger)).ToOptionLazy(() =>
+                    (ICompositionOf<C>)subject.WithComponentsUnsafe(
                             merger.ComponentsUnsafe.Elements
-                            .FilterMap(x => (x.key as r._Private.IMergeIdentifier).NullToNone().RemapAs(y => (y.ForComponentUnsafe, x.val))))))
-                .Press().ToCompletedITask();
+                            .FilterMap(x => (x.key as r._Private.IMergeIdentifier).NullToNone().RemapAs(y => (y.ForComponentUnsafe, x.val)))))
+                    .ToCompletedITask();
             }
-            protected override IOption<string> CustomToString() => $">{Arg1}".AsSome();
+            protected override IOption<string> CustomToString() => $"{Arg1}>>{Arg2}".AsSome();
         }
     }
     public record Execute<R> : Function<r.Boxed.MetaFunction<R>, R>

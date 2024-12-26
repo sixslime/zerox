@@ -82,7 +82,7 @@ namespace FourZeroOne.Resolution
         }
         public override string ToString()
         {
-            return $"{typeof(C).Namespace!.Split(".")[^1]}.{typeof(C).Name}:{{{string.Join(" ", ComponentsUnsafe.Elements.Map(x => $"{x.key}={x.val}"))}}}";
+            return $"{typeof(C).Namespace!.Split(".")[^1]}.{typeof(C).Name}:{{{string.Join(" ", ComponentsUnsafe.Elements.OrderBy(x => x.key.ToString()).Map(x => $"{x.key}={x.val}"))}}}";
         }
     }
     public abstract record NoOp : Construct

@@ -76,11 +76,15 @@ namespace FourZeroOne.Core.Macros
         {
             return P.pSubEnvironment(RHint<r.Instructions.Assign<D>>.Hint(), new()
             {
-                Environment = P.pOriginalA().pAsVariable(out var address).pYield(),
-                Value = P.pOriginalB().pExecuteWith(new()
+                Environment = P.pMultiOf(RHint<ResObj>.Hint(),
+                [
+                    P.pOriginalA().pAsVariable(out var address),
+                    P.pOriginalB().pAsVariable(out var updateFunc)
+                ]),
+                Value = address.tRef().tWrite(updateFunc.tRef().tExecuteWith(new()
                 {
-                    A = address.tRef().tReadData(RHint<D>.Hint()).pDirect(P)
-                }).pWriteTo(address.tRef().pDirect(P))
+                    A = address.tRef().tRead(RHint<D>.Hint())
+                })).pDirect(P)
             });
         });
     }

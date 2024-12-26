@@ -150,7 +150,6 @@ namespace FourZeroOne.Core.Resolutions
     public record MergeSpec<H> : ICompositionType where H : ICompositionType
     {
 
-        public readonly static StaticComponentIdentifier<MergeSpec<H>, ICompositionOf<H>> SUBJECT = new("CORE", "subject");
         public static _Private.MergeComponentIdentifier<H, R> MERGE<R>(IComponentIdentifier<H, R> component) where R : class, ResObj => new(component);
 
     }
