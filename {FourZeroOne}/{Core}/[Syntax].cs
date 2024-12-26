@@ -512,16 +512,16 @@ namespace FourZeroOne.Core.Syntax
             where TOrig : IToken
             where H : class, ICompositionType
         { return new(subject, mergeObject); }
-        public static t.Data.Insert<RAddress, RObj> tWrite<RAddress, RObj>(this IToken<RAddress> address, IToken<RObj> data)
+        public static t.Data.Insert<RAddress, RObj> tDataWrite<RAddress, RObj>(this IToken<RAddress> address, IToken<RObj> data)
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj
         { return new(address, data); }
-        public static p.Function<t.Data.Insert<RAddress, RObj>, TOrig, RAddress, RObj, r.Instructions.Assign<RObj>> pWrite<TOrig, RAddress, RObj>(this IProxy<TOrig, RAddress> address, IProxy<TOrig, RObj> data)
+        public static p.Function<t.Data.Insert<RAddress, RObj>, TOrig, RAddress, RObj, r.Instructions.Assign<RObj>> pDataWrite<TOrig, RAddress, RObj>(this IProxy<TOrig, RAddress> address, IProxy<TOrig, RObj> data)
             where TOrig : IToken
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj
         { return new(address, data); }
-        public static t.Data.Get<RAddress, RObj> tRead<RAddress, RObj>(this IToken<RAddress> address, RHint<RObj> _)
+        public static t.Data.Get<RAddress, RObj> tDataRead<RAddress, RObj>(this IToken<RAddress> address, RHint<RObj> _)
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj
         { return new(address); }
@@ -530,27 +530,27 @@ namespace FourZeroOne.Core.Syntax
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj
         { return new(address); }
-        public static t.Data.Remove<RAddress> tRedact<RAddress>(this IToken<RAddress> address)
+        public static t.Data.Remove<RAddress> tDataRedact<RAddress>(this IToken<RAddress> address)
             where RAddress : class, Resolution.Unsafe.IStateAddress, ResObj
         { return new(address); }
-        public static p.Function<t.Data.Remove<RAddress>, TOrig, RAddress, r.Instructions.Redact> pRedact<TOrig, RAddress>(this IProxy<TOrig, RAddress> address)
+        public static p.Function<t.Data.Remove<RAddress>, TOrig, RAddress, r.Instructions.Redact> pDataRedact<TOrig, RAddress>(this IProxy<TOrig, RAddress> address)
             where TOrig : IToken
             where RAddress : class, Resolution.Unsafe.IStateAddress, ResObj
         { return new(address); }
-        public static tM.UpdateStateObject<RAddress, RObj> tUpdateData<RAddress, RObj>(this IToken<RAddress> address, IToken<r.Boxed.MetaFunction<RObj, RObj>> updateFunction)
+        public static tM.UpdateStateObject<RAddress, RObj> tDataUpdate<RAddress, RObj>(this IToken<RAddress> address, IToken<r.Boxed.MetaFunction<RObj, RObj>> updateFunction)
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj
         { return new(address, updateFunction); }
-        public static tM.UpdateStateObject<RAddress, RObj> tUpdateData<RAddress, RObj>(this IToken<RAddress> address, RHint<RObj> _, Func<DynamicAddress<RObj>, IToken<RObj>> updateFunction)
+        public static tM.UpdateStateObject<RAddress, RObj> tDataUpdate<RAddress, RObj>(this IToken<RAddress> address, RHint<RObj> _, Func<DynamicAddress<RObj>, IToken<RObj>> updateFunction)
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj
         { return new(address, Core.tMetaFunction(RHint<RObj, RObj>.Hint(), updateFunction)); }
-        public static p.Function<tM.UpdateStateObject<RAddress, RObj>, TOrig, RAddress, r.Boxed.MetaFunction<RObj, RObj>, r.Instructions.Assign<RObj>> pUpdateData<TOrig, RAddress, RObj>(this IProxy<TOrig, RAddress> address, RHint<RObj> _, IProxy<TOrig, r.Boxed.MetaFunction<RObj, RObj>> updateFunction)
+        public static p.Function<tM.UpdateStateObject<RAddress, RObj>, TOrig, RAddress, r.Boxed.MetaFunction<RObj, RObj>, r.Instructions.Assign<RObj>> pDataUpdate<TOrig, RAddress, RObj>(this IProxy<TOrig, RAddress> address, RHint<RObj> _, IProxy<TOrig, r.Boxed.MetaFunction<RObj, RObj>> updateFunction)
             where TOrig : IToken
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj
         { return new(address, updateFunction); }
-        public static p.Function<tM.UpdateStateObject<RAddress, RObj>, TOrig, RAddress, r.Boxed.MetaFunction<RObj, RObj>, r.Instructions.Assign<RObj>> pUpdateData<TOrig, RAddress, RObj>(this IProxy<TOrig, RAddress> address, RHint<RObj> _, Func<DynamicAddress<RObj>, IProxy<TOrig, RObj>> updateFunction)
+        public static p.Function<tM.UpdateStateObject<RAddress, RObj>, TOrig, RAddress, r.Boxed.MetaFunction<RObj, RObj>, r.Instructions.Assign<RObj>> pDataUpdate<TOrig, RAddress, RObj>(this IProxy<TOrig, RAddress> address, RHint<RObj> _, Func<DynamicAddress<RObj>, IProxy<TOrig, RObj>> updateFunction)
             where TOrig : IToken
             where RAddress : class, IStateAddress<RObj>, ResObj
             where RObj : class, ResObj

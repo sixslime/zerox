@@ -81,9 +81,9 @@ namespace FourZeroOne.Core.Macros
                     P.pOriginalA().pAsVariable(out var address),
                     P.pOriginalB().pAsVariable(out var updateFunc)
                 ]),
-                Value = address.tRef().tWrite(updateFunc.tRef().tExecuteWith(new()
+                Value = address.tRef().tDataWrite(updateFunc.tRef().tExecuteWith(new()
                 {
-                    A = address.tRef().tRead(RHint<D>.Hint())
+                    A = address.tRef().tDataRead(RHint<D>.Hint())
                 })).pDirect(P)
             });
         });

@@ -470,6 +470,35 @@ public class Tester
                     ])
                 })
             }),
+
+            MkRuntime().MakeTest(RHint<ResObj>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = Core.tMultiOf(RHint<ResObj>.Hint(),
+                [
+                    new ax.Unit.Address() { ID = 1 }.tFixed().tDataWrite(await base_unit.GetToken()),
+                    new ax.Player.Address() { ID = 1 }.tFixed().tDataWrite(Core.tCompose<ax.Player.Data>())
+                ])
+            })
+            .Use(out var state_writes),
+
+            MkRuntime().MakeTest(RHint<ResObj>.Hint(), async () => new() {
+                State = (await state_writes.GetPostState()),
+                Evaluate = Core.tMultiOf(RHint<ResObj>.Hint(),
+                [
+                    new ax.Unit.Address() { ID = 1 }.tFixed().tDataRead(RHint<ICompositionOf<ax.Unit.Data>>.Hint()),
+                    new ax.Player.Address() { ID = 1 }.tFixed().tDataRead(RHint<ICompositionOf<ax.Player.Data>>.Hint())
+                ])
+            })
+            .Use(out var get_addresses),
+
+            MkRuntime().MakeTest(RHint<ResObj>.Hint(), hint => async () => new() {
+                State = (await state_writes.GetPostState()),
+                Evaluate = Core.tSubEnvironment(hint, new() {
+                    Environment = new ax.Unit.Address() {ID=1}.tFixed()
+                    .tUpdateData(RHint<ICompositionOf<ax.Unit.Data>>.Hint(), x => xh)
+                })
+            })
+            .Use(out var get_addresses)
         ];
 
         // skips

@@ -116,14 +116,14 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     namespace Action
     {
         public interface IAction<Self> : IDecomposableType<Self> where Self : IAction<Self>, new() { }
-        public record Change<A, C> : IDecomposableType<Change<A, C>> where A : class, IStateAddress<ICompositionOf<C>>, ResObj where C : ICompositionType
+        public record Change<A, C> : IAction<Change<A, C>> where A : class, IStateAddress<ICompositionOf<C>>, ResObj where C : ICompositionType
         {
             public IProxy<Decompose<Change<A, C>>, ResObj> DecompositionProxy => MakeProxy.Statement<Decompose<Change<A, C>>, ResObj>(
                 P =>
                     P.pSubEnvironment(RHint<ResObj>.Hint(), new()
                     {
                         Environment = P.pOriginalA().pAsVariable(out var thisObj),
-                        Value = thisObj.tRef().tGetComponent(ADDRESS).tUpdateData(RHint<ICompositionOf<C>>.Hint(),
+                        Value = thisObj.tRef().tGetComponent(ADDRESS).tDataUpdate(RHint<ICompositionOf<C>>.Hint(),
                             subject => subject.tRef().tMerge(thisObj.tRef().tGetComponent(CHANGE))).pDirect(P)
                     }));
             public readonly static StaticComponentIdentifier<Change<A, C>, A> ADDRESS = new("axiom", "address");
