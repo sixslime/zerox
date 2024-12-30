@@ -141,7 +141,6 @@ namespace FourZeroOne.Core.Tokens
             {
                 List<IToken<IMulti<R>>> argList = [.. Args];
                 return $"[{string.Join(", ", Args.Map(x => x.ToString()))}]".AsSome();
-                return $"[{argList[0]}{argList[1..].AccumulateInto("", (msg, v) => $"{msg}, {v}")}]".AsSome();
             }
         }
         public sealed record Intersection<R> : PureCombiner<IMulti<R>, r.Multi<R>> where R : class, ResObj

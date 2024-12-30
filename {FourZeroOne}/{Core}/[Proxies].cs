@@ -285,8 +285,8 @@ namespace FourZeroOne.Core.Proxies
         protected override IToken<ROut> ConstructFromArgs(TOrig _, List<IToken> tokens)
         {
             return (IToken<ROut>)
-                typeof(TNew).GetConstructor(new Type[] { typeof(IToken<RArg1>) })
-                .Invoke(tokens.ToArray());
+                typeof(TNew).GetConstructor([typeof(IToken<RArg1>)])
+                !.Invoke(tokens.ToArray());
         }
     }
     public record Function<TNew, TOrig, RArg1, RArg2, ROut> : FunctionProxy<TOrig, ROut>
@@ -300,8 +300,8 @@ namespace FourZeroOne.Core.Proxies
         protected override IToken<ROut> ConstructFromArgs(TOrig _, List<IToken> tokens)
         {
             return (IToken<ROut>)
-                typeof(TNew).GetConstructor(new Type[] { typeof(IToken<RArg1>), typeof(IToken<RArg2>) })
-                .Invoke(tokens.ToArray());
+                typeof(TNew).GetConstructor([typeof(IToken<RArg1>), typeof(IToken<RArg2>)])
+                !.Invoke(tokens.ToArray());
         }
     }
     public record Function<TNew, TOrig, RArg1, RArg2, RArg3, ROut> : FunctionProxy<TOrig, ROut>
@@ -316,8 +316,8 @@ namespace FourZeroOne.Core.Proxies
         protected override IToken<ROut> ConstructFromArgs(TOrig _, List<IToken> tokens)
         {
             return ((IToken<ROut>)
-                typeof(TNew).GetConstructor(new Type[] { typeof(IToken<RArg1>), typeof(IToken<RArg2>), typeof(IToken<RArg3>) })
-                .Invoke(tokens.ToArray()))
+                typeof(TNew).GetConstructor([typeof(IToken<RArg1>), typeof(IToken<RArg2>), typeof(IToken<RArg3>)])
+                !.Invoke(tokens.ToArray()))
                 .WithHooks(HookLabels);
         }
     }
@@ -331,8 +331,8 @@ namespace FourZeroOne.Core.Proxies
 
         protected override IToken<ROut> ConstructFromArgs(TOrig _, List<IToken> tokens)
         {
-            return (IToken<ROut>)typeof(TNew).GetConstructor(new Type[] { typeof(IEnumerable<IToken<RArgs>>) })
-                .Invoke(new object[] { tokens.Map(x => (IToken<RArgs>)x) });
+            return (IToken<ROut>)typeof(TNew).GetConstructor([typeof(IEnumerable<IToken<RArgs>>)])
+                !.Invoke([tokens.Map(x => (IToken<RArgs>)x)]);
         }
     }
     // DEV: *may* not need to exist.
@@ -344,8 +344,8 @@ namespace FourZeroOne.Core.Proxies
     {
         protected override IToken<ROut> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {
-            return (TNew)typeof(TNew).GetConstructor(new Type[] { typeof(IEnumerable<IToken<RArg>>) })
-                .Invoke(new object[] { original.Args.Map(x => RuleApplied(rule, x)) });
+            return (TNew)typeof(TNew).GetConstructor([typeof(IEnumerable<IToken<RArg>>)])
+                !.Invoke([original.Args.Map(x => RuleApplied(rule, x))]);
         }
     }
     
