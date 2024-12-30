@@ -99,7 +99,7 @@ namespace FourZeroOne.Core.Macros
             {
                 Environment = P.p_Env(P.pOriginalA().pAsVariable(out var comp), P.pOriginalB().pAsVariable(out var func)),
                 Value = comp.tRef().tWithComponent(Identifier, func.tRef().tExecuteWith(new() { A = comp.tRef().tGetComponent(Identifier) })).pDirect(P)
-            });
+            }));
         public IToken<ICompositionOf<C>> Arg1 { get; private init; }
         public IToken<r.Boxed.MetaFunction<R, R>> Arg2 { get; private init; }
 

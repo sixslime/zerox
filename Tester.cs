@@ -495,10 +495,12 @@ public class Tester
                 State = (await state_writes.GetPostState()),
                 Evaluate = Core.tSubEnvironment(hint, new() {
                     Environment = new ax.Unit.Address() {ID=1}.tFixed()
-                    .tUpdateData(RHint<ICompositionOf<ax.Unit.Data>>.Hint(), x => xh)
+                    .tDataUpdate(RHint<ICompositionOf<ax.Unit.Data>>.Hint(),
+                        x => x.tRef().tUpdateComponent(ax.Unit.Data.HP, hp => hp.tRef().tSubtract(1.tFixed()))),
+                    Value = new ax.Unit.Address() {ID=1}.tFixed().tDataRead(RHint<ICompositionOf<ax.Unit.Data>>.Hint())
                 })
             })
-            .Use(out var get_addresses)
+            .Use(out var e)
         ];
 
         // skips

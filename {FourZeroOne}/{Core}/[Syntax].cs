@@ -442,9 +442,7 @@ namespace FourZeroOne.Core.Syntax
         public static tM.Multi.Map<RIn, ROut> tMap<RIn, ROut>(this IToken<IMulti<RIn>> source, Func<DynamicAddress<RIn>, IToken<ROut>> mapFunction)
             where RIn : class, ResObj
             where ROut : class, ResObj
-        {
-            return new(source, Core.tMetaFunction(new(), mapFunction));
-        }
+        { return new(source, Core.tMetaFunction(new(), mapFunction)); }
         public static p.Function<tM.Multi.Map<RIn, ROut>, TOrig, IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>> pMap<TOrig, RIn, ROut>(this IProxy<TOrig, IMulti<RIn>> values, IProxy<TOrig, r.Boxed.MetaFunction<RIn, ROut>> mapFunction)
             where TOrig : IToken where RIn : class, ResObj where ROut : class, ResObj
         { return new(values, mapFunction); }
@@ -484,6 +482,24 @@ namespace FourZeroOne.Core.Syntax
             where H : ICompositionType
             where C : class, ResObj
         { return new(identifier, holder, component); }
+        public static tM.UpdateComponent<H, C> tUpdateComponent<H, C>(this IToken<ICompositionOf<H>> holder, IComponentIdentifier<H, C> componentIdentifier, IToken<r.Boxed.MetaFunction<C, C>> changeFunc)
+            where H : ICompositionType
+            where C : class, ResObj
+        { return new(componentIdentifier, holder, changeFunc); }
+        public static tM.UpdateComponent<H, C> tUpdateComponent<H, C>(this IToken<ICompositionOf<H>> holder, IComponentIdentifier<H, C> componentIdentifier, Func<DynamicAddress<C>, IToken<C>> changeFunc)
+            where H : ICompositionType
+            where C : class, ResObj
+        { return new(componentIdentifier, holder, Core.tMetaFunction(RHint<C, C>.Hint(), changeFunc)); }
+        public static p.SpecialCase.Component.Update<TOrig, H, C> pUpdateComponent<TOrig, H, C>(this IProxy<TOrig, ICompositionOf<H>> holder, IComponentIdentifier<H, C> identifier, IProxy<TOrig, r.Boxed.MetaFunction<C, C>> changeFunc)
+            where TOrig : IToken
+            where H : ICompositionType
+            where C : class, ResObj
+        { return new(identifier, holder, changeFunc); }
+        public static p.SpecialCase.Component.Update<TOrig, H, C> pUpdateComponent<TOrig, H, C>(this IProxy<TOrig, ICompositionOf<H>> holder, IComponentIdentifier<H, C> identifier, Func<DynamicAddress<C>, IProxy<TOrig, C>> changeFunc)
+            where TOrig : IToken
+            where H : ICompositionType
+            where C : class, ResObj
+        { return new(identifier, holder, Core.pMetaFunction(new(), new(), changeFunc)); }
         public static t.Component.Without<H> tWithoutComponent<H>(this IToken<ICompositionOf<H>> holder, Resolution.Unsafe.IComponentIdentifier<H> componentIdentifier)
             where H : ICompositionType
         { return new(componentIdentifier, holder); }
