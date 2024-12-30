@@ -529,7 +529,7 @@ public class Tester
                 State = (await state_writes.GetPostState()),
                 Evaluate = Core.tSubEnvironment(hint, new() {
                     Environment = Core.tCompose<ar.Action.Change<ax.Unit.Address, ax.Unit.Data>>()
-                    // we gotta get some damn syntax
+                    // we gotta get some damn shorthand syntax
                         .tWithComponent(ar.Action.Change<ax.Unit.Address, ax.Unit.Data>.ADDRESS, new ax.Unit.Address() {ID=2}.tFixed())
                         .tWithComponent(ar.Action.Change<ax.Unit.Address, ax.Unit.Data>.CHANGE, Core.tCompose<r.MergeSpec<ax.Unit.Data>>()
                             .t_WithMerged(ax.Unit.Data.HP, 77.tFixed())).tAsVariable(out var action),
@@ -545,8 +545,8 @@ public class Tester
         ];
 
         // skips
-        testGroups.Remove("Intro Demo");
-        testGroups.Remove("Advanced Examples");
+        _ = testGroups.Remove("Intro Demo");
+        _ = testGroups.Remove("Advanced Examples");
 
         // make better later
         foreach (var testGroup in testGroups)
