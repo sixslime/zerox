@@ -12,12 +12,11 @@ namespace Perfection
     }
     public record Some<T> : ISome<T>
     {
-        public T Value => _value;
-        public Some(T value) => _value = value;
-        private readonly T _value;
+        public T Value { get; private init; }
+        public Some(T value) { Value = value; }
         public override string ToString()
         {
-            return $"{_value}";
+            return $"{Value}";
         }
     }
     public record None<T> : IOption<T>
