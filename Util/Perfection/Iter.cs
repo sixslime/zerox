@@ -10,7 +10,7 @@ namespace Perfection
         public static IEnumerable<TResult> Map<TIn, TResult>(this IEnumerable<TIn> enumerable, Func<TIn, TResult> mapFunction)
         {
             //foreach (var e in enumerable) yield return mapFunction(e);
-            // using Linq is probably '''optimized'''
+            // using Linq is probably ""optimized""
             return enumerable.Select(mapFunction);
         }
         public static IEnumerable<TResult> FilterMap<TIn, TResult>(this IEnumerable<TIn> enumerable, Func<TIn, IOption<TResult>> mapFunction)
@@ -19,8 +19,10 @@ namespace Perfection
         }
         public static IEnumerable<T> Also<T>(this IEnumerable<T> enumerable, IEnumerable<T> also)
         {
-            foreach (var v in enumerable) yield return v;
-            foreach (var v in also) yield return v;
+            // same situation as 'Map()'
+            return enumerable.Concat(also);
+            //foreach (var v in enumerable) yield return v;
+            //foreach (var v in also) yield return v;
         }
 
         public static IEnumerable<(int index, T value)> Enumerate<T>(this IEnumerable<T> enumerable)
@@ -51,6 +53,17 @@ namespace Perfection
                 o = function(o, v);
             }
             return o;
+        }
+        public static IOption<T> Accumulate<T>(this IEnumerable<T> enumerable, Func<T, T, T> function)
+        {
+            var iter = enumerable.GetEnumerator();
+            if (!iter.MoveNext()) return new None<T>();
+            var o = iter.Current;
+            while (iter.MoveNext())
+            {
+                o = function(o, iter.Current);
+            }
+            return o.AsSome();
         }
 
         public static IEnumerable<T> Until<T>(this IEnumerable<T> enumerable, Predicate<T> breakCondition)

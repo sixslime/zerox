@@ -147,9 +147,7 @@ namespace FourZeroOne.Core.Tokens
             protected override ITask<IOption<r.Multi<R>>> Evaluate(IRuntime _, IEnumerable<IOption<IMulti<R>>> inputs)
             {
                 return new r.Multi<R>() { Values = inputs
-                    .Map(x => x.RemapAs(y => y.Values).Or([]))
-                    .ExprAs(vals =>
-                        vals.AccumulateInto(vals.At(0).Or([]), (acc, set) => acc.Any() ? acc.Intersect(set) : acc)) }
+                    .Map(x => x.RemapAs(y => y.Values).Or([])).Accumulate((a, b) => a.Intersect(b)).Or([]) }
                 .AsSome().ToCompletedITask();
             }
             protected override IOption<string> CustomToString()
