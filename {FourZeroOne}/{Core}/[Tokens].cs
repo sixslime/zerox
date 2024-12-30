@@ -178,12 +178,12 @@ namespace FourZeroOne.Core.Tokens
             }
             protected override IOption<string> CustomToString() => $"^{Arg1}".AsSome();
         }
-        public sealed record Count : PureFunction<IMulti<ResObj>, ro.Number>
+        public sealed record Count : Function<IMulti<ResObj>, ro.Number>
         {
             public Count(IToken<IMulti<ResObj>> of) : base(of) { }
-            protected override ro.Number EvaluatePure(IMulti<ResObj> in1)
+            protected override ITask<IOption<ro.Number>> Evaluate(IRuntime _, IOption<IMulti<ResObj>> in1)
             {
-                return new() { Value = in1.Count };
+                return new ro.Number() { Value = in1.RemapAs(x => x.Count).Or(0) }.AsSome().ToCompletedITask();
             }
             protected override IOption<string> CustomToString() => $"{Arg1}.len".AsSome();
         }
@@ -285,8 +285,6 @@ namespace FourZeroOne.Core.Tokens
             protected override IOption<string> CustomToString() => $"{ArgTokens[0]}:{{{_identifier} X}}".AsSome();
             private readonly Resolution.Unsafe.IComponentIdentifier<C> _identifier;
         }
-        // move this to axiom, simplify the Merge component to actually just pure merge (no address), then in Axiom, create "action" which includes a Merge as a component, aswell as the address.
-        // guys, were making progress, i swear.
         public sealed record DoMerge<C> : Function<ICompositionOf<C>, ICompositionOf<r.MergeSpec<C>>, ICompositionOf<C>> where C : ICompositionType
         {
             public DoMerge(IToken<ICompositionOf<C>> in1, IToken<ICompositionOf<r.MergeSpec<C>>> in2) : base(in1, in2) { }
