@@ -1,7 +1,7 @@
 ﻿using System;
 using Perfection;
 #nullable enable
-namespace FourZeroOne.Libraries.Axiom.Resolutions
+namespace FourZeroOne.Plugins.Axiom.Resolutions
 {
     using r = Core.Resolutions;
     using ResObj = Resolution.IResolution;

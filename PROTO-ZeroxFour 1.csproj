@@ -9,9 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="{FourZeroOne}\{Testing}\**" />
-    <EmbeddedResource Remove="{FourZeroOne}\{Testing}\**" />
-    <None Remove="{FourZeroOne}\{Testing}\**" />
+    <Compile Remove="FourZeroOne\{Testing}\**" />
+    <EmbeddedResource Remove="FourZeroOne\{Testing}\**" />
+    <None Remove="FourZeroOne\{Testing}\**" />
   </ItemGroup>
 
   <ItemGroup>

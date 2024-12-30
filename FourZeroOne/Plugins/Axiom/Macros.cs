@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FourZeroOne.Libraries.Axiom.Macros
+namespace FourZeroOne.Plugins.Axiom.Macros
 {
     using Token;
     using Macro;

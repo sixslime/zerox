@@ -1,7 +1,7 @@
 
 using Perfection;
 using System.Collections.Generic;
-namespace FourZeroOne.Libraries.Axiom.Tokens
+namespace FourZeroOne.Plugins.Axiom.Tokens
 {
     using r = Core.Resolutions;
     using ro = Core.Resolutions.Objects;
@@ -11,7 +11,7 @@ namespace FourZeroOne.Libraries.Axiom.Tokens
     using ResObj = Resolution.IResolution;
     using Token;
     using Resolution;
-    using FourZeroOne.Libraries.Axiom.Resolutions.Structures;
+    using FourZeroOne.Plugins.Axiom.Resolutions.Structures;
 
     namespace Hex
     {

@@ -8,7 +8,7 @@ using p = FourZeroOne.Core.Proxies;
 using FZ = FourZeroOne;
 using ResObj = FourZeroOne.Resolution.IResolution;
 using r = FourZeroOne.Core.Resolutions;
-using a = FourZeroOne.Libraries.Axiom;
+using a = FourZeroOne.Plugins.Axiom;
 using ro = FourZeroOne.Core.Resolutions.Objects;
 using System.Threading.Tasks;
 using Perfection;
