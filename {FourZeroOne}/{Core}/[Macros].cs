@@ -88,6 +88,7 @@ namespace FourZeroOne.Core.Macros
                 })).pDirect(P)
             });
         });
+        protected override IOption<string> CustomToString() => $"{Arg1} <==! {Arg2}".AsSome();
     }
 
     public sealed record UpdateComponent<C, R> : Macro<ICompositionOf<C>>, Token.Unsafe.IHasArg1<ICompositionOf<C>>, Token.Unsafe.IHasArg2<r.Boxed.MetaFunction<R, R>>
@@ -109,6 +110,7 @@ namespace FourZeroOne.Core.Macros
             Arg1 = composition;
             Arg2 = func;
         }
+        protected override IOption<string> CustomToString() => $"{Arg1}-{Identifier} <=! {Arg2}".AsSome();
     }
     public sealed record Compose<C> : Macro<ICompositionOf<C>> where C : ICompositionType, new()
     {

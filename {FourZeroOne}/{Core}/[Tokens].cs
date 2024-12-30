@@ -496,7 +496,7 @@ namespace FourZeroOne.Core.Tokens
         {
             return args[0].RemapAs(x => new r.Instructions.Assign<R>() { Address = _assigningAddress, Subject = (R)x }).ToCompletedITask();
         }
-        protected override IOption<string> CustomToString() => $"{_assigningAddress} = {ArgTokens[0]}".AsSome();
+        protected override IOption<string> CustomToString() => $"{_assigningAddress}<- {ArgTokens[0]}".AsSome();
         private readonly DynamicAddress<R> _assigningAddress;
     }
     public sealed record DynamicReference<R> : Value<R> where R : class, ResObj
