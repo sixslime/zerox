@@ -412,43 +412,6 @@ namespace FourZeroOne.Core.Tokens
         protected override IOption<string> CustomToString() => $"let {Arg1} in {{{Arg2}}}".AsSome();
 
     }
-
-    [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
-    public record Recursive<RArg1, ROut> : Macro.OneArg<RArg1, ROut>
-        where RArg1 : class, ResObj
-        where ROut : class, ResObj
-    {
-        public required Proxy.IProxy<Recursive<RArg1, ROut>, ROut> RecursiveProxy { get; init; }
-        protected override Proxy.Unsafe.IProxy<ROut> InternalProxy => RecursiveProxy;
-        public Recursive(IToken<RArg1> arg1) : base(arg1) { }
-        protected override IOption<string> CustomToString() => $"@\"{(RecursiveProxy.GetHashCode()%7777).ToBase("vwmbkjqzsnthdiueoalrcgpfy", "")}\"({Arg1})".AsSome();
-
-    }
-    [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
-    public record Recursive<RArg1, RArg2, ROut> : Macro.TwoArg<RArg1, RArg2, ROut>
-        where RArg1 : class, ResObj
-        where RArg2 : class, ResObj
-        where ROut : class, ResObj
-    {
-        public required Proxy.IProxy<Recursive<RArg1, RArg2, ROut>, ROut> RecursiveProxy { get; init; }
-        protected override Proxy.Unsafe.IProxy<ROut> InternalProxy => RecursiveProxy;
-        public Recursive(IToken<RArg1> arg1, IToken<RArg2> arg2) : base(arg1, arg2) { }
-        protected override IOption<string> CustomToString() => $"@\"{(RecursiveProxy.GetHashCode() % 7777).ToBase("vwmbkjqzsnthdiueoalrcgpfy", "")}\"({Arg1}, {Arg2})".AsSome();
-
-    }
-    [Obsolete("Will be removed. Use self referencing MetaFunctions.", true)]
-    public record Recursive<RArg1, RArg2, RArg3, ROut> : Macro.ThreeArg<RArg1, RArg2, RArg3, ROut>
-        where RArg1 : class, ResObj
-        where RArg2 : class, ResObj
-        where RArg3 : class, ResObj
-        where ROut : class, ResObj
-    {
-        public required Proxy.IProxy<Recursive<RArg1, RArg2, RArg3, ROut>, ROut> RecursiveProxy { get; init; }
-        protected override Proxy.Unsafe.IProxy<ROut> InternalProxy => RecursiveProxy;
-        public Recursive(IToken<RArg1> arg1, IToken<RArg2> arg2, IToken<RArg3> arg3) : base(arg1, arg2, arg3) { }
-        protected override IOption<string> CustomToString() => $"@\"{(RecursiveProxy.GetHashCode() % 7777).ToBase("vwmbkjqzsnthdiueoalrcgpfy", "")}\"({Arg1}, {Arg2}, {Arg3})".AsSome();
-
-    }
     public record IfElse<R> : Function<ro.Bool, r.Boxed.MetaFunction<R>, r.Boxed.MetaFunction<R>, r.Boxed.MetaFunction<R>> where R : class, ResObj
     {
         public IfElse(IToken<ro.Bool> condition, IToken<r.Boxed.MetaFunction<R>> positive, IToken<r.Boxed.MetaFunction<R>> negative) : base(condition, positive, negative) { }
