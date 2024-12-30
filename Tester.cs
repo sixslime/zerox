@@ -430,6 +430,18 @@ public class Tester
             .Named("Rules in sequence")
         ];
 
+        testGroups["General Tests"] =
+        [
+            MkRuntime().MakeTest(RHint<r.Multi<ro.Number>>.Hint(), hint => async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = Core.tIntersection(RHint<ro.Number>.Hint(),
+                [
+                    1.tFixed().Sequence<IToken<ro.Number>>(x => x.tAdd(1.tFixed())).Take(10).tToMulti(),
+                    Iter.Over(0, 2, 4, 6, 8, 10).Map(x => x.tFixed()).t_ToConstMulti(),
+                    Iter.Over(5, 6, 7, 8, 9, 10).Map(x => x.tFixed()).t_ToConstMulti(),
+                ])
+            })
+        ];
         testGroups["Components"] =
         [
             MkRuntime().MakeTest(RHint<ICompositionOf<ax.Unit.Data>>.Hint(), async () => new() {

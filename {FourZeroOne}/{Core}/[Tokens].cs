@@ -123,10 +123,7 @@ namespace FourZeroOne.Core.Tokens
             public Contains(IToken<IMulti<R>> multi, IToken<R> element) : base(multi, element) { }
             protected override ITask<IOption<ro.Bool>> Evaluate(IRuntime runtime, IOption<IMulti<R>> in1, IOption<R> in2)
             {
-                ro.Bool o = (in1.Check(out var multi) && in2.Check(out var element))
-                    ? new() { IsTrue = multi.Values.Contains(element) }
-                    : new() { IsTrue = false };
-                return o.AsSome().ToCompletedITask();
+                return in2.RemapAs(item => new ro.Bool() { IsTrue = in1.RemapAs(arr => arr.Values.Contains(item)).Or(false)}).ToCompletedITask();
             }
         }
         public sealed record Union<R> : PureCombiner<IMulti<R>, r.Multi<R>> where R : class, ResObj
@@ -143,20 +140,17 @@ namespace FourZeroOne.Core.Tokens
                 return $"[{string.Join(", ", Args.Map(x => x.ToString()))}]".AsSome();
             }
         }
-        public sealed record Intersection<R> : PureCombiner<IMulti<R>, r.Multi<R>> where R : class, ResObj
+        public sealed record Intersection<R> : Combiner<IMulti<R>, r.Multi<R>> where R : class, ResObj
         {
             public Intersection(IEnumerable<IToken<IMulti<R>>> sets) : base(sets) { }
             public Intersection(params IToken<IMulti<R>>[] sets) : base(sets) { }
-            protected override r.Multi<R> EvaluatePure(IEnumerable<IMulti<R>> inputs)
+            protected override ITask<IOption<r.Multi<R>>> Evaluate(IRuntime _, IEnumerable<IOption<IMulti<R>>> inputs)
             {
-                var iter = inputs.GetEnumerator();
-                if (!iter.MoveNext()) return new() { Values = [] };
-                var o = iter.Current.Values;
-                while (iter.MoveNext())
-                {
-                    o = o.Where(x => iter.Current.Values.HasMatch(y => x.Equals((object)y)));
-                }
-                return new() { Values = o };
+                return new r.Multi<R>() { Values = inputs
+                    .Map(x => x.RemapAs(y => y.Values).Or([]))
+                    .ExprAs(vals =>
+                        vals.AccumulateInto(vals.At(0).Or([]), (acc, set) => acc.Any() ? acc.Intersect(set) : acc)) }
+                .AsSome().ToCompletedITask();
             }
             protected override IOption<string> CustomToString()
             {
@@ -164,12 +158,13 @@ namespace FourZeroOne.Core.Tokens
                 return $"{argList[0]}{argList[1..].AccumulateInto("", (msg, v) => $"{msg}I{v}")}".AsSome();
             }
         }
-        public sealed record Exclusion<R> : PureFunction<IMulti<R>, IMulti<R>, r.Multi<R>> where R : class, ResObj
+        public sealed record Exclusion<R> : Function<IMulti<R>, IMulti<R>, r.Multi<R>> where R : class, ResObj
         {
             public Exclusion(IToken<IMulti<R>> from, IToken<IMulti<R>> exclude) : base(from, exclude) { }
-            protected override r.Multi<R> EvaluatePure(IMulti<R> in1, IMulti<R> in2)
+            protected override ITask<IOption<r.Multi<R>>> Evaluate(IRuntime _, IOption<IMulti<R>> in1, IOption<IMulti<R>> in2)
             {
-                return new() { Values = in1.Values.Where(x => !in2.Values.HasMatch(y => y.Equals(x))) };
+                return in1.RemapAs(from => new r.Multi<R>() { Values = in2.RemapAs(sub => from.Values.Except(sub.Values)).Or([]) })
+                    .ToCompletedITask();
             }
             protected override IOption<string> CustomToString() => $"{Arg1} - {Arg2}".AsSome();
 
