@@ -22,6 +22,7 @@ namespace FourZeroOne.Resolution
     // DEV: MAY NOT ACTUALLY BE 'out' COMPATIBLE
     public interface ICompositionOf<out C> : Unsafe.ICompositionOf, IResolution where C : ICompositionType
     {
+        public PMap<Unsafe.IComponentIdentifier, IResolution> ComponentsUnsafe { get; }
         public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : IResolution;
         public ICompositionOf<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses);
         public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : IResolution;
@@ -30,15 +31,10 @@ namespace FourZeroOne.Resolution
     /// Types that implement must be functionally static and have an empty constructor with no init fields. <br></br>
     /// Yup! thats how I'm doing things!
     /// </summary>
-    public interface ICompositionType
+    public interface ICompositionType { }
+    public interface IDecomposableType<Self> : ICompositionType where Self : IDecomposableType<Self>, new()
     {
-        public delegate IOption<IResolution> ResolutionFunction(PMap<Unsafe.IComponentIdentifier, IResolution> components);
-        public ResolutionFunction EvaluatedAs { get; }
-    }
-    public abstract record CompositionNoOp : ICompositionType
-    {
-        public ICompositionType.ResolutionFunction EvaluatedAs => _ => _nolla;
-        private static readonly None<IResolution> _nolla = new();
+        public Proxy.IProxy<Core.Macros.Decompose<Self>, IResolution> DecompositionProxy { get; }
     }
     public interface IMulti<out R> : IResolution where R : IResolution
     {
@@ -58,23 +54,22 @@ namespace FourZeroOne.Resolution
     }
     // the 'new()' constraint is mega stupid.
     // this is mega stupid.
-    public record CompositionOf<C> : Construct, ICompositionOf<C> where C : ICompositionType, new()
+    public record CompositionOf<C> : NoOp, ICompositionOf<C> where C : ICompositionType, new()
     {
-        public override IEnumerable<IInstruction> Instructions => _instance.EvaluatedAs(_components).RemapAs(x => x.Instructions).Or([]);
+        public PMap<Unsafe.IComponentIdentifier, IResolution> ComponentsUnsafe { get; private init; }
         public CompositionOf()
         {
-            _components = new() { Elements = [] };
-            _instance = new();
+            ComponentsUnsafe = new() { Elements = [] };
         }
         // UNBELIEVABLY stupid
         public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : IResolution => (ICompositionOf<C>)WithComponentsUnsafe(((Unsafe.IComponentIdentifier)identifier, (IResolution)data).Yield());
         public Unsafe.ICompositionOf WithComponentsUnsafe(IEnumerable<(Unsafe.IComponentIdentifier, IResolution)> components)
         {
-            return this with { _components = _components with { dElements = Q => Q.Also(components) } };
+            return this with { ComponentsUnsafe = ComponentsUnsafe with { dElements = Q => Q.Also(components) } };
         }
         public ICompositionOf<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses)
         {
-            return this with { _components = _components with { dElements = Q => Q.ExceptBy(addresses, x => x.key) } };
+            return this with { ComponentsUnsafe = ComponentsUnsafe with { dElements = Q => Q.ExceptBy(addresses, x => x.key) } };
         }
 
         public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : IResolution
@@ -83,10 +78,20 @@ namespace FourZeroOne.Resolution
         }
         public IOption<IResolution> GetComponentUnsafe(Unsafe.IComponentIdentifier address)
         {
-            return _components[address];
+            return ComponentsUnsafe[address];
         }
-        private PMap<Unsafe.IComponentIdentifier, IResolution> _components { get; init; }
-        private readonly C _instance;
+        public override string ToString()
+        {
+            return $"{typeof(C).Namespace!.Split(".")[^1]}.{typeof(C).Name}:{{{string.Join(" ", ComponentsUnsafe.Elements.OrderBy(x => x.key.ToString()).Map(x => $"{x.key}={x.val}"))}}}";
+        }
+        public virtual bool Equals(CompositionOf<C>? other)
+        {
+            return (other is not null) && ComponentsUnsafe.Elements.SequenceEqual(other.ComponentsUnsafe.Elements);
+        }
+        public override int GetHashCode()
+        {
+            return ComponentsUnsafe.Elements.GetHashCode();
+        }
     }
     public abstract record NoOp : Construct
     {
@@ -106,7 +111,7 @@ namespace FourZeroOne.Resolution
             return $"{(_id % 5).ToBase("AOEUI", "")}{(typeof(R).GetHashCode() % 441).ToBase("DHTNSYFPGCRLVWMBXKJQZ".ToLower(), "")}";
         }
     }
-    public sealed record StaticComponentIdentifier<H, R> : IComponentIdentifier<H, R> where H : ICompositionType where R : class, IResolution
+    public record StaticComponentIdentifier<H, R> : IComponentIdentifier<H, R> where H : ICompositionType where R : class, IResolution
     {
         public string Source => _source;
         public string Identity => _identifier;

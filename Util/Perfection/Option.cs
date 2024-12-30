@@ -12,12 +12,11 @@ namespace Perfection
     }
     public record Some<T> : ISome<T>
     {
-        public T Value => _value;
-        public Some(T value) => _value = value;
-        private readonly T _value;
+        public T Value { get; private init; }
+        public Some(T value) { Value = value; }
         public override string ToString()
         {
-            return $"{_value}";
+            return $"{Value}";
         }
     }
     public record None<T> : IOption<T>
@@ -73,6 +72,18 @@ namespace Perfection
         public static IOption<T> None<T>(this T _)
         {
             return new None<T>();
+        }
+        public static IOption<T> ToOptionLazy<T>(this bool some, Func<T> someValue)
+        {
+            return some
+                ? someValue().AsSome()
+                : new None<T>();
+        }
+        public static IOption<T> ToOption<T>(this bool some, T someValue)
+        {
+            return some
+                ? someValue.AsSome()
+                : new None<T>();
         }
         public static bool IsSome<T>(this IOption<T> option) { return option.Check(out var _); }
         public static IOption<T> NullToNone<T>(this T? value)

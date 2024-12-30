@@ -15,6 +15,8 @@ namespace FourZeroOne.Core.Macros
     using FourZeroOne.Proxy;
     using Syntax;
     using FourZeroOne.Proxy.Unsafe;
+    using FourZeroOne.Core.Resolutions;
+    using Resolution;
 
     namespace Multi
     {
@@ -59,9 +61,15 @@ namespace FourZeroOne.Core.Macros
         }
     }
     
-    // TODO: make IfElse macro that executes the metafunction returned by the token IfElse. then rename the token IfElse to something else (and make it general maybe) :D.
+    public sealed record Decompose<D> : OneArg<ICompositionOf<D>, ResObj> where D : IDecomposableType<D>, new()
+    {
+        public Decompose(IToken<ICompositionOf<D>> composition) : base(composition) { }
 
-    public sealed record UpdateStateObject<A, D> : TwoArg<A, r.Boxed.MetaFunction<D, D>, r.Instructions.Assign<D>> where A : class, Resolution.IStateAddress<D>, ResObj where D : class, ResObj
+        // this is nightmare fuel.
+        protected override IProxy<ResObj> InternalProxy => new D().DecompositionProxy;
+        protected override IOption<string> CustomToString() => $"~{Arg1}".AsSome();
+    }
+    public sealed record UpdateStateObject<A, D> : TwoArg<A, r.Boxed.MetaFunction<D, D>, r.Instructions.Assign<D>> where A : class, IStateAddress<D>, ResObj where D : class, ResObj
     {
         public UpdateStateObject(IToken<A> in1, IToken<r.Boxed.MetaFunction<D, D>> in2) : base(in1, in2) { }
         protected override IProxy<r.Instructions.Assign<D>> InternalProxy => PROXY;
@@ -70,21 +78,49 @@ namespace FourZeroOne.Core.Macros
         {
             return P.pSubEnvironment(RHint<r.Instructions.Assign<D>>.Hint(), new()
             {
-                Environment = P.pOriginalA().pAsVariable(out var address).pYield(),
-                Value = P.pOriginalB().pExecuteWith(new()
+                Environment = P.pMultiOf(RHint<ResObj>.Hint(),
+                [
+                    P.pOriginalA().pAsVariable(out var address),
+                    P.pOriginalB().pAsVariable(out var updateFunc)
+                ]),
+                Value = address.tRef().tDataWrite(updateFunc.tRef().tExecuteWith(new()
                 {
-                    A = address.tRef().tReadData(RHint<D>.Hint()).pDirect(P)
-                }).pWriteTo(address.tRef().pDirect(P))
+                    A = address.tRef().tDataRead(RHint<D>.Hint())
+                })).pDirect(P)
             });
         });
+        protected override IOption<string> CustomToString() => $"{Arg1} <==! {Arg2}".AsSome();
     }
-    public sealed record Compose<C> : Macro<Resolution.CompositionOf<C>> where C : Resolution.ICompositionType, new()
+
+    public sealed record UpdateComponent<C, R> : Macro<ICompositionOf<C>>, Token.Unsafe.IHasArg1<ICompositionOf<C>>, Token.Unsafe.IHasArg2<r.Boxed.MetaFunction<R, R>>
+        where C : ICompositionType where R : class, ResObj
     {
-        protected override IProxy<Resolution.CompositionOf<C>> InternalProxy => PROXY;
-        public readonly static IProxy<Compose<C>, Resolution.CompositionOf<C>> PROXY = MakeProxy.Statement<Compose<C>, Resolution.CompositionOf<C>>(P =>
+        public IComponentIdentifier<C, R> Identifier { get; private init; }
+        protected override IProxy<ICompositionOf<C>> InternalProxy => MakeProxy.Statement<UpdateComponent<C, R>, ICompositionOf<C>>(
+            P => P.pSubEnvironment(RHint<ICompositionOf<C>>.Hint(), new()
+            {
+                Environment = P.p_Env(P.pOriginalA().pAsVariable(out var comp), P.pOriginalB().pAsVariable(out var func)),
+                Value = comp.tRef().tWithComponent(Identifier, func.tRef().tExecuteWith(new() { A = comp.tRef().tGetComponent(Identifier) })).pDirect(P)
+            }));
+        public IToken<ICompositionOf<C>> Arg1 { get; private init; }
+        public IToken<r.Boxed.MetaFunction<R, R>> Arg2 { get; private init; }
+
+        public UpdateComponent(IComponentIdentifier<C, R> identifier, IToken<ICompositionOf<C>> composition, IToken<r.Boxed.MetaFunction<R, R>> func)
         {
-            return new Resolution.CompositionOf<C>().tFixed().pDirect(P);
+            Identifier = identifier;
+            Arg1 = composition;
+            Arg2 = func;
+        }
+        protected override IOption<string> CustomToString() => $"{Arg1}-{Identifier} <=! {Arg2}".AsSome();
+    }
+    public sealed record Compose<C> : Macro<ICompositionOf<C>> where C : ICompositionType, new()
+    {
+        protected override IProxy<ICompositionOf<C>> InternalProxy => PROXY;
+        public readonly static IProxy<Compose<C>, ICompositionOf<C>> PROXY = MakeProxy.Statement<Compose<C>, ICompositionOf<C>>(P =>
+        {
+            return new CompositionOf<C>().tFixed().pDirect(P);
         });
+        protected override IOption<string> CustomToString() => $"{typeof(C).Namespace!.Split(".")[^1]}.{typeof(C).Name}".AsSome();
     }
     public sealed record CatchNolla<R> : TwoArg<R, R, R> where R : class, ResObj
     {
@@ -107,6 +143,7 @@ namespace FourZeroOne.Core.Macros
                 .pExecute()
             });
         });
+        protected override IOption<string> CustomToString() => $"{Arg1} or {Arg2}".AsSome();
     }
 
 }

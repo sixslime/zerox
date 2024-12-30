@@ -74,10 +74,16 @@ namespace FourZeroOne.Testing
                 ? results.Resolution.RemapAs(x => (R)x)
                 : throw exc;
         }
+        public async ITask<IState> GetPostState()
+        {
+            return (await EvaluateMustPass()).RunResult.Break(out var results, out var exc)
+                ? results.State
+                : throw exc;
+        }
         public async Task<Structure.FinishedTest> EvaluateMustPass()
         {
             var o = await Evaluate();
-            return o.Passed ? o : throw new TestFailedException(o);
+            return await o.HasPassed() ? o : throw new TestFailedException(o);
         }
         public async Task<Structure.FinishedTest> Evaluate()
         {
@@ -122,6 +128,7 @@ namespace FourZeroOne.Testing
         public U Runtime { get; }
         public ITask<IToken<R>> GetToken();
         public ITask<IOption<R>> GetResolution();
+        public ITask<IState> GetPostState();
         public Task<Structure.FinishedTest> Evaluate();
         public Task<Structure.FinishedTest> EvaluateMustPass();
     }
@@ -137,21 +144,25 @@ namespace FourZeroOne.Testing
         {
             public required Spec.IBlueprint Spec { get; init; }
             public required IResult<TestResults, TestEvaluateException> RunResult { get; init; }
-            public bool Passed { get
-                {
-                    return RunResult.Break(out var results, out var exc)
-                        ? NullPass(Spec.AssertI, assert =>
-                                NullPass(assert.State, f => f(Spec.State)(results.State)) &&
-                                NullPass(assert.Token, p => p(Spec.EvaluateI)) &&
-                                NullPass(assert.Resolution, p => p(results.Resolution))) &&
+            public async Task<bool> HasPassed()
+            {
+                return RunResult.Break(out var results, out var exc)
+                        ? await NullPassAsync(Spec.AssertI,async assert =>
+                                await NullPassAsync(assert.State, f => f(results.State)) &&
+                                await NullPassAsync(assert.Token, p => p(Spec.EvaluateI)) &&
+                                await NullPassAsync(assert.Resolution, p => p(results.Resolution))) &&
                             NullPass(Spec.ExpectI, expect =>
                                 NullPass(expect.ResolutionI, x => x.Equals(results.Resolution)) &&
                                 NullPass(expect.State, f => f(Spec.State).Equals(results.State)))
                         : throw exc;
-                } }
+            }
             private static bool NullPass<T>(T? v, Predicate<T> pred)
             {
                 return v is null || pred(v);
+            }
+            private static async Task<bool> NullPassAsync<T>(T? v, Func<T, ITask<bool>> pred)
+            {
+                return v is null || await pred(v);
             }
         }
         public record TestResults
@@ -181,9 +192,9 @@ namespace FourZeroOne.Testing
         }
         public record Asserts : IAsserts
         {
-            public Predicate<IToken>? Token { get; init; }
-            public Predicate<IOption<ResObj>>? Resolution { get; init; }
-            public Func<IState, Predicate<IState>>? State { get; init; }
+            public Func<IOption<ResObj>, ITask<bool>>? Resolution { get; init; }
+            public Func<IToken, ITask<bool>>? Token { get; init; }
+            public Func<IState, ITask<bool>>? State { get; init; }
         }
         
         // really dumb that i have to make these
@@ -202,9 +213,9 @@ namespace FourZeroOne.Testing
         }
         public interface IAsserts
         {
-            public Predicate<IOption<ResObj>>? Resolution { get; }
-            public Predicate<IToken>? Token { get; }
-            public Func<IState, Predicate<IState>>? State { get; }
+            public Func<IOption<ResObj>, ITask<bool>>? Resolution { get; }
+            public Func<IToken, ITask<bool>>? Token { get; }
+            public Func<IState, ITask<bool>>? State { get; }
         }
     }
     

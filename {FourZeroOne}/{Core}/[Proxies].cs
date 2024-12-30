@@ -131,12 +131,15 @@ namespace FourZeroOne.Core.Proxies
             private readonly DynamicAddress<R> _address;
             private readonly IProxy<TOrig, R> _objectProxy;
         }
+
+        //DEV - consider abstracting component tokens into IComponentFunction or something, this is stupid.
+        // similar to functions where there needs to be a constructor matching (identifier, arg1, arg2,...)
         namespace Component
         {
             public sealed record Get<TOrig, H, R> : Proxy<TOrig, R>
                 where TOrig : IToken
                 where R : class, ResObj
-                where H : class, ICompositionType
+                where H : ICompositionType
             {
                 public Get(IComponentIdentifier<H, R> identifier, IProxy<TOrig, ICompositionOf<H>> proxy)
                 {
@@ -153,7 +156,7 @@ namespace FourZeroOne.Core.Proxies
             public sealed record With<TOrig, H, R> : Proxy<TOrig, ICompositionOf<H>>
                 where TOrig : IToken
                 where R : class, ResObj
-                where H : class, ICompositionType
+                where H : ICompositionType
             {
                 public With(IComponentIdentifier<H, R> identifier, IProxy<TOrig, ICompositionOf<H>> holderProxy, IProxy<TOrig, R> componentProxy)
                 {
@@ -171,7 +174,7 @@ namespace FourZeroOne.Core.Proxies
             }
             public sealed record Without<TOrig, H> : Proxy<TOrig, ICompositionOf<H>>
                 where TOrig : IToken
-                where H : class, ICompositionType
+                where H : ICompositionType
             {
                 public Without(Resolution.Unsafe.IComponentIdentifier<H> identifier, IProxy<TOrig, ICompositionOf<H>> holderProxy)
                 {
@@ -186,6 +189,26 @@ namespace FourZeroOne.Core.Proxies
                 private readonly IProxy<TOrig, ICompositionOf<H>> _holderProxy;
             }
 
+            // writing specialcases for macros is stupid
+            public sealed record Update<TOrig, H, R> : Proxy<TOrig, ICompositionOf<H>>
+                where TOrig : IToken
+                where R : class, ResObj
+                where H : ICompositionType
+            {
+                public Update(IComponentIdentifier<H, R> identifier, IProxy<TOrig, ICompositionOf<H>> holderProxy, IProxy<TOrig, r.Boxed.MetaFunction<R, R>> funcProxy)
+                {
+                    _identifier = identifier;
+                    _holderProxy = holderProxy;
+                    _funcProxy = funcProxy;
+                }
+                protected override IToken<ICompositionOf<H>> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
+                {
+                    return new Macros.UpdateComponent<H, R>(_identifier, _holderProxy.Realize(original, rule), _funcProxy.Realize(original, rule));
+                }
+                private readonly IComponentIdentifier<H, R> _identifier;
+                private readonly IProxy<TOrig, ICompositionOf<H>> _holderProxy;
+                private readonly IProxy<TOrig, r.Boxed.MetaFunction<R, R>> _funcProxy;
+            }
         }
     }
 

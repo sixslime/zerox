@@ -9,16 +9,23 @@ using FZ = FourZeroOne;
 using ResObj = FourZeroOne.Resolution.IResolution;
 using r = FourZeroOne.Core.Resolutions;
 using a = FourZeroOne.Libraries.Axiom;
+using ar = FourZeroOne.Libraries.Axiom.Resolutions;
+using ax = FourZeroOne.Libraries.Axiom.Resolutions.GameObjects;
 using ro = FourZeroOne.Core.Resolutions.Objects;
 using System.Threading.Tasks;
 using Perfection;
 using ControlledFlows;
+using FourZeroOne.Resolution;
+using FourZeroOne.Token;
 using FourZeroOne.Testing;
 using FourZeroOne.Testing.Syntax;
 namespace PROTO_ZeroxFour_1;
 
 
-// this file stresses VisualStudio alot, too bad.
+
+// we journeyed to make things easier to debug, alas, we made it harder.
+// but we certainly made it look cooler.
+// we have made
 public class Tester
 {
     public readonly static FZ.StateModels.Minimal BLANK_STARTING_STATE = new() { };
@@ -41,7 +48,6 @@ public class Tester
          *  - 'p' return Proxies (will be explained when encountered).
          * - when "prompted" to select, enter the index number of the desired element.
          */
-
         testGroups["Intro Demo"] =
         [
             //          ┌[make a test that expects a final Resolution-type of 'ro.Number']
@@ -88,7 +94,7 @@ public class Tester
                 Evaluate = (await array_test.GetResolution()).Unwrap().tFixed().tIOSelectOne(),
                 //                                                              └[prompt user to select one element]
                 Assert = new() {
-                    Resolution = x => x is Some<ro.Number> num && num.Unwrap().Value is 1 or 2 or 3 or 4
+                    Resolution = async x => x is Some<ro.Number> num && num.Unwrap().Value is 1 or 2 or 3 or 4
                 }
             })
             .Named("selection"),
@@ -107,7 +113,7 @@ public class Tester
                     //                                           └[refer to it again]
                 }),
                 Assert = new() {
-                    Resolution = x => x is Some<ro.Number> num && num.Unwrap().Value is 4 or 16 or 36
+                    Resolution = async x => x is Some<ro.Number> num && num.Unwrap().Value is 4 or 16 or 36
                 }
             })
             .Named("selection squared"),
@@ -124,7 +130,7 @@ public class Tester
                         A = Iter.Over(2, 4, 6).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne()
                     }),
                 Assert = new() {
-                    Resolution = x => x is Some<ro.Number> num && num.Unwrap().Value.ExprAs(n => n == 4 || n == 16 || n == 36),
+                    Resolution = async x => x is Some<ro.Number> num && num.Unwrap().Value.ExprAs(n => n == 4 || n == 16 || n == 36),
                 }
             })
             .Named("MetaFunction introduction"),
@@ -185,7 +191,6 @@ public class Tester
          * - When prompted to make a manual selection, you may enter '<' followed by number to "rewind" that many 'Frames'. ex: "<7"
          *  - A Frame is saved whenever a Token evaluates to a Resolution (green text).
          */
-
         testGroups["Advanced Examples"] =
         [
         //  ┌['MkRuntimeWithAuto' makes a Test with auto-selections]
@@ -196,7 +201,7 @@ public class Tester
                 //   ┌[first prompt to select 2 or 4, then prompt to select *that* number of elements from the list above]
                     .tIOSelectMany(Iter.Over(2, 4).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne()),
                 Assert = new() {
-                    Resolution = x => x is Some<r.Multi<ro.Number>> final && final.Unwrap().Count is 2 or 4
+                    Resolution = async x => x is Some<r.Multi<ro.Number>> final && final.Unwrap().Count is 2 or 4
                 }
             })
             .Named("select many"),
@@ -243,7 +248,7 @@ public class Tester
                     })
                 }),
                 Assert = new() {
-                    Resolution = x => x is Some<r.Multi<ro.Number>> final && final.Unwrap().Count is 2 or 4
+                    Resolution = async x => x is Some<r.Multi<ro.Number>> final && final.Unwrap().Count is 2 or 4
                 }
             })
             .Named("recursion introduction")
@@ -256,7 +261,7 @@ public class Tester
                 State = BLANK_STARTING_STATE,
                 Evaluate = (await recursion_test.GetToken()),
                 Assert = new() {
-                    Resolution = x => x is Some<r.Multi<ro.Number>> final && final.Unwrap().Count is 2 or 4
+                    Resolution = async x => x is Some<r.Multi<ro.Number>> final && final.Unwrap().Count is 2 or 4
                 }
             })
             .Named("rewind introduction"),
@@ -310,7 +315,7 @@ public class Tester
                     33.tFixed().tAsVariable(out _),
                 ]),
                 Assert = new() {
-                    State = startState => endState => endState.Objects.Count() - startState.Objects.Count() == 3
+                    State = async endState => endState.Objects.Count() - BLANK_STARTING_STATE.Objects.Count() == 3
                 }
             })
             .Named("Multi resolution"),
@@ -343,7 +348,7 @@ public class Tester
                     })
                 }),
                 Assert = new() {
-                    Resolution = res => res is Some<r.Multi<ro.Number>> value &&
+                    Resolution = async res => res is Some<r.Multi<ro.Number>> value &&
                     Iter.Over(
                         Iter.Over(0, 0, 0, 0, 0),
                         Iter.Over(1, 2, 3, 4, 5),
@@ -372,7 +377,7 @@ public class Tester
                     //                       └[the previous test reflects how 'tMap' is implemented]
                 }),
                 Assert = new() {
-                    Resolution = res => res is Some<r.Multi<ro.Number>> result &&
+                    Resolution = async res => res is Some<r.Multi<ro.Number>> result &&
                     Iter.Over(
                         Iter.Over(0, 0, 0, 0, 0),
                         Iter.Over(1, 2, 3, 4, 5),
@@ -400,7 +405,7 @@ public class Tester
                         .tMultiply(10.tFixed()).WithHooks("hook")
                 }),
                 Assert = new() {
-                    Resolution = res => res is Some<ro.Number> result &&
+                    Resolution = async res => res is Some<ro.Number> result &&
                         (result.Unwrap().Value is 4*4 or 4*8 or 8*8)
                 }
             })
@@ -424,6 +429,113 @@ public class Tester
             })
             .Named("Rules in sequence")
         ];
+
+        testGroups["Components"] =
+        [
+            MkRuntime().MakeTest(RHint<ICompositionOf<ax.Unit.Data>>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = Core.tCompose<ax.Unit.Data>()
+                    .tWithComponent(ax.Unit.Data.HP, 5.tFixed())
+                    .tWithComponent(ax.Unit.Data.OWNER, new ax.Player.Address() {ID = 1}.tFixed())
+            })
+            .Use(out var base_unit),
+
+            MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = (await base_unit.GetToken())
+                .tGetComponent(ax.Unit.Data.HP)
+            }),
+
+            MkRuntime().MakeTest(RHint<ICompositionOf<ax.Unit.Data>>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = (await base_unit.GetToken())
+                .tWithoutComponent(ax.Unit.Data.HP)
+            }),
+
+            MkRuntime().MakeTest(RHint<ICompositionOf<r.MergeSpec<ax.Unit.Data>>>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = Core.tCompose<r.MergeSpec<ax.Unit.Data>>()
+                .t_WithMerged(ax.Unit.Data.HP, 99.tFixed())
+                .t_WithMerged(ax.Unit.Data.OWNER, new ax.Player.Address() { ID = 99 }.tFixed())
+            })
+            .Use(out var unit_merge),
+
+            MkRuntime().MakeTest(RHint<r.Multi<ICompositionOf<ax.Unit.Data>>>.Hint(), hint => async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = Core.tSubEnvironment(hint, new() {
+                    Environment = Core.t_Env(
+                        (await unit_merge.GetResolution()).Unwrap().tFixed().tAsVariable(out var merger),
+                        (await base_unit.GetResolution()).Unwrap().tFixed().tAsVariable(out var unit)),
+                    Value = Core.tMultiOf(RHint<ICompositionOf<ax.Unit.Data>>.Hint(),
+                    [
+                        unit.tRef(),
+                        unit.tRef().tMerge(merger.tRef())
+                    ])
+                })
+            }),
+
+            MkRuntime().MakeTest(RHint<ResObj>.Hint(), async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = Core.tMultiOf(RHint<ResObj>.Hint(),
+                [
+                    new ax.Unit.Address() { ID = 1 }.tFixed().tDataWrite(await base_unit.GetToken()),
+                    new ax.Unit.Address() { ID = 2 }.tFixed().tDataWrite(Core.tCompose<ax.Unit.Data>()
+                        .tWithComponent(ax.Unit.Data.OWNER, new ax.Player.Address() {ID=2}.tFixed())
+                        .tWithComponent(ax.Unit.Data.HP, 2.tFixed())),
+                    new ax.Player.Address() { ID = 1 }.tFixed().tDataWrite(Core.tCompose<ax.Player.Data>()),
+                    new ax.Player.Address() { ID = 2 }.tFixed().tDataWrite(Core.tCompose<ax.Player.Data>())
+                ]),
+                Assert = new() {
+                    State = async state => state.GetObject(new ax.Unit.Address() { ID = 1 }).Unwrap().Equals((await base_unit.GetResolution()).Unwrap()) &&
+                    state.GetObject(new ax.Player.Address() { ID = 1 }).Unwrap().Equals(new CompositionOf<ax.Player.Data>())
+                }
+            })
+            .Use(out var state_writes),
+
+            MkRuntime().MakeTest(RHint<ResObj>.Hint(), async () => new() {
+                State = (await state_writes.GetPostState()),
+                Evaluate = Core.tMultiOf(RHint<ResObj>.Hint(),
+                [
+                    new ax.Unit.Address() { ID = 1 }.tFixed().tDataRead(RHint<ICompositionOf<ax.Unit.Data>>.Hint()),
+                    new ax.Player.Address() { ID = 1 }.tFixed().tDataRead(RHint<ICompositionOf<ax.Player.Data>>.Hint())
+                ])
+            })
+            .Use(out var get_addresses),
+
+            MkRuntime().MakeTest(RHint<ResObj>.Hint(), hint => async () => new() {
+                State = (await state_writes.GetPostState()),
+                Evaluate = Core.tSubEnvironment(hint, new() {
+                    Environment = new ax.Unit.Address() {ID=1}.tFixed()
+                    .tDataUpdate(RHint<ICompositionOf<ax.Unit.Data>>.Hint(),
+                        x => x.tRef().tUpdateComponent(ax.Unit.Data.HP, hp => hp.tRef().tSubtract(1.tFixed()))),
+                    Value = new ax.Unit.Address() {ID=1}.tFixed().tDataRead(RHint<ICompositionOf<ax.Unit.Data>>.Hint())
+                })
+            }),
+
+            
+            MkRuntime().MakeTest(RHint<ResObj>.Hint(), hint => async() => new() {
+                State = (await state_writes.GetPostState()),
+                Evaluate = Core.tSubEnvironment(hint, new() {
+                    Environment = Core.tCompose<ar.Action.Change<ax.Unit.Address, ax.Unit.Data>>()
+                    // we gotta get some damn syntax
+                        .tWithComponent(ar.Action.Change<ax.Unit.Address, ax.Unit.Data>.ADDRESS, new ax.Unit.Address() {ID=2}.tFixed())
+                        .tWithComponent(ar.Action.Change<ax.Unit.Address, ax.Unit.Data>.CHANGE, Core.tCompose<r.MergeSpec<ax.Unit.Data>>()
+                            .t_WithMerged(ax.Unit.Data.HP, 77.tFixed())).tAsVariable(out var action),
+                    Value = Core.t_Env(
+                        new ax.Unit.Address() {ID=2}.tFixed().tDataRead(RHint<ICompositionOf<ax.Unit.Data>>.Hint()),
+                        Core.tSubEnvironment(hint, new() {
+                            Environment = action.tRef().tDecompose(),
+                            Value = new ax.Unit.Address() {ID=2}.tFixed().tDataRead(RHint<ICompositionOf<ax.Unit.Data>>.Hint())
+                        }))
+                })
+            })
+            
+        ];
+
+        // skips
+        testGroups.Remove("Intro Demo");
+        testGroups.Remove("Advanced Examples");
+
         // make better later
         foreach (var testGroup in testGroups)
         {
@@ -431,6 +543,7 @@ public class Tester
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine($"\n=== GROUP: \"{testGroup.Key}\" ===");
             Console.ResetColor();
+
             for (int i = 0; i < groupList.Count; i++)
             {
                 Console.ForegroundColor = ConsoleColor.White;

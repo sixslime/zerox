@@ -8,32 +8,39 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     using ro = Core.Resolutions.Objects;
     using ax = GameObjects;
     using Resolution;
+    using FourZeroOne.Proxy;
+    using FourZeroOne.Core.Macros;
+    using Core.Syntax;
 
     namespace GameObjects
     {
         namespace Unit
         {
-            public record Data : CompositionNoOp
+            public record Data : ICompositionType
             {
                 public readonly static StaticComponentIdentifier<Data, ro.Number> HP = new("axiom", "hp");
                 public readonly static StaticComponentIdentifier<Data, Hex.Position> POSITION = new("axiom", "position");
-                public readonly static StaticComponentIdentifier<Data, Player.Identifier> OWNER = new("axiom", "owner");
+                public readonly static StaticComponentIdentifier<Data, Player.Address> OWNER = new("axiom", "owner");
                 public readonly static StaticComponentIdentifier<Data, r.Multi<NEffect>> EFFECTS = new("axiom", "effects");
             }
-            public record Identifier : NoOp, IStateAddress<CompositionOf<Data>>
+            public record Address : NoOp, IStateAddress<CompositionOf<Data>>
             {
                 public required int ID { get; init; }
-                public Identifier() { }
+                public Address() { }
+                public override string ToString()
+                {
+                    return $"@unit{ID}";
+                }
             }
         }
         namespace Hex
         {
-            public sealed record Data : CompositionNoOp
+            public sealed record Data : ICompositionType
             {
                 public readonly static StaticComponentIdentifier<Data, ro.Bool> CONTROL_POINT = new("axiom", "control_point");
                 public readonly static StaticComponentIdentifier<Data, ro.Bool> OPEN = new("axiom", "open");
                 public readonly static StaticComponentIdentifier<Data, ro.Bool> WALL = new("axiom", "wall");
-                public readonly static StaticComponentIdentifier<Data, Player.Identifier> PLAYER_BASE = new("axiom", "player_base");
+                public readonly static StaticComponentIdentifier<Data, Player.Address> PLAYER_BASE = new("axiom", "player_base");
             }
             public sealed record Position : NoOp, IStateAddress<CompositionOf<Data>>
             {
@@ -45,18 +52,26 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
                 {
                     return new() { R = transformFunction(R, other.R), U = transformFunction(U, other.U), D = transformFunction(D, other.D) };
                 }
+                public override string ToString()
+                {
+                    return $"@hex{R}.{U}.{D}";
+                }
             }
         }
         namespace Player
         {
-            public sealed record Data : CompositionNoOp
+            public sealed record Data : ICompositionType
             {
                 
             }
-            public sealed record Identifier : NoOp, IStateAddress<CompositionOf<Data>>
+            public sealed record Address : NoOp, IStateAddress<CompositionOf<Data>>
             {
                 public required int ID { get; init; }
-                public Identifier() { }
+                public Address() { }
+                public override string ToString()
+                {
+                    return $"@player{ID}";
+                }
             }
         }
 
@@ -100,10 +115,19 @@ namespace FourZeroOne.Libraries.Axiom.Resolutions
     }
     namespace Action
     {
-        public interface IAction : ResObj { }
-        public record Data : ICompositionType
+        public interface IAction<Self> : IDecomposableType<Self> where Self : IAction<Self>, new() { }
+        public record Change<A, C> : IAction<Change<A, C>> where A : class, IStateAddress<ICompositionOf<C>>, ResObj where C : ICompositionType
         {
-            public ICompositionType.ResolutionFunction EvaluatedAs => components => throw new NotImplementedException();
+            public IProxy<Decompose<Change<A, C>>, ResObj> DecompositionProxy => MakeProxy.Statement<Decompose<Change<A, C>>, ResObj>(
+                P =>
+                    P.pSubEnvironment(RHint<ResObj>.Hint(), new()
+                    {
+                        Environment = P.pOriginalA().pAsVariable(out var thisObj),
+                        Value = thisObj.tRef().tGetComponent(ADDRESS).tDataUpdate(RHint<ICompositionOf<C>>.Hint(),
+                            subject => subject.tRef().tMerge(thisObj.tRef().tGetComponent(CHANGE))).pDirect(P)
+                    }));
+            public readonly static StaticComponentIdentifier<Change<A, C>, A> ADDRESS = new("axiom", "address");
+            public readonly static StaticComponentIdentifier<Change<A, C>, ICompositionOf<r.MergeSpec<C>>> CHANGE = new("axiom", "change");
         }
 
     }

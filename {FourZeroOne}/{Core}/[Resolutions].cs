@@ -42,6 +42,9 @@ namespace FourZeroOne.Core.Resolutions
     }
     namespace Instructions
     {
+        using FourZeroOne.Core.Macros;
+        using FourZeroOne.Proxy;
+        using FourZeroOne.Core.Syntax;
         using Objects;
         public sealed record Assign<D> : Instruction where D : class, ResObj
         {
@@ -53,40 +56,7 @@ namespace FourZeroOne.Core.Resolutions
             }
             public override string ToString() => $"{Address}<-{Subject}";
         }
-
-        public record Merge<H> : ICompositionType where H : ICompositionType, new()
-        {
-            public ICompositionType.ResolutionFunction EvaluatedAs => components =>
-            {
-                return components[SUBJECT].Check(out var sObj) && sObj is ICompositionOf<H> subject
-                    ? subject
-                        .WithComponentsUnsafe(
-                            components.Elements
-                            .Where(x => x.key is _Private.IMerger)
-                            .Map(x => (((_Private.IMerger)x.key).ForComponent, x.val)))
-                        .AsSome()
-                    : new None<ResObj>();
-            };
-            public readonly static StaticComponentIdentifier<Merge<H>, ICompositionOf<H>> SUBJECT = new("CORE", "subject");
-            public static _Private.MergeComponentIdentifier<H, R> MERGE<R>(IComponentIdentifier<H, R> component) where R : class, ResObj => new(component);
-        }
-        namespace _Private
-        {
-            public interface IMerger
-            {
-                public IComponentIdentifier ForComponent { get; }
-            }
-            public record MergeComponentIdentifier<H, R> : IComponentIdentifier<Merge<H>, R>, IMerger where H : ICompositionType, new() where R : class, ResObj
-            {
-                public IComponentIdentifier ForComponent { get; private init; }
-                public string Source => "CORE";
-                public string Identity => $"merge-{ForComponent.Identity}";
-                public MergeComponentIdentifier(IComponentIdentifier<H, R> component)
-                {
-                    ForComponent = component;
-                }
-            }
-        }
+        
 
         public sealed record Redact : Instruction
         {
@@ -103,6 +73,10 @@ namespace FourZeroOne.Core.Resolutions
             {
                 return state.WithRules([Rule]);
             }
+            public override string ToString()
+            {
+                return $"<?>+{Rule}";
+            }
         }
     }
     namespace Boxed
@@ -111,7 +85,7 @@ namespace FourZeroOne.Core.Resolutions
         {
             public required DynamicAddress<MetaFunction<R>> SelfIdentifier { get; init; }
             public required IToken<R> Token { get; init; }
-            public override string ToString() => $"()-> {SelfIdentifier}{{{Token}}}";
+            public override string ToString() => $"()_{SelfIdentifier}{{{Token}}}";
         }
         public sealed record MetaFunction<RArg1, ROut> : NoOp
             where RArg1 : class, ResObj
@@ -120,7 +94,7 @@ namespace FourZeroOne.Core.Resolutions
             public required DynamicAddress <MetaFunction<RArg1, ROut>> SelfIdentifier { get; init; }
             public required DynamicAddress<RArg1> IdentifierA { get; init; }
             public required IToken<ROut> Token { get; init; }
-            public override string ToString() => $"({IdentifierA})-> {SelfIdentifier}{{{Token}}}";
+            public override string ToString() => $"{SelfIdentifier}({IdentifierA})::{{{Token}}}";
         }
         public sealed record MetaFunction<RArg1, RArg2, ROut> : NoOp
             where RArg1 : class, ResObj
@@ -131,7 +105,7 @@ namespace FourZeroOne.Core.Resolutions
             public required DynamicAddress<RArg1> IdentifierA { get; init; }
             public required DynamicAddress<RArg2> IdentifierB { get; init; }
             public required IToken<ROut> Token { get; init; }
-            public override string ToString() => $"({IdentifierA}, {IdentifierB})-> {SelfIdentifier}{{{Token}}}";
+            public override string ToString() => $"({IdentifierA}, {IdentifierB})_{SelfIdentifier}{{{Token}}}";
         }
         public sealed record MetaFunction<RArg1, RArg2, RArg3, ROut> : NoOp
             where RArg1 : class, ResObj
@@ -144,7 +118,7 @@ namespace FourZeroOne.Core.Resolutions
             public required DynamicAddress<RArg2> IdentifierB { get; init; }
             public required DynamicAddress<RArg3> IdentifierC { get; init; }
             public required IToken<ROut> Token { get; init; }
-            public override string ToString() => $"({IdentifierA}, {IdentifierB}, {IdentifierC})-> {SelfIdentifier}{{{Token}}}";
+            public override string ToString() => $"({IdentifierA}, {IdentifierB}, {IdentifierC}){SelfIdentifier}{{{Token}}}";
         }
 
         public sealed record MetaArgs<R1> : NoOp
@@ -172,6 +146,32 @@ namespace FourZeroOne.Core.Resolutions
             public override string ToString() => $"<{Arg1},{Arg2},{Arg3}>";
         }
 
+    }
+    public record MergeSpec<H> : ICompositionType where H : ICompositionType
+    {
+
+        public static _Private.MergeComponentIdentifier<H, R> MERGE<R>(IComponentIdentifier<H, R> component) where R : class, ResObj => new(component);
+
+    }
+    namespace _Private
+    {
+        // ??
+        public interface IMergeIdentifier
+        {
+            public IComponentIdentifier ForComponentUnsafe { get; }
+        }
+        public record MergeComponentIdentifier<H, R> : IMergeIdentifier, IComponentIdentifier<MergeSpec<H>, R> where H : ICompositionType where R : class, ResObj
+        {
+            public IComponentIdentifier<H, R> ForComponent { get; private init; }
+            public IComponentIdentifier ForComponentUnsafe => ForComponent;
+            public string Source => "CORE";
+            public string Identity => $"merge-{ForComponent.Identity}";
+            public MergeComponentIdentifier(IComponentIdentifier<H, R> component)
+            {
+                ForComponent = component;
+            }
+            public override string ToString() => $"{ForComponent.Identity}*";
+        }
     }
 
     public sealed record Multi<R> : Construct, IMulti<R> where R : class, ResObj

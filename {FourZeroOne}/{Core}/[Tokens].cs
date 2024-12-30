@@ -219,6 +219,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 return in1.RemapAs(x => runtime.GetState().GetObject(x)).Press().ToCompletedITask();
             }
+            protected override IOption<string> CustomToString() => $"*{Arg1}".AsSome();
         }
         public sealed record Insert<RAddress, RObj> : PureFunction<RAddress, RObj, r.Instructions.Assign<RObj>> where RAddress : class, IStateAddress<RObj>, ResObj where RObj : class, ResObj
         {
@@ -227,6 +228,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 return new() { Address = in1, Subject = in2 };
             }
+            protected override IOption<string> CustomToString() => $"{Arg1} <== {Arg2}".AsSome();
         }
         public sealed record Remove<RAddress> : PureFunction<RAddress, r.Instructions.Redact> where RAddress : class, Resolution.Unsafe.IStateAddress, ResObj
         {
@@ -235,6 +237,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 return new() { Address = in1 };
             }
+            protected override IOption<string> CustomToString() => $"{Arg1} <=X".AsSome();
         }
     }
 
@@ -252,6 +255,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 return args[0].RemapAs(x => ((ICompositionOf<C>)x).GetComponent(_identifier)).Press().ToCompletedITask();
             }
+            protected override IOption<string> CustomToString() => $"{ArgTokens[0]}->{_identifier}".AsSome();
             private readonly IComponentIdentifier<C, R> _identifier;
         }
         public sealed record With<C, R> : Token<ICompositionOf<C>> where R : class, ResObj where C : ICompositionType
@@ -262,16 +266,16 @@ namespace FourZeroOne.Core.Tokens
             }
             public override ITask<IOption<ICompositionOf<C>>> Resolve(IRuntime _, IOption<ResObj>[] args)
             {
-                return (
-                    (args[0].RemapAs(x => (ICompositionOf<C>)x).Check(out var holder))
-                    ? (IOption<ICompositionOf<C>>) (
-                        (args[1].RemapAs(x => (R)x).Check(out var component))
+                return
+                    (args[0].RemapAs(x => (ICompositionOf<C>)x).Check(out var holder)
+                    ?  (args[1].RemapAs(x => (R)x).Check(out var component)
                         ? holder.WithComponent(_identifier, component)
                         : holder
                         ).AsSome()
                     : new None<ICompositionOf<C>>()
                     ).ToCompletedITask();
             }
+            protected override IOption<string> CustomToString() => $"{ArgTokens[0]}:{{{_identifier}={ArgTokens[1]}}}".AsSome();
             private readonly IComponentIdentifier<C, R> _identifier;
         }
         public sealed record Without<C> : Token<ICompositionOf<C>> where C : ICompositionType
@@ -284,7 +288,24 @@ namespace FourZeroOne.Core.Tokens
             {
                 return args[0].RemapAs(x => ((ICompositionOf<C>)x).WithoutComponents([_identifier])).ToCompletedITask();
             }
+            protected override IOption<string> CustomToString() => $"{ArgTokens[0]}:{{{_identifier} X}}".AsSome();
             private readonly Resolution.Unsafe.IComponentIdentifier<C> _identifier;
+        }
+        // move this to axiom, simplify the Merge component to actually just pure merge (no address), then in Axiom, create "action" which includes a Merge as a component, aswell as the address.
+        // guys, were making progress, i swear.
+        public sealed record DoMerge<C> : Function<ICompositionOf<C>, ICompositionOf<r.MergeSpec<C>>, ICompositionOf<C>> where C : ICompositionType
+        {
+            public DoMerge(IToken<ICompositionOf<C>> in1, IToken<ICompositionOf<r.MergeSpec<C>>> in2) : base(in1, in2) { }
+
+            protected override ITask<IOption<ICompositionOf<C>>> Evaluate(IRuntime runtime, IOption<ICompositionOf<C>> in1, IOption<ICompositionOf<r.MergeSpec<C>>> in2)
+            {
+                return (in1.Check(out var subject) & in2.Check(out var merger)).ToOptionLazy(() =>
+                    (ICompositionOf<C>)subject.WithComponentsUnsafe(
+                            merger.ComponentsUnsafe.Elements
+                            .FilterMap(x => (x.key as r._Private.IMergeIdentifier).NullToNone().RemapAs(y => (y.ForComponentUnsafe, x.val)))))
+                    .ToCompletedITask();
+            }
+            protected override IOption<string> CustomToString() => $"{Arg1}>>{Arg2}".AsSome();
         }
     }
     public record Execute<R> : Function<r.Boxed.MetaFunction<R>, R>
@@ -475,7 +496,7 @@ namespace FourZeroOne.Core.Tokens
         {
             return args[0].RemapAs(x => new r.Instructions.Assign<R>() { Address = _assigningAddress, Subject = (R)x }).ToCompletedITask();
         }
-        protected override IOption<string> CustomToString() => $"{_assigningAddress} = {ArgTokens[0]}".AsSome();
+        protected override IOption<string> CustomToString() => $"{_assigningAddress}<- {ArgTokens[0]}".AsSome();
         private readonly DynamicAddress<R> _assigningAddress;
     }
     public sealed record DynamicReference<R> : Value<R> where R : class, ResObj
