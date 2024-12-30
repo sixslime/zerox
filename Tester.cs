@@ -479,7 +479,11 @@ public class Tester
                 Evaluate = Core.tMultiOf(RHint<ResObj>.Hint(),
                 [
                     new ax.Unit.Address() { ID = 1 }.tFixed().tDataWrite(await base_unit.GetToken()),
-                    new ax.Player.Address() { ID = 1 }.tFixed().tDataWrite(Core.tCompose<ax.Player.Data>())
+                    new ax.Unit.Address() { ID = 2 }.tFixed().tDataWrite(Core.tCompose<ax.Unit.Data>()
+                        .tWithComponent(ax.Unit.Data.OWNER, new ax.Player.Address() {ID=2}.tFixed())
+                        .tWithComponent(ax.Unit.Data.HP, 2.tFixed())),
+                    new ax.Player.Address() { ID = 1 }.tFixed().tDataWrite(Core.tCompose<ax.Player.Data>()),
+                    new ax.Player.Address() { ID = 2 }.tFixed().tDataWrite(Core.tCompose<ax.Player.Data>())
                 ]),
                 Assert = new() {
                     State = async state => state.GetObject(new ax.Unit.Address() { ID = 1 }).Unwrap().Equals((await base_unit.GetResolution()).Unwrap()) &&
@@ -508,15 +512,24 @@ public class Tester
                 })
             }),
 
-            /*
+            
             MkRuntime().MakeTest(RHint<ResObj>.Hint(), hint => async() => new() {
                 State = (await state_writes.GetPostState()),
                 Evaluate = Core.tSubEnvironment(hint, new() {
                     Environment = Core.tCompose<ar.Action.Change<ax.Unit.Address, ax.Unit.Data>>()
-                    .tWithComponent(ar.Action.Change<ax.Unit.Address, ax.Unit.Data>.CHANGE, )
+                    // we gotta get some damn syntax
+                        .tWithComponent(ar.Action.Change<ax.Unit.Address, ax.Unit.Data>.ADDRESS, new ax.Unit.Address() {ID=2}.tFixed())
+                        .tWithComponent(ar.Action.Change<ax.Unit.Address, ax.Unit.Data>.CHANGE, Core.tCompose<r.MergeSpec<ax.Unit.Data>>()
+                            .t_WithMerged(ax.Unit.Data.HP, 77.tFixed())).tAsVariable(out var action),
+                    Value = Core.t_Env(
+                        new ax.Unit.Address() {ID=2}.tFixed().tDataRead(RHint<ICompositionOf<ax.Unit.Data>>.Hint()),
+                        Core.tSubEnvironment(hint, new() {
+                            Environment = action.tRef().tDecompose(),
+                            Value = new ax.Unit.Address() {ID=2}.tFixed().tDataRead(RHint<ICompositionOf<ax.Unit.Data>>.Hint())
+                        }))
                 })
             })
-            */
+            
         ];
 
         // skips
