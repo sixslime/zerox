@@ -467,29 +467,29 @@ namespace FourZeroOne.Core.Syntax
         { return new(a, b); }
 
         public static t.Component.Get<H, C> tGetComponent<H, C>(this IToken<ICompositionOf<H>> holder, IComponentIdentifier<H, C> componentIdentifier)
-            where H : class, ICompositionType
+            where H : ICompositionType
             where C : class, ResObj
         { return new(componentIdentifier, holder); }
         public static p.SpecialCase.Component.Get<TOrig, H, C> pGetComponent<TOrig, H, C>(this IProxy<TOrig, ICompositionOf<H>> holder, IComponentIdentifier<H, C> identifier)
             where TOrig : IToken
-            where H : class, ICompositionType
+            where H : ICompositionType
             where C : class, ResObj
         { return new(identifier, holder); }
         public static t.Component.With<H, C> tWithComponent<H, C>(this IToken<ICompositionOf<H>> holder, IComponentIdentifier<H, C> componentIdentifier, IToken<C> component)
-            where H : class, ICompositionType
+            where H : ICompositionType
             where C : class, ResObj
         { return new(componentIdentifier, holder, component); }
         public static p.SpecialCase.Component.With<TOrig, H, C> pWithComponent<TOrig, H, C>(this IProxy<TOrig, ICompositionOf<H>> holder, IComponentIdentifier<H, C> identifier, IProxy<TOrig, C> component)
             where TOrig : IToken
-            where H : class, ICompositionType
+            where H : ICompositionType
             where C : class, ResObj
         { return new(identifier, holder, component); }
         public static t.Component.Without<H> tWithoutComponent<H>(this IToken<ICompositionOf<H>> holder, Resolution.Unsafe.IComponentIdentifier<H> componentIdentifier)
-            where H : class, ICompositionType
+            where H : ICompositionType
         { return new(componentIdentifier, holder); }
         public static p.SpecialCase.Component.Without<TOrig, H> pWithoutComponent<TOrig, H>(this IProxy<TOrig, ICompositionOf<H>> holder, Resolution.Unsafe.IComponentIdentifier<H> identifier)
             where TOrig : IToken
-            where H : class, ICompositionType
+            where H : ICompositionType
         { return new(identifier, holder); }
         public static tM.Decompose<D> tDecompose<D>(this IToken<ICompositionOf<D>> composition) where D : IDecomposableType<D>, new()
         { return new(composition); }
@@ -497,12 +497,12 @@ namespace FourZeroOne.Core.Syntax
         { return new(composition); }
 
         public static t.Component.With<r.MergeSpec<H>, C> t_WithMerged<H, C>(this IToken<ICompositionOf<r.MergeSpec<H>>> mergeObject, IComponentIdentifier<H, C> mergingIdentifier, IToken<C> component)
-            where H : class, ICompositionType
+            where H : ICompositionType
             where C : class, ResObj
         { return mergeObject.tWithComponent(r.MergeSpec<H>.MERGE(mergingIdentifier), component); }
         public static p.SpecialCase.Component.With<TOrig, r.MergeSpec<H>, C> p_MergeComponent<TOrig, H, C>(this IProxy<TOrig, ICompositionOf<r.MergeSpec<H>>> mergeObject, IComponentIdentifier<H, C> mergingIdentifier, IProxy<TOrig, C> component)
             where TOrig : IToken
-            where H : class, ICompositionType
+            where H : ICompositionType
             where C : class, ResObj
         { return mergeObject.pWithComponent(r.MergeSpec<H>.MERGE(mergingIdentifier), component); }
         public static t.Component.DoMerge<H> tMerge<H>(this IToken<ICompositionOf<H>> subject, IToken<ICompositionOf<r.MergeSpec<H>>> mergeObject)
@@ -510,7 +510,7 @@ namespace FourZeroOne.Core.Syntax
         { return new(subject, mergeObject); }
         public static p.Function<t.Component.DoMerge<H>, TOrig, ICompositionOf<H>, ICompositionOf<r.MergeSpec<H>>, ICompositionOf<H>> pMerge<TOrig, H>(this IProxy<TOrig, ICompositionOf<H>> subject, IProxy<TOrig, ICompositionOf<r.MergeSpec<H>>> mergeObject)
             where TOrig : IToken
-            where H : class, ICompositionType
+            where H : ICompositionType
         { return new(subject, mergeObject); }
         public static t.Data.Insert<RAddress, RObj> tDataWrite<RAddress, RObj>(this IToken<RAddress> address, IToken<RObj> data)
             where RAddress : class, IStateAddress<RObj>, ResObj
