@@ -85,7 +85,7 @@ namespace FourZeroOne.Core.Resolutions
         {
             public required DynamicAddress<MetaFunction<R>> SelfIdentifier { get; init; }
             public required IToken<R> Token { get; init; }
-            public override string ToString() => $"()_{SelfIdentifier}{{{Token}}}";
+            public override string ToString() => $"{SelfIdentifier}(){{{Token}}}";
         }
         public sealed record MetaFunction<RArg1, ROut> : NoOp
             where RArg1 : class, ResObj
@@ -105,7 +105,7 @@ namespace FourZeroOne.Core.Resolutions
             public required DynamicAddress<RArg1> IdentifierA { get; init; }
             public required DynamicAddress<RArg2> IdentifierB { get; init; }
             public required IToken<ROut> Token { get; init; }
-            public override string ToString() => $"({IdentifierA}, {IdentifierB})_{SelfIdentifier}{{{Token}}}";
+            public override string ToString() => $"{SelfIdentifier}({IdentifierA}, {IdentifierB})::{{{Token}}}";
         }
         public sealed record MetaFunction<RArg1, RArg2, RArg3, ROut> : NoOp
             where RArg1 : class, ResObj
@@ -118,7 +118,7 @@ namespace FourZeroOne.Core.Resolutions
             public required DynamicAddress<RArg2> IdentifierB { get; init; }
             public required DynamicAddress<RArg3> IdentifierC { get; init; }
             public required IToken<ROut> Token { get; init; }
-            public override string ToString() => $"({IdentifierA}, {IdentifierB}, {IdentifierC}){SelfIdentifier}{{{Token}}}";
+            public override string ToString() => $"{SelfIdentifier}({IdentifierA}, {IdentifierB}, {IdentifierC})::{{{Token}}}";
         }
 
         public sealed record MetaArgs<R1> : NoOp

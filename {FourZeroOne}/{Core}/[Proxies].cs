@@ -212,10 +212,6 @@ namespace FourZeroOne.Core.Proxies
         }
     }
     
-    // ---- [ OriginalArgs ] ----
-
-    // ok bro just fucking revert to 'doesnt work' commit.
-    // Original may be a codesmell.
     public sealed record This<TOrig, R> : ThisProxy<TOrig, R> where TOrig : IToken<R> where R : class, ResObj
     {
         public This(IEnumerable<string> hookRemovals) : base(hookRemovals) { }
@@ -272,9 +268,7 @@ namespace FourZeroOne.Core.Proxies
             return RuleApplied(rule, original.Arg3);
         }
     }
-    // --------
 
-    // ---- [ Functions ] ----
     public record Function<TNew, TOrig, RArg1, ROut> : FunctionProxy<TOrig, ROut>
         where TOrig : IToken
         where TNew : IFunction<RArg1, ROut>
@@ -348,7 +342,4 @@ namespace FourZeroOne.Core.Proxies
                 !.Invoke([original.Args.Map(x => RuleApplied(rule, x))]);
         }
     }
-    
-    // --------
-
 }

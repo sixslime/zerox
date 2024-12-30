@@ -34,9 +34,7 @@ namespace FourZeroOne.Macro
         }
         public Token.Unsafe.IToken ExpandUnsafe() => Expand();
 
-        //NOTE: this only works under the assumption that proxies are perfect pure (stateless immutable).
         private IToken<R>? _cachedRealization;
-        
     }
 
     /// <summary>
@@ -48,12 +46,11 @@ namespace FourZeroOne.Macro
         where RArg1 : class, ResObj
         where ROut : class, ResObj
     {
-        public IToken<RArg1> Arg1 => _arg1;
+        public IToken<RArg1> Arg1 { get; }
         protected OneArg(IToken<RArg1> in1)
         {
-            _arg1 = in1;
+            Arg1 = in1;
         }
-        private readonly IToken<RArg1> _arg1;
     }
     /// <summary>
     /// Tokens that inherit must have a constructor matching: <br></br>
@@ -66,15 +63,13 @@ namespace FourZeroOne.Macro
         where RArg2 : class, ResObj
         where ROut : class, ResObj
     {
-        public IToken<RArg1> Arg1 => _arg1;
-        public IToken<RArg2> Arg2 => _arg2;
+        public IToken<RArg1> Arg1 { get; }
+        public IToken<RArg2> Arg2 { get; }
         protected TwoArg(IToken<RArg1> in1, IToken<RArg2> in2)
         {
-            _arg1 = in1;
-            _arg2 = in2;
+            Arg1 = in1;
+            Arg2 = in2;
         }
-        private readonly IToken<RArg1> _arg1;
-        private readonly IToken<RArg2> _arg2;
     }
     /// <summary>
     /// Tokens that inherit must have a constructor matching: <br></br>
@@ -89,20 +84,16 @@ namespace FourZeroOne.Macro
         where RArg3 : class, ResObj
         where ROut : class, ResObj
     {
-        public IToken<RArg1> Arg1 => _arg1;
-        public IToken<RArg2> Arg2 => _arg2;
-        public IToken<RArg3> Arg3 => _arg3;
+        public IToken<RArg1> Arg1 { get; }
+        public IToken<RArg2> Arg2 { get; }
+        public IToken<RArg3> Arg3 { get; }
         protected ThreeArg(IToken<RArg1> in1, IToken<RArg2> in2, IToken<RArg3> in3)
         {
-            _arg1 = in1;
-            _arg2 = in2;
-            _arg3 = in3;
+            Arg1 = in1;
+            Arg2 = in2;
+            Arg3 = in3;
         }
-        private readonly IToken<RArg1> _arg1;
-        private readonly IToken<RArg2> _arg2;
-        private readonly IToken<RArg3> _arg3;
     }
-
 }
 
 namespace FourZeroOne.Macro.Unsafe

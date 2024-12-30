@@ -57,9 +57,6 @@ namespace FourZeroOne.Token
         
     }
 
-    #region Functions
-        // ---- [ Functions ] ----
-
     public interface IFunction<RArg1, ROut> : Unsafe.IHasArg1<RArg1>, Unsafe.IFunction<ROut>
         where RArg1 : class, ResObj
         where ROut : class, ResObj
@@ -187,8 +184,6 @@ namespace FourZeroOne.Token
         protected Combiner(IEnumerable<IToken<RArg>> tokens) : base(tokens) { }
 
     }
-    #region Pure Functions
-    // -- [ Pure Functions ] --
     public abstract record PureFunction<RArg1, ROut> : Function<RArg1, ROut>
         where RArg1 : class, ResObj
         where ROut : class, ResObj
@@ -242,10 +237,6 @@ namespace FourZeroOne.Token
         protected PureCombiner(IEnumerable<IToken<RArg>> tokens) : base(tokens) { }
         protected sealed override ITask<IOption<ROut>> Evaluate(IRuntime _, IEnumerable<IOption<RArg>> inputs) => EvaluatePure(inputs.Where(x => x.IsSome()).Map(x => x.Unwrap())).AsSome().ToCompletedITask();
     }
-    // ----
-    #endregion
-    // --------
-    #endregion
 
 }
 namespace FourZeroOne.Token.Unsafe
@@ -280,6 +271,4 @@ namespace FourZeroOne.Token.Unsafe
     public interface IHasArg1 : IToken { }
     public interface IHasArg2 : IHasArg1 { }
     public interface IHasArg3 : IHasArg2 { }
-
-
 }

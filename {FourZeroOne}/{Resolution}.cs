@@ -99,29 +99,27 @@ namespace FourZeroOne.Resolution
     }
     public sealed record DynamicAddress<R> : IStateAddress<R> where R : class, IResolution
     {
-        private readonly int _id;
+        public int DynamicId { get; }
 
         public DynamicAddress()
         {
-            _id = _idAssigner++;
+            DynamicId = _idAssigner++;
         }
         private static int _idAssigner = 0;
         public override string ToString()
         {
-            return $"{(_id % 5).ToBase("AOEUI", "")}{(typeof(R).GetHashCode() % 441).ToBase("DHTNSYFPGCRLVWMBXKJQZ".ToLower(), "")}";
+            return $"{(DynamicId % 5).ToBase("AOEUI", "")}{(typeof(R).GetHashCode() % 441).ToBase("DHTNSYFPGCRLVWMBXKJQZ".ToLower(), "")}";
         }
     }
     public record StaticComponentIdentifier<H, R> : IComponentIdentifier<H, R> where H : ICompositionType where R : class, IResolution
     {
-        public string Source => _source;
-        public string Identity => _identifier;
+        public string Source { get; }
+        public string Identity { get; }
         public StaticComponentIdentifier(string source, string fixedIdentity)
         {
-            _source = source;
-            _identifier = fixedIdentity;
+            Source = source;
+            Identity = fixedIdentity;
         }
-        private string _identifier;
-        private string _source;
         public override string ToString() => $"{Identity}";
     }
 }
