@@ -25,7 +25,7 @@ namespace FourZeroOne.Rule
     public record Rule<TFor, R> : IRule where TFor : IToken<R> where R : class, ResObj
     {
         public required IProxy<TFor, R> Proxy { get; init; }
-        public required string Hook { get; init; }
+        public required IEnumerable<string> Hooks { get => _hooks.Elements; init => _hooks = new() { Elements = value }; }
         public IToken<R> Apply(TFor original)
         {
             return Proxy.Realize(original, this.AsSome());
@@ -35,7 +35,7 @@ namespace FourZeroOne.Rule
             // i don't see a better way. rules are just cheugy.
             return 
                 original is TFor match
-                && match.HookLabels.Contains(Hook)
+                && Hooks.All(x => match.HookLabels.Contains(x))
                 && original.GetType().FindInterfaces(InterfaceFilter, ITOKEN_TYPE)
                     .Map(x => x.GenericTypeArguments[0])
                     .HasMatch(x => typeof(R).IsAssignableTo(x))
@@ -58,6 +58,7 @@ namespace FourZeroOne.Rule
         {
             return "rule";
         }
+        private readonly PSet<string> _hooks = new(0) { Elements = [] };
         private readonly static Type ITOKEN_TYPE = typeof(IToken<ResObj>).GetGenericTypeDefinition();
         
     }

@@ -8,7 +8,7 @@ namespace LookNicePls
 {
     public static class LookNicePlsExtensions
     {
-        public static string LookNicePls<T>(this T[] array)
+        public static string LookNicePls<T>(this IEnumerable<T> array)
         {
             return $"[{string.Join(",", array)}]";
         }
