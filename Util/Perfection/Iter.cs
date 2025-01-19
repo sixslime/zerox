@@ -158,11 +158,10 @@ namespace Perfection
 
         public static IEnumerable<T> IEnumerable<T>(this IEnumerable<T> enumerable) => enumerable;
 
-        public static List<T> AsMutList<T>(this IEnumerable<T> enumerable) { return new List<T>(enumerable); }
-        public static PList<T> AsList<T>(this IEnumerable<T> enumerable) { return new() { Elements = enumerable }; }
-        public static PSet<T> AsSet<T>(this IEnumerable<T> enumerable, int modulo) { return new(modulo) { Elements = enumerable }; }
-        public static PIndexedSet<I, T> ToIndexedSet<I, T>(this IEnumerable<T> enumerable, Func<T, I> indexGenerator, int modulo) { return new(indexGenerator, modulo) { Elements = enumerable }; }
-        public static PMap<K, T> ToMap<K, T>(this IEnumerable<(K, T)> mapPairs, int modulo) { return new(modulo) { Elements = mapPairs }; }
+        public static PSequence<T> ToPSequence<T>(this IEnumerable<T> enumerable) => new PSequence<T>().WithEntries(enumerable);
+        public static PMap<K, T> ToPMap<K, T>(this IEnumerable<ITiple<K, T>> enumerable) where K : notnull => new PMap<K, T>().WithEntries(enumerable);
+        public static PMap<K, T> ToPMap<K, T>(this IEnumerable<(K, T)> enumerable) where K : notnull => new PMap<K, T>().WithEntries(enumerable.Map(x => x.Tiple()));
+        public static PSet<T> ToPSet<K, T>(this IEnumerable<T> enumerable) where K : notnull => new PSet<T>().WithEntries(enumerable);
 
         public static IEnumerable<T> Over<T>(params T[] arr) => arr;
     }

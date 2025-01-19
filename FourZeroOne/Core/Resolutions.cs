@@ -178,7 +178,7 @@ namespace FourZeroOne.Core.Resolutions
     {
         public override IEnumerable<IInstruction> Instructions => Values.Map(x => x.Instructions).Flatten();
         public int Count => _list.Count;
-        public required IEnumerable<R> Values { get => _list.Elements; init => _list = new() { Elements = value }; }
+        public required IEnumerable<R> Values { get => _list.Elements; init => _list = new(); }
         public Updater<IEnumerable<R>> dValues { init => Values = value(Values); }
         public bool Equals(Multi<R>? other)
         {
@@ -188,7 +188,7 @@ namespace FourZeroOne.Core.Resolutions
         {
             return Values.GetHashCode();
         }
-        private readonly PList<R> _list;
+        private readonly PSequence<R> _list;
         public override string ToString()
         {
             return $"[{string.Join(", ", _list.Elements.Map(x => x.ToString()))}]";
