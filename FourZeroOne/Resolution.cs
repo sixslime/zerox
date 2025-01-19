@@ -22,7 +22,7 @@ namespace FourZeroOne.Resolution
     // DEV: MAY NOT ACTUALLY BE 'out' COMPATIBLE
     public interface ICompositionOf<out C> : Unsafe.ICompositionOf, IResolution where C : ICompositionType
     {
-        public PMap<Unsafe.IComponentIdentifier, IResolution> ComponentsUnsafe { get; }
+        public IEnumerable<ITiple<Unsafe.IComponentIdentifier, IResolution>> ComponentsUnsafe { get; }
         public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : IResolution;
         public ICompositionOf<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses);
         public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : IResolution;
@@ -56,20 +56,21 @@ namespace FourZeroOne.Resolution
     // this is mega stupid.
     public record CompositionOf<C> : NoOp, ICompositionOf<C> where C : ICompositionType, new()
     {
-        public PMap<Unsafe.IComponentIdentifier, IResolution> ComponentsUnsafe { get; private init; }
+        private PMap<Unsafe.IComponentIdentifier, IResolution> _componentMap { get; init; }
+        public IEnumerable<ITiple<Unsafe.IComponentIdentifier, IResolution>> ComponentsUnsafe => _componentMap.Elements;
         public CompositionOf()
         {
-            ComponentsUnsafe = new() { Elements = [] };
+            _componentMap = new();
         }
         // UNBELIEVABLY stupid
-        public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : IResolution => (ICompositionOf<C>)WithComponentsUnsafe(((Unsafe.IComponentIdentifier)identifier, (IResolution)data).Yield());
-        public Unsafe.ICompositionOf WithComponentsUnsafe(IEnumerable<(Unsafe.IComponentIdentifier, IResolution)> components)
+        public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : IResolution => (ICompositionOf<C>)WithComponentsUnsafe(((Unsafe.IComponentIdentifier)identifier, (IResolution)data).Tiple().Yield()));
+        public Unsafe.ICompositionOf WithComponentsUnsafe(IEnumerable<ITiple<Unsafe.IComponentIdentifier, IResolution>> components)
         {
-            return this with { ComponentsUnsafe = ComponentsUnsafe with { dElements = Q => Q.Also(components) } };
+            return this with { _componentMap = _componentMap.WithEntries(components) };
         }
         public ICompositionOf<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses)
         {
-            return this with { ComponentsUnsafe = ComponentsUnsafe with { dElements = Q => Q.ExceptBy(addresses, x => x.key) } };
+            return this with { _componentMap = _componentMap.WithoutEntries(addresses) };
         }
 
         public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : IResolution
@@ -78,19 +79,19 @@ namespace FourZeroOne.Resolution
         }
         public IOption<IResolution> GetComponentUnsafe(Unsafe.IComponentIdentifier address)
         {
-            return ComponentsUnsafe[address];
+            return _componentMap.At(address);
         }
         public override string ToString()
         {
-            return $"{typeof(C).Namespace!.Split(".")[^1]}.{typeof(C).Name}:{{{string.Join(" ", ComponentsUnsafe.Elements.OrderBy(x => x.key.ToString()).Map(x => $"{x.key}={x.val}"))}}}";
+            return $"{typeof(C).Namespace!.Split(".")[^1]}.{typeof(C).Name}:{{{string.Join(" ", ComponentsUnsafe.OrderBy(x => x.A.ToString()).Map(x => $"{x.A}={x.B}"))}}}";
         }
         public virtual bool Equals(CompositionOf<C>? other)
         {
-            return (other is not null) && ComponentsUnsafe.Elements.SequenceEqual(other.ComponentsUnsafe.Elements);
+            return (other is not null) && ComponentsUnsafe.SequenceEqual(other.ComponentsUnsafe);
         }
         public override int GetHashCode()
         {
-            return ComponentsUnsafe.Elements.GetHashCode();
+            return ComponentsUnsafe.GetHashCode();
         }
     }
     public abstract record NoOp : Construct
@@ -128,7 +129,7 @@ namespace FourZeroOne.Resolution.Unsafe
     public interface ICompositionOf : IResolution
     {
         public IOption<IResolution> GetComponentUnsafe(IComponentIdentifier address);
-        public ICompositionOf WithComponentsUnsafe(IEnumerable<(IComponentIdentifier, IResolution)> components);
+        public ICompositionOf WithComponentsUnsafe(IEnumerable<ITiple<IComponentIdentifier, IResolution>> components);
     }
     public interface IComponentIdentifier
     { 

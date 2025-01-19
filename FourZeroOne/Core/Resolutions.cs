@@ -176,19 +176,18 @@ namespace FourZeroOne.Core.Resolutions
 
     public sealed record Multi<R> : Construct, IMulti<R> where R : class, ResObj
     {
-        public override IEnumerable<IInstruction> Instructions => Values.Map(x => x.Instructions).Flatten();
-        public int Count => _list.Count;
-        public required IEnumerable<R> Values { get => _list.Elements; init => _list = new(); }
-        public Updater<IEnumerable<R>> dValues { init => Values = value(Values); }
+        public override IEnumerable<IInstruction> Instructions => Values.Elements.Map(x => x.Instructions).Flatten();
+        public int Count => Values.Count;
+        public required ISequence<R> Values { get; init; }
+        public Updater<ISequence<R>> dValues { init => Values = value(Values); }
         public bool Equals(Multi<R>? other)
         {
-            return other is not null && Values.SequenceEqual(other.Values);
+            return other is not null && Values.Elements.SequenceEqual(other.Values);
         }
         public override int GetHashCode()
         {
             return Values.GetHashCode();
         }
-        private readonly PSequence<R> _list;
         public override string ToString()
         {
             return $"[{string.Join(", ", _list.Elements.Map(x => x.ToString()))}]";
