@@ -6,6 +6,7 @@ using System;
 namespace Perfection
 {
     // MUST: methods that start with '_' must return the instatiating type.
+    // is this dumb as shit? yes. is it kinda cool? in my head and in my head only.
     public interface IHasElements<out T>
     {
         public int Count { get; }

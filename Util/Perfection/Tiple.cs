@@ -20,9 +20,9 @@ namespace Perfection
     }
     public static class TipleExtensions
     {
-        public static Tiple<Ta, Tb> Real<Ta, Tb>(this ITiple<Ta, Tb> tup) => tup is Tiple<Ta, Tb> o ? o : new(tup.A, tup.B);
-        public static ITiple<Ta, Tb> ITiple<Ta, Tb>(this ITiple<Ta, Tb> tiple) => tiple;
-        public static Tiple<Ta, Tb> Tiple<Ta, Tb>(this ValueTuple<Ta, Tb> tup) => new(tup.Item1, tup.Item2);
+        public static Tiple<Ta, Tb> Concrete<Ta, Tb>(this ITiple<Ta, Tb> tup) => tup is Tiple<Ta, Tb> o ? o : new(tup.A, tup.B);
+        public static ITiple<Ta, Tb> Tiple<Ta, Tb>(this ITiple<Ta, Tb> tiple) => tiple;
+        public static ITiple<Ta, Tb> Tiple<Ta, Tb>(this ValueTuple<Ta, Tb> tup) => new Tiple<Ta, Tb>(tup.Item1, tup.Item2);
     }
 
 }
