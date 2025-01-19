@@ -5,6 +5,7 @@ using System;
 #nullable enable
 namespace Perfection
 {
+    public delegate T Updater<T>(T original);
     // MUST: methods that start with '_' must return the instatiating type.
     // is this dumb as shit? yes. is it kinda cool? in my head and in my head only.
     public interface IHasElements<out T>
@@ -45,7 +46,7 @@ namespace Perfection
         { return (Self)s._WithoutEntries(values); }
         public static Self Merge<Self, T>(this Self s, Self other) where Self : IMergable<Self>
         { return s._Merge(other); }
-        public static Self WithEnsertionAt<Self, T>(this Self s, int index, IEnumerable<T> values) where Self : ISequence<T>
+        public static Self WithInsertionAt<Self, T>(this Self s, int index, IEnumerable<T> values) where Self : ISequence<T>
         { return (Self)s._WithInsertionAt(index, values); }
     }
 
@@ -56,7 +57,7 @@ namespace Perfection
         private readonly Dictionary<K, T> _dict = new();
         public int Count => _dict.Count;
 
-        public IEnumerable<ITiple<K, T>> Elements => _dict.Map(x => (x.Key, x.Value).Tiple().ITiple());
+        public IEnumerable<ITiple<K, T>> Elements => _dict.Map(x => (x.Key, x.Value).Tiple());
 
         private PMap(Dictionary<K, T> dict) : this() { _dict = dict; }
         public IOption<T> At(K index)
