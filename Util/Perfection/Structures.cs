@@ -2,149 +2,81 @@ using System.Collections.Generic;
 using System.Collections;
 using System;
 
-#nullable disable
+#nullable enable
 namespace Perfection
 {
-    /// <summary>
-    /// <paramref name="original"/> is to be named 'Q' by convention.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="original"></param>
-    /// <returns></returns>
-    public delegate T Updater<T>(T original);
-    public struct Empty<T> : IEnumerable<T>
+    // MUST: methods that start with '_' must return the instatiating type.
+    public interface IHasElements<out T>
     {
-        public readonly IEnumerator<T> GetEnumerator()
-        {
-            yield break;
-        }
+        public int Count { get; }
+        public IEnumerable<T> Elements { get; }
+    }
+    public interface IEntryAddable<in T>
+    {
+        public IEntryAddable<T> _WithEntries(IEnumerable<T> entries);
+    }
+    public interface IEntryRemovable<in T>
+    {
+        public IEntryRemovable<T> _WithoutEntries(IEnumerable<T> entries);
+    }
+    public interface IIndexReadable<in I, out T>
+    {
+        public T At(I index);
+    }
+    public interface IMergable<U> where U : IMergable<U>
+    {
+        public U _Merge(U union);
+    }
+    public interface IMap<K, T> : IHasElements<ITiple<K, T>>, IEntryAddable<ITiple<K, T>>, IEntryRemovable<K>, IIndexReadable<K, IOption<T>>, IMergable<IMap<K, T>>
+    { }
+    public interface ISet<T> : IHasElements<T>, IEntryAddable<T>, IEntryRemovable<T>, IIndexReadable<T, bool>, IMergable<ISet<T>>
+    { }
+    public interface ISequence<T> : IHasElements<T>, IIndexReadable<int, T>, IEntryAddable<ITiple<int, T>>, IEntryAddable<T>, IEntryAddable<ITiple<int, IEnumerable<T>>>, IMergable<ISequence<T>>, IEntryRemovable<Range>
+    { }
 
-        readonly IEnumerator IEnumerable.GetEnumerator()
-        {
-            yield break;
-        }
-        public static IEnumerable<T> Yield()
-        {
-            yield break;
-        }
-    }
-    // Shitty ass HashSet
-    public record PSet<T> : PIndexedSet<T, T>
+    public static class SelfTypeAssumption
     {
-        public PSet(float storageRatio = 1.3f) : base(x => x, storageRatio) { }
-        public override string ToString() => _storage
-            .AccumulateInto($"PSet:\n", (msg1, x) => msg1 +
-        $"{x.AccumulateInto(">", (msg2, y) => msg2 + $" [{y}]\n  ")}\n");
-    }
-    /// <summary>
-    /// TODO: make HAMT.
-    /// </summary>
-    /// <typeparam name="I"></typeparam>
-    /// <typeparam name="T"></typeparam>
-    public record PIndexedSet<I, T>
-    {
-        protected readonly List<List<T>> _storage;
-        public required IEnumerable<T> Elements
-        {
-            get => _storage.Flatten(); init
-            {
-                var elementList = new List<T>(value);
-                Count = elementList.Count;
-                Modulo = Math.Max((int)(Count * _storageRatio), 1);
-                _storage = new List<List<T>>(Modulo);
-                _storage.AddRange(new List<T>(2).Sequence((_) => new(2)).Take(Modulo));
-                foreach (var v in elementList)
-                {
-                    var bindex = IndexGenerator(v).GetHashCode().Abs() % Modulo;
-                    var foundAt = _storage[bindex].FindIndex(x => IndexGenerator(v).Equals(IndexGenerator(x)));
-                    if (foundAt == -1) _storage[bindex].Add(v);
-                    else _storage[bindex][foundAt] = v;
-                }
-            }
-        }
-        public Updater<IEnumerable<T>> dElements { init => Elements = value(Elements); }
-        public readonly int Modulo;
-        public readonly int Count;
-        public readonly Func<T, I> IndexGenerator;
-        public PIndexedSet(Func<T, I> indexGenerator, float storageRatio = 1.3f)
-        {
-            _storageRatio = storageRatio;
-            Modulo = 1;
-            IndexGenerator = indexGenerator;
-            Count = 0;
-            _storage = new(0);
-        }
-        public bool Contains(I index) => GetBucket(index).HasMatch(x => IndexGenerator(x).Equals(index));
-        public IOption<T> this[I index] => Count > 0 ? GetBucket(index).Find(x => IndexGenerator(x).Equals(index)).NullToNone() : new None<T>();
-        public IOption<T> this[T obj] => this[IndexGenerator(obj)];
-        private List<T> GetBucket(I index) => _storage[index.GetHashCode().Abs() % Modulo];
-        public override string ToString() => _storage.AccumulateInto("PIndexedSet:\n", (msg1, x) => msg1 +
-        $"{x.AccumulateInto(">", (msg2, y) => msg2 + $" [{IndexGenerator(y)} : {y}]\n  ")}\n");
-
-        private readonly float _storageRatio;
-    }
-    // Shitty ass Dictionary
-    /// <summary>
-    /// TODO: make HAMT.
-    /// </summary>
-    /// <typeparam name="K"></typeparam>
-    /// <typeparam name="T"></typeparam>
-    public record PMap<K, T>
-    {
-        private readonly List<List<(K key, T val)>> _storage;
-        public required IEnumerable<(K key, T val)> Elements
-        {
-            get => _storage.Flatten(); init
-            {
-                var elementList = new List<(K key, T val)>(value);
-                Count = elementList.Count;
-                Modulo = (int)(Count * _storageRatio);
-                _storage = new List<List<(K key, T val)>>(Modulo);
-                _storage.AddRange(new List<(K key, T val)>(2).Sequence((_) => new(2)).Take(Modulo));
-                foreach (var v in elementList)
-                {
-                    var bindex = v.key.GetHashCode().Abs() % Modulo;
-                    var foundAt = _storage[bindex].FindIndex(x => v.key.Equals(x.key));
-                    if (foundAt == -1) _storage[bindex].Add(v);
-                    else _storage[bindex][foundAt] = v;
-                }
-            }
-        }
-        public Updater<IEnumerable<(K key, T val)>> dElements { init => Elements = value(Elements); }
-        public readonly int Modulo;
-        public readonly int Count;
-        public PMap(float storageRatio = 1.3f)
-        {
-            _storageRatio = storageRatio;
-            Modulo = 0;
-            Count = 0;
-            _storage = new(0);
-        }
-        public IOption<T> this[K indexer] => GetBucket(indexer).FirstMatch(x => indexer.Equals(x.key)).RemapAs(x => x.val);
-        private List<(K key, T val)> GetBucket(K element) => _storage[element.GetHashCode().Abs() % Modulo];
-        public override string ToString() => Elements.AccumulateInto("PMap:\n", (msg, x) => msg + $"- [{x.key} : {x.val}]\n");
-
-        private readonly float _storageRatio;
-    }
-    /// <summary>
-    /// TODO: make efficient.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public record PList<T>
-    {
-        public required IEnumerable<T> Elements { get => _list; init => _list = new(value); }
-        public Updater<IEnumerable<T>> dElements { init => Elements = value(Elements); }
-        public int Count => _list.Count;
-        public PList()
-        {
-            _list = new(0);
-        }
-        public IEnumerable<T> this[Range range] => _list[range];
-        public T this[int index] => _list[index];
-        public T[] ToArray() => _list.ToArray();
-        public override string ToString() => Elements.AccumulateInto("PList:\n", (msg, x) => msg + $"- {x}\n");
-        private readonly List<T> _list;
+        public static Self WithEntries<Self, T>(this Self s, IEnumerable<T> values) where Self : IEntryAddable<T>
+        { return (Self)s._WithEntries(values); }
+        public static Self WithoutEntries<Self, T>(this Self s, IEnumerable<T> values) where Self : IEntryRemovable<T>
+        { return (Self)s._WithoutEntries(values); }
+        public static Self Merge<Self, T>(this Self s, Self other) where Self : IMergable<Self>
+        { return s._Merge(other); }
     }
 
-    // DEV - bro, we need HAMTs bro. just trust me bro... bro... kiss me...
+    // DEV/FIXME: temporary bare-functionality inneficient implementations.
+
+    public class PMap<K, T>() : IMap<K, T> where K : notnull
+    {
+        private readonly Dictionary<K, T> _dict = new();
+        public int Count => _dict.Count;
+
+        public IEnumerable<ITiple<K, T>> Elements => _dict.Map(x => (x.Key, x.Value).Tiple().ITiple());
+
+        private PMap(Dictionary<K, T> dict) : this() => _dict = dict;
+        public IOption<T> At(K index)
+        {
+            return _dict.TryGetValue(index, out var v).ToOption(v)!;
+        }
+
+        IMap<K, T> IMergable<IMap<K, T>>._Merge(IMap<K, T> union)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEntryAddable<ITiple<K, T>> IEntryAddable<ITiple<K, T>>._WithEntries(IEnumerable<ITiple<K, T>> entries)
+        {
+            var ndict = new Dictionary<K, T>(_dict);
+            foreach (var e in entries) ndict[e.A] = e.B;
+            return new PMap<K, T>(ndict);
+        }
+
+        IEntryRemovable<K> IEntryRemovable<K>._WithoutEntries(IEnumerable<K> entries)
+        {
+            var ndict = new Dictionary<K, T>(_dict);
+            foreach (var r in entries) _ = ndict.Remove(r);
+            return new PMap<K, T>(ndict);
+        }
+    }
+    public clas
 }
