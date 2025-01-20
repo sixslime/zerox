@@ -168,6 +168,7 @@ namespace Perfection
             var nlist = new List<T>(_list);
             nlist.InsertRange(index, items);
             return new PSequence<T>(nlist);
+            
         }
     }
 }

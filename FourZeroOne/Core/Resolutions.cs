@@ -31,7 +31,7 @@ namespace FourZeroOne.Core.Resolutions
             
             public required Number Start { get; init; }
             public required Number End { get; init; }
-
+             
             public IHasElements<Number> Container => new PSequence<Number>().WithEntries(
                 (Start.Value <= End.Value)
                     ? Start.Sequence(x => x with { dValue = Q => Q + 1 }).TakeWhile(x => x.Value <= End.Value)
