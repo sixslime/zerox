@@ -122,14 +122,14 @@ namespace Perfection
     }
     public class PSequence<T>() : ISequence<T>
     {
-        private readonly List<T> _list = new();
-        public int Count => _list.Count;
+        private readonly CachingEnumerable<T> _list = new([]);
+        public int Count => _list.CountAndCache();
 
         public IEnumerable<T> Elements => _list;
 
         public T At(int index)
         {
-            return _list[index];
+            return _list.At(index);
         }
 
         private PSequence(IEnumerable<T> values) : this() { _list = new(values); }

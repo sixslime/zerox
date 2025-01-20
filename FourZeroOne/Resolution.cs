@@ -62,7 +62,7 @@ namespace FourZeroOne.Resolution
             _componentMap = new();
         }
         // UNBELIEVABLY stupid
-        public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : IResolution => (ICompositionOf<C>)WithComponentsUnsafe(((Unsafe.IComponentIdentifier)identifier, (IResolution)data).Tiple().Yield()));
+        public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : IResolution => (ICompositionOf<C>)WithComponentsUnsafe(((Unsafe.IComponentIdentifier)identifier, (IResolution)data).Tiple().Yield());
         public Unsafe.ICompositionOf WithComponentsUnsafe(IEnumerable<ITiple<Unsafe.IComponentIdentifier, IResolution>> components)
         {
             return this with { _componentMap = _componentMap.WithEntries(components) };
