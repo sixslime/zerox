@@ -32,10 +32,11 @@ namespace FourZeroOne.Core.Resolutions
             public required Number Start { get; init; }
             public required Number End { get; init; }
              
-            public IHasElements<Number> Container => new PSequence<Number>().WithEntries(
-                (Start.Value <= End.Value)
+            public IHasElements<Number> Container =>
+                ((Start.Value <= End.Value)
                     ? Start.Sequence(x => x with { dValue = Q => Q + 1 }).TakeWhile(x => x.Value <= End.Value)
-                    : []);
+                    : [])
+                .ToPSequence();
             public int Count => (Start.Value <= End.Value) ? (End.Value - Start.Value) + 1 : 0;
             public override string ToString() => $"{Start}..{End}";
         }
