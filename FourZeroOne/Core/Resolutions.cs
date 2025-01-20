@@ -32,9 +32,10 @@ namespace FourZeroOne.Core.Resolutions
             public required Number Start { get; init; }
             public required Number End { get; init; }
 
-            public IEnumerable<Number> Values => (Start.Value <= End.Value)
-                ? Start.Sequence(x => x with { dValue = Q => Q + 1 }).TakeWhile(x => x.Value <= End.Value)
-                : [];
+            public IHasElements<Number> Container => new PSequence<Number>().WithEntries(
+                (Start.Value <= End.Value)
+                    ? Start.Sequence(x => x with { dValue = Q => Q + 1 }).TakeWhile(x => x.Value <= End.Value)
+                    : []);
             public int Count => (Start.Value <= End.Value) ? (End.Value - Start.Value) + 1 : 0;
             public override string ToString() => $"{Start}..{End}";
         }
@@ -176,21 +177,22 @@ namespace FourZeroOne.Core.Resolutions
 
     public sealed record Multi<R> : Construct, IMulti<R> where R : class, ResObj
     {
-        public override IEnumerable<IInstruction> Instructions => Values.Elements.Map(x => x.Instructions).Flatten();
+        public IHasElements<R> Container => Values;
+        public override IEnumerable<IInstruction> Instructions => Container.Elements.Map(x => x.Instructions).Flatten();
+        public required PSequence<R> Values { get; init; } 
+        public Updater<PSequence<R>> dValues { init => Values = value(Values); }
         public int Count => Values.Count;
-        public required ISequence<R> Values { get; init; }
-        public Updater<ISequence<R>> dValues { init => Values = value(Values); }
         public bool Equals(Multi<R>? other)
         {
-            return other is not null && Values.Elements.SequenceEqual(other.Values);
+            return other is not null && Container.Elements.SequenceEqual(other.Container.Elements);
         }
         public override int GetHashCode()
         {
-            return Values.GetHashCode();
+            return Container.Elements.GetHashCode();
         }
         public override string ToString()
         {
-            return $"[{string.Join(", ", _list.Elements.Map(x => x.ToString()))}]";
+            return $"[{string.Join(", ", Container.Elements.Map(x => x.ToString()))}]";
         }
     }
 }

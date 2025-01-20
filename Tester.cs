@@ -80,7 +80,7 @@ public class Tester
 
                 Expect = new() {
                     //                                              ┌[ints implicitly cast to 'ro.Number']
-                    Resolution = new r.Multi<ro.Number>() {Values = [1, 2, 3, 4]}.AsSome()
+                    Resolution = new r.Multi<ro.Number>() {ValueSequence = [1, 2, 3, 4]}.AsSome()
                 }
             })
             .Named("1..4 Multi")
@@ -354,7 +354,7 @@ public class Tester
                         Iter.Over(1, 2, 3, 4, 5),
                         Iter.Over(2, 4, 6, 8, 10),
                         Iter.Over(4, 8, 12, 16, 20))
-                    .Map(x => new r.Multi<ro.Number>() {Values = x.Map(x => (ro.Number)x)})
+                    .Map(x => new r.Multi<ro.Number>() {ValueSequence = x.Map(x => (ro.Number)x)})
                     .Contains(value.Unwrap())
                 }
             })
@@ -383,7 +383,7 @@ public class Tester
                         Iter.Over(1, 2, 3, 4, 5),
                         Iter.Over(2, 4, 6, 8, 10),
                         Iter.Over(4, 8, 12, 16, 20))
-                    .Map(x => new r.Multi<ro.Number>() {Values = x.Map(x => (ro.Number)x)})
+                    .Map(x => new r.Multi<ro.Number>() {ValueSequence = x.Map(x => (ro.Number)x)})
                     .Contains(result.Unwrap())
                 }
             })

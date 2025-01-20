@@ -22,7 +22,7 @@ namespace FourZeroOne.Plugins.Axiom.Tokens
                 public Offset(IToken<IMulti<ax.Hex.Position>> area, IToken<ax.Hex.Position> offset) : base(area, offset) { }
                 protected override HexArea EvaluatePure(IMulti<ax.Hex.Position> in1, ax.Hex.Position in2)
                 {
-                    return new() { Center = in2, Offsets = new() { Elements = in1.Values } };
+                    return new() { Center = in2, Offsets = new() { Elements = in1.ValueSequence } };
                 }
             }
         } 

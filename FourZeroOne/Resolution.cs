@@ -38,8 +38,7 @@ namespace FourZeroOne.Resolution
     }
     public interface IMulti<out R> : IResolution where R : IResolution
     {
-        public IEnumerable<R> Values { get; }
-        public int Count { get; }
+        public IHasElements<R> Container { get; }
     }
 
     public interface IStateAddress<out R> : Unsafe.IStateAddress where R : class, IResolution { }
