@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.Collections;
-using System;
 
 #nullable enable
 namespace Perfection
@@ -31,8 +29,8 @@ namespace Perfection
     }
     public interface IIntersectable<in U> where U : IIntersectable<U>
     {
-        public IIntersectable<U> _IntersectionWith(U intersection);
-        public IIntersectable<U> _InversectionWith(U intersection);
+        public IIntersectable<U> _IntersectedWith(U intersection);
+        public IIntersectable<U> _InversectedWith(U intersection);
     }
     public interface IPMap<K, T> : IHasElements<ITiple<K, T>>, IEntryAddable<ITiple<K, T>>, IEntryRemovable<K>, IIndexReadable<K, IOption<T>>, IMergable<IPMap<K, T>>
     { }
@@ -53,10 +51,10 @@ namespace Perfection
         //CHECK: type restrictions might be silly here
         public static Self MergedWith<Self, T>(this Self s, T other) where Self : IMergable<T>, T where T : IMergable<T>
         { return (Self)s._MergedWith(other); }
-        public static Self IntersectionWith<Self, T>(this Self s, T other) where Self : IIntersectable<T>, T where T : IIntersectable<T>
-        { return (Self)s._IntersectionWith(other); }
-        public static Self InversectionWith<Self, T>(this Self s, T other) where Self : IIntersectable<T>, T where T : IIntersectable<T>
-        { return (Self)s._InversectionWith(other); }
+        public static Self IntersectedWith<Self, T>(this Self s, T other) where Self : IIntersectable<T>, T where T : IIntersectable<T>
+        { return (Self)s._IntersectedWith(other); }
+        public static Self InversectedWith<Self, T>(this Self s, T other) where Self : IIntersectable<T>, T where T : IIntersectable<T>
+        { return (Self)s._InversectedWith(other); }
         public static Self WithInsertionAt<Self, T>(this Self s, int index, IEnumerable<T> values) where Self : IPSequence<T>
         { return (Self)s._WithInsertionAt(index, values); }
     }
@@ -131,14 +129,14 @@ namespace Perfection
             return new PSet<T>(nset);
         }
 
-        IIntersectable<IPSet<T>> IIntersectable<IPSet<T>>._IntersectionWith(IPSet<T> intersection)
+        IIntersectable<IPSet<T>> IIntersectable<IPSet<T>>._IntersectedWith(IPSet<T> intersection)
         {
             var nset = new HashSet<T>(_set);
             nset.IntersectWith(intersection.Elements);
             return new PSet<T>(nset);
         }
 
-        IIntersectable<IPSet<T>> IIntersectable<IPSet<T>>._InversectionWith(IPSet<T> intersection)
+        IIntersectable<IPSet<T>> IIntersectable<IPSet<T>>._InversectedWith(IPSet<T> intersection)
         {
             var nset = new HashSet<T>(_set);
             nset.SymmetricExceptWith(intersection.Elements);
