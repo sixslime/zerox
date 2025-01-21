@@ -27,11 +27,16 @@ namespace Perfection
     }
     public interface IMergable<in U> where U : IMergable<U>
     {
-        public IMergable<U> _Merge(U union);
+        public IMergable<U> _MergedWith(U union);
+    }
+    public interface IIntersectable<in U> where U : IIntersectable<U>
+    {
+        public IIntersectable<U> _IntersectionWith(U intersection);
+        public IIntersectable<U> _InversectionWith(U intersection);
     }
     public interface IPMap<K, T> : IHasElements<ITiple<K, T>>, IEntryAddable<ITiple<K, T>>, IEntryRemovable<K>, IIndexReadable<K, IOption<T>>, IMergable<IPMap<K, T>>
     { }
-    public interface IPSet<T> : IHasElements<T>, IEntryAddable<T>, IEntryRemovable<T>, IIndexReadable<T, bool>, IMergable<IPSet<T>>
+    public interface IPSet<T> : IHasElements<T>, IEntryAddable<T>, IEntryRemovable<T>, IIndexReadable<T, bool>, IMergable<IPSet<T>>, IIntersectable<IPSet<T>>
     { }
     public interface IPSequence<T> : IHasElements<T>, IIndexReadable<int, T>, IEntryAddable<ITiple<int, T>>, IEntryAddable<T>, IMergable<IPSequence<T>>, IEntryRemovable<Range>
     {
@@ -46,8 +51,12 @@ namespace Perfection
         { return (Self)s._WithoutEntries(values); }
 
         //CHECK: type restrictions might be silly here
-        public static Self Merge<Self, T>(this Self s, T other) where Self : IMergable<T>, T where T : IMergable<T>
-        { return (Self)s._Merge(other); }
+        public static Self MergedWith<Self, T>(this Self s, T other) where Self : IMergable<T>, T where T : IMergable<T>
+        { return (Self)s._MergedWith(other); }
+        public static Self IntersectionWith<Self, T>(this Self s, T other) where Self : IIntersectable<T>, T where T : IIntersectable<T>
+        { return (Self)s._IntersectionWith(other); }
+        public static Self InversectionWith<Self, T>(this Self s, T other) where Self : IIntersectable<T>, T where T : IIntersectable<T>
+        { return (Self)s._InversectionWith(other); }
         public static Self WithInsertionAt<Self, T>(this Self s, int index, IEnumerable<T> values) where Self : IPSequence<T>
         { return (Self)s._WithInsertionAt(index, values); }
     }
@@ -67,7 +76,7 @@ namespace Perfection
             return _dict.TryGetValue(index, out var v).ToOption(v)!;
         }
 
-        IMergable<IPMap<K, T>> IMergable<IPMap<K, T>>._Merge(IPMap<K, T> union)
+        IMergable<IPMap<K, T>> IMergable<IPMap<K, T>>._MergedWith(IPMap<K, T> union)
         {
             var ndict = new Dictionary<K, T>(_dict);
             foreach (var e in union.Elements) ndict[e.A] = e.B;
@@ -101,7 +110,7 @@ namespace Perfection
             return _set.Contains(index);
         }
 
-        IMergable<IPSet<T>> IMergable<IPSet<T>>._Merge(IPSet<T> union)
+        IMergable<IPSet<T>> IMergable<IPSet<T>>._MergedWith(IPSet<T> union)
         {
             var nset = new HashSet<T>(_set);
             nset.UnionWith(union.Elements);
@@ -121,6 +130,20 @@ namespace Perfection
             nset.ExceptWith(entries);
             return new PSet<T>(nset);
         }
+
+        IIntersectable<IPSet<T>> IIntersectable<IPSet<T>>._IntersectionWith(IPSet<T> intersection)
+        {
+            var nset = new HashSet<T>(_set);
+            nset.IntersectWith(intersection.Elements);
+            return new PSet<T>(nset);
+        }
+
+        IIntersectable<IPSet<T>> IIntersectable<IPSet<T>>._InversectionWith(IPSet<T> intersection)
+        {
+            var nset = new HashSet<T>(_set);
+            nset.SymmetricExceptWith(intersection.Elements);
+            return new PSet<T>(nset);
+        }
     }
     public class PSequence<T>() : IPSequence<T>
     {
@@ -135,7 +158,7 @@ namespace Perfection
         }
 
         private PSequence(IEnumerable<T> values) : this() { _list = new(values); }
-        IMergable<IPSequence<T>> IMergable<IPSequence<T>>._Merge(IPSequence<T> union)
+        IMergable<IPSequence<T>> IMergable<IPSequence<T>>._MergedWith(IPSequence<T> union)
         {
             return this.WithEntries(union.Elements);
         }

@@ -25,7 +25,7 @@ namespace FourZeroOne.Proxy
         protected abstract IToken<R> RealizeInternal(TOrig original, IOption<Rule.IRule> realizingRule);
         public IToken<R> Realize(TOrig original, IOption<Rule.IRule> realizingRule)
         {
-            return RealizeInternal(original, realizingRule).dLabels(x => x.Merge(Labels));
+            return RealizeInternal(original, realizingRule).dLabels(x => x.MergedWith(Labels));
         }
         public IToken<R> UnsafeTypedRealize(IToken original, IOption<Rule.IRule> rule) => Realize((TOrig)original, rule);
         public IToken UnsafeContextualRealize(TOrig original, IOption<Rule.IRule> rule) => Realize(original, rule);
@@ -101,7 +101,7 @@ namespace FourZeroOne.Proxy.Unsafe
         {
             var o = ConstructFromArgs(original, MakeSubstitutions(original, rule));
             // this is a little silly.
-            return o.dLabels(x => x.Merge(Labels));
+            return o.dLabels(x => x.MergedWith(Labels));
         }
 
         protected readonly IProxy[] ArgProxies;
