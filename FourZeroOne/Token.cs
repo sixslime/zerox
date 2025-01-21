@@ -15,26 +15,22 @@ namespace FourZeroOne.Token
     {
         // "ToNodes(IRuntime runtime)".
         // "Resolve(IOption<ResObj>[]...)"
-        public IToken<R> WithLabels(IPSet<string> labels);
         public ITask<IOption<R>> Resolve(IRuntime runtime, IOption<ResObj>[] args);
         public IToken<R> UnsafeTypedWithArgs(Unsafe.IToken[] args);
     }
     public abstract record Token<R> : IToken<R> where R : class, ResObj
     {
         public Unsafe.IToken[] ArgTokens => _argTokens;
-        public IPSet<string> Labels => _labels;
+        public IPSet<string> Labels { get; private init; } = new PSet<string>();
+        public Unsafe.IToken _dLabels(Updater<IPSet<string>> updater) => this with { Labels = updater(Labels) };
         public Token(params Unsafe.IToken[] args)
         {
             _argTokens = args;
             _uniqueId = ++_assigner;
-            _labels = new();
         }
         public Token(IEnumerable<Unsafe.IToken> args) : this(args.ToArray()) { }
         public abstract ITask<IOption<R>> Resolve(IRuntime runtime, IOption<ResObj>[] args);
         public ITask<IOption<ResObj>> UnsafeResolve(IRuntime runtime, IOption<ResObj>[] args) { return Resolve(runtime, args); }
-        public IToken<R> WithLabels(params string[] labels) => WithLabels(labels.ToPSet());
-        public IToken<R> WithLabels(IPSet<string> labels) => this with { _labels = _labels.Merge(labels) };
-        public Unsafe.IToken UnsafeWithLabels(IPSet<string> labels) => WithLabels(labels);
         // WithArgs() is smelly
         public Unsafe.IToken UnsafeWithArgs(Unsafe.IToken[] args) => UnsafeTypedWithArgs(args);
         public IToken<R> UnsafeTypedWithArgs(Unsafe.IToken[] args) => this with { _argTokens = args };
@@ -52,9 +48,13 @@ namespace FourZeroOne.Token
         }
         private static int _assigner = 0;
         private Unsafe.IToken[] _argTokens;
-        private PSet<string> _labels;
         private int _uniqueId;
         
+    }
+    public static class SelfAssumptions
+    {
+        public static Self dLabels<Self>(this Self s, Updater<IPSet<string>> updater) where Self : Unsafe.IToken
+            => (Self)s._dLabels(updater);
     }
 
     public interface IFunction<RArg1, ROut> : Unsafe.IHasArg1<RArg1>, Unsafe.IFunction<ROut>
@@ -247,8 +247,8 @@ namespace FourZeroOne.Token.Unsafe
     public interface IToken
     {
         public IToken[] ArgTokens { get; }
-        public IPSet<string> Labels { get; }
-        public IToken UnsafeWithLabels(IPSet<string> labels);
+        public IPSet<string> Labels { get; } 
+        public IToken _dLabels(Updater<IPSet<string>> updater);
         public ITask<IOption<ResObj>> UnsafeResolve(IRuntime runtime, IOption<ResObj>[] args);
         public IToken UnsafeWithArgs(IToken[] args);
     }
