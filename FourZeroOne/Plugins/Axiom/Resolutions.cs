@@ -105,6 +105,7 @@ namespace FourZeroOne.Plugins.Axiom.Resolutions
     {
         // this could be a composition.
         // then use a macro to resolve it into a multi
+        /*
         public record HexArea : NoOp, IMulti<ax.Hex.Position>
         {
             public IEnumerable<ax.Hex.Position> ValueSequence => Offsets.Elements.Map(x => x.Transform((a, b) => a + b, Center));
@@ -112,6 +113,7 @@ namespace FourZeroOne.Plugins.Axiom.Resolutions
             public required ax.Hex.Position Center { get; init; }
             public required PList<ax.Hex.Position> Offsets { get; init; }
         }
+        */
     }
     namespace Action
     {

@@ -17,6 +17,7 @@ namespace FourZeroOne.Plugins.Axiom.Tokens
     {
         namespace Position
         {
+            /*
             public sealed record Offset : PureFunction<IMulti<ax.Hex.Position>, ax.Hex.Position, HexArea>
             {
                 public Offset(IToken<IMulti<ax.Hex.Position>> area, IToken<ax.Hex.Position> offset) : base(area, offset) { }
@@ -25,6 +26,7 @@ namespace FourZeroOne.Plugins.Axiom.Tokens
                     return new() { Center = in2, Offsets = new() { Elements = in1.ValueSequence } };
                 }
             }
+            */
         } 
     }
 }
