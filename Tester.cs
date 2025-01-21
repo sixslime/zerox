@@ -546,7 +546,7 @@ public class Tester
 
         // skips
         _ = testGroups.Remove("Intro Demo");
-        _ = testGroups.Remove("Advanced Examples");
+        //_ = testGroups.Remove("Advanced Examples");
 
         // make better later
         foreach (var testGroup in testGroups)

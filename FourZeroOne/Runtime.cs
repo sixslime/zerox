@@ -30,7 +30,7 @@ namespace FourZeroOne.Runtime
             _resolutionStack = new None<LinkedStack<Resolved>>();
             _runThread = ControlledFlow.Resolved((Resolved)(new None<ResObj>()));
             _frameStack = new None<LinkedStack<Frame>>();
-            _appliedRuleStack = new None<LinkedStack<PList<RuleContainer>>>();
+            _appliedRuleStack = new None<LinkedStack<PSequence<RuleContainer>>>();
             _discontinueEval = false;
         }
         public async Task<Resolved> Run(IState startingState, IToken program)
@@ -70,7 +70,7 @@ namespace FourZeroOne.Runtime
             var currentState = _stateStack.Unwrap();
             _stateStack = (currentState with
             {
-                dValue = Q => Q.WithObjectsUnsafe(metaPointers.FilterMap(x => x.Item2.RemapAs(confirmedData => (x.Item1, confirmedData))))
+                dValue = Q => Q.WithObjectsUnsafe(metaPointers.FilterMap(x => x.Item2.RemapAs(confirmedData => (x.Item1, confirmedData).Tiple())))
             }).AsSome();
             _discontinueEval = true;
             return new None<R>().ToCompletedITask();
@@ -180,7 +180,7 @@ namespace FourZeroOne.Runtime
                     RecieveMacroExpansion(macro, expanded, operationNode.Depth);
                     ruledToken = ApplyRules(expanded, rulesToApply, out var appliedPostMacro);
                     // Assert(appliedRules.Count = 0 || appliedPostMacro.Count = 0); logically right?
-                    appliedRules = appliedRules with { dElements = Q => Q.Also(appliedPostMacro.Elements) };
+                    appliedRules = appliedRules.MergedWith(appliedPostMacro);
                 }
                 RecieveRuleSteps(appliedRules.Elements.Map(x => (x.fromToken, x.container.Rule)));
                 RecieveToken(ruledToken, operationNode.Depth);
@@ -218,13 +218,13 @@ namespace FourZeroOne.Runtime
                 }
                 else
                 {
-                    PushToStack(ref _operationStack, operationNode.Depth + 1, operationNode.Value.ArgTokens.AsMutList().Reversed());
+                    PushToStack(ref _operationStack, operationNode.Depth + 1, operationNode.Value.ArgTokens.ToMutList().Reversed());
                     PushToStack(ref _stateStack, currentStateNode.Depth + 1, currentStateNode.Value.Yield(argAmount));
-                    var previousRules = _appliedRuleStack.Check(out var ruleStack) ? ruleStack.Value.Elements : [];
-                    PushToStack(ref _appliedRuleStack, operationNode.Depth + 1, new PList<RuleContainer>() { Elements = previousRules.Also(appliedRules.Elements.Map(x => x.container))});
+                    var previousRules = _appliedRuleStack.Check(out var ruleStack) ? ruleStack.Value : new();
+                    PushToStack(ref _appliedRuleStack, operationNode.Depth + 1, previousRules.WithEntries(appliedRules.Elements.Map(x => x.container)));
                 }
             }
-
+            
             Debug.Assert(_resolutionStack.Check(out var finalNode) && !finalNode.Link.IsSome());
             ResolveRun(PopFromStack(ref _resolutionStack).Value);
         }
@@ -252,7 +252,7 @@ namespace FourZeroOne.Runtime
             return o;
         }
         private static void PushToStack<T>(ref IOption<LinkedStack<T>> stack, int depth, params T[] values) { PushToStack(ref stack, depth, values.IEnumerable()); }
-        private static IToken ApplyRules(IToken token, IEnumerable<RuleContainer> rules, out PList<(IToken fromToken, RuleContainer container)> appliedRules)
+        private static IToken ApplyRules(IToken token, IEnumerable<RuleContainer> rules, out PSequence<(IToken fromToken, RuleContainer container)> appliedRules)
         {
             var o = token;
             var appliedRulesList = new List<(IToken fromToken, RuleContainer container)>();
@@ -264,7 +264,7 @@ namespace FourZeroOne.Runtime
                     o = newToken;
                 }
             }
-            appliedRules = new() { Elements = appliedRulesList };
+            appliedRules = appliedRulesList.ToPSequence();
             return o;
         }
         private static Exception MakeInternalError(string msg)
@@ -273,7 +273,7 @@ namespace FourZeroOne.Runtime
         }
         private ControlledFlow<Resolved> _runThread;
         // I guess _appliedRuleStack could be a stack of normal IEnumerables, but PList has P in it
-        private IOption<LinkedStack<PList<RuleContainer>>> _appliedRuleStack;
+        private IOption<LinkedStack<PSequence<RuleContainer>>> _appliedRuleStack;
         private IOption<LinkedStack<IState>> _stateStack;
         private IOption<LinkedStack<Frame>> _frameStack;
         private IOption<LinkedStack<IToken>> _operationStack;

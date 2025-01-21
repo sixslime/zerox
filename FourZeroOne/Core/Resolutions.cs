@@ -60,7 +60,7 @@ namespace FourZeroOne.Core.Resolutions
             public required D Subject { get; init; }
             public override IState ChangeState(IState previousState)
             {
-                return previousState.WithObjects([(Address, Subject)]);
+                return previousState.WithObjects([(Address, Subject).Tiple()]);
             }
             public override string ToString() => $"{Address}<-{Subject}";
         }
