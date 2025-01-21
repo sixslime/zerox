@@ -43,9 +43,7 @@ namespace FourZeroOne.Proxy
     {
         public static Self dLabels<Self>(this Self s, Updater<IPSet<string>> updater) where Self : Unsafe.IProxy
             => (Self)s._dLabels(updater);
-        public static Self dLabelRemovals<Self, TOrig, R>(this Self s, Updater<IPSet<string>> updater) where Self : Unsafe.ThisProxy<TOrig, R>
-            where TOrig : IToken<R>
-            where R : class, ResObj
+        public static Self dLabelRemovals<Self>(this Self s, Updater<IPSet<string>> updater) where Self : IThisProxy
             => (Self)s._dLabelsRemovals(updater);
     }
 }
@@ -70,12 +68,17 @@ namespace FourZeroOne.Proxy.Unsafe
         public abstract IToken UnsafeContextualRealize(TOrig original, IOption<Rule.IRule> rule);
     }
 
+    public interface IThisProxy : IProxy
+    {
+        public IPSet<string> LabelRemovals { get; }
+        public IThisProxy _dLabelsRemovals(Updater<IPSet<string>> updater);
+    }
     // DEV: perhaps make FunctionProxy follow the same structure as TransformProxy
-    public abstract record ThisProxy<TOrig, R> : Proxy<TOrig, R> where TOrig : IToken<R> where R : class, ResObj
+    public abstract record ThisProxy<TOrig, R> : Proxy<TOrig, R>, IThisProxy where TOrig : IToken<R> where R : class, ResObj
     {
         public IPSet<string> LabelRemovals { get; private init; } = new PSet<string>();
         // DEV: this doesn't need to be in '_d' form, but for consistency with other things it is.
-        public ThisProxy<TOrig, R> _dLabelsRemovals(Updater<IPSet<string>> updater)
+        public IThisProxy _dLabelsRemovals(Updater<IPSet<string>> updater)
             => this with { LabelRemovals = updater(LabelRemovals) };
         protected readonly IProxy[] ArgProxies;
         protected ThisProxy(IEnumerable<IProxy> proxies) : this(proxies.ToArray()) { }

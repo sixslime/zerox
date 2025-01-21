@@ -25,7 +25,7 @@ namespace FourZeroOne.Rule
     public record Rule<TFor, R> : IRule where TFor : IToken<R> where R : class, ResObj
     {
         public required IProxy<TFor, R> Proxy { get; init; }
-        public required IPSet<string> RequiredLabels { get; init; }
+        public IPSet<string> RequiredLabels { get; init; } = new PSet<string>();
         public IToken<R> Apply(TFor original)
         {
             return Proxy.Realize(original, this.AsSome());

@@ -79,8 +79,8 @@ public class Tester
                     ]),
 
                 Expect = new() {
-                    //                                              ┌[ints implicitly cast to 'ro.Number']
-                    Resolution = new r.Multi<ro.Number>() {ValueSequence = [1, 2, 3, 4]}.AsSome()
+                    //                                               
+                    Resolution = new r.Multi<ro.Number>() { Values = Iter.Over(1, 2, 3, 4).Map(x => (ro.Number)x).ToPSequence() }.AsSome()
                 }
             })
             .Named("1..4 Multi")
@@ -157,19 +157,19 @@ public class Tester
 
             // ## 'Rules' are evaluation-time Token replacements ##
             // ## they are written in proxies, which can reference the 'Original' information of the Token they are replacing. ##
-            // ## 'Hooks' can be arbitrarily attached to any Tokens (see below) ##
+            // ## 'Labels' can be arbitrarily attached to any Tokens (see below) ##
             MkRuntime().MakeTest(RHint<r.Multi<ro.Number>>.Hint(), async () => new() {
                 State = BLANK_STARTING_STATE,
                 Evaluate = Core.tSubEnvironment(RHint<r.Multi<ro.Number>>.Hint(), new() {
                 //                ┌[constructs Rule: replace '(A+B)' with '((A-B)+1)', given '(A+B)' has the Hook 'my_hook']
-                    Environment = MakeProxy.AsRule<t.Number.Add, ro.Number>("my_hook",
+                    Environment = MakeProxy.AsRule<t.Number.Add, ro.Number>(["my_hook"],
                         P =>
                             P.pOriginalA().pSubtract(P.pOriginalB()).pAdd(1.tFixed().pDirect(P)))
                         .tAddRule(),
                     //   └[Resolution will add Rule to the State]
                     Value = Core.tMultiOf(RHint<ro.Number>.Hint(), [
                         //          ┌[affected by Rule, has "my_hook" Hook]
-                        10.tFixed().tAdd(5.tFixed()).WithLabels("my_hook"),
+                        10.tFixed().tAdd(5.tFixed()).SetLabels("my_hook"),
                         //          ┌[unaffected by Rule]
                         10.tFixed().tAdd(5.tFixed())
                     ])
@@ -354,7 +354,7 @@ public class Tester
                         Iter.Over(1, 2, 3, 4, 5),
                         Iter.Over(2, 4, 6, 8, 10),
                         Iter.Over(4, 8, 12, 16, 20))
-                    .Map(x => new r.Multi<ro.Number>() {ValueSequence = x.Map(x => (ro.Number)x)})
+                    .Map(x => new r.Multi<ro.Number>() { Values = x.Map(x => (ro.Number)x).ToPSequence()})
                     .Contains(value.Unwrap())
                 }
             })
@@ -383,7 +383,7 @@ public class Tester
                         Iter.Over(1, 2, 3, 4, 5),
                         Iter.Over(2, 4, 6, 8, 10),
                         Iter.Over(4, 8, 12, 16, 20))
-                    .Map(x => new r.Multi<ro.Number>() {ValueSequence = x.Map(x => (ro.Number)x)})
+                    .Map(x => new r.Multi<ro.Number>() { Values = x.Map(x => (ro.Number)x).ToPSequence()})
                     .Contains(result.Unwrap())
                 }
             })
@@ -394,7 +394,7 @@ public class Tester
             MkRuntimeWithAuto([[0], [1]]).MakeTest(RHint<ro.Number>.Hint(), hint => async () => new() {
                 State = BLANK_STARTING_STATE,
                 Evaluate = Core.tSubEnvironment(hint, new() {
-                    Environment = MakeProxy.AsRule<t.Number.Multiply, ro.Number>("hook",
+                    Environment = MakeProxy.AsRule<t.Number.Multiply, ro.Number>(["hook"],
                         P =>
                         //    ┌[will fully evaluate argA Token]
                             P.pOriginalA().pMultiply(P.pOriginalA())).tAddRule(),
@@ -402,7 +402,7 @@ public class Tester
                     //                                                            ┌[argA of 'tMultiply']
                     Value = Iter.Over(4, 8).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne()
                     //                ┌[argB of 'tMultiply']
-                        .tMultiply(10.tFixed()).WithLabels("hook")
+                        .tMultiply(10.tFixed()).SetLabels("hook")
                 }),
                 Assert = new() {
                     Resolution = async res => res is Some<ro.Number> result &&
@@ -415,13 +415,13 @@ public class Tester
             MkRuntime().MakeTest(RHint<ro.Number>.Hint(), hint => async () => new() {
                 State = BLANK_STARTING_STATE,
                 Evaluate = Core.tSubEnvironment(hint, new() {
-                    Environment = MakeProxy.AsRule<t.Fixed<ro.Number>, ro.Number>("duplicate_me",
+                    Environment = MakeProxy.AsRule<t.Fixed<ro.Number>, ro.Number>(["duplicate_me"],
                         P =>
-                        //    ┌['pThis' refers to the original Token itself, preserving Hooks]
+                        //    ┌['pThis' refers to the original Token itself, preserving Labels]
                             P.pThis().pAdd(P.pThis())).tAddRule()
                         //            ┌[when evaluated, 4 copies of the above Rule will be added to State]
                             .Yield(4).t_ToConstMulti(),
-                    Value = 1.tFixed().WithLabels("duplicate_me")
+                    Value = 1.tFixed().SetLabels("duplicate_me")
                 }),
                 Expect = new() {
                     Resolution = 16.rAsRes()

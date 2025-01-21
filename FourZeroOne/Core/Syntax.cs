@@ -302,8 +302,8 @@ namespace FourZeroOne.Core.Syntax
     {
         public static IProxy<TOrig, ROut> Statement<TOrig, ROut>(ProxyBuilder<TOrig, ROut> statement) where TOrig : Token.IToken<ROut> where ROut : class, ResObj
         { return statement(new()); }
-        public static Rule.Rule<TOrig, ROutMatch> AsRule<TOrig, ROutMatch>(string hook, ProxyBuilder<TOrig, ROutMatch> statement) where TOrig : Token.IToken<ROutMatch> where ROutMatch : class, ResObj
-        { return new() { Hook = hook, Proxy = statement(new()) }; }
+        public static Rule.Rule<TOrig, ROutMatch> AsRule<TOrig, ROutMatch>(IEnumerable<string> requiredLabels, ProxyBuilder<TOrig, ROutMatch> statement) where TOrig : Token.IToken<ROutMatch> where ROutMatch : class, ResObj
+        { return new() { RequiredLabels = requiredLabels.ToPSet(), Proxy = statement(new()) }; }
     }
     public static class _Extensions
     {
@@ -621,6 +621,19 @@ namespace FourZeroOne.Core.Syntax
         public static IOption<r.Multi<R>> rAsRes<R>(this IEnumerable<IOption<R>> v) where R : class, ResObj
         {
             return new r.Multi<R>() { Values = v.FilterMap(x => x).ToPSequence() }.AsSome();
+        }
+
+        public static T SetLabels<T>(this T token, params string[] labels) where T : IToken
+        {
+            return token.dLabels(_ => labels.ToPSet());
+        }
+        public static P SetAddedLabels<P>(this P proxy, params string[] labels) where P : Proxy.Unsafe.IProxy
+        {
+            return proxy.dLabels(_ => labels.ToPSet());
+        }
+        public static P SetRemovedLabels<P, TOrig, R>(this P proxy, params string[] labels) where P : Proxy.Unsafe.IThisProxy
+        {
+            return proxy.dLabelRemovals(_ => labels.ToPSet());
         }
     }
 }
