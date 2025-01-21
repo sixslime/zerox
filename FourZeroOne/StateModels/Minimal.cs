@@ -9,32 +9,32 @@ namespace FourZeroOne.StateModels
     // with the current implementations of PMap/PList, this is extremely inefficient, but we will fix later yah.
     public record Minimal : State
     {
-        public override IEnumerable<(IStateAddress, IResolution)> Objects => _objects.Elements;
+        public override IEnumerable<ITiple<IStateAddress, IResolution>> Objects => _objects.Elements;
         public override IEnumerable<IRule> Rules => _rules.Elements;
 
         public Minimal()
         {
-            _objects = new() { Elements = [] };
-            _rules = new() { Elements = [] };
+            _objects = new();
+            _rules = new();
         }
         public override IState WithClearedAddresses(IEnumerable<IStateAddress> removals)
         {
-            return this with { _objects = _objects with { dElements = E => E.ExceptBy(removals, x => x.key) } };
+            return this with { _objects = _objects.WithoutEntries(removals) };
         }
-        public override IState WithObjectsUnsafe(IEnumerable<(IStateAddress, IResolution)> insertions)
+        public override IState WithObjectsUnsafe(IEnumerable<ITiple<IStateAddress, IResolution>> insertions)
         {
-            return this with { _objects = _objects with { dElements = E => E.Also(insertions) } };
+            return this with { _objects = _objects.WithEntries(insertions) };
         }
         public override IState WithRules(IEnumerable<IRule> rules)
         {
-            return this with { _rules = _rules with { dElements = E => E.Also(rules) } };
+            return this with { _rules = _rules.WithEntries(rules) };
         }
         public override IOption<IResolution> GetObjectUnsafe(IStateAddress address)
         {
-            return _objects[address];
+            return _objects.At(address);
         }
 
         private PMap<IStateAddress, IResolution> _objects;
-        private PList<IRule> _rules;
+        private PSequence<IRule> _rules;
     }
 }
