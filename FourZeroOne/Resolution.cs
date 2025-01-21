@@ -36,10 +36,8 @@ namespace FourZeroOne.Resolution
     {
         public Proxy.IProxy<Core.Macros.Decompose<Self>, IResolution> DecompositionProxy { get; }
     }
-    public interface IMulti<out R> : IResolution where R : IResolution
-    {
-        public IHasElements<R> Container { get; }
-    }
+    public interface IMulti<out R> : IHasElements<R>, IIndexReadable<int, IOption<R>>, IResolution where R : IResolution
+    { }
 
     public interface IStateAddress<out R> : Unsafe.IStateAddress where R : class, IResolution { }
     public abstract record Instruction : Construct, IInstruction

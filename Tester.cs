@@ -169,7 +169,7 @@ public class Tester
                     //   └[Resolution will add Rule to the State]
                     Value = Core.tMultiOf(RHint<ro.Number>.Hint(), [
                         //          ┌[affected by Rule, has "my_hook" Hook]
-                        10.tFixed().tAdd(5.tFixed()).WithHooks("my_hook"),
+                        10.tFixed().tAdd(5.tFixed()).WithLabels("my_hook"),
                         //          ┌[unaffected by Rule]
                         10.tFixed().tAdd(5.tFixed())
                     ])
@@ -402,7 +402,7 @@ public class Tester
                     //                                                            ┌[argA of 'tMultiply']
                     Value = Iter.Over(4, 8).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne()
                     //                ┌[argB of 'tMultiply']
-                        .tMultiply(10.tFixed()).WithHooks("hook")
+                        .tMultiply(10.tFixed()).WithLabels("hook")
                 }),
                 Assert = new() {
                     Resolution = async res => res is Some<ro.Number> result &&
@@ -421,7 +421,7 @@ public class Tester
                             P.pThis().pAdd(P.pThis())).tAddRule()
                         //            ┌[when evaluated, 4 copies of the above Rule will be added to State]
                             .Yield(4).t_ToConstMulti(),
-                    Value = 1.tFixed().WithHooks("duplicate_me")
+                    Value = 1.tFixed().WithLabels("duplicate_me")
                 }),
                 Expect = new() {
                     Resolution = 16.rAsRes()

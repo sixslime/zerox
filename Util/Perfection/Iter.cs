@@ -161,7 +161,7 @@ namespace Perfection
         public static PSequence<T> ToPSequence<T>(this IEnumerable<T> enumerable) => new PSequence<T>().WithEntries(enumerable);
         public static PMap<K, T> ToPMap<K, T>(this IEnumerable<ITiple<K, T>> enumerable) where K : notnull => new PMap<K, T>().WithEntries(enumerable);
         public static PMap<K, T> ToPMap<K, T>(this IEnumerable<(K, T)> enumerable) where K : notnull => new PMap<K, T>().WithEntries(enumerable.Map(x => x.Tiple()));
-        public static PSet<T> ToPSet<K, T>(this IEnumerable<T> enumerable) where K : notnull => new PSet<T>().WithEntries(enumerable);
+        public static PSet<T> ToPSet<T>(this IEnumerable<T> enumerable) => new PSet<T>().WithEntries(enumerable);
         public static CachingEnumerable<T> Caching<T>(this IEnumerable<T> enumerable) => new(enumerable);
         public static IEnumerable<T> Over<T>(params T[] arr) => arr;
     }

@@ -28,16 +28,22 @@ namespace FourZeroOne.Core.Resolutions
         }
         public sealed record NumRange : NoOp, IMulti<Number>
         {
-            
             public required Number Start { get; init; }
             public required Number End { get; init; }
-             
-            public IHasElements<Number> Container =>
-                ((Start.Value <= End.Value)
-                    ? Start.Sequence(x => x with { dValue = Q => Q + 1 }).TakeWhile(x => x.Value <= End.Value)
-                    : [])
-                .ToPSequence();
             public int Count => (Start.Value <= End.Value) ? (End.Value - Start.Value) + 1 : 0;
+
+            public IEnumerable<Number> Elements =>
+                (Start.Value <= End.Value)
+                    ? Start.Sequence(x => x with { dValue = Q => Q + 1 }).TakeWhile(x => x.Value <= End.Value)
+                    : [];
+
+            public IOption<Number> At(int index)
+            {
+                return (index <= End.Value - Start.Value)
+                    ? new Number() { Value = Start.Value + index }.AsSome()
+                    : new None<Number>();
+            }
+
             public override string ToString() => $"{Start}..{End}";
         }
 
@@ -178,22 +184,27 @@ namespace FourZeroOne.Core.Resolutions
 
     public sealed record Multi<R> : Construct, IMulti<R> where R : class, ResObj
     {
-        public IHasElements<R> Container => Values;
-        public override IEnumerable<IInstruction> Instructions => Container.Elements.Map(x => x.Instructions).Flatten();
+        public IEnumerable<R> Elements => Values.Elements;
+        public int Count => Values.Count;
+        public override IEnumerable<IInstruction> Instructions => Elements.Map(x => x.Instructions).Flatten();
         public required PSequence<R> Values { get; init; } 
         public Updater<PSequence<R>> dValues { init => Values = value(Values); }
-        public int Count => Values.Count;
+        public IOption<R> At(int index)
+        {
+            try { return Values.At(index).AsSome(); }
+            catch { return new None<R>(); }
+        }
         public bool Equals(Multi<R>? other)
         {
-            return other is not null && Container.Elements.SequenceEqual(other.Container.Elements);
+            return other is not null && Elements.SequenceEqual(other.Elements);
         }
         public override int GetHashCode()
         {
-            return Container.Elements.GetHashCode();
+            return Elements.GetHashCode();
         }
         public override string ToString()
         {
-            return $"[{string.Join(", ", Container.Elements.Map(x => x.ToString()))}]";
+            return $"[{string.Join(", ", Elements.Map(x => x.ToString()))}]";
         }
     }
 }

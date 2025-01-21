@@ -25,17 +25,17 @@ namespace Perfection
     {
         public T At(I index);
     }
-    public interface IMergable<U> where U : IMergable<U>
+    public interface IMergable<in U> where U : IMergable<U>
     {
-        public U _Merge(U union);
+        public IMergable<U> _Merge(U union);
     }
-    public interface IMap<K, T> : IHasElements<ITiple<K, T>>, IEntryAddable<ITiple<K, T>>, IEntryRemovable<K>, IIndexReadable<K, IOption<T>>, IMergable<IMap<K, T>>
+    public interface IPMap<K, T> : IHasElements<ITiple<K, T>>, IEntryAddable<ITiple<K, T>>, IEntryRemovable<K>, IIndexReadable<K, IOption<T>>, IMergable<IPMap<K, T>>
     { }
-    public interface ISet<T> : IHasElements<T>, IEntryAddable<T>, IEntryRemovable<T>, IIndexReadable<T, bool>, IMergable<ISet<T>>
+    public interface IPSet<T> : IHasElements<T>, IEntryAddable<T>, IEntryRemovable<T>, IIndexReadable<T, bool>, IMergable<IPSet<T>>
     { }
-    public interface ISequence<T> : IHasElements<T>, IIndexReadable<int, T>, IEntryAddable<ITiple<int, T>>, IEntryAddable<T>, IMergable<ISequence<T>>, IEntryRemovable<Range>
+    public interface IPSequence<T> : IHasElements<T>, IIndexReadable<int, T>, IEntryAddable<ITiple<int, T>>, IEntryAddable<T>, IMergable<IPSequence<T>>, IEntryRemovable<Range>
     {
-        public ISequence<T> _WithInsertionAt(int index, IEnumerable<T> items);
+        public IPSequence<T> _WithInsertionAt(int index, IEnumerable<T> items);
     }
 
     public static class SelfTypeAssumption
@@ -44,15 +44,17 @@ namespace Perfection
         { return (Self)s._WithEntries(values); }
         public static Self WithoutEntries<Self, T>(this Self s, IEnumerable<T> values) where Self : IEntryRemovable<T>
         { return (Self)s._WithoutEntries(values); }
-        public static Self Merge<Self, T>(this Self s, Self other) where Self : IMergable<Self>
-        { return s._Merge(other); }
-        public static Self WithInsertionAt<Self, T>(this Self s, int index, IEnumerable<T> values) where Self : ISequence<T>
+
+        //CHECK: type restrictions might be silly here
+        public static Self Merge<Self, T>(this Self s, T other) where Self : IMergable<T>, T where T : IMergable<T>
+        { return (Self)s._Merge(other); }
+        public static Self WithInsertionAt<Self, T>(this Self s, int index, IEnumerable<T> values) where Self : IPSequence<T>
         { return (Self)s._WithInsertionAt(index, values); }
     }
 
     // DEV/FIXME: temporary bare-functionality inneficient implementations.
 
-    public class PMap<K, T>() : IMap<K, T> where K : notnull
+    public class PMap<K, T>() : IPMap<K, T> where K : notnull
     {
         private readonly Dictionary<K, T> _dict = new();
         public int Count => _dict.Count;
@@ -65,7 +67,7 @@ namespace Perfection
             return _dict.TryGetValue(index, out var v).ToOption(v)!;
         }
 
-        IMap<K, T> IMergable<IMap<K, T>>._Merge(IMap<K, T> union)
+        IMergable<IPMap<K, T>> IMergable<IPMap<K, T>>._Merge(IPMap<K, T> union)
         {
             var ndict = new Dictionary<K, T>(_dict);
             foreach (var e in union.Elements) ndict[e.A] = e.B;
@@ -86,7 +88,7 @@ namespace Perfection
             return new PMap<K, T>(ndict);
         }
     }
-    public class PSet<T>() : ISet<T>
+    public class PSet<T>() : IPSet<T>
     {
         private readonly HashSet<T> _set = new();
         public int Count => _set.Count;
@@ -99,7 +101,7 @@ namespace Perfection
             return _set.Contains(index);
         }
 
-        ISet<T> IMergable<ISet<T>>._Merge(ISet<T> union)
+        IMergable<IPSet<T>> IMergable<IPSet<T>>._Merge(IPSet<T> union)
         {
             var nset = new HashSet<T>(_set);
             nset.UnionWith(union.Elements);
@@ -120,7 +122,7 @@ namespace Perfection
             return new PSet<T>(nset);
         }
     }
-    public class PSequence<T>() : ISequence<T>
+    public class PSequence<T>() : IPSequence<T>
     {
         private readonly CachingEnumerable<T> _list = new([]);
         public int Count => _list.CountAndCache();
@@ -133,7 +135,7 @@ namespace Perfection
         }
 
         private PSequence(IEnumerable<T> values) : this() { _list = new(values); }
-        ISequence<T> IMergable<ISequence<T>>._Merge(ISequence<T> union)
+        IMergable<IPSequence<T>> IMergable<IPSequence<T>>._Merge(IPSequence<T> union)
         {
             return this.WithEntries(union.Elements);
         }
@@ -163,7 +165,7 @@ namespace Perfection
             return new PSequence<T>(optList.FilterMap(x => x));
         }
 
-        ISequence<T> ISequence<T>._WithInsertionAt(int index, IEnumerable<T> items)
+        IPSequence<T> IPSequence<T>._WithInsertionAt(int index, IEnumerable<T> items)
         {
             var nlist = new List<T>(_list);
             nlist.InsertRange(index, items);

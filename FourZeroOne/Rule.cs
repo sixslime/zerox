@@ -35,7 +35,7 @@ namespace FourZeroOne.Rule
             // i don't see a better way. rules are just cheugy.
             return 
                 original is TFor match
-                && Hooks.All(x => match.HookLabels.Contains(x))
+                && Hooks.All(x => match.Labels.Contains(x))
                 && original.GetType().FindInterfaces(InterfaceFilter, ITOKEN_TYPE)
                     .Map(x => x.GenericTypeArguments[0])
                     .HasMatch(x => typeof(R).IsAssignableTo(x))
