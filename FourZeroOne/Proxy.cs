@@ -9,32 +9,27 @@ namespace FourZeroOne.Proxy
     using ResObj = Resolution.IResolution;
     using Token.Unsafe;
     using Token;
+    using FourZeroOne.Proxy.Unsafe;
+
     public interface IProxy<in TOrig, out R> : Unsafe.IProxyOf<TOrig>, Unsafe.IProxy<R> where TOrig : IToken where R : class, ResObj
     {
         public IToken<R> Realize(TOrig original, IOption<Rule.IRule> realizingRule);
-        public IProxy<TOrig, R> WithLabels(IPSet<string> labels);
     }
     public abstract record Proxy<TOrig, R> : IProxy<TOrig, R> where TOrig : IToken where R : class, ResObj
     {
         // HookLabels are appended to ArgTransform.
         // This is a cringe :P
-        public IPSet<string> Labels => _labels;
-        public Proxy()
-        {
-            _labels = new();
-        }
+        public IPSet<string> Labels { get; private init; } = new PSet<string>();
+        IProxy IProxy._dLabels(Updater<IPSet<string>> updater)
+            => this with { Labels = updater(Labels) };
         protected abstract IToken<R> RealizeInternal(TOrig original, IOption<Rule.IRule> realizingRule);
         public IToken<R> Realize(TOrig original, IOption<Rule.IRule> realizingRule)
         {
-            return RealizeInternal(original, realizingRule)
-                .ExprAs(x => x.WithLabels(x.Labels.Also(Labels)));
+            return RealizeInternal(original, realizingRule).dLabels(x => x.Merge(Labels));
         }
         public IToken<R> UnsafeTypedRealize(IToken original, IOption<Rule.IRule> rule) => Realize((TOrig)original, rule);
         public IToken UnsafeContextualRealize(TOrig original, IOption<Rule.IRule> rule) => Realize(original, rule);
         public IToken UnsafeRealize(IToken original, IOption<Rule.IRule> rule) => UnsafeTypedRealize(original, rule);
-        public Unsafe.IProxy UnsafeWithLabels(IPSet<string> labels) => WithLabels(labels);
-        public IProxy<TOrig, R> WithLabels(params string[] labels) => WithLabels(labels.ToPSet());
-        public IProxy<TOrig, R> WithLabels(IPSet<string> labels) => this with { _labels = labels };
         protected static IToken<RLocal> RuleApplied<RLocal>(IOption<Rule.IRule> rule, IToken<RLocal> original) where RLocal : class, ResObj
         {
             return rule.RemapAs(r => r.TryApplyTyped(original)).Press().Or(original);
@@ -43,7 +38,15 @@ namespace FourZeroOne.Proxy
         {
             return rule.RemapAs(r => r.TryApply(original)).Press().Or(original);
         }
-        private PSet<string> _labels;
+    }
+    public static class SelfAssumptions
+    {
+        public static Self dLabels<Self>(this Self s, Updater<IPSet<string>> updater) where Self : Unsafe.IProxy
+            => (Self)s._dLabels(updater);
+        public static Self dLabelRemovals<Self, TOrig, R>(this Self s, Updater<IPSet<string>> updater) where Self : Unsafe.ThisProxy<TOrig, R>
+            where TOrig : IToken<R>
+            where R : class, ResObj
+            => (Self)s._dLabelsRemovals(updater);
     }
 }
 namespace FourZeroOne.Proxy.Unsafe
@@ -55,8 +58,8 @@ namespace FourZeroOne.Proxy.Unsafe
     public interface IProxy
     {
         public IPSet<string> Labels { get; }
+        public IProxy _dLabels(Updater<IPSet<string>> updater);
         public IToken UnsafeRealize(IToken original, IOption<Rule.IRule> rule);
-        public IProxy UnsafeWithLabels(IPSet<string> labels);
     }
     public interface IProxy<out R> : IProxy where R : class, ResObj
     {
@@ -70,24 +73,24 @@ namespace FourZeroOne.Proxy.Unsafe
     // DEV: perhaps make FunctionProxy follow the same structure as TransformProxy
     public abstract record ThisProxy<TOrig, R> : Proxy<TOrig, R> where TOrig : IToken<R> where R : class, ResObj
     {
-        public IPSet<string> HookRemovals { get => RemovedLabels.Elements; init => RemovedLabels = new() { Elements = value }; }
-        protected readonly PSequence<IProxy> ArgProxies;
-        protected readonly PSet<string> RemovedLabels;
-        protected ThisProxy(IEnumerable<string> hookRemovals, IEnumerable<IProxy> proxies)
+        public IPSet<string> LabelRemovals { get; private init; } = new PSet<string>();
+        // DEV: this doesn't need to be in '_d' form, but for consistency with other things it is.
+        public ThisProxy<TOrig, R> _dLabelsRemovals(Updater<IPSet<string>> updater)
+            => this with { LabelRemovals = updater(LabelRemovals) };
+        protected readonly IProxy[] ArgProxies;
+        protected ThisProxy(IEnumerable<IProxy> proxies) : this(proxies.ToArray()) { }
+        protected ThisProxy(params IProxy[] proxies)
         {
-            ArgProxies = new() { Elements = proxies };
-            RemovedLabels = new() { Elements = hookRemovals };
+            ArgProxies = proxies;
         }
-        // NOTE: 'hookRemovals' may be unnecessary
-        protected ThisProxy(IEnumerable<string> hookRemovals, params IProxy[] proxies) : this(hookRemovals, proxies.IEnumerable()) { }
         protected override IToken<R> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {
             return original.UnsafeTypedWithArgs(
-                ArgProxies.Elements.ZipLong(original.ArgTokens)
+                ArgProxies.ZipLong(original.ArgTokens)
                 .Map(optPair => optPair.a.RemapAs(argProxy => argProxy.UnsafeRealize(original, rule))
                         .Or(RuleAppliedUnsafe(rule, optPair.b.Unwrap())))
                 .ToArray())
-            .WithHooks(original.Labels.Except(RemovedLabels.Elements));
+            .dLabels(x => x.WithoutEntries(LabelRemovals.Elements));
         }
     }
     public abstract record FunctionProxy<TOrig, R> : Proxy<TOrig, R>
@@ -98,19 +101,19 @@ namespace FourZeroOne.Proxy.Unsafe
         {
             var o = ConstructFromArgs(original, MakeSubstitutions(original, rule));
             // this is a little silly.
-            return o.WithLabels([.. o.Labels.Also(Labels)]);
+            return o.dLabels(x => x.Merge(Labels));
         }
 
-        protected readonly PSequence<IProxy> ArgProxies;
+        protected readonly IProxy[] ArgProxies;
         protected abstract IToken<R> ConstructFromArgs(TOrig original, List<IToken> tokens);
-        protected FunctionProxy(IEnumerable<IProxy> proxies)
+        protected FunctionProxy(IEnumerable<IProxy> proxies) : this(proxies.ToArray()) { }
+        protected FunctionProxy(params IProxy[] proxies)
         {
-            ArgProxies = new() { Elements = proxies };
+            ArgProxies = proxies;
         }
-        protected FunctionProxy(params IProxy[] proxies) : this(proxies.IEnumerable()) { }
         protected List<IToken> MakeSubstitutions(TOrig original, IOption<Rule.IRule> rule)
         {
-            return new(ArgProxies.Elements.Map(x => x.UnsafeRealize(original, rule)));
+            return new(ArgProxies.Map(x => x.UnsafeRealize(original, rule)));
         }
     }
 }
