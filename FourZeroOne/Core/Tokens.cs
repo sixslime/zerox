@@ -29,7 +29,7 @@ namespace FourZeroOne.Core.Tokens
                 protected async override ITask<IOption<R>> Evaluate(IRuntime runtime, IOption<IMulti<R>> fromOpt)
                 {
                     return fromOpt.Check(out var from)
-                        ? (await runtime.ReadSelection(from.ValueSequence, 1)).RemapAs(x => x.First().NullToNone()).Press()
+                        ? (await runtime.ReadSelection(from.Elements, 1)).RemapAs(x => x.First().NullToNone()).Press()
                         : new None<R>();
                 }
                 protected override IOption<string> CustomToString() => $"Select({Arg1})".AsSome();
@@ -43,7 +43,7 @@ namespace FourZeroOne.Core.Tokens
                 protected override async ITask<IOption<r.Multi<R>>> Evaluate(IRuntime runtime, IOption<IMulti<R>> fromOpt, IOption<ro.Number> countOpt)
                 {
                     return (fromOpt.Check(out var from) && countOpt.Check(out var count))
-                        ? (await runtime.ReadSelection(from.ValueSequence, count.Value)).RemapAs(v => new r.Multi<R>() { ValueSequence = v })
+                        ? (await runtime.ReadSelection(from.Elements, count.Value)).RemapAs(v => new r.Multi<R>() { Values = v.ToPSequence() })
                         : new None<r.Multi<R>>();
                 }
                 protected override IOption<string> CustomToString() => $"SelectMulti({Arg1}, {Arg2})".AsSome();
@@ -123,7 +123,7 @@ namespace FourZeroOne.Core.Tokens
             public Contains(IToken<IMulti<R>> multi, IToken<R> element) : base(multi, element) { }
             protected override ITask<IOption<ro.Bool>> Evaluate(IRuntime runtime, IOption<IMulti<R>> in1, IOption<R> in2)
             {
-                return in2.RemapAs(item => new ro.Bool() { IsTrue = in1.RemapAs(arr => arr.ValueSequence.Contains(item)).Or(false)}).ToCompletedITask();
+                return in2.RemapAs(item => new ro.Bool() { IsTrue = in1.RemapAs(arr => arr.Elements.Contains(item)).Or(false)}).ToCompletedITask();
             }
         }
         public sealed record Union<R> : PureCombiner<IMulti<R>, r.Multi<R>> where R : class, ResObj
@@ -132,7 +132,7 @@ namespace FourZeroOne.Core.Tokens
             public Union(params IToken<IMulti<R>>[] elements) : base(elements) { }
             protected override r.Multi<R> EvaluatePure(IEnumerable<IMulti<R>> inputs)
             {
-                return new() { ValueSequence = inputs.Map(x => x.ValueSequence).Flatten() };
+                return new() { Values = inputs.Map(x => x.Elements).Flatten().ToPSequence() };
             }
             protected override IOption<string> CustomToString()
             {
@@ -146,8 +146,9 @@ namespace FourZeroOne.Core.Tokens
             public Intersection(params IToken<IMulti<R>>[] sets) : base(sets) { }
             protected override ITask<IOption<r.Multi<R>>> Evaluate(IRuntime _, IEnumerable<IOption<IMulti<R>>> inputs)
             {
-                return new r.Multi<R>() { ValueSequence = inputs
-                    .Map(x => x.RemapAs(y => y.ValueSequence).Or([])).Accumulate((a, b) => a.Intersect(b)).Or([]) }
+                //OPTIMIZE: does not make full usage of PSequence merging behavior.
+                return new r.Multi<R>() { Values = inputs
+                    .Map(x => x.RemapAs(y => y.Elements).Or([])).Accumulate((a, b) => a.Intersect(b)).Or([]).ToPSequence() }
                 .AsSome().ToCompletedITask();
             }
             protected override IOption<string> CustomToString()
@@ -161,7 +162,7 @@ namespace FourZeroOne.Core.Tokens
             public Exclusion(IToken<IMulti<R>> from, IToken<IMulti<R>> exclude) : base(from, exclude) { }
             protected override ITask<IOption<r.Multi<R>>> Evaluate(IRuntime _, IOption<IMulti<R>> in1, IOption<IMulti<R>> in2)
             {
-                return in1.RemapAs(from => new r.Multi<R>() { ValueSequence = in2.RemapAs(sub => from.ValueSequence.Except(sub.ValueSequence)).Or([]) })
+                return in1.RemapAs(from => new r.Multi<R>() { Values = in2.RemapAs(sub => from.Elements.Except(sub.Elements)).Or([]).ToPSequence() })
                     .ToCompletedITask();
             }
             protected override IOption<string> CustomToString() => $"{Arg1} - {Arg2}".AsSome();
@@ -172,7 +173,7 @@ namespace FourZeroOne.Core.Tokens
             public Yield(IToken<R> value) : base(value) { }
             protected override r.Multi<R> EvaluatePure(R in1)
             {
-                return new() { ValueSequence = in1.Yield() };
+                return new() { Values = in1.Yield().ToPSequence() };
             }
             protected override IOption<string> CustomToString() => $"^{Arg1}".AsSome();
         }
@@ -195,7 +196,7 @@ namespace FourZeroOne.Core.Tokens
             protected override ITask<IOption<R>> Evaluate(IRuntime _, IOption<IMulti<R>> in1, IOption<ro.Number> in2)
             {
                 var o = in1.Check(out var from) && in2.Check(out var index)
-                    ? from.ValueSequence.At(index.Value - 1)
+                    ? from.At(index.Value - 1)
                     : new None<R>();
                 return o.ToCompletedITask();
             }
@@ -291,8 +292,8 @@ namespace FourZeroOne.Core.Tokens
             {
                 return (in1.Check(out var subject) & in2.Check(out var merger)).ToOptionLazy(() =>
                     (ICompositionOf<C>)subject.WithComponentsUnsafe(
-                            merger.ComponentsUnsafe.Elements
-                            .FilterMap(x => (x.key as r._Private.IMergeIdentifier).NullToNone().RemapAs(y => (y.ForComponentUnsafe, x.val)))))
+                            merger.ComponentsUnsafe
+                            .FilterMap(x => (x.A as r._Private.IMergeIdentifier).NullToNone().RemapAs(y => (y.ForComponentUnsafe, x.B).Tiple()))))
                     .ToCompletedITask();
             }
             protected override IOption<string> CustomToString() => $"{Arg1}>>{Arg2}".AsSome();
