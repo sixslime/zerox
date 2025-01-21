@@ -214,14 +214,14 @@ namespace FourZeroOne.Core.Proxies
     
     public sealed record This<TOrig, R> : ThisProxy<TOrig, R> where TOrig : IToken<R> where R : class, ResObj
     {
-        public This(IEnumerable<string> hookRemovals) : base(hookRemovals) { }
+        public This() : base() { }
     }
     public sealed record ThisFunction<TOrig, RArg1, ROut> : ThisProxy<TOrig, ROut>
         where TOrig : IFunction<RArg1, ROut>
         where RArg1 : class, ResObj
         where ROut : class, ResObj
     {
-        public ThisFunction(IProxy<TOrig, RArg1> in1, IEnumerable<string> hookRemovals) : base(hookRemovals, in1) { }
+        public ThisFunction(IProxy<TOrig, RArg1> in1) : base(in1) { }
     }
     public sealed record ThisFunction<TOrig, RArg1, RArg2, ROut> : ThisProxy<TOrig, ROut>
         where TOrig : IFunction<RArg1, RArg2, ROut>
@@ -229,7 +229,7 @@ namespace FourZeroOne.Core.Proxies
         where RArg2 : class, ResObj
         where ROut : class, ResObj
     {
-        public ThisFunction(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2, IEnumerable<string> hookRemovals) : base(hookRemovals, in1, in2) { }
+        public ThisFunction(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2) : base(in1, in2) { }
     }
     public sealed record ThisFunction<TOrig, RArg1, RArg2, RArg3, ROut> : ThisProxy<TOrig, ROut>
         where TOrig : IFunction<RArg1, RArg2, RArg3, ROut>
@@ -238,14 +238,14 @@ namespace FourZeroOne.Core.Proxies
         where RArg3 : class, ResObj
         where ROut : class, ResObj
     {
-        public ThisFunction(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2, IProxy<TOrig, RArg3> in3, IEnumerable<string> hookRemovals) : base(hookRemovals, in1, in2, in3) { }
+        public ThisFunction(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2, IProxy<TOrig, RArg3> in3) : base(in1, in2, in3) { }
     }
     public sealed record ThisCombiner<TOrig, RArgs, ROut> : ThisProxy<TOrig, ROut>
         where TOrig : ICombiner<RArgs, ROut>
         where RArgs : class, ResObj
         where ROut : class, ResObj
     {
-        public ThisCombiner(IEnumerable<IProxy<TOrig, RArgs>> args, IEnumerable<string> hookRemovals) : base(hookRemovals, args) { }
+        public ThisCombiner(IEnumerable<IProxy<TOrig, RArgs>> args) : base(args) { }
     }
     public sealed record OriginalArg1<TOrig, RArg> : Proxy<TOrig, RArg> where TOrig : IHasArg1<RArg> where RArg : class, ResObj
     {
@@ -312,7 +312,7 @@ namespace FourZeroOne.Core.Proxies
             return ((IToken<ROut>)
                 typeof(TNew).GetConstructor([typeof(IToken<RArg1>), typeof(IToken<RArg2>), typeof(IToken<RArg3>)])
                 !.Invoke(tokens.ToArray()))
-                .WithLabels(Labels);
+                .dLabels(x => x.Merge(Labels));
         }
     }
     public record Combiner<TNew, TOrig, RArgs, ROut> : FunctionProxy<TOrig, ROut>

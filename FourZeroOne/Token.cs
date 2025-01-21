@@ -41,8 +41,8 @@ namespace FourZeroOne.Token
             var mainPart = CustomToString().Check(out var custom)
                 ? custom
                 : $"{this.GetType().Name}( {_argTokens.AccumulateInto("", (msg, arg) => $"{msg}{arg} ")})";
-            var hookPart = _labels.Count > 0
-                ? $"-HOOKS[{string.Join(",", Labels)}]"
+            var hookPart = Labels.Count > 0
+                ? $"-HOOKS[{string.Join(",", Labels.Elements)}]"
                 : "";
             return mainPart + hookPart;
         }
