@@ -446,6 +446,13 @@ namespace FourZeroOne.Core.Syntax
         public static p.Function<tM.Multi.Map<RIn, ROut>, TOrig, IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>> pMap<TOrig, RIn, ROut>(this IProxy<TOrig, IMulti<RIn>> values, IProxy<TOrig, r.Boxed.MetaFunction<RIn, ROut>> mapFunction)
             where TOrig : IToken where RIn : class, ResObj where ROut : class, ResObj
         { return new(values, mapFunction); }
+        public static tM.Multi.Duplicate<R> tDuplicate<R>(this IToken<R> value, IToken<ro.Number> count)
+            where R : class, ResObj
+        { return new(value, count); }
+        public static p.Function<tM.Multi.Duplicate<R>, TOrig, R, ro.Number, r.Multi<R>> pDuplicate<TOrig, R>(this IProxy<TOrig, R> value, IProxy<TOrig, ro.Number> count)
+            where TOrig : IToken
+            where R : class, ResObj
+        { return new(value, count); }
 
         public static t.Number.Add tAdd(this IToken<ro.Number> a, IToken<ro.Number> b)
         { return new(a, b); }

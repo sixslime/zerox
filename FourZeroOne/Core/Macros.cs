@@ -15,17 +15,16 @@ namespace FourZeroOne.Core.Macros
     using FourZeroOne.Proxy;
     using Syntax;
     using FourZeroOne.Proxy.Unsafe;
-    using FourZeroOne.Core.Resolutions;
     using Resolution;
-
+    using ro = Core.Resolutions.Objects;
     namespace Multi
     {
-        public sealed record Map<RIn, ROut> : TwoArg<Resolution.IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>>
+        public sealed record Map<RIn, ROut> : TwoArg<IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>>
             where RIn : class, ResObj
             where ROut : class, ResObj
         {
             protected override IProxy<r.Multi<ROut>> InternalProxy => PROXY;
-            public Map(IToken<Resolution.IMulti<RIn>> values, IToken<r.Boxed.MetaFunction<RIn, ROut>> mapFunction) : base(values, mapFunction) { }
+            public Map(IToken<IMulti<RIn>> values, IToken<r.Boxed.MetaFunction<RIn, ROut>> mapFunction) : base(values, mapFunction) { }
 
             // DEV - Consider not storing the map function as a variable, so that the Token *does* re-evaluate every iteration.
             private readonly static IProxy<Map<RIn, ROut>, r.Multi<ROut>> PROXY = MakeProxy.Statement<Map<RIn, ROut>, r.Multi<ROut>>(P =>
@@ -37,7 +36,7 @@ namespace FourZeroOne.Core.Macros
                         P.pOriginalA().pAsVariable(out var enumerable),
                         P.pOriginalB().pAsVariable(out var mapFunction)),
                     Value =
-                    Core.tMetaRecursiveFunction(RHint<r.Objects.Number, r.Multi<ROut>>.Hint(),
+                    Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<ROut>>.Hint(),
                         (selfFunc, i) =>
                             i.tRef().tIsGreaterThan(enumerable.tRef().tCount())
                             .tIfTrue(RHint<r.Multi<ROut>>.Hint(), new()
@@ -53,6 +52,36 @@ namespace FourZeroOne.Core.Macros
                 });
             });
             protected override IOption<string> CustomToString() => $"{Arg1}=>{Arg2}".AsSome();
+        }
+        public sealed record Duplicate<R> : TwoArg<R, ro.Number, r.Multi<R>>
+            where R : class, ResObj
+        {
+            public Duplicate(IToken<R> value, IToken<ro.Number> count) : base(value, count) { }
+            protected override IProxy<r.Multi<R>> InternalProxy => PROXY;
+            private readonly static IProxy<Duplicate<R>, r.Multi<R>> PROXY = MakeProxy.Statement<Duplicate<R>, r.Multi<R>>(
+                P =>
+                    P.pSubEnvironment(RHint<r.Multi<R>>.Hint(), new() {
+                        Environment = P.p_Env(
+                            P.pOriginalA().pAsVariable(out var value),
+                            P.pOriginalB().pAsVariable(out var duplicateCount)),
+                        Value =
+                            Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<R>>.Hint(),
+                                (selfFunc, i) =>
+                                    i.tRef().tIsGreaterThan(duplicateCount.tRef())
+                                    .tIfTrue(RHint<r.Multi<R>>.Hint(), new()
+                                    {
+                                        Then = Core.tNolla(RHint<r.Multi<R>>.Hint()).tMetaBoxed(),
+                                        Else = Core.tUnion(RHint<R>.Hint(),
+                                        [
+                                            value.tRef().tYield(),
+                                            selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tFixed()) })
+                                        ]).tMetaBoxed()
+                                    }).tExecute())
+                            .tExecuteWith(new() { A = 1.tFixed() }).pDirect(P)
+                    }
+            ));
+            protected override IOption<string> CustomToString() => $"{Arg1}x{Arg2}".AsSome();
+
         }
     }
     
