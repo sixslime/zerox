@@ -12,6 +12,21 @@ namespace FourZeroOne.Plugins.Axiom.Resolutions
     using FourZeroOne.Core.Macros;
     using Core.Syntax;
 
+    // GOAL: create an attack ability
+    // 'current turn' static player pointer?
+    namespace State
+    {
+        public record ActingPlayer : NoOp, IStateAddress<ax.Player.Address>
+        {
+            private ActingPlayer() { }
+            public readonly static ActingPlayer PTR = new();
+        }
+        public record TurnCount : NoOp, IStateAddress<ro.Number>
+        {
+            private TurnCount() { }
+            public readonly static TurnCount PTR = new();
+        }
+    }
     namespace GameObjects
     {
         namespace Unit

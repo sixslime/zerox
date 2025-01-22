@@ -544,7 +544,29 @@ public class Tester
             
         ];
 
+        testGroups["Gameplay"] =
+        [
+            MkRuntime().MakeTest(RHint<ResObj>.Hint(), hint => async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = Core.tSubEnvironment(hint, new() {
+                    Environment = Core.t_Env(
+                        1.Sequence(x => x + 1).Take(20).Map(x => x.tFixed())
+                            .t_ToConstMulti()
+                            .tIOSelectOne()
+                            .tAsVariable(out var totalTurns),
+                        ar.State.TurnCount.PTR.tFixed().tDataWrite(0.tFixed()),
+                        Core.tMultiOf(RHint<ax.Player.Address>.Hint(),[
+                                new ax.Player.Address() { ID = 1 }.tFixed(),
+                                new ax.Player.Address() { ID = 2 }.tFixed()
+                            ])
+                            .tAsVariable(out var playerOrder)
+                        ),
+                    Value = totalTurns.tRef()
+                })
+            }),
+        ];
         // skips
+
         _ = testGroups.Remove("Intro Demo");
         //_ = testGroups.Remove("Advanced Examples");
 
