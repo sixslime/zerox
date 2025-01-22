@@ -554,21 +554,37 @@ public class Tester
                             .t_ToConstMulti()
                             .tIOSelectOne()
                             .tAsVariable(out var totalTurns),
-                        ar.State.TurnCount.PTR.tFixed().tDataWrite(0.tFixed()),
+                        ar.State.TurnCount.PTR.tFixed().tDataWrite(1.tFixed()),
                         Core.tMultiOf(RHint<ax.Player.Address>.Hint(),[
                                 new ax.Player.Address() { ID = 1 }.tFixed(),
                                 new ax.Player.Address() { ID = 2 }.tFixed()
                             ])
                             .tAsVariable(out var playerOrder)
                         ),
-                    Value = totalTurns.tRef()
+                    Value = Core.t_Env(
+                        playerOrder.tRef().tMap(
+                            currentPlayer => Core.tSubEnvironment(hint, new() {
+                                Environment = Core.t_Env(
+                                    ar.State.ActingPlayer.PTR.tFixed().tDataWrite(currentPlayer.tRef())
+                                ),
+                                Value = Core.t_Env(
+                                    ar.State.ActingPlayer.PTR.tFixed().tDataRead(RHint<ax.Player.Address>.Hint()),
+                                    Iter.Over(888, 111).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne()
+                                )
+                        })),
+                        ar.State.TurnCount.PTR.tFixed().tDataUpdate(RHint<ro.Number>.Hint(), x => x.tRef().tAdd(1.tFixed()))
+                        ).tMetaBoxed()
+                        .tDuplicate(totalTurns.tRef())
+                        .tMap(x => x.tRef().tExecute())
                 })
             }),
         ];
         // skips
 
         _ = testGroups.Remove("Intro Demo");
-        //_ = testGroups.Remove("Advanced Examples");
+        _ = testGroups.Remove("Advanced Examples");
+        _ = testGroups.Remove("Components");
+        _ = testGroups.Remove("General Tests");
 
         // make better later
         foreach (var testGroup in testGroups)

@@ -20,11 +20,13 @@ namespace FourZeroOne.Plugins.Axiom.Resolutions
         {
             private ActingPlayer() { }
             public readonly static ActingPlayer PTR = new();
+            public override string ToString() => "ACTING_PLAYER";
         }
         public record TurnCount : NoOp, IStateAddress<ro.Number>
         {
             private TurnCount() { }
             public readonly static TurnCount PTR = new();
+            public override string ToString() => "TURN_COUNT";
         }
     }
     namespace GameObjects
