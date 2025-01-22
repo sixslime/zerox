@@ -138,7 +138,7 @@ public class Tester
 
             MkRuntime().MakeTest(RHint<ro.Number>.Hint(), async () => new() {
                 State = BLANK_STARTING_STATE,
-                Evaluate = 4.tFixed().tIsGreaterThan(0.tFixed()).tIfTrue(RHint<ro.Number>.Hint(), new() {
+                Evaluate = 4.tFixed().tIsGreaterThan(0.tFixed()).tIfTrueDirect(RHint<ro.Number>.Hint(), new() {
 
                     //                   ┌["() => <previous token>" as a MetaFunction]
                     Then = 9999.tFixed().tMetaBoxed(),
@@ -219,7 +219,7 @@ public class Tester
                     //   ┌['thisFunc' points to this MetaFunction]
                         (thisFunc, argA, argB) =>
                             firstSelection.tRef().tIsGreaterThan(argA.tRef())
-                            .tIfTrue(hint, new()
+                            .tIfTrueDirect(hint, new()
                             {
                                 Then = Core.tSubEnvironment(hint, new()
                                 {
@@ -270,7 +270,7 @@ public class Tester
             MkRuntime().MakeTest(RHint<ro.Number>.Hint(), hint => async () => new() {
                 State = BLANK_STARTING_STATE,
                 //                                ┌[with two exceptions (shown in next example), a Token evaluates to Nolla if *any* of it's arguements do]
-                Evaluate = 100.tFixed().tAdd(Core.tNolla(hint)).tIsGreaterThan(200.tFixed()).tIfTrue(hint, new() {
+                Evaluate = 100.tFixed().tAdd(Core.tNolla(hint)).tIsGreaterThan(200.tFixed()).tIfTrueDirect(hint, new() {
                 //                                └['tNolla'=Nolla -> 'tAdd'=Nolla -> 'tIsGreaterThan'=Nolla -> 'tIfTrue'=Nolla -> 'tExecute'=Nolla]
                     Then = 1.tFixed().tMetaBoxed(),
                     Else = 0.tFixed().tMetaBoxed(),
@@ -335,7 +335,7 @@ public class Tester
                     //           ┌[iteration is only possible through recursion]
                     Value = Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<ro.Number>>.Hint(),
                     (thisFunc, i) =>
-                    i.tRef().tIsGreaterThan(baseArray.tRef().tCount()).tIfTrue(hint, new() {
+                    i.tRef().tIsGreaterThan(baseArray.tRef().tCount()).tIfTrueDirect(hint, new() {
                         Then = Core.tMultiOf(RHint<ro.Number>.Hint(), []).tMetaBoxed(),
                         //                      ┌[indexing starts at 1; cry about it]
                         Else = baseArray.tRef().tGetIndex(i.tRef()).tMultiply(selectedNum.tRef())

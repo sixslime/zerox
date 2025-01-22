@@ -39,7 +39,7 @@ namespace FourZeroOne.Core.Macros
                     Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<ROut>>.Hint(),
                         (selfFunc, i) =>
                             i.tRef().tIsGreaterThan(enumerable.tRef().tCount())
-                            .tIfTrue(RHint<r.Multi<ROut>>.Hint(), new()
+                            .tIfTrueDirect(RHint<r.Multi<ROut>>.Hint(), new()
                             {
                                 Then = Core.tNolla(RHint<r.Multi<ROut>>.Hint()).tMetaBoxed(),
                                 Else = Core.tUnion(RHint<ROut>.Hint(),
@@ -68,7 +68,7 @@ namespace FourZeroOne.Core.Macros
                             Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<R>>.Hint(),
                                 (selfFunc, i) =>
                                     i.tRef().tIsGreaterThan(duplicateCount.tRef())
-                                    .tIfTrue(RHint<r.Multi<R>>.Hint(), new()
+                                    .tIfTrueDirect(RHint<r.Multi<R>>.Hint(), new()
                                     {
                                         Then = Core.tNolla(RHint<r.Multi<R>>.Hint()).tMetaBoxed(),
                                         Else = Core.tUnion(RHint<R>.Hint(),
@@ -156,7 +156,7 @@ namespace FourZeroOne.Core.Macros
             P.pSubEnvironment(RHint<R>.Hint(), new()
             {
                 Environment = P.pOriginalA().pAsVariable(out var value),
-                Value = value.tRef().tExists().pDirect(P).pIfTrue(RHint<R>.Hint(), new()
+                Value = value.tRef().tExists().pDirect(P).pIfTrueDirect(RHint<R>.Hint(), new()
                 {
                     Then = value.tRef().pDirect(P).pMetaBoxed(),
                     Else = P.pOriginalB().pMetaBoxed()

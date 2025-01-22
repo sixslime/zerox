@@ -70,8 +70,8 @@ namespace FourZeroOne.Core.Syntax
             }
             public sealed record IfElse<R> where R : class, ResObj
             {
-                public required IToken<r.Boxed.MetaFunction<R>> Then { get; init; }
-                public required IToken<r.Boxed.MetaFunction<R>> Else { get; init; }
+                public required IToken<R> Then { get; init; }
+                public required IToken<R> Else { get; init; }
             }
 
             public sealed record SubEnvironment<R> where R : class, ResObj
@@ -109,8 +109,8 @@ namespace FourZeroOne.Core.Syntax
 
             public sealed record IfElse<TOrig, R> where TOrig : IToken where R : class, ResObj
             {
-                public required IProxy<TOrig, r.Boxed.MetaFunction<R>> Then { get; init; }
-                public required IProxy<TOrig, r.Boxed.MetaFunction<R>> Else { get; init; }
+                public required IProxy<TOrig, R> Then { get; init; }
+                public required IProxy<TOrig, R> Else { get; init; }
             }
 
             public sealed record SubEnvironment<TOrig, R> where TOrig : IToken where R : class, ResObj
@@ -379,13 +379,9 @@ namespace FourZeroOne.Core.Syntax
         }
 
         public static t.Exists tExists(this IToken<ResObj> token)
-        {
-            return new(token);
-        }
+        { return new(token); }
         public static p.Function<t.Exists, TOrig, ResObj, ro.Bool> pExists<TOrig>(this IProxy<TOrig, ResObj> value) where TOrig : IToken
-        {
-            return new(value);
-        }
+        { return new(value); }
 
         public static t.DynamicAssign<R> tAsVariable<R>(this IToken<R> token, out DynamicAddress<R> ident) where R : class, ResObj
         {
@@ -398,15 +394,28 @@ namespace FourZeroOne.Core.Syntax
             return new(identifier, value);
         }
 
-        public static t.IfElse<R> tIfTrue<R>(this IToken<ro.Bool> condition, RHint<R> _, Structure.Token.IfElse<R> block) where R : class, ResObj
+        public static t.IfElse<R> tIfTrueDirect<R>(this IToken<ro.Bool> condition, RHint<R> _, Structure.Token.IfElse<r.Boxed.MetaFunction<R>> block) where R : class, ResObj
+        { return new(condition, block.Then, block.Else); }
+        public static p.Function<t.IfElse<R>, TOrig, ro.Bool, r.Boxed.MetaFunction<R>, r.Boxed.MetaFunction<R>, r.Boxed.MetaFunction<R>> pIfTrueDirect<TOrig, R>(this IProxy<TOrig, ro.Bool> condition, RHint<R> _, Structure.Proxy.IfElse<TOrig, r.Boxed.MetaFunction<R>> block) where TOrig : IToken where R : class, ResObj
+        { return new(condition, block.Then, block.Else); }
+        public static t.Execute<R> t_IfTrue<R>(this IToken<ro.Bool> condition, RHint<R> hint, Structure.Token.IfElse<R> block) where R : class, ResObj
         {
-            return new(condition, block.Then, block.Else);
+            return condition.tIfTrueDirect(hint, new()
+            {
+                Then = block.Then.tMetaBoxed(),
+                Else = block.Else.tMetaBoxed()
+            }).tExecute();
         }
-        public static p.Function<t.IfElse<R>, TOrig, ro.Bool, r.Boxed.MetaFunction<R>, r.Boxed.MetaFunction<R>, r.Boxed.MetaFunction<R>> pIfTrue<TOrig, R>(this IProxy<TOrig, ro.Bool> condition, RHint<R> _, Structure.Proxy.IfElse<TOrig, R> block) where TOrig : IToken where R : class, ResObj
+        public static p.Function<t.Execute<R>, TOrig, r.Boxed.MetaFunction<R>, R> p_IfTrue<TOrig, R>(this IProxy<TOrig, ro.Bool> condition, RHint<R> hint, Structure.Proxy.IfElse<TOrig, R> block)
+            where TOrig : IToken
+            where R : class, ResObj
         {
-            return new(condition, block.Then, block.Else);
+            return condition.pIfTrueDirect(hint, new()
+            {
+                Then = block.Then.pMetaBoxed(),
+                Else = block.Else.pMetaBoxed()
+            }).pExecute();
         }
-
         public static t.Multi.Exclusion<R> tWithout<R>(this IToken<IMulti<R>> source, IToken<IMulti<R>> exclude) where R : class, ResObj
         { return new(source, exclude); }
         public static p.Function<t.Multi.Exclusion<R>, TOrig, IMulti<R>, IMulti<R>, r.Multi<R>> pWithout<TOrig, R>(this IProxy<TOrig, IMulti<R>> source, IProxy<TOrig, IMulti<R>> values) where TOrig : IToken where R : class, ResObj
