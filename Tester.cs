@@ -632,12 +632,16 @@ public class Tester
 
 /* NOTES
  *# Boxed Reference Issues (captures)
- * given 'let { a = ... } in { boxed(() => a.tRef)) }',
- * the boxed function will have a nullptr when it's passed up.
+ * given 'let { a } in { () => &a }',
+ * '&a' in the boxed function will be dangling when it's passed upwards.
  * me when variable captures exist for a reason!
  * I don't even know if capturing is feasable conceptually.
  * The "solution" is just to be careful with boxed functions :P
  * 
  *# There seems to be buggyness with rewinding and metafunctions/tests(?)
  * requires further investigation.
+ * 
+ * CONFIRMED
+ * - macro expansions are stored/recieved incorrectly in framesaving runtime.
+ *  - this leads to odd frame rewinding behavior after a macro expansion.
  */

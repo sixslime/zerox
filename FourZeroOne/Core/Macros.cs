@@ -80,7 +80,7 @@ namespace FourZeroOne.Core.Macros
                             .tExecuteWith(new() { A = 1.tFixed() }).pDirect(P)
                     }
             ));
-            protected override IOption<string> CustomToString() => $"{Arg1}x{Arg2}".AsSome();
+            protected override IOption<string> CustomToString() => $"{Arg1}**({Arg2})".AsSome();
 
         }
     }
