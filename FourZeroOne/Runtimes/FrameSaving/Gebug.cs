@@ -132,7 +132,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
             while (true)
             {
                 var inputString = Console.ReadLine();
-                if (inputString is null) continue;
+                if (inputString is null || inputString.Length == 0) continue;
                 if (inputString[0] == '<')
                 {
                     if (!int.TryParse(inputString[1..], out var framesBack))

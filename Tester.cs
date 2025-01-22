@@ -546,14 +546,11 @@ public class Tester
 
         testGroups["Gameplay"] =
         [
-            MkRuntime().MakeTest(RHint<ResObj>.Hint(), hint => async () => new() {
+            MkRuntimeWithAuto(Iter.Over(0, 1).Yield(10).Flatten().Map(x => x.Yield())).MakeTest(RHint<ResObj>.Hint(), hint => async () => new() {
                 State = BLANK_STARTING_STATE,
                 Evaluate = Core.tSubEnvironment(hint, new() {
                     Environment = Core.t_Env(
-                        1.Sequence(x => x + 1).Take(20).Map(x => x.tFixed())
-                            .t_ToConstMulti()
-                            .tIOSelectOne()
-                            .tAsVariable(out var totalTurns),
+                        10.tFixed().tAsVariable(out var totalRotations),
                         ar.State.TurnCount.PTR.tFixed().tDataWrite(1.tFixed()),
                         Core.tMultiOf(RHint<ax.Player.Address>.Hint(),[
                                 new ax.Player.Address() { ID = 1 }.tFixed(),
@@ -574,10 +571,31 @@ public class Tester
                         })),
                         ar.State.TurnCount.PTR.tFixed().tDataUpdate(RHint<ro.Number>.Hint(), x => x.tRef().tAdd(1.tFixed()))
                         ).tMetaBoxed()
-                        .tDuplicate(totalTurns.tRef())
+                        .tDuplicate(totalRotations.tRef())
                         .tMap(x => x.tRef().tExecute())
-                })
-            }),
+                }),
+                Assert = new() {
+                    State = async v =>
+                        v is FZ.IState state &&
+                        state.GetObject(ar.State.TurnCount.PTR).Check(out var count) &&
+                        count.Value == 10 + 1,
+                    Resolution = async v =>
+                        v is IOption<ResObj> resOpt &&
+                        resOpt.Check(out var res) &&
+                        res is r.Multi<r.Multi<ResObj>> arr &&
+                        arr.Count == 10 &&
+                        arr.Elements.All(x => 
+                            x.At(0).Unwrap() is r.Multi<ResObj> turnRotation &&
+                            turnRotation.Elements.Enumerate().All(y =>
+                                y.value is r.Multi<ResObj> turn &&
+                                turn.At(1).Unwrap() is ro.Number selection &&
+                                selection.Value == Iter.Over(888, 111).ElementAt(y.index)
+                                )
+                            )
+                }
+            })
+            .Named("10 Turn POC"),
+            
         ];
         // skips
 
@@ -615,18 +633,18 @@ public class Tester
     {
         return MkRuntimeWithAuto([]);
     }
-    private static FZ.Runtimes.FrameSaving.Gebug MkRuntimeWithAuto(int[]?[] selections)
+    private static FZ.Runtimes.FrameSaving.Gebug MkRuntimeWithAuto(IEnumerable<IEnumerable<int>?> selections)
     {
-        return MkRuntimeWithAuto(selections, []);
+        return MkRuntimeWithAuto(selections.Map(x => x?.ToArray()).ToArray(), []);
     }
     /// <summary>
     /// Creates a basic Runtime, with the option to specify auto-selections and auto-rewinds.
     /// </summary>
     /// <param name="selections"></param>
     /// <returns></returns>
-    private static FZ.Runtimes.FrameSaving.Gebug MkRuntimeWithAuto(int[]?[] selections, int?[] rewinds)
+    private static FZ.Runtimes.FrameSaving.Gebug MkRuntimeWithAuto(IEnumerable<int[]?> selections, IEnumerable<int?> rewinds)
     {
-        return new FZ.Runtimes.FrameSaving.Gebug().Mut(x => { x.SetAutoSelections(selections); x.SetAutoRewinds(rewinds); });
+        return new FZ.Runtimes.FrameSaving.Gebug().Mut(x => { x.SetAutoSelections(selections.Map(x => x?.ToArray()).ToArray()); x.SetAutoRewinds(rewinds.ToArray()); });
     }
 }
 

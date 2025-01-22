@@ -32,9 +32,11 @@ namespace FourZeroOne.Core.Resolutions
             public required Number End { get; init; }
             public int Count => (Start.Value <= End.Value) ? (End.Value - Start.Value) + 1 : 0;
 
+            public static implicit operator NumRange(Range range)
+                => new() { Start = range.Start.Value, End = range.End.Value };
             public IEnumerable<Number> Elements =>
                 (Start.Value <= End.Value)
-                    ? Start.Sequence(x => x with { dValue = Q => Q + 1 }).TakeWhile(x => x.Value <= End.Value)
+                    ? Start.Sequence(x => x.Value + 1).TakeWhile(x => x.Value <= End.Value)
                     : [];
 
             public IOption<Number> At(int index)
