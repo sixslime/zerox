@@ -429,19 +429,6 @@ public class Tester
             })
             .Named("Rules in sequence")
         ];
-
-        testGroups["General Tests"] =
-        [
-            MkRuntime().MakeTest(RHint<r.Multi<ro.Number>>.Hint(), hint => async () => new() {
-                State = BLANK_STARTING_STATE,
-                Evaluate = Core.tIntersection(RHint<ro.Number>.Hint(),
-                [
-                    1.tFixed().Sequence<IToken<ro.Number>>(x => x.tAdd(1.tFixed())).Take(10).tToMulti(),
-                    Iter.Over(0, 2, 4, 6, 8, 10).Map(x => x.tFixed()).t_ToConstMulti(),
-                    Iter.Over(5, 6, 7, 8, 9, 10).Map(x => x.tFixed()).t_ToConstMulti(),
-                ])
-            })
-        ];
         testGroups["Components"] =
         [
             MkRuntime().MakeTest(RHint<ICompositionOf<ax.Unit.Data>>.Hint(), async () => new() {
@@ -543,7 +530,6 @@ public class Tester
             })
             
         ];
-
         testGroups["Gameplay"] =
         [
             MkRuntimeWithAuto(Iter.Over(0, 1).Yield(10).Flatten().Map(x => x.Yield())).MakeTest(RHint<ResObj>.Hint(), hint => async () => new() {
@@ -597,12 +583,39 @@ public class Tester
             .Named("10 Turn POC"),
             
         ];
+        testGroups["General Tests"] =
+        [
+            MkRuntime().MakeTest(RHint<r.Multi<ro.Number>>.Hint(), hint => async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = Core.tIntersection(RHint<ro.Number>.Hint(),
+                [
+                    (1..20).tFixed(),
+                    Iter.Over(0, 2, 4, 6, 8, 10, 12).Map(x => x.tFixed()).t_ToConstMulti(),
+                    Iter.Over(5, 6, 7, 8, 9, 10).Map(x => x.tFixed()).t_ToConstMulti(),
+                ]),
+                Expect = new() {
+                    Resolution = Iter.Over(6, 8, 10).Map(x => x.rAsRes()).rAsRes()
+                }
+            }),
+
+            
+        ];
+        testGroups["Confirmed Bugs"] =
+        [
+            // 4 is the very first frame (pre-frame) with no operations on stack.
+            MkRuntimeWithAuto([], [4]).MakeTest(RHint<ro.Number>.Hint(), hint => async () => new() {
+                State = BLANK_STARTING_STATE,
+                Evaluate = 1.tFixed().tAdd(1.tFixed().tYield().tIOSelectOne())
+            })
+            .Named("null rewind")
+        ];
         // skips
 
         _ = testGroups.Remove("Intro Demo");
         _ = testGroups.Remove("Advanced Examples");
         _ = testGroups.Remove("Components");
         _ = testGroups.Remove("General Tests");
+        _ = testGroups.Remove("Gameplay");
 
         // make better later
         foreach (var testGroup in testGroups)
@@ -662,4 +675,5 @@ public class Tester
  * CONFIRMED
  * - macro expansions are stored/recieved incorrectly in framesaving runtime.
  *  - this leads to odd frame rewinding behavior after a macro expansion.
+ * - if rewinding to exactly the first frame, selection will just return none (and not rewind) sometimes (confirmed if selection is very last token).
  */

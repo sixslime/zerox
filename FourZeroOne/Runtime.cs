@@ -148,6 +148,7 @@ namespace FourZeroOne.Runtime
             public readonly int Index = index;
             public readonly Rule.IRule Rule = rule;
         }
+        // DEV: consider refactoring due to multiple weird bugs.
         private async void StartEval()
         {
             while (_operationStack.Check(out var operationNode))
