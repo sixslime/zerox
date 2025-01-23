@@ -566,7 +566,7 @@ public class Tester
                                 ),
                                 Value = Core.t_Env(
                                     ar.State.ActingPlayer.PTR.tFixed().tDataRead(RHint<ax.Player.Address>.Hint()),
-                                    Iter.Over(888, 111).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne()
+                                    Iter.Over(111, 222).Map(x => x.tFixed()).t_ToConstMulti().tIOSelectOne()
                                 )
                         })),
                         ar.State.TurnCount.PTR.tFixed().tDataUpdate(RHint<ro.Number>.Hint(), x => x.tRef().tAdd(1.tFixed()))
@@ -589,7 +589,7 @@ public class Tester
                             turnRotation.Elements.Enumerate().All(y =>
                                 y.value is r.Multi<ResObj> turn &&
                                 turn.At(1).Unwrap() is ro.Number selection &&
-                                selection.Value == Iter.Over(888, 111).ElementAt(y.index)
+                                selection.Value == Iter.Over(111, 222).ElementAt(y.index)
                                 )
                             )
                 }
