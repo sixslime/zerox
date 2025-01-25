@@ -54,11 +54,12 @@ namespace Perfection
             }
             return o;
         }
-        public static IOption<T> Accumulate<T>(this IEnumerable<T> enumerable, Func<T, T, T> function)
+        public static IOption<T> Accumulate<T>(this IEnumerable<T> enumerable, Func<T, T, T> function) => Accumulate(enumerable, i => i, function);
+        public static IOption<TResult> Accumulate<TIn, TResult>(this IEnumerable<TIn> enumerable, Func<TIn, TResult> placementFunction, Func<TResult, TIn, TResult> function)
         {
             var iter = enumerable.GetEnumerator();
-            if (!iter.MoveNext()) return new None<T>();
-            var o = iter.Current;
+            if (!iter.MoveNext()) return new None<TResult>();
+            var o = placementFunction(iter.Current);
             while (iter.MoveNext())
             {
                 o = function(o, iter.Current);
@@ -137,13 +138,6 @@ namespace Perfection
             while (iter2.MoveNext()) yield return (new None<T1>(), iter2.Current.AsSome());
         }
 
-        public static IEnumerable<T> Skip<T>(this IEnumerable<T> enumerable, int amount)
-        {
-            var iter = enumerable.GetEnumerator();
-            for (int i = -1; i < amount; i++) _ = iter.MoveNext();
-            while (iter.MoveNext()) yield return iter.Current;
-        }
-
         public static IEnumerable<T> ContinueAfter<T>(this IEnumerable<T> enumerable, Func<IEnumerable<T>, IEnumerable<T>> consumer)
         {
             var iter = enumerable.GetEnumerator();
@@ -163,6 +157,7 @@ namespace Perfection
         public static PMap<K, T> ToPMap<K, T>(this IEnumerable<ITiple<K, T>> enumerable) where K : notnull => new PMap<K, T>().WithEntries(enumerable);
         public static PMap<K, T> ToPMap<K, T>(this IEnumerable<(K, T)> enumerable) where K : notnull => new PMap<K, T>().WithEntries(enumerable.Map(x => x.Tiple()));
         public static PSet<T> ToPSet<T>(this IEnumerable<T> enumerable) => new PSet<T>().WithEntries(enumerable);
+        public static PStack<T> ToPStackRoo<T>(this T value) => new(value);
         public static CachingEnumerable<T> Caching<T>(this IEnumerable<T> enumerable) => new(enumerable);
         public static IEnumerable<T> Over<T>(params T[] arr) => arr;
     }

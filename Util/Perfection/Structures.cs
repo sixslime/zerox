@@ -40,7 +40,10 @@ namespace Perfection
     {
         public IPSequence<T> _WithInsertionAt(int index, IEnumerable<T> items);
     }
-
+    public interface IPStack<T> : IEntryAddable<T>, IIndexReadable<int, IOption<IPStack<T>>>
+    {
+        public T TopValue { get; }
+    }
     public static class SelfTypeAssumption
     {
         public static Self WithEntries<Self, T>(this Self s, IEnumerable<T> values) where Self : IEntryAddable<T>
@@ -57,6 +60,13 @@ namespace Perfection
         { return (Self)s._InversectedWith(other); }
         public static Self WithInsertionAt<Self, T>(this Self s, int index, IEnumerable<T> values) where Self : IPSequence<T>
         { return (Self)s._WithInsertionAt(index, values); }
+
+        public static IEnumerable<T> StackTraverse<T>(this IPStack<T> stack)
+        {
+            for (var link = stack.AsSome(); link.Check(out var substack); link = substack.At(1))
+                yield return substack.TopValue;
+        }
+        
     }
 
     // DEV/FIXME: temporary bare-functionality inneficient implementations.
@@ -194,6 +204,35 @@ namespace Perfection
             
         }
     }
+    public class PStack<T>(T rootValue) : IPStack<T>
+    {
+        public T TopValue { get; private init; } = rootValue;
+        private readonly IOption<IPStack<T>> _link = new None<IPStack<T>>();
+
+        private PStack(T value, IPStack<T> link) : this(value)
+        {
+            _link = link.AsSome();
+        }
+        public IOption<IPStack<T>> At(int index)
+        {
+            // can be written recursively very nicely but that wouldn't be good for large stacks.
+            if (index == 1) return _link;
+            IOption<IPStack<T>> o = this.AsSome();
+            while (index > 0 && o.Check(out var stack))
+            {
+                o = stack.At(1);
+                index--;
+            }
+            return (index >= 0) ? o : new None<PStack<T>>();
+        }
+
+        IEntryAddable<T> IEntryAddable<T>._WithEntries(IEnumerable<T> entries)
+        {
+            var o = this;
+            foreach(var v in entries) o = new(v, o);
+            return o;
+        }
+    }
 
     public class CachingEnumerable<T> : IEnumerable<T>, IIndexReadable<int, T>
     {
@@ -263,4 +302,5 @@ namespace Perfection
             return _list[index];
         }
     }
+
 }

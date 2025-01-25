@@ -615,8 +615,8 @@ public class Tester
         _ = testGroups.Remove("Advanced Examples");
         _ = testGroups.Remove("Components");
         _ = testGroups.Remove("General Tests");
-        _ = testGroups.Remove("Gameplay");
-
+        //_ = testGroups.Remove("Gameplay");
+        _ = testGroups.Remove("confirmed Bugs");
         // make better later
         foreach (var testGroup in testGroups)
         {
