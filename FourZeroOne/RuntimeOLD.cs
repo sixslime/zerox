@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using MorseCode.ITask;
 #nullable enable
-namespace FourZeroOne.Runtime
+namespace FourZeroOne.RuntimeOLD
 {
     using ResObj = Resolution.IResolution;
     using Resolved = IOption<Resolution.IResolution>;
@@ -20,25 +20,6 @@ namespace FourZeroOne.Runtime
         public ITask<IOption<IEnumerable<R>>> ReadSelection<R>(IEnumerable<R> from, int count) where R : class, ResObj;
     }
 
-    public interface IBackEnd
-    {
-        public delegate void EvaluationEventHandler<T>(object sender, EvaluationEventArgs<T> args);
-        public event EvaluationEventHandler<IToken> PushedOperationEvent;
-        public event EvaluationEventHandler<ResObj> ResolvedEvent;
-        // events that send messages...
-        
-        // methods that recieve messages...
-        public void RecieveSelection();
-    }
-    public class EvaluationEventArgs<T>(T evalObject, int depth)
-    {
-        public T EvalObject { get; } = evalObject;
-        public int Depth { get; } = depth;
-    }
-    public interface IFrontEnd
-    {
-
-    }
     public abstract class FrameSaving : IRuntime
     {
         

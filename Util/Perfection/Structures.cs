@@ -43,6 +43,7 @@ namespace Perfection
     public interface IPStack<T> : IEntryAddable<T>, IIndexReadable<int, IOption<IPStack<T>>>
     {
         public T TopValue { get; }
+        public int Height { get; }
     }
     public static class SelfTypeAssumption
     {
@@ -60,13 +61,18 @@ namespace Perfection
         { return (Self)s._InversectedWith(other); }
         public static Self WithInsertionAt<Self, T>(this Self s, int index, IEnumerable<T> values) where Self : IPSequence<T>
         { return (Self)s._WithInsertionAt(index, values); }
-
-        public static IEnumerable<T> StackTraverse<T>(this IPStack<T> stack)
+    }
+    public static class StructureExtensions
+    {
+        public static IEnumerable<IPStack<T>> SubStacks<T>(this IPStack<T> stack)
         {
             for (var link = stack.AsSome(); link.Check(out var substack); link = substack.At(1))
-                yield return substack.TopValue;
+                yield return substack;
         }
-        
+        public static IEnumerable<T> TraverseDown<T>(this IPStack<T> stack)
+            => stack.SubStacks().Map(x => x.TopValue);
+        public static IEnumerable<T> TraverseUp<T>(this IPStack<T> stack)
+            => stack.TraverseDown().Reverse();
     }
 
     // DEV/FIXME: temporary bare-functionality inneficient implementations.
@@ -206,12 +212,14 @@ namespace Perfection
     }
     public class PStack<T>(T rootValue) : IPStack<T>
     {
+        public int Height { get; private init; } = 1;
         public T TopValue { get; private init; } = rootValue;
         private readonly IOption<IPStack<T>> _link = new None<IPStack<T>>();
 
-        private PStack(T value, IPStack<T> link) : this(value)
+        private PStack(T value, IPStack<T> link, int height) : this(value)
         {
             _link = link.AsSome();
+            Height = height;
         }
         public IOption<IPStack<T>> At(int index)
         {
@@ -229,9 +237,10 @@ namespace Perfection
         IEntryAddable<T> IEntryAddable<T>._WithEntries(IEnumerable<T> entries)
         {
             var o = this;
-            foreach(var v in entries) o = new(v, o);
+            foreach(var (i, v) in entries.Enumerate()) o = new(v, o, Height + i+1);
             return o;
         }
+
     }
 
     public class CachingEnumerable<T> : IEnumerable<T>, IIndexReadable<int, T>
