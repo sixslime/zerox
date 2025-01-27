@@ -46,12 +46,12 @@ namespace FourZeroOne.Runtime
     // fuck it, you have to use stacks, theres no reason should use anything else, fuck you.
     public interface IRuntimeData
     {
-        public IOption<IPStack<IToken>> OperationStack { get; }
-        public IOption<IPStack<ResObj>> ResolutionStack { get; }
-        public IOption<IPStack<IState>> StateStack { get; }
-        public IOption<IPStack<IToken>> PreProcessingStack { get; }
-        public IOption<IPStack<IPSet<Rule.IRule>>> AppliedRuleStack { get; }
-        public IOption<IPStack<IPSet<Proxy.Unsafe.IProxy>>> MacroExpansionStack { get; }
+        public IPStack<IToken> OperationStack { get; }
+        public IPStack<ResObj> ResolutionStack { get; }
+        public IPStack<IState> StateStack { get; }
+        public IPStack<IToken> PreProcessingStack { get; }
+        public IPStack<IPSet<Rule.IRule>> AppliedRuleStack { get; }
+        public IPStack<IPSet<Proxy.Unsafe.IProxy>> MacroExpansionStack { get; }
     }
     public class SelectionRequest
     {
