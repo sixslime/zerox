@@ -26,7 +26,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 public One(IToken<IMulti<R>> from) : base(from) { }
 
-                protected async override ITask<IOption<R>> Evaluate(IRuntime runtime, IOption<IMulti<R>> fromOpt)
+                protected async override ITask<IOption<R>> Evaluate(ITokenContext runtime, IOption<IMulti<R>> fromOpt)
                 {
                     return fromOpt.Check(out var from)
                         ? (await runtime.ReadSelection(from.Elements, 1)).RemapAs(x => x.First().NullToNone()).Press()
@@ -40,7 +40,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 public Multiple(IToken<IMulti<R>> from, IToken<ro.Number> count) : base(from, count) { }
 
-                protected override async ITask<IOption<r.Multi<R>>> Evaluate(IRuntime runtime, IOption<IMulti<R>> fromOpt, IOption<ro.Number> countOpt)
+                protected override async ITask<IOption<r.Multi<R>>> Evaluate(ITokenContext runtime, IOption<IMulti<R>> fromOpt, IOption<ro.Number> countOpt)
                 {
                     return (fromOpt.Check(out var from) && countOpt.Check(out var count))
                         ? (await runtime.ReadSelection(from.Elements, count.Value)).RemapAs(v => new r.Multi<R>() { Values = v.ToPSequence() })
@@ -121,7 +121,7 @@ namespace FourZeroOne.Core.Tokens
         public sealed record Contains<R> : Function<IMulti<R>, R, ro.Bool> where R : class, ResObj
         {
             public Contains(IToken<IMulti<R>> multi, IToken<R> element) : base(multi, element) { }
-            protected override ITask<IOption<ro.Bool>> Evaluate(IRuntime runtime, IOption<IMulti<R>> in1, IOption<R> in2)
+            protected override ITask<IOption<ro.Bool>> Evaluate(ITokenContext runtime, IOption<IMulti<R>> in1, IOption<R> in2)
             {
                 return in2.RemapAs(item => new ro.Bool() { IsTrue = in1.RemapAs(arr => arr.Elements.Contains(item)).Or(false)}).ToCompletedITask();
             }
@@ -144,7 +144,7 @@ namespace FourZeroOne.Core.Tokens
         {
             public Intersection(IEnumerable<IToken<IMulti<R>>> sets) : base(sets) { }
             public Intersection(params IToken<IMulti<R>>[] sets) : base(sets) { }
-            protected override ITask<IOption<r.Multi<R>>> Evaluate(IRuntime _, IEnumerable<IOption<IMulti<R>>> inputs)
+            protected override ITask<IOption<r.Multi<R>>> Evaluate(ITokenContext _, IEnumerable<IOption<IMulti<R>>> inputs)
             {
                 //OPTIMIZE: does not make full usage of PSequence merging behavior.
                 return new r.Multi<R>() { Values = inputs
@@ -160,7 +160,7 @@ namespace FourZeroOne.Core.Tokens
         public sealed record Exclusion<R> : Function<IMulti<R>, IMulti<R>, r.Multi<R>> where R : class, ResObj
         {
             public Exclusion(IToken<IMulti<R>> from, IToken<IMulti<R>> exclude) : base(from, exclude) { }
-            protected override ITask<IOption<r.Multi<R>>> Evaluate(IRuntime _, IOption<IMulti<R>> in1, IOption<IMulti<R>> in2)
+            protected override ITask<IOption<r.Multi<R>>> Evaluate(ITokenContext _, IOption<IMulti<R>> in1, IOption<IMulti<R>> in2)
             {
                 return in1.RemapAs(from => new r.Multi<R>() { Values = in2.RemapAs(sub => from.Elements.Except(sub.Elements)).Or([]).ToPSequence() })
                     .ToCompletedITask();
@@ -180,7 +180,7 @@ namespace FourZeroOne.Core.Tokens
         public sealed record Count : Function<IMulti<ResObj>, ro.Number>
         {
             public Count(IToken<IMulti<ResObj>> of) : base(of) { }
-            protected override ITask<IOption<ro.Number>> Evaluate(IRuntime _, IOption<IMulti<ResObj>> in1)
+            protected override ITask<IOption<ro.Number>> Evaluate(ITokenContext _, IOption<IMulti<ResObj>> in1)
             {
                 return new ro.Number() { Value = in1.RemapAs(x => x.Count).Or(0) }.AsSome().ToCompletedITask();
             }
@@ -193,7 +193,7 @@ namespace FourZeroOne.Core.Tokens
         public sealed record GetIndex<R> : Function<IMulti<R>, ro.Number, R> where R : class, ResObj
         {
             public GetIndex(IToken<IMulti<R>> from, IToken<ro.Number> index) : base(from, index) { }
-            protected override ITask<IOption<R>> Evaluate(IRuntime _, IOption<IMulti<R>> in1, IOption<ro.Number> in2)
+            protected override ITask<IOption<R>> Evaluate(ITokenContext _, IOption<IMulti<R>> in1, IOption<ro.Number> in2)
             {
                 var o = in1.Check(out var from) && in2.Check(out var index)
                     ? from.At(index.Value - 1)
@@ -208,7 +208,7 @@ namespace FourZeroOne.Core.Tokens
         public sealed record Get<RAddress, RObj> : Function<RAddress, RObj> where RAddress : class, IStateAddress<RObj>, ResObj where RObj : class, ResObj
         {
             public Get(IToken<RAddress> address) : base(address) { }
-            protected override ITask<IOption<RObj>> Evaluate(IRuntime runtime, IOption<RAddress> in1)
+            protected override ITask<IOption<RObj>> Evaluate(ITokenContext runtime, IOption<RAddress> in1)
             {
                 return in1.RemapAs(x => runtime.GetState().GetObject(x)).Press().ToCompletedITask();
             }
@@ -244,7 +244,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 _identifier = identifier;
             }
-            public override ITask<IOption<R>> Resolve(IRuntime _, IOption<ResObj>[] args)
+            public override ITask<IOption<R>> Resolve(ITokenContext _, IOption<ResObj>[] args)
             {
                 return args[0].RemapAs(x => ((ICompositionOf<C>)x).GetComponent(_identifier)).Press().ToCompletedITask();
             }
@@ -257,7 +257,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 _identifier = identifier;
             }
-            public override ITask<IOption<ICompositionOf<C>>> Resolve(IRuntime _, IOption<ResObj>[] args)
+            public override ITask<IOption<ICompositionOf<C>>> Resolve(ITokenContext _, IOption<ResObj>[] args)
             {
                 return
                     (args[0].RemapAs(x => (ICompositionOf<C>)x).Check(out var holder)
@@ -277,7 +277,7 @@ namespace FourZeroOne.Core.Tokens
             {
                 _identifier = identifier;
             }
-            public override ITask<IOption<ICompositionOf<C>>> Resolve(IRuntime _, IOption<ResObj>[] args)
+            public override ITask<IOption<ICompositionOf<C>>> Resolve(ITokenContext _, IOption<ResObj>[] args)
             {
                 return args[0].RemapAs(x => ((ICompositionOf<C>)x).WithoutComponents([_identifier])).ToCompletedITask();
             }
@@ -288,7 +288,7 @@ namespace FourZeroOne.Core.Tokens
         {
             public DoMerge(IToken<ICompositionOf<C>> in1, IToken<ICompositionOf<r.MergeSpec<C>>> in2) : base(in1, in2) { }
 
-            protected override ITask<IOption<ICompositionOf<C>>> Evaluate(IRuntime runtime, IOption<ICompositionOf<C>> in1, IOption<ICompositionOf<r.MergeSpec<C>>> in2)
+            protected override ITask<IOption<ICompositionOf<C>>> Evaluate(ITokenContext runtime, IOption<ICompositionOf<C>> in1, IOption<ICompositionOf<r.MergeSpec<C>>> in2)
             {
                 return (in1.Check(out var subject) & in2.Check(out var merger)).ToOptionLazy(() =>
                     (ICompositionOf<C>)subject.WithComponentsUnsafe(
@@ -304,7 +304,7 @@ namespace FourZeroOne.Core.Tokens
     {
         public Execute(IToken<r.Boxed.MetaFunction<R>> function) : base(function) { }
 
-        protected override ITask<IOption<R>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<R>> in1)
+        protected override ITask<IOption<R>> Evaluate(ITokenContext runtime, IOption<r.Boxed.MetaFunction<R>> in1)
         {
             return in1.Check(out var function)
                 ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome())])
@@ -318,7 +318,7 @@ namespace FourZeroOne.Core.Tokens
     {
         public Execute(IToken<r.Boxed.MetaFunction<RArg1, ROut>> function, IToken<r.Boxed.MetaArgs<RArg1>> arg) : base(function, arg) { }
 
-        protected override ITask<IOption<ROut>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<RArg1, ROut>> in1, IOption<r.Boxed.MetaArgs<RArg1>> in2)
+        protected override ITask<IOption<ROut>> Evaluate(ITokenContext runtime, IOption<r.Boxed.MetaFunction<RArg1, ROut>> in1, IOption<r.Boxed.MetaArgs<RArg1>> in2)
         {
             return in1.Check(out var function) && in2.Check(out var args)
                 ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome()), (function.IdentifierA, args.Arg1)])
@@ -333,7 +333,7 @@ namespace FourZeroOne.Core.Tokens
     {
         public Execute(IToken<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> function, IToken<r.Boxed.MetaArgs<RArg1, RArg2>> args) : base(function, args) { }
 
-        protected override ITask<IOption<ROut>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> in1, IOption<r.Boxed.MetaArgs<RArg1, RArg2>> in2)
+        protected override ITask<IOption<ROut>> Evaluate(ITokenContext runtime, IOption<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> in1, IOption<r.Boxed.MetaArgs<RArg1, RArg2>> in2)
         {
             return in1.Check(out var function) && in2.Check(out var args)
                 ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome()), (function.IdentifierA, args.Arg1), (function.IdentifierB, args.Arg2)])
@@ -349,7 +349,7 @@ namespace FourZeroOne.Core.Tokens
     {
         public Execute(IToken<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> function, IToken<r.Boxed.MetaArgs<RArg1, RArg2, RArg3>> args) : base(function, args) { }
 
-        protected override ITask<IOption<ROut>> Evaluate(IRuntime runtime, IOption<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> in1, IOption<r.Boxed.MetaArgs<RArg1, RArg2, RArg3>> in2)
+        protected override ITask<IOption<ROut>> Evaluate(ITokenContext runtime, IOption<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> in1, IOption<r.Boxed.MetaArgs<RArg1, RArg2, RArg3>> in2)
         {
             return in1.Check(out var function) && in2.Check(out var args)
                 ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome()), (function.IdentifierA, args.Arg1), (function.IdentifierB, args.Arg2), (function.IdentifierC, args.Arg3)])
@@ -362,7 +362,7 @@ namespace FourZeroOne.Core.Tokens
         where R1 : class, ResObj
     {
         public ToBoxedArgs(IToken<R1> in1) : base(in1) { }
-        protected override ITask<IOption<r.Boxed.MetaArgs<R1>>> Evaluate(IRuntime _, IOption<R1> in1)
+        protected override ITask<IOption<r.Boxed.MetaArgs<R1>>> Evaluate(ITokenContext _, IOption<R1> in1)
         {
             return new r.Boxed.MetaArgs<R1>() { Arg1 = in1 }.AsSome().ToCompletedITask();
         }
@@ -373,7 +373,7 @@ namespace FourZeroOne.Core.Tokens
         where R2 : class, ResObj
     {
         public ToBoxedArgs(IToken<R1> in1, IToken<R2> in2) : base(in1, in2) { }
-        protected override ITask<IOption<r.Boxed.MetaArgs<R1, R2>>> Evaluate(IRuntime _, IOption<R1> in1, IOption<R2> in2)
+        protected override ITask<IOption<r.Boxed.MetaArgs<R1, R2>>> Evaluate(ITokenContext _, IOption<R1> in1, IOption<R2> in2)
         {
             return new r.Boxed.MetaArgs<R1, R2>() { Arg1 = in1, Arg2 = in2}.AsSome().ToCompletedITask();
         }
@@ -385,7 +385,7 @@ namespace FourZeroOne.Core.Tokens
         where R3 : class, ResObj
     {
         public ToBoxedArgs(IToken<R1> in1, IToken<R2> in2, IToken<R3> in3) : base(in1, in2, in3) { }
-        protected override ITask<IOption<r.Boxed.MetaArgs<R1, R2, R3>>> Evaluate(IRuntime _, IOption<R1> in1, IOption<R2> in2, IOption<R3> in3)
+        protected override ITask<IOption<r.Boxed.MetaArgs<R1, R2, R3>>> Evaluate(ITokenContext _, IOption<R1> in1, IOption<R2> in2, IOption<R3> in3)
         {
             return new r.Boxed.MetaArgs<R1, R2, R3>() { Arg1 = in1, Arg2 = in2, Arg3 = in3 }.AsSome().ToCompletedITask();
         }
@@ -406,7 +406,7 @@ namespace FourZeroOne.Core.Tokens
     public record IfElse<R> : Function<ro.Bool, r.Boxed.MetaFunction<R>, r.Boxed.MetaFunction<R>, r.Boxed.MetaFunction<R>> where R : class, ResObj
     {
         public IfElse(IToken<ro.Bool> condition, IToken<r.Boxed.MetaFunction<R>> positive, IToken<r.Boxed.MetaFunction<R>> negative) : base(condition, positive, negative) { }
-        protected override ITask<IOption<r.Boxed.MetaFunction<R>>> Evaluate(IRuntime runtime, IOption<ro.Bool> in1, IOption<r.Boxed.MetaFunction<R>> in2, IOption<r.Boxed.MetaFunction<R>> in3)
+        protected override ITask<IOption<r.Boxed.MetaFunction<R>>> Evaluate(ITokenContext runtime, IOption<ro.Bool> in1, IOption<r.Boxed.MetaFunction<R>> in2, IOption<r.Boxed.MetaFunction<R>> in3)
         {
             return in1.RemapAs(x => x.IsTrue ? in2 : in3).Press().ToCompletedITask();
         }
@@ -429,13 +429,13 @@ namespace FourZeroOne.Core.Tokens
     public sealed record Nolla<R> : Value<R> where R : class, ResObj
     {
         public Nolla() { }
-        protected override ITask<IOption<R>> Evaluate(IRuntime _) { return new None<R>().ToCompletedITask(); }
+        protected override ITask<IOption<R>> Evaluate(ITokenContext _) { return new None<R>().ToCompletedITask(); }
         protected override IOption<string> CustomToString() => "nolla".AsSome();
     }
     public sealed record Exists : Function<ResObj, ro.Bool>
     {
         public Exists(IToken<ResObj> obj) : base(obj) { }
-        protected override ITask<IOption<ro.Bool>> Evaluate(IRuntime _, IOption<ResObj> obj)
+        protected override ITask<IOption<ro.Bool>> Evaluate(ITokenContext _, IOption<ResObj> obj)
         {
             return new ro.Bool() { IsTrue = obj.IsSome() }.AsSome().ToCompletedITask();
         }
@@ -446,7 +446,7 @@ namespace FourZeroOne.Core.Tokens
         {
             _assigningAddress = address;
         }
-        public override ITask<IOption<r.Instructions.Assign<R>>> Resolve(IRuntime runtime, IOption<ResObj>[] args)
+        public override ITask<IOption<r.Instructions.Assign<R>>> Resolve(ITokenContext runtime, IOption<ResObj>[] args)
         {
             return args[0].RemapAs(x => new r.Instructions.Assign<R>() { Address = _assigningAddress, Subject = (R)x }).ToCompletedITask();
         }
@@ -460,7 +460,7 @@ namespace FourZeroOne.Core.Tokens
             _referenceAddress = referenceAddress;
         }
 
-        protected override ITask<IOption<R>> Evaluate(IRuntime runtime)
+        protected override ITask<IOption<R>> Evaluate(ITokenContext runtime)
         {
             return runtime.GetState().GetObject(_referenceAddress).ToCompletedITask();
         }

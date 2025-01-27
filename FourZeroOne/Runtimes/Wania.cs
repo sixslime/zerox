@@ -5,10 +5,12 @@ using FourZeroOne.Rule;
 using FourZeroOne.Token.Unsafe;
 using Perfection;
 using MorseCode.ITask;
-namespace FourZeroOne.Runtimes.FrameSaving
+using FourZeroOne;
+
+namespace FourZeroOne.Runtimes
 {
     using LookNicePls;
-    public class Gebug : Runtime.FrameSaving
+    public class Wania : Runtime.FrameSaving
     {
         private IOption<int[]>[] _autoSelections = [];
         private IOption<int>[] _autoRewinds = [];
@@ -24,7 +26,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
         public void SetAutoRewinds(params int?[] rewinds)
         {
             _autoRewinds = rewinds.Map(x => x.NullToNone().RemapAs(x => (int)x! /*???*/)).ToArray(); ;
-        } 
+        }
         protected override void OnRunCall(IState startingState, IToken program)
         {
             _currentFrame = new None<LinkedStack<Frame>>();
@@ -65,7 +67,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
 
         protected override void RecieveToken(IToken token, int depth)
         {
-            
+
             if (depth >= _depth)
             {
                 if (_macroExpanding)
@@ -83,7 +85,8 @@ namespace FourZeroOne.Runtimes.FrameSaving
                 Console.WriteLine($"{token}");
                 Console.ResetColor();
 
-            } else
+            }
+            else
             {
                 Console.Write($"{DepthPad(_depth)}|");
                 Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -101,7 +104,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
             return o;
         }
 
-        
+
         private static string DepthPad(int depth) => "| ".Yield(depth).AccumulateInto("", (msg, x) => msg + x);
 
         private ITask<IOption<IEnumerable<R>>> SelectionPrompt<R>(IEnumerable<R> from, int count, out IOption<LinkedStack<Frame>> targetFrame)
@@ -126,7 +129,7 @@ namespace FourZeroOne.Runtimes.FrameSaving
                 Console.WriteLine($"AUTO SELECT: {selections.LookNicePls()}");
                 return __DoSelection(selections);
             }
-                
+
 
             // MANUAL USER INPUT
             while (true)

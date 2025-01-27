@@ -19,6 +19,7 @@ using FourZeroOne.Resolution;
 using FourZeroOne.Token;
 using FourZeroOne.Testing;
 using FourZeroOne.Testing.Syntax;
+using PROTO_ZeroxFour_1.FourZeroOne.Runtimes;
 namespace PROTO_ZeroxFour_1;
 
 
@@ -31,7 +32,7 @@ public class Tester
     public readonly static FZ.StateModels.Minimal BLANK_STARTING_STATE = new() { };
     public async Task Run()
     {
-        Dictionary<string, List<ITest<FZ.Runtimes.FrameSaving.Gebug, ResObj>>> testGroups = new();
+        Dictionary<string, List<ITest<Wania, ResObj>>> testGroups = new();
 
 
         /* Intro Demo (~5-10 min)
@@ -642,11 +643,11 @@ public class Tester
     /// </summary>
     /// <param name="selections"></param>
     /// <returns></returns>
-    private static FZ.Runtimes.FrameSaving.Gebug MkRuntime()
+    private static Wania MkRuntime()
     {
         return MkRuntimeWithAuto([]);
     }
-    private static FZ.Runtimes.FrameSaving.Gebug MkRuntimeWithAuto(IEnumerable<IEnumerable<int>?> selections)
+    private static Wania MkRuntimeWithAuto(IEnumerable<IEnumerable<int>?> selections)
     {
         return MkRuntimeWithAuto(selections.Map(x => x?.ToArray()).ToArray(), []);
     }
@@ -655,7 +656,7 @@ public class Tester
     /// </summary>
     /// <param name="selections"></param>
     /// <returns></returns>
-    private static FZ.Runtimes.FrameSaving.Gebug MkRuntimeWithAuto(IEnumerable<int[]?> selections, IEnumerable<int?> rewinds)
+    private static Wania MkRuntimeWithAuto(IEnumerable<int[]?> selections, IEnumerable<int?> rewinds)
     {
         return new FZ.Runtimes.FrameSaving.Gebug().Mut(x => { x.SetAutoSelections(selections.Map(x => x?.ToArray()).ToArray()); x.SetAutoRewinds(rewinds.ToArray()); });
     }
