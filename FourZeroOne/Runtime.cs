@@ -1,17 +1,12 @@
-
-using System.Collections.Generic;
-using Perfection;
-using ControlledFlows;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using MorseCode.ITask;
+using Perfection;
 #nullable enable
 namespace FourZeroOne.Runtime
 {
+    using Token;
+    using IToken = Token.Unsafe.IToken;
     using ResObj = Resolution.IResolution;
     using Resolved = IOption<Resolution.IResolution>;
-    using IToken = Token.Unsafe.IToken;
-    using Token;
     public interface ITokenContext
     {
         public IState CurrentState { get; }
@@ -30,22 +25,33 @@ namespace FourZeroOne.Runtime
 
         public IOption<SelectionRequest> RequestedSelection { get; }
 
-        public event EventHandler NextTokenEvent;
+        public event EventHandler? NextTokenEvent;
 
-        public event EventHandler RuleAppliedEvent;
-        public event EventHandler MacroExpandedEvent;
+        public event EventHandler? RuleAppliedEvent;
+        public event EventHandler? MacroExpandedEvent;
 
-        public event EventHandler OperationPushedEvent;
-        public event EventHandler OperationResolvedEvent;
+        public event EventHandler? OperationPushedEvent;
+        public event EventHandler? OperationResolvedEvent;
 
-        public event EventHandler SelectionRequestedEvent;
-        public event EventHandler SelectionRecievedEvent;
+        public event EventHandler? SelectionRequestedEvent;
+        public event EventHandler? SelectionRecievedEvent;
 
-        public event EventHandler BacktrackingEvent;
-        public event EventHandler BacktrackEvent;
+        public event EventHandler? BacktrackingEvent;
+        public event EventHandler? BacktrackEvent;
         
         public void Backtrack(int resolvedOperationAmount);
         public void SendSelectionResponse<R>(SelectionRequest request, params int[] selectedIndicies) where R : class, ResObj;
+    }
+
+    // fuck it, you have to use stacks, theres no reason should use anything else, fuck you.
+    public interface IRuntimeData
+    {
+        public IOption<IPStack<IToken>> OperationStack { get; }
+        public IOption<IPStack<ResObj>> ResolutionStack { get; }
+        public IOption<IPStack<IState>> StateStack { get; }
+        public IOption<IPStack<IToken>> PreProcessingStack { get; }
+        public IOption<IPStack<IPSet<Rule.IRule>>> AppliedRuleStack { get; }
+        public IOption<IPStack<IPSet<Proxy.Unsafe.IProxy>>> MacroExpansionStack { get; }
     }
     public class SelectionRequest
     {

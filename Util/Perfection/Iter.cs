@@ -157,11 +157,9 @@ namespace Perfection
         public static PMap<K, T> ToPMap<K, T>(this IEnumerable<ITiple<K, T>> enumerable) where K : notnull => new PMap<K, T>().WithEntries(enumerable);
         public static PMap<K, T> ToPMap<K, T>(this IEnumerable<(K, T)> enumerable) where K : notnull => new PMap<K, T>().WithEntries(enumerable.Map(x => x.Tiple()));
         public static PSet<T> ToPSet<T>(this IEnumerable<T> enumerable) => new PSet<T>().WithEntries(enumerable);
-        public static PStack<T> AsPStackRoot<T>(this T value) => new(value);
-        public static IOption<PStack<T>> ToPStack<T>(this IEnumerable<T> enumerable)
+        public static PStack<T> ToPStack<T>(this IEnumerable<T> enumerable)
         {
-            return enumerable.At(0)
-                .RemapAs(x => x.AsPStackRoot().WithEntries(enumerable.Skip(1)));
+            return new PStack<T>().WithEntries(enumerable);
         }
         public static CachingEnumerable<T> Caching<T>(this IEnumerable<T> enumerable) => new(enumerable);
         public static IEnumerable<T> Over<T>(params T[] arr) => arr;
