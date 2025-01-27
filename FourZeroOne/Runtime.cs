@@ -22,23 +22,38 @@ namespace FourZeroOne.Runtime
 
     public interface IBackEnd
     {
-        public delegate void EvaluationEventHandler<T>(object sender, EvaluationEventArgs<T> args);
-        public event EvaluationEventHandler<IToken> PushedOperationEvent;
-        public event EvaluationEventHandler<ResObj> ResolvedEvent;
-        // events that send messages...
-        
-        // methods that recieve messages...
-        public void RecieveSelection();
-    }
-    public class EvaluationEventArgs<T>(T evalObject, int depth)
-    {
-        public T EvalObject { get; } = evalObject;
-        public int Depth { get; } = depth;
-    }
-    public interface IFrontEnd
-    {
+        public IPStack<IToken> OperationStack { get; }
+        public IPStack<ResObj> ResolutionStack { get; }
+        public IPStack<IState> StateStack { get; }
+        public IPStack<IToken> PreProcessingStack { get; }
+        public IPStack<IPSet<Rule.IRule>> AppliedRuleStack { get; }
+        public IPStack<IPSet<Proxy.Unsafe.IProxy>> MacroExpansionStack { get; }
 
+        public IOption<SelectionRequest> RequestedSelection { get; }
+
+        public event EventHandler NextTokenEvent;
+
+        public event EventHandler RuleAppliedEvent;
+        public event EventHandler MacroExpandedEvent;
+
+        public event EventHandler OperationPushedEvent;
+        public event EventHandler OperationResolvedEvent;
+
+        public event EventHandler SelectionRequestedEvent;
+        public event EventHandler SelectionRecievedEvent;
+
+        public event EventHandler BacktrackingEvent;
+        public event EventHandler BacktrackEvent;
+        
+        public void Backtrack(int resolvedOperationAmount);
+        public void SendSelectionResponse<R>(SelectionRequest request, params int[] selectedIndicies) where R : class, ResObj;
     }
+    public class SelectionRequest
+    {
+        public required int Amount { get; init; }
+        public required IPSequence<ResObj> Pool { get; init; }
+    }
+
     public abstract class FrameSaving : IRuntime
     {
         
@@ -139,7 +154,7 @@ namespace FourZeroOne.Runtime
             public LinkedStack(T value)
             {
                 Value = value;
-                Link = this.None();
+                Link = this.AsNone();
                 Depth = 0;
             }
             public IEnumerable<LinkedStack<T>> ThroughStack()

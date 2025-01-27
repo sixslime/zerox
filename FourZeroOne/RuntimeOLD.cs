@@ -120,7 +120,7 @@ namespace FourZeroOne.RuntimeOLD
             public LinkedStack(T value)
             {
                 Value = value;
-                Link = this.None();
+                Link = this.AsNone();
                 Depth = 0;
             }
             public IEnumerable<LinkedStack<T>> ThroughStack()

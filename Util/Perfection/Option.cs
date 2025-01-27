@@ -69,7 +69,7 @@ namespace Perfection
         {
             return CheckNone(option, out var o) ? new None<TOut>() : func(o).AsSome();
         }
-        public static IOption<T> None<T>(this T _)
+        public static IOption<T> AsNone<T>(this T? _)
         {
             return new None<T>();
         }

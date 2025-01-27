@@ -221,9 +221,17 @@ namespace Perfection
             _link = link.AsSome();
             Height = height;
         }
+
+        private IOption<IPStack<T>> RecursiveAt(int index)
+        {
+            return (index < 0)
+                ? this.AsNone()
+                : (index == 0)
+                    ? this.AsSome()
+                    : _link.RemapAs(x => x.At(index - 1)).Press(); 
+        }
         public IOption<IPStack<T>> At(int index)
         {
-            // can be written recursively very nicely but that wouldn't be good for large stacks.
             if (index == 1) return _link;
             IOption<IPStack<T>> o = this.AsSome();
             while (index > 0 && o.Check(out var stack))
