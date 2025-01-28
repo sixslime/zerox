@@ -8,26 +8,23 @@ using MorseCode.ITask;
 using FourZeroOne;
 using FourZeroOne.Runtime;
 
+#nullable enable
 namespace FourZeroOne.Runtimes
 {
     using System;
+    using System.Collections.Generic;
     using FourZeroOne.Proxy.Unsafe;
+    using FourZeroOne.Resolution.Unsafe;
+    using FourZeroOne.Token;
     using LookNicePls;
-    public record Wania : IRuntime
+    using ResObj = Resolution.IResolution;
+    public class Wania : IRuntime
     {
-        public IPStack<IToken> OperationStack => throw new NotImplementedException();
+        private IPStack<IRuntimeSnapshot> _snapshotStack = new PStack<IRuntimeSnapshot>();
+        private IPStack<IPStack<IRuntimeSnapshot>> _backtrackFrames = new PStack<IPStack<IRuntimeSnapshot>>();
 
-        public IPStack<IResolution> ResolutionStack => throw new NotImplementedException();
 
-        public IPStack<IState> StateStack => throw new NotImplementedException();
-
-        public IPStack<IToken> PreProcessingStack => throw new NotImplementedException();
-
-        public IPStack<IPSet<IRule>> AppliedRuleStack => throw new NotImplementedException();
-
-        public IPStack<IPSet<IProxy>> MacroExpansionStack => throw new NotImplementedException();
-
-        public IOption<SelectionRequest> RequestedSelection => throw new NotImplementedException();
+        public IRuntimeSnapshot CurrentSnapshot => throw new NotImplementedException();
 
         public event EventHandler? NextTokenEvent;
         public event EventHandler? RuleAppliedEvent;
@@ -44,9 +41,26 @@ namespace FourZeroOne.Runtimes
             throw new NotImplementedException();
         }
 
-        void IRuntime.SendSelectionResponse<R>(SelectionRequest request, params int[] selectedIndicies)
+        public void SendSelectionResponse<R>(SelectionRequest request, params int[] selectedIndicies) where R : class, ResObj
         {
             throw new NotImplementedException();
+        }
+
+        private class TokenHandle(Wania parent) : ITokenContext
+        {
+            readonly Wania _parent = parent;
+            IState ITokenContext.CurrentState => _parent.CurrentSnapshot.StateStack.TopValue.Unwrap();
+
+            // consider having wania be able to 'spawn' multiple execution threads to simulate creating a new instance.
+            ITask<IOption<R>> ITokenContext.MetaExecute<R>(IToken<R> token, IEnumerable<ITiple<IStateAddress, IOption<ResObj>>> args)
+            {
+                throw new NotImplementedException();
+            }
+
+            ITask<IOption<IEnumerable<R>>> ITokenContext.ReadSelection<R>(IEnumerable<R> from, int count)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }
