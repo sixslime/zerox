@@ -22,6 +22,7 @@ namespace FourZeroOne.Core.Tokens
     {
         namespace Select
         {
+            // NOTE: select tokens assume correct count is returned and do not check for it.
             public sealed record One<R> : Function<IMulti<R>, R> where R : class, ResObj
             {
                 public One(IToken<IMulti<R>> from) : base(from) { }
@@ -29,7 +30,7 @@ namespace FourZeroOne.Core.Tokens
                 protected async override ITask<IOption<R>> Evaluate(ITokenContext runtime, IOption<IMulti<R>> fromOpt)
                 {
                     return fromOpt.Check(out var from)
-                        ? (await runtime.ReadSelection(from.Elements, 1)).RemapAs(x => x.First().NullToNone()).Press()
+                        ? (await runtime.ReadSelection(from, 1)).RemapAs(x => x.Elements.First().NullToNone()).Press()
                         : new None<R>();
                 }
                 protected override IOption<string> CustomToString() => $"Select({Arg1})".AsSome();
@@ -43,7 +44,7 @@ namespace FourZeroOne.Core.Tokens
                 protected override async ITask<IOption<r.Multi<R>>> Evaluate(ITokenContext runtime, IOption<IMulti<R>> fromOpt, IOption<ro.Number> countOpt)
                 {
                     return (fromOpt.Check(out var from) && countOpt.Check(out var count))
-                        ? (await runtime.ReadSelection(from.Elements, count.Value)).RemapAs(v => new r.Multi<R>() { Values = v.ToPSequence() })
+                        ? (await runtime.ReadSelection(from, count.Value)).RemapAs(v => new r.Multi<R>() { Values = v.Elements.ToPSequence() })
                         : new None<r.Multi<R>>();
                 }
                 protected override IOption<string> CustomToString() => $"SelectMulti({Arg1}, {Arg2})".AsSome();
@@ -210,7 +211,7 @@ namespace FourZeroOne.Core.Tokens
             public Get(IToken<RAddress> address) : base(address) { }
             protected override ITask<IOption<RObj>> Evaluate(ITokenContext runtime, IOption<RAddress> in1)
             {
-                return in1.RemapAs(x => runtime.GetState().GetObject(x)).Press().ToCompletedITask();
+                return in1.RemapAs(x => runtime.CurrentState.GetObject(x)).Press().ToCompletedITask();
             }
             protected override IOption<string> CustomToString() => $"*{Arg1}".AsSome();
         }
@@ -307,7 +308,7 @@ namespace FourZeroOne.Core.Tokens
         protected override ITask<IOption<R>> Evaluate(ITokenContext runtime, IOption<r.Boxed.MetaFunction<R>> in1)
         {
             return in1.Check(out var function)
-                ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome())])
+                ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome()).Tiple()])
                 : new None<R>().ToCompletedITask();
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}:<>;".AsSome();
@@ -321,7 +322,7 @@ namespace FourZeroOne.Core.Tokens
         protected override ITask<IOption<ROut>> Evaluate(ITokenContext runtime, IOption<r.Boxed.MetaFunction<RArg1, ROut>> in1, IOption<r.Boxed.MetaArgs<RArg1>> in2)
         {
             return in1.Check(out var function) && in2.Check(out var args)
-                ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome()), (function.IdentifierA, args.Arg1)])
+                ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome()).Tiple(), (function.IdentifierA, args.Arg1).Tiple()])
                 : new None<ROut>().ToCompletedITask();
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2};".AsSome();
@@ -336,7 +337,7 @@ namespace FourZeroOne.Core.Tokens
         protected override ITask<IOption<ROut>> Evaluate(ITokenContext runtime, IOption<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> in1, IOption<r.Boxed.MetaArgs<RArg1, RArg2>> in2)
         {
             return in1.Check(out var function) && in2.Check(out var args)
-                ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome()), (function.IdentifierA, args.Arg1), (function.IdentifierB, args.Arg2)])
+                ? runtime.MetaExecute(function.Token, [(function.SelfIdentifier, function.AsSome()).Tiple(), (function.IdentifierA, args.Arg1).Tiple(), (function.IdentifierB, args.Arg2).Tiple()])
                 : new None<ROut>().ToCompletedITask();
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2};".AsSome();
@@ -462,7 +463,7 @@ namespace FourZeroOne.Core.Tokens
 
         protected override ITask<IOption<R>> Evaluate(ITokenContext runtime)
         {
-            return runtime.GetState().GetObject(_referenceAddress).ToCompletedITask();
+            return runtime.CurrentState.GetObject(_referenceAddress).ToCompletedITask();
         }
         protected override IOption<string> CustomToString() => $"&{_referenceAddress}".AsSome();
 

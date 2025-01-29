@@ -23,20 +23,30 @@ namespace FourZeroOne.Runtimes
         private IPStack<IRuntimeSnapshot> _snapshotStack = new PStack<IRuntimeSnapshot>();
         private IPStack<IPStack<IRuntimeSnapshot>> _backtrackFrames = new PStack<IPStack<IRuntimeSnapshot>>();
 
-
         public IRuntimeSnapshot CurrentSnapshot => throw new NotImplementedException();
+
+        public event EventHandler? ProgramStartingEvent;
+        public event EventHandler? ProgramFinishedEvent;
 
         public event EventHandler? NextTokenEvent;
         public event EventHandler? RuleAppliedEvent;
         public event EventHandler? MacroExpandedEvent;
+
         public event EventHandler? OperationPushedEvent;
         public event EventHandler? OperationResolvedEvent;
+
         public event EventHandler? SelectionRequestedEvent;
         public event EventHandler? SelectionRecievedEvent;
+
         public event EventHandler? BacktrackingEvent;
         public event EventHandler? BacktrackEvent;
 
         public void Backtrack(int resolvedOperationAmount)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RunProgram(IState startingState, IToken program)
         {
             throw new NotImplementedException();
         }
@@ -46,20 +56,64 @@ namespace FourZeroOne.Runtimes
             throw new NotImplementedException();
         }
 
+        private ITask<IOption<R>> RecieveMetaExecute<R>(IToken<R> token, IEnumerable<ITiple<IStateAddress, IOption<ResObj>>> args) where R : class, ResObj
+        {
+            throw new NotImplementedException();
+        }
+        private ITask<IOption<IHasElements<R>>> RecieveReadSelection<R>(IHasElements<R> from, int count)
+        {
+            throw new NotImplementedException();
+        }
         private class TokenHandle(Wania parent) : ITokenContext
         {
             readonly Wania _parent = parent;
-            IState ITokenContext.CurrentState => _parent.CurrentSnapshot.StateStack.TopValue.Unwrap();
+            IState ITokenContext.CurrentState => _parent.CurrentSnapshot.StateStack.TopValue;
 
             // consider having wania be able to 'spawn' multiple execution threads to simulate creating a new instance.
             ITask<IOption<R>> ITokenContext.MetaExecute<R>(IToken<R> token, IEnumerable<ITiple<IStateAddress, IOption<ResObj>>> args)
-            {
-                throw new NotImplementedException();
-            }
+            => _parent.RecieveMetaExecute(token, args);
 
-            ITask<IOption<IEnumerable<R>>> ITokenContext.ReadSelection<R>(IEnumerable<R> from, int count)
+            ITask<IOption<IHasElements<R>>> ITokenContext.ReadSelection<R>(IHasElements<R> from, int count)
+            => _parent.RecieveReadSelection(from, count);
+        }
+        private record Snapshot : IRuntimeSnapshot
+        {
+            public IEvaluationStack<IToken> OperationStack => throw new NotImplementedException();
+
+            public IEvaluationStack<ResObj> ResolutionStack => throw new NotImplementedException();
+
+            public IEvaluationStack<IState> StateStack => throw new NotImplementedException();
+
+            public IPStack<IToken> TokenResultStack => throw new NotImplementedException();
+
+            public IPStack<IPSet<IRule>> AppliedRuleStack => throw new NotImplementedException();
+
+            public IPStack<IPSet<IProxy>> MacroExpansionStack => throw new NotImplementedException();
+
+            public IOption<SelectionRequest> RequestedSelection => throw new NotImplementedException();
+
+            // FIXME: heavy use of 'Unwrap()'
+            // ironic. laugh.
+            private class EvaluationStackWrapper<T>(IPStack<IPStack<T>> internalStack) : IEvaluationStack<T>
             {
-                throw new NotImplementedException();
+                private IPStack<IPStack<T>> _internalStack = internalStack;
+                public T TopValue => _internalStack.TopValue.Unwrap().TopValue.Unwrap();
+                public int ExpressionDepth => _internalStack.Count;
+                public int ArgIndex => _internalStack.TopValue.Unwrap().Count;
+
+                public IEvaluationStack<T> Ascend(int amount)
+                    => new EvaluationStackWrapper<T>(_internalStack.At(amount).Unwrap());
+
+                public IEvaluationStack<T> Back(int amount)
+                {
+                    return new EvaluationStackWrapper<T>(
+                    (amount, _internalStack)
+                        .Sequence(x => (x.amount - x._internalStack.Count, x._internalStack.At(1).Unwrap()))
+                        .Until(x => x.amount < x._internalStack.Count)
+                        .Last()
+                        .ExprAs(x => x._internalStack.At(x.amount))
+                        .Unwrap());
+                }
             }
         }
     }

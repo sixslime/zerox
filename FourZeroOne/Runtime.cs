@@ -10,7 +10,7 @@ namespace FourZeroOne.Runtime
     {
         public IState CurrentState { get; }
         public ITask<IOption<R>> MetaExecute<R>(IToken<R> token, IEnumerable<ITiple<Resolution.Unsafe.IStateAddress, IOption<ResObj>>> args) where R : class, ResObj;
-        public ITask<IOption<IEnumerable<R>>> ReadSelection<R>(IEnumerable<R> from, int count) where R : class, ResObj;
+        public ITask<IOption<IHasElements<R>>> ReadSelection<R>(IHasElements<R> from, int count) where R : class, ResObj;
     }
 
     public interface IRuntime
@@ -18,6 +18,7 @@ namespace FourZeroOne.Runtime
         public IRuntimeSnapshot CurrentSnapshot { get; }
 
         public event EventHandler? ProgramStartingEvent;
+        public event EventHandler? ProgramFinishedEvent;
 
         public event EventHandler? NextTokenEvent;
 
