@@ -32,7 +32,7 @@ namespace FourZeroOne.Runtime
         public event EventHandler? SelectionRecievedEvent;
 
         public event EventHandler? BacktrackingEvent;
-        public event EventHandler? BacktrackEvent;
+        public event EventHandler? BacktrackedEvent;
 
         public void RunProgram(IState startingState, IToken program);
         public void Backtrack(int resolvedOperationAmount);
@@ -46,10 +46,18 @@ namespace FourZeroOne.Runtime
         public IEvaluationStack<IToken> OperationStack { get; }
         public IEvaluationStack<ResObj> ResolutionStack { get; }
         public IEvaluationStack<IState> StateStack { get; }
-        public IPStack<IToken> TokenResultStack { get; }
-        public IPStack<IPSet<Rule.IRule>> AppliedRuleStack { get; }
-        public IPStack<IPSet<Proxy.Unsafe.IProxy>> MacroExpansionStack { get; }
+        public IPStack<ETokenTransmuteStep> TokenTransmutationStack { get; }
         public IOption<SelectionRequest> RequestedSelection { get; }
+    }
+    public interface ETokenTransmuteStep
+    {
+        public IToken Result { get; }
+        public interface Identity : ETokenTransmuteStep { }
+        public interface MacroExpansion : ETokenTransmuteStep { }
+        public interface RuleApplication : ETokenTransmuteStep
+        {
+            public Rule.IRule Rule { get; }
+        }
     }
     public interface IEvaluationStack<out T>
     {
@@ -59,7 +67,7 @@ namespace FourZeroOne.Runtime
         public IEvaluationStack<T> Ascend(int amount);
         public IEvaluationStack<T> Back(int amount);
     }
-    public class SelectionRequest
+    public sealed class SelectionRequest
     {
         public required int Amount { get; init; }
         public required IPSequence<ResObj> Pool { get; init; }

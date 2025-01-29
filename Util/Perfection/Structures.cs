@@ -3,6 +3,8 @@ using System.Collections;
 #nullable enable
 namespace Perfection
 {
+    // DEV: so what if we made the default IPStructures read-only (out T),
+    // then made a "handle" to mutate it, with that handle being 'in T'.
     public delegate T Updater<T>(T original);
     // MUST: methods that start with '_' must return the instatiating type.
     // is this dumb as shit? yes. is it kinda cool? in my head and in my head only.

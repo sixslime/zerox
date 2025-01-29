@@ -39,7 +39,7 @@ namespace FourZeroOne.Runtimes
         public event EventHandler? SelectionRecievedEvent;
 
         public event EventHandler? BacktrackingEvent;
-        public event EventHandler? BacktrackEvent;
+        public event EventHandler? BacktrackedEvent;
 
         public void Backtrack(int resolvedOperationAmount)
         {
@@ -78,40 +78,40 @@ namespace FourZeroOne.Runtimes
         }
         private record Snapshot : IRuntimeSnapshot
         {
-            public IEvaluationStack<IToken> OperationStack => throw new NotImplementedException();
+            public required PStack<IPStack<IToken>> OperationStack { get; init; }
+            public required PStack<IPStack<ResObj>> ResolutionStack { get; init; }
+            public required PStack<IPStack<IState>> StateStack { get; init; }
+            public required PStack<ETokenTransmuteStep> TokenTransmutationStack { get; init; }
+            public required IOption<SelectionRequest> RequestedSelection { get; init; }
 
-            public IEvaluationStack<ResObj> ResolutionStack => throw new NotImplementedException();
+            public required PSet<IRule> AppliedRuleSet { get; init; }
 
-            public IEvaluationStack<IState> StateStack => throw new NotImplementedException();
-
-            public IPStack<IToken> TokenResultStack => throw new NotImplementedException();
-
-            public IPStack<IPSet<IRule>> AppliedRuleStack => throw new NotImplementedException();
-
-            public IPStack<IPSet<IProxy>> MacroExpansionStack => throw new NotImplementedException();
-
-            public IOption<SelectionRequest> RequestedSelection => throw new NotImplementedException();
-
-            // FIXME: heavy use of 'Unwrap()'
-            // ironic. laugh.
-            private class EvaluationStackWrapper<T>(IPStack<IPStack<T>> internalStack) : IEvaluationStack<T>
+            IEvaluationStack<IToken> IRuntimeSnapshot.OperationStack
+                => new EvaluationStackWrapper<IToken>(OperationStack);
+            IEvaluationStack<ResObj> IRuntimeSnapshot.ResolutionStack
+                => new EvaluationStackWrapper<ResObj>(ResolutionStack);
+            IEvaluationStack<IState> IRuntimeSnapshot.StateStack
+                => new EvaluationStackWrapper<IState>(StateStack);
+            IPStack<ETokenTransmuteStep> IRuntimeSnapshot.TokenTransmutationStack => TokenTransmutationStack;
+            IOption<SelectionRequest> IRuntimeSnapshot.RequestedSelection => RequestedSelection;
+            private class EvaluationStackWrapper<T>(IPStack<IPStack<T>> evalStack) : IEvaluationStack<T>
             {
-                private IPStack<IPStack<T>> _internalStack = internalStack;
-                public T TopValue => _internalStack.TopValue.Unwrap().TopValue.Unwrap();
-                public int ExpressionDepth => _internalStack.Count;
-                public int ArgIndex => _internalStack.TopValue.Unwrap().Count;
+                public readonly IPStack<IPStack<T>> Reference = evalStack;
+                public T TopValue => Reference.TopValue.Unwrap().TopValue.Unwrap();
+                public int ExpressionDepth => Reference.Count;
+                public int ArgIndex => Reference.TopValue.Unwrap().Count;
 
                 public IEvaluationStack<T> Ascend(int amount)
-                    => new EvaluationStackWrapper<T>(_internalStack.At(amount).Unwrap());
+                    => new EvaluationStackWrapper<T>(Reference.At(amount).Unwrap());
 
                 public IEvaluationStack<T> Back(int amount)
                 {
                     return new EvaluationStackWrapper<T>(
-                    (amount, _internalStack)
-                        .Sequence(x => (x.amount - x._internalStack.Count, x._internalStack.At(1).Unwrap()))
-                        .Until(x => x.amount < x._internalStack.Count)
+                    (amount, Reference)
+                        .Sequence(x => (x.amount - x.Reference.Count, x.Reference.At(1).Unwrap()))
+                        .Until(x => x.amount < x.Reference.Count)
                         .Last()
-                        .ExprAs(x => x._internalStack.At(x.amount))
+                        .ExprAs(x => x.Reference.At(x.amount))
                         .Unwrap());
                 }
             }
