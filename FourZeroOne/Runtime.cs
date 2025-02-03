@@ -47,7 +47,8 @@ namespace FourZeroOne.Runtime
     // fuck it, you have to use stacks, theres no reason should use anything else, fuck you.
     public interface IRuntimeSnapshot
     {
-        // fucking stack of stacks because we need the token depth.
+        // shouldnt be double stacked, we forgot that they get dynamically popped from.
+        // instead of this, we probably need to make a stack of snapshots available for full time travel coverage.
         public IEvaluationStack<IToken> OperationStack { get; }
         public IEvaluationStack<ResObj> ResolutionStack { get; }
         public IEvaluationStack<IState> StateStack { get; }
