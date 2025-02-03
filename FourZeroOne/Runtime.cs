@@ -16,6 +16,7 @@ namespace FourZeroOne.Runtime
     public interface IRuntime
     {
         public IRuntimeSnapshot CurrentSnapshot { get; }
+        public bool IsRunning { get; }
 
         public event EventHandler? ProgramStartingEvent;
         public event EventHandler? ProgramFinishedEvent;
@@ -34,9 +35,11 @@ namespace FourZeroOne.Runtime
         public event EventHandler? BacktrackingEvent;
         public event EventHandler? BacktrackedEvent;
 
-        public void RunProgram(IState startingState, IToken program);
+        public bool RunProgram(IState startingState, IToken program);
         public void Backtrack(int resolvedOperationAmount);
-        public void SendSelectionResponse<R>(SelectionRequest request, params int[] selectedIndicies) where R : class, ResObj;
+        // should return false if 'request' has already been fulfilled.
+        // throws if indicies are out of range.
+        public bool SendSelectionResponse<R>(SelectionRequest request, params int[] selectedIndicies) where R : class, ResObj;
     }
 
     // fuck it, you have to use stacks, theres no reason should use anything else, fuck you.
@@ -49,16 +52,7 @@ namespace FourZeroOne.Runtime
         public IPStack<ETokenTransmuteStep> TokenTransmutationStack { get; }
         public IOption<SelectionRequest> RequestedSelection { get; }
     }
-    public interface ETokenTransmuteStep
-    {
-        public IToken Result { get; }
-        public interface Identity : ETokenTransmuteStep { }
-        public interface MacroExpansion : ETokenTransmuteStep { }
-        public interface RuleApplication : ETokenTransmuteStep
-        {
-            public Rule.IRule Rule { get; }
-        }
-    }
+    
     public interface IEvaluationStack<out T>
     {
         public T TopValue { get; }
@@ -72,5 +66,22 @@ namespace FourZeroOne.Runtime
         public required int Amount { get; init; }
         public required IPSequence<ResObj> Pool { get; init; }
     }
-
+    // we call this going full r-word (rust)
+    public abstract record ETokenTransmuteStep
+    {
+        public required IToken Result { get; init; }
+        public sealed record Identity : ETokenTransmuteStep { }
+        public sealed record MacroExpansion : ETokenTransmuteStep { }
+        public sealed record RuleApplication : ETokenTransmuteStep
+        {
+            public required Rule.IRule Rule { get; init; }
+        }
+    }
+    /*
+    public abstract class ESelectionResponseError
+    {
+        public sealed class InvalidIndicies { }
+        public sealed class RequestAlreadyFulfilled { }
+    }
+    */
 }

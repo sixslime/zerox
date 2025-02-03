@@ -28,14 +28,16 @@ namespace Perfection
     }
     public static class Option
     {
-        public static T Unwrap<T>(this IOption<T> option)
+        public static T Expect<T>(this IOption<T> option, string message)
         {
             return option switch
             {
                 ISome<T> ok => ok.Value,
-                _ => throw new System.Exception("Unwrapped non-Some option.")
+                _ => throw new ExpectedValueException(message)
             };
         }
+        public static T Unwrap<T>(this IOption<T> option)
+            => Expect(option, "'None' value unwrapped, expected 'Some'");
         public static IOption<T> AsSome<T>(this T value)
         {
             return new Some<T>(value);

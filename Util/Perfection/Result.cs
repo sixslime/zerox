@@ -7,7 +7,12 @@ using MorseCode.ITask;
 #nullable enable
 namespace Perfection
 {
+    /// <summary>
+    /// Representation of no value or data.
+    /// </summary>
+    public class NoVal { }
     public interface IResult<out T, out E> { }
+    public interface ICanErr<out E> : IResult<NoVal, E> { }
     public interface IOk<out T, out E> : IResult<T, E>
     {
         T Value { get; }
@@ -25,17 +30,24 @@ namespace Perfection
     {
         public E Value => value;
     }
+    public class ExpectedValueException(string message) : Exception(message) { }
     public struct Hint<T> { }
     public static class Result
     {
+        
+        public static T ExpectOk<T, E>(this IResult<T, E> result, string message)
+        {
+            return result is IOk<T, E> ok ? ok.Value : throw new ExpectedValueException(message);
+        }
+        public static E ExpectErr<T, E>(this IResult<T, E> result, string message)
+        {
+            return result is IErr<T, E> ok ? ok.Value : throw new ExpectedValueException(message);
+        }
         public static T UnwrapOk<T, E>(this IResult<T, E> result)
-        {
-            return result is IOk<T, E> ok ? ok.Value : throw new Exception("IResult UnwrapOk() did not get Ok.");
-        }
+            => ExpectOk(result, "'Err' value unwrapped, expected 'Ok'.");
         public static E UnwrapErr<T, E>(this IResult<T, E> result)
-        {
-            return result is IErr<T, E> ok ? ok.Value : throw new Exception("IResult UnwrapErr() did not get Err.");
-        }
+            => ExpectErr(result, "'Ok' value unwrapped, expected 'Err'.");
+
         public static bool Break<T, E>(this IResult<T, E> result, out T ok, out E err)
         {
             ok = default!;

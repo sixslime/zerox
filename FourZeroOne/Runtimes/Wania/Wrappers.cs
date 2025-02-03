@@ -18,52 +18,9 @@ namespace FourZeroOne.Runtimes
     using FourZeroOne.Token;
     using LookNicePls;
     using ResObj = Resolution.IResolution;
-    public class Wania : IRuntime
+    public partial class Wania
     {
-        private IPStack<IRuntimeSnapshot> _snapshotStack = new PStack<IRuntimeSnapshot>();
-        private IPStack<IPStack<IRuntimeSnapshot>> _backtrackFrames = new PStack<IPStack<IRuntimeSnapshot>>();
-
-        public IRuntimeSnapshot CurrentSnapshot => throw new NotImplementedException();
-
-        public event EventHandler? ProgramStartingEvent;
-        public event EventHandler? ProgramFinishedEvent;
-
-        public event EventHandler? NextTokenEvent;
-        public event EventHandler? RuleAppliedEvent;
-        public event EventHandler? MacroExpandedEvent;
-
-        public event EventHandler? OperationPushedEvent;
-        public event EventHandler? OperationResolvedEvent;
-
-        public event EventHandler? SelectionRequestedEvent;
-        public event EventHandler? SelectionRecievedEvent;
-
-        public event EventHandler? BacktrackingEvent;
-        public event EventHandler? BacktrackedEvent;
-
-        public void Backtrack(int resolvedOperationAmount)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RunProgram(IState startingState, IToken program)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SendSelectionResponse<R>(SelectionRequest request, params int[] selectedIndicies) where R : class, ResObj
-        {
-            throw new NotImplementedException();
-        }
-
-        private ITask<IOption<R>> RecieveMetaExecute<R>(IToken<R> token, IEnumerable<ITiple<IStateAddress, IOption<ResObj>>> args) where R : class, ResObj
-        {
-            throw new NotImplementedException();
-        }
-        private ITask<IOption<IHasElements<R>>> RecieveReadSelection<R>(IHasElements<R> from, int count)
-        {
-            throw new NotImplementedException();
-        }
+        
         private class TokenHandle(Wania parent) : ITokenContext
         {
             readonly Wania _parent = parent;
@@ -71,10 +28,10 @@ namespace FourZeroOne.Runtimes
 
             // consider having wania be able to 'spawn' multiple execution threads to simulate creating a new instance.
             ITask<IOption<R>> ITokenContext.MetaExecute<R>(IToken<R> token, IEnumerable<ITiple<IStateAddress, IOption<ResObj>>> args)
-            => _parent.RecieveMetaExecute(token, args);
+            => _parent.TokenMetaExecute(token, args);
 
             ITask<IOption<IHasElements<R>>> ITokenContext.ReadSelection<R>(IHasElements<R> from, int count)
-            => _parent.RecieveReadSelection(from, count);
+            => _parent.TokenReadSelection(from, count);
         }
         private record Snapshot : IRuntimeSnapshot
         {
