@@ -5,6 +5,20 @@ using MorseCode.ITask;
 #nullable enable
 namespace Perfection
 {
+    public static class Mut
+    {
+        /// <summary>
+        /// Catch me dead before I start typing variable names twice.<br></br>
+        /// <i>This method just sets <paramref name="value"/> according to <paramref name="transformFunction"/>.</i>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <param name="transformFunction"></param>
+        public static void the<T>(ref T value, Func<T, T> transformFunction)
+        {
+            value = transformFunction(value);
+        }
+    }
     public static class Misc
     {
         public static List<T> Reversed<T>(this List<T> list)

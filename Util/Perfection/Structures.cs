@@ -50,8 +50,12 @@ namespace Perfection
     {
         public static Self WithEntries<Self, T>(this Self s, IEnumerable<T> values) where Self : IEntryAddable<T>
         { return (Self)s._WithEntries(values); }
+        public static Self WithEntries<Self, T>(this Self s, params T[] values) where Self : IEntryAddable<T>
+            => WithEntries(s, values.IEnumerable());
         public static Self WithoutEntries<Self, T>(this Self s, IEnumerable<T> values) where Self : IEntryRemovable<T>
         { return (Self)s._WithoutEntries(values); }
+        public static Self WithoutEntries<Self, T>(this Self s, params T[] values) where Self : IEntryRemovable<T>
+            => WithoutEntries(s, values.IEnumerable());
 
         //CHECK: type restrictions might be silly here
         public static Self MergedWith<Self, T>(this Self s, T other) where Self : IMergable<T>, T where T : IMergable<T>
@@ -62,6 +66,8 @@ namespace Perfection
         { return (Self)s._InversectedWith(other); }
         public static Self WithInsertionAt<Self, T>(this Self s, int index, IEnumerable<T> values) where Self : IPSequence<T>
         { return (Self)s._WithInsertionAt(index, values); }
+        public static Self WithInsertionAt<Self, T>(this Self s, int index, params T[] values) where Self : IPSequence<T>
+            => WithInsertionAt(s, index, values.IEnumerable());
     }
     public static class StructureExtensions
     {
@@ -70,6 +76,19 @@ namespace Perfection
             for (var link = stack.AsSome(); link.Check(out var substack) && substack.Count > 0; link = substack.At(1))
                 yield return substack;
         }
+        public static IPStack<T> MapTopValue<T>(this IPStack<T> stack, Func<T, T> function)
+        {
+            return stack.TopValue.Check(out var top)
+                ? stack.At(1).Expect("TopValue implies At(1)").WithEntries(function(top))
+                : stack;
+        }
+    }
+    public static class StructureICast
+    {
+        public static IPStack<T> I<T>(this IPStack<T> s) => s;
+        public static IPSequence<T> I<T>(this IPSequence<T> s) => s;
+        public static IPSet<T> I<T>(this IPSet<T> s) => s;
+        public static IPMap<K, V> I<K, V>(this IPMap<K, V> s) => s;
     }
 
     // DEV/FIXME: temporary bare-functionality inneficient implementations.

@@ -20,8 +20,15 @@ namespace FourZeroOne.Runtimes
     using ResObj = Resolution.IResolution;
     public partial class Wania : IRuntime
     {
+
         public bool IsRunning => throw new NotImplementedException();
 
+        private readonly Wania.TransformationHandler SIGNAL;
+
+        public Wania()
+        {
+            SIGNAL = new(this);
+        }
         public void Backtrack(int resolvedOperationAmount)
         {
             throw new NotImplementedException();
@@ -40,7 +47,7 @@ namespace FourZeroOne.Runtimes
 
         private async Task Main()
         {
-
+            
         }
         // should be fine to literally just push to next token?
         private ITask<IOption<R>> TokenMetaExecute<R>(IToken<R> token, IEnumerable<ITiple<IStateAddress, IOption<ResObj>>> args) where R : class, ResObj
@@ -50,6 +57,8 @@ namespace FourZeroOne.Runtimes
         private ITask<IOption<IHasElements<R>>> TokenReadSelection<R>(IHasElements<R> from, int count)
         {
             throw new NotImplementedException();
+            
         }
+
     }
 }

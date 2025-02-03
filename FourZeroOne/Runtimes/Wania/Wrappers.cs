@@ -23,22 +23,22 @@ namespace FourZeroOne.Runtimes
         
         private class TokenHandle(Wania parent) : ITokenContext
         {
-            readonly Wania _parent = parent;
-            IState ITokenContext.CurrentState => _parent.CurrentSnapshot.StateStack.TopValue;
+            public readonly Wania Parent = parent;
+            IState ITokenContext.CurrentState => Parent.CurrentSnapshot.StateStack.TopValue;
 
             // consider having wania be able to 'spawn' multiple execution threads to simulate creating a new instance.
             ITask<IOption<R>> ITokenContext.MetaExecute<R>(IToken<R> token, IEnumerable<ITiple<IStateAddress, IOption<ResObj>>> args)
-            => _parent.TokenMetaExecute(token, args);
+            => Parent.TokenMetaExecute(token, args);
 
             ITask<IOption<IHasElements<R>>> ITokenContext.ReadSelection<R>(IHasElements<R> from, int count)
-            => _parent.TokenReadSelection(from, count);
+            => Parent.TokenReadSelection(from, count);
         }
         private record Snapshot : IRuntimeSnapshot
         {
-            public required PStack<IPStack<IToken>> OperationStack { get; init; }
-            public required PStack<IPStack<ResObj>> ResolutionStack { get; init; }
-            public required PStack<IPStack<IState>> StateStack { get; init; }
-            public required PStack<ETokenTransmuteStep> TokenTransmutationStack { get; init; }
+            public required IPStack<IPStack<IToken>> OperationStack { get; init; }
+            public required IPStack<IPStack<ResObj>> ResolutionStack { get; init; }
+            public required IPStack<IPStack<IState>> StateStack { get; init; }
+            public required IPStack<ETokenTransmuteStep> TokenTransmutationStack { get; init; }
             public required IOption<SelectionRequest> RequestedSelection { get; init; }
 
             public required PSet<IRule> AppliedRuleSet { get; init; }

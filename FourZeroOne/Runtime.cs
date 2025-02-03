@@ -13,12 +13,14 @@ namespace FourZeroOne.Runtime
         public ITask<IOption<IHasElements<R>>> ReadSelection<R>(IHasElements<R> from, int count) where R : class, ResObj;
     }
 
+    // would love to use a custom delegate with no EventArgs and just a sender
+    // but i suppose this is where i arbitrarily choose to follow .NET design guidelines.
     public interface IRuntime
     {
         public IRuntimeSnapshot CurrentSnapshot { get; }
         public bool IsRunning { get; }
 
-        public event EventHandler? ProgramStartingEvent;
+        public event EventHandler? ProgramStartedEvent;
         public event EventHandler? ProgramFinishedEvent;
 
         public event EventHandler? NextTokenEvent;
