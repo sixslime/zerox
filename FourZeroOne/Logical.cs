@@ -58,7 +58,6 @@ namespace FourZeroOne.Logical
             public IEnumerable<ResOpt> ResolvedArgs { get; }
         }
     }
-    
     public interface IMemory
     {
         public IEnumerable<ITiple<IStateAddress, ResObj>> Objects { get; }
