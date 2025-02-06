@@ -563,7 +563,7 @@ public class Tester
                 }),
                 Assert = new() {
                     State = async v =>
-                        v is FZ.IState state &&
+                        v is FZ.IMemory state &&
                         state.GetObject(ar.State.TurnCount.PTR).Check(out var count) &&
                         count.Value == 10 + 1,
                     Resolution = async v =>

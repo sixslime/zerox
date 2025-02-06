@@ -94,7 +94,7 @@ namespace Perfection
             foreach (var v in enumerable) if (matchPredicate(v)) return v.AsSome();
             return new None<T>();
         }
-        public static IOption<T> At<T>(this IEnumerable<T> enumerable, int index)
+        public static IOption<T> GetAt<T>(this IEnumerable<T> enumerable, int index)
         {
             if (index < 0) return new None<T>();
             var iter = enumerable.GetEnumerator();

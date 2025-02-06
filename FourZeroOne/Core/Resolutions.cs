@@ -9,7 +9,7 @@ namespace FourZeroOne.Core.Resolutions
     using Token;
     using Resolution;
     using Resolution.Unsafe;
-
+    using Handles;
     namespace Objects
     {
         public sealed record Number : NoOp
@@ -60,7 +60,7 @@ namespace FourZeroOne.Core.Resolutions
         {
             public required IStateAddress<D> Address { get; init; }
             public required D Subject { get; init; }
-            public override IState ChangeState(IState previousState)
+            public override IMemory ChangeState(IMemory previousState)
             {
                 return previousState.WithObjects([(Address, Subject).Tiple()]);
             }
@@ -71,7 +71,7 @@ namespace FourZeroOne.Core.Resolutions
         public sealed record Redact : Instruction
         {
             public required IStateAddress Address { get; init; }
-            public override IState ChangeState(IState context)
+            public override IMemory ChangeState(IMemory context)
             {
                 return context.WithClearedAddresses([Address]);
             }
@@ -79,7 +79,7 @@ namespace FourZeroOne.Core.Resolutions
         public sealed record RuleAdd : Instruction
         {
             public required Rule.IRule Rule { get; init; }
-            public override IState ChangeState(IState state)
+            public override IMemory ChangeState(IMemory state)
             {
                 return state.WithRules([Rule]);
             }
@@ -155,8 +155,8 @@ namespace FourZeroOne.Core.Resolutions
             public required IOption<R3> Arg3 { get; init; }
             public override string ToString() => $"<{Arg1},{Arg2},{Arg3}>";
         }
-
     }
+
     public record MergeSpec<H> : ICompositionType where H : ICompositionType
     {
 

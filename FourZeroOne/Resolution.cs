@@ -5,7 +5,15 @@ using PROTO_ZeroxFour_1.Util;
 #nullable enable
 namespace FourZeroOne.Resolution
 {
-
+    using Handles;
+    public abstract record EEvaluatorHandled
+    {
+        public sealed record MetaExecute : EEvaluatorHandled
+        {
+            public required Token.Unsafe.IToken FunctionToken { get; init; }
+            public required IEnumerable<ITiple<IStateAddress<IResolution>, IOption<IResolution>>> StateWrites { get; init; }
+        }
+    }
     /// <summary>
     /// all inherits must be by a record class.
     /// </summary>
@@ -15,7 +23,7 @@ namespace FourZeroOne.Resolution
     }
     public interface IInstruction : IResolution
     {
-        public IState ChangeState(IState context);
+        public IMemory ChangeState(IMemory context);
     }
     public interface IComponentIdentifier<in H, out R> : Unsafe.IComponentIdentifier<H>, Unsafe.IComponentIdentifierOf<R> where H : ICompositionType where R : IResolution { }
     // pretty fucking silly bro im not going even to even lie even.
@@ -42,7 +50,7 @@ namespace FourZeroOne.Resolution
     public interface IStateAddress<out R> : Unsafe.IStateAddress where R : class, IResolution { }
     public abstract record Instruction : Construct, IInstruction
     {
-        public abstract IState ChangeState(IState previousState);
+        public abstract IMemory ChangeState(IMemory previousState);
         public override IEnumerable<IInstruction> Instructions => [this];
     }
     public abstract record Construct : IResolution

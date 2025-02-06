@@ -41,6 +41,12 @@ namespace Perfection
             mutFunction(value);
             return value;
         }
+        /// <summary>
+        /// All RN's hate the '!' symbol.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public static bool Not(this bool v) => !v;
     }
     public static class Integer
     {
@@ -51,6 +57,10 @@ namespace Perfection
         public static ITask<T> ToCompletedITask<T>(this T obj)
         {
             return Task.FromResult(obj).AsITask();
+        }
+        public static Task<T> ToCompletedTask<T>(this T obj)
+        {
+            return Task.FromResult(obj);
         }
     }
 }

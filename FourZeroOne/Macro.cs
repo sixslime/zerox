@@ -10,8 +10,7 @@ namespace FourZeroOne.Macro
     using ResObj = Resolution.IResolution;
     using r = Core.Resolutions;
     using Token;
-    using Runtime;
-
+    using Handles;
     public interface IMacro<out R> : IToken<R>, Unsafe.IMacro where R : class, ResObj
     {
         public IToken<R> Expand();
@@ -19,9 +18,9 @@ namespace FourZeroOne.Macro
     public abstract record Macro<R> : Token<R>, IMacro<R> where R : class, ResObj
     {
         protected abstract Proxy.Unsafe.IProxy<R> InternalProxy { get; }
-        public override ITask<IOption<R>> Resolve(ITokenContext _, IOption<ResObj>[] __)
+        public override IResult<ITask<IOption<R>>, Resolution.EEvaluatorHandled> Resolve(ITokenContext _, IOption<ResObj>[] __)
         {
-            throw new System.Exception("Macro directly resolved without expansion.");
+            throw new Exception("Macro directly resolved without expansion.");
         }
         protected Macro()
         {
@@ -101,7 +100,6 @@ namespace FourZeroOne.Macro.Unsafe
     using ResObj = Resolution.IResolution;
     using r = Core.Resolutions;
     using Token.Unsafe;
-    using Runtime;
     public interface IMacro : IToken
     {
         public IToken ExpandUnsafe();

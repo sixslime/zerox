@@ -10,7 +10,7 @@ namespace FourZeroOne.Testing
 {
     using ResObj = Resolution.IResolution;
     using Token.Unsafe;
-    using Runtime;
+    using Evaluation;
     using Token;
 
     public delegate ITask<Spec.Blueprint<R>> TestStatement<R>() where R : class, ResObj;
@@ -70,13 +70,13 @@ namespace FourZeroOne.Testing
         }
         public async ITask<IOption<R>> GetResolution()
         {
-            return (await EvaluateMustPass()).RunResult.Break(out var results, out var exc)
+            return (await EvaluateMustPass()).RunResult.CheckOk(out var results, out var exc)
                 ? results.Resolution.RemapAs(x => (R)x)
                 : throw exc;
         }
-        public async ITask<IState> GetPostState()
+        public async ITask<IMemory> GetPostState()
         {
-            return (await EvaluateMustPass()).RunResult.Break(out var results, out var exc)
+            return (await EvaluateMustPass()).RunResult.CheckOk(out var results, out var exc)
                 ? results.State
                 : throw exc;
         }
@@ -87,9 +87,9 @@ namespace FourZeroOne.Testing
         }
         public async Task<Structure.FinishedTest> Evaluate()
         {
-            if (_value.Break(out var cached, out var statement))
+            if (_value.CheckOk(out var cached, out var statement))
             {
-                return cached.Break(out var test, out var exception) ? test : throw exception;
+                return cached.CheckOk(out var test, out var exception) ? test : throw exception;
             }
             else
             {
@@ -113,7 +113,7 @@ namespace FourZeroOne.Testing
                 )).RemapErr(x => new TestCreationException(x));
 
                 _value = _value.ToOk(creation);
-                return creation.Break(out var finished, out var exc)
+                return creation.CheckOk(out var finished, out var exc)
                     ? finished
                     : throw exc;
             }
@@ -128,7 +128,7 @@ namespace FourZeroOne.Testing
         public U Runtime { get; }
         public ITask<IToken<R>> GetToken();
         public ITask<IOption<R>> GetResolution();
-        public ITask<IState> GetPostState();
+        public ITask<IMemory> GetPostState();
         public Task<Structure.FinishedTest> Evaluate();
         public Task<Structure.FinishedTest> EvaluateMustPass();
     }
@@ -146,7 +146,7 @@ namespace FourZeroOne.Testing
             public required IResult<TestResults, TestEvaluateException> RunResult { get; init; }
             public async Task<bool> HasPassed()
             {
-                return RunResult.Break(out var results, out var exc)
+                return RunResult.CheckOk(out var results, out var exc)
                         ? await NullPassAsync(Spec.AssertI,async assert =>
                                 await NullPassAsync(assert.State, f => f(results.State)) &&
                                 await NullPassAsync(assert.Token, p => p(Spec.EvaluateI)) &&
@@ -168,14 +168,14 @@ namespace FourZeroOne.Testing
         public record TestResults
         {
             public required IOption<ResObj> Resolution { get; init; }
-            public required IState State { get; init; }
+            public required IMemory State { get; init; }
         }
     }
     namespace Spec
     {
         public record Blueprint<R> : IBlueprint where  R : class, ResObj
         {
-            public required IState State { get; init; } 
+            public required IMemory State { get; init; } 
             public required IToken<R> Evaluate { get; init; }
             public IToken<ResObj> EvaluateI => Evaluate;
             public int[][] Selections { get; init; } = [];
@@ -188,19 +188,19 @@ namespace FourZeroOne.Testing
         {
             public IOption<R>? Resolution { get; init; }
             public IOption<ResObj>? ResolutionI => Resolution;
-            public Func<IState, IState>? State { get; init; }
+            public Func<IMemory, IMemory>? State { get; init; }
         }
         public record Asserts : IAsserts
         {
             public Func<IOption<ResObj>, ITask<bool>>? Resolution { get; init; }
             public Func<IToken, ITask<bool>>? Token { get; init; }
-            public Func<IState, ITask<bool>>? State { get; init; }
+            public Func<IMemory, ITask<bool>>? State { get; init; }
         }
         
         // really dumb that i have to make these
         public interface IBlueprint
         {
-            public IState State { get; }
+            public IMemory State { get; }
             public IToken<ResObj> EvaluateI { get; }
             public int[][] Selections { get; }
             public IExpects? ExpectI { get; }
@@ -209,13 +209,13 @@ namespace FourZeroOne.Testing
         public interface IExpects
         {
             public IOption<ResObj>? ResolutionI { get; }
-            public Func<IState, IState>? State { get; }
+            public Func<IMemory, IMemory>? State { get; }
         }
         public interface IAsserts
         {
             public Func<IOption<ResObj>, ITask<bool>>? Resolution { get; }
             public Func<IToken, ITask<bool>>? Token { get; }
-            public Func<IState, ITask<bool>>? State { get; }
+            public Func<IMemory, ITask<bool>>? State { get; }
         }
     }
     
