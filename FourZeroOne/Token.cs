@@ -16,22 +16,22 @@ namespace FourZeroOne.Token
     {
         // "ToNodes(IRuntime runtime)".
         // "Resolve(IOption<ResObj>[]...)"
-        public IResult<ITask<IOption<R>>, EProcessorHandled> Resolve(ITokenContext runtime, IOption<ResObj>[] args);
+        public IResult<ITask<IOption<R>>, EProcessorImplemented> Resolve(ITokenContext runtime, IOption<ResObj>[] args);
         public IToken<R> UnsafeTypedWithArgs(Unsafe.IToken[] args);
     }
-    public abstract record Token<R> : IToken<R> where R : class, ResObj
+    public abstract record TokenBehavior<R> : IToken<R> where R : class, ResObj
     {
         public Unsafe.IToken[] ArgTokens => _argTokens;
         public IPSet<string> Labels { get; private init; } = new PSet<string>();
         public Unsafe.IToken _dLabels(Updater<IPSet<string>> updater) => this with { Labels = updater(Labels) };
-        public Token(params Unsafe.IToken[] args)
+        public TokenBehavior(params Unsafe.IToken[] args)
         {
             _argTokens = args;
             _uniqueId = ++_assigner;
         }
-        public Token(IEnumerable<Unsafe.IToken> args) : this(args.ToArray()) { }
-        public abstract IResult<ITask<IOption<R>>, EProcessorHandled> Resolve(ITokenContext runtime, IOption<ResObj>[] args);
-        public IResult<ITask<IOption<ResObj>>, EProcessorHandled> UnsafeResolve(FZOSpec.IProcessorFZO.ITokenContext tokenContext, IOption<ResObj>[] args) { return Resolve(tokenContext.ToHandle(), args); }
+        public TokenBehavior(IEnumerable<Unsafe.IToken> args) : this(args.ToArray()) { }
+        public abstract IResult<ITask<IOption<R>>, EProcessorImplemented> Resolve(ITokenContext runtime, IOption<ResObj>[] args);
+        public IResult<ITask<IOption<ResObj>>, EProcessorImplemented> UnsafeResolve(FZOSpec.IProcessorFZO.ITokenContext tokenContext, IOption<ResObj>[] args) { return Resolve(tokenContext.ToHandle(), args); }
         // WithArgs() is smelly
         public Unsafe.IToken UnsafeWithArgs(Unsafe.IToken[] args) => UnsafeTypedWithArgs(args);
         public IToken<R> UnsafeTypedWithArgs(Unsafe.IToken[] args) => this with { _argTokens = args };
@@ -52,15 +52,15 @@ namespace FourZeroOne.Token
         private int _uniqueId;
         
     }
-    public abstract record NormalToken<R> : Token<R> where R : class, ResObj
+    public abstract record StandardToken<R> : TokenBehavior<R> where R : class, ResObj
     {
-        protected abstract ITask<IOption<R>> NormalResolve(ITokenContext runtime, IOption<ResObj>[] args);
-        public override IResult<ITask<IOption<R>>, EProcessorHandled> Resolve(ITokenContext runtime, IOption<ResObj>[] args)
+        protected abstract ITask<IOption<R>> StandardResolve(ITokenContext runtime, IOption<ResObj>[] args);
+        public override IResult<ITask<IOption<R>>, EProcessorImplemented> Resolve(ITokenContext runtime, IOption<ResObj>[] args)
         {
-            return new Ok<ITask<IOption<R>>, EProcessorHandled>(NormalResolve(runtime, args));
+            return new Ok<ITask<IOption<R>>, EProcessorImplemented>(StandardResolve(runtime, args));
         }
-        public NormalToken(params Unsafe.IToken[] args) : base(args) { }
-        public NormalToken(IEnumerable<Unsafe.IToken> args) : base(args) { }
+        public StandardToken(params Unsafe.IToken[] args) : base(args) { }
+        public StandardToken(IEnumerable<Unsafe.IToken> args) : base(args) { }
     }
     public static class SelfAssumptions
     {
@@ -88,9 +88,9 @@ namespace FourZeroOne.Token
     where ROut : class, ResObj
     { }
 
-    public abstract record Value<R> : NormalToken<R> where R : class, ResObj
+    public abstract record Value<R> : StandardToken<R> where R : class, ResObj
     {
-        protected sealed override ITask<IOption<R>> NormalResolve(ITokenContext runtime, IOption<ResObj>[] _)
+        protected sealed override ITask<IOption<R>> StandardResolve(ITokenContext runtime, IOption<ResObj>[] _)
         {
             return Evaluate(runtime);
         }
@@ -111,13 +111,13 @@ namespace FourZeroOne.Token
     /// <code>(IToken&lt;<typeparamref name="RArg1"/>&gt;)</code>
     /// </summary>
     /// <typeparam name="RArg1"></typeparam>
-    public abstract record Function<RArg1, ROut> : NormalToken<ROut>,
+    public abstract record Function<RArg1, ROut> : StandardToken<ROut>,
         IFunction<RArg1, ROut>
         where RArg1 : class, ResObj
         where ROut : class, ResObj
     {
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
-        protected sealed override ITask<IOption<ROut>> NormalResolve(ITokenContext runtime, IOption<ResObj>[] args)
+        protected sealed override ITask<IOption<ROut>> StandardResolve(ITokenContext runtime, IOption<ResObj>[] args)
         {
             return Evaluate(runtime, args[0].RemapAs(x => (RArg1)x));
         }
@@ -132,7 +132,7 @@ namespace FourZeroOne.Token
     /// </summary>
     /// <typeparam name="RArg1"></typeparam>
     /// <typeparam name="RArg2"></typeparam>
-    public abstract record Function<RArg1, RArg2, ROut> : NormalToken<ROut>,
+    public abstract record Function<RArg1, RArg2, ROut> : StandardToken<ROut>,
         IFunction<RArg1, RArg2, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
@@ -140,7 +140,7 @@ namespace FourZeroOne.Token
     {
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
         public IToken<RArg2> Arg2 => (IToken<RArg2>)ArgTokens[1];
-        protected sealed override ITask<IOption<ROut>> NormalResolve(ITokenContext runtime, IOption<ResObj>[] args)
+        protected sealed override ITask<IOption<ROut>> StandardResolve(ITokenContext runtime, IOption<ResObj>[] args)
         {
             return Evaluate(runtime, args[0].RemapAs(x => (RArg1)x), args[1].RemapAs(x => (RArg2)x));
         }
@@ -156,7 +156,7 @@ namespace FourZeroOne.Token
     /// <typeparam name="RArg1"></typeparam>
     /// <typeparam name="RArg2"></typeparam>
     /// <typeparam name="RArg3"></typeparam>
-    public abstract record Function<RArg1, RArg2, RArg3, ROut> : NormalToken<ROut>,
+    public abstract record Function<RArg1, RArg2, RArg3, ROut> : StandardToken<ROut>,
         IFunction<RArg1, RArg2, RArg3, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
@@ -166,7 +166,7 @@ namespace FourZeroOne.Token
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
         public IToken<RArg2> Arg2 => (IToken<RArg2>)ArgTokens[1];
         public IToken<RArg3> Arg3 => (IToken<RArg3>)ArgTokens[2];
-        protected sealed override ITask<IOption<ROut>> NormalResolve(ITokenContext runtime, IOption<ResObj>[] args)
+        protected sealed override ITask<IOption<ROut>> StandardResolve(ITokenContext runtime, IOption<ResObj>[] args)
         {
             return Evaluate(runtime, args[0].RemapAs(x => (RArg1)x), args[1].RemapAs(x => (RArg2)x), args[2].RemapAs(x => (RArg3)x));
         }
@@ -181,12 +181,12 @@ namespace FourZeroOne.Token
     /// <code>(IEnumerable&lt;IToken&lt;<typeparamref name="RArg"/>&gt;&gt;)</code>
     /// </summary>
     /// <typeparam name="RArg"></typeparam>
-    public abstract record Combiner<RArg, ROut> : NormalToken<ROut>, ICombiner<RArg, ROut>
+    public abstract record Combiner<RArg, ROut> : StandardToken<ROut>, ICombiner<RArg, ROut>
         where RArg : class, ResObj
         where ROut : class, ResObj
     {
         public IEnumerable<IToken<RArg>> Args => ArgTokens.Map(x => (IToken<RArg>)x);
-        protected sealed override ITask<IOption<ROut>> NormalResolve(ITokenContext runtime, IOption<ResObj>[] tokens)
+        protected sealed override ITask<IOption<ROut>> StandardResolve(ITokenContext runtime, IOption<ResObj>[] tokens)
         {
             return Evaluate(runtime, tokens.Map(x => x.RemapAs(x => (RArg)x)));
         }
@@ -195,22 +195,22 @@ namespace FourZeroOne.Token
         protected Combiner(IEnumerable<IToken<RArg>> tokens) : base(tokens) { }
 
     }
-    public abstract record RuntimeHandledFunction<RArg1, ROut> : Token<ROut>,
+    public abstract record RuntimeHandledFunction<RArg1, ROut> : TokenBehavior<ROut>,
         IFunction<RArg1, ROut>
         where RArg1 : class, ResObj
         where ROut : class, ResObj
     {
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
-        public sealed override IResult<ITask<IOption<ROut>>, EProcessorHandled> Resolve(ITokenContext _, IOption<ResObj>[] args)
+        public sealed override IResult<ITask<IOption<ROut>>, EProcessorImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
         {
             return (args[0].Check(out var in1))
-                ? new Err<ITask<IOption<ROut>>, EProcessorHandled>(MakeData((RArg1)in1))
-                : new Ok<ITask<IOption<ROut>>, EProcessorHandled>(new None<ROut>().ToCompletedITask());
+                ? new Err<ITask<IOption<ROut>>, EProcessorImplemented>(MakeData((RArg1)in1))
+                : new Ok<ITask<IOption<ROut>>, EProcessorImplemented>(new None<ROut>().ToCompletedITask());
         }
-        protected abstract EProcessorHandled MakeData(RArg1 in1);
+        protected abstract EProcessorImplemented MakeData(RArg1 in1);
         protected RuntimeHandledFunction(IToken<RArg1> in1) : base(in1) { }
     }
-    public abstract record RuntimeHandledFunction<RArg1, RArg2, ROut> : Token<ROut>,
+    public abstract record RuntimeHandledFunction<RArg1, RArg2, ROut> : TokenBehavior<ROut>,
         IFunction<RArg1, RArg2, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
@@ -218,13 +218,13 @@ namespace FourZeroOne.Token
     {
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
         public IToken<RArg2> Arg2 => (IToken<RArg2>)ArgTokens[1];
-        public sealed override IResult<ITask<IOption<ROut>>, EProcessorHandled> Resolve(ITokenContext _, IOption<ResObj>[] args)
+        public sealed override IResult<ITask<IOption<ROut>>, EProcessorImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
         {
             return (args[0].Check(out var in1) && args[1].Check(out var in2))
-                ? new Err<ITask<IOption<ROut>>, EProcessorHandled>(MakeData((RArg1)in1, (RArg2)in2))
-                : new Ok<ITask<IOption<ROut>>, EProcessorHandled>(new None<ROut>().ToCompletedITask());
+                ? new Err<ITask<IOption<ROut>>, EProcessorImplemented>(MakeData((RArg1)in1, (RArg2)in2))
+                : new Ok<ITask<IOption<ROut>>, EProcessorImplemented>(new None<ROut>().ToCompletedITask());
         }
-        protected abstract EProcessorHandled MakeData(RArg1 in1, RArg2 in2);
+        protected abstract EProcessorImplemented MakeData(RArg1 in1, RArg2 in2);
         protected RuntimeHandledFunction(IToken<RArg1> in1, IToken<RArg2> in2) : base(in1, in2) { }
     }
 
@@ -294,7 +294,7 @@ namespace FourZeroOne.Token.Unsafe
         public IPSet<string> Labels { get; } 
         public IToken _dLabels(Updater<IPSet<string>> updater);
         // SMELL: 'UnsafeResolve()' takes a direct 'ITokenContext' while 'Resolve()' takes a handle.
-        public IResult<ITask<IOption<ResObj>>, EProcessorHandled> UnsafeResolve(FZOSpec.IProcessorFZO.ITokenContext runtime, IOption<ResObj>[] args);
+        public IResult<ITask<IOption<ResObj>>, EProcessorImplemented> UnsafeResolve(FZOSpec.IProcessorFZO.ITokenContext runtime, IOption<ResObj>[] args);
         public IToken UnsafeWithArgs(IToken[] args);
     }
 

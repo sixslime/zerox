@@ -246,26 +246,26 @@ namespace FourZeroOne.Core.Tokens
     // not that it's bad, it just *may* be bad
     namespace Component
     {
-        public sealed record Get<C, R> : NormalToken<R> where R : class, ResObj where C : ICompositionType
+        public sealed record Get<C, R> : StandardToken<R> where R : class, ResObj where C : ICompositionType
         {
             public Get(IComponentIdentifier<C, R> identifier, IToken<ICompositionOf<C>> holder) : base(holder)
             {
                 _identifier = identifier;
             }
-            protected override ITask<IOption<R>> NormalResolve(ITokenContext _, IOption<ResObj>[] args)
+            protected override ITask<IOption<R>> StandardResolve(ITokenContext _, IOption<ResObj>[] args)
             {
                 return args[0].RemapAs(x => ((ICompositionOf<C>)x).GetComponent(_identifier)).Press().ToCompletedITask();
             }
             protected override IOption<string> CustomToString() => $"{ArgTokens[0]}->{_identifier}".AsSome();
             private readonly IComponentIdentifier<C, R> _identifier;
         }
-        public sealed record With<C, R> : NormalToken<ICompositionOf<C>> where R : class, ResObj where C : ICompositionType
+        public sealed record With<C, R> : StandardToken<ICompositionOf<C>> where R : class, ResObj where C : ICompositionType
         {
             public With(IComponentIdentifier<C, R> identifier, IToken<ICompositionOf<C>> holder, IToken<R> component) : base(holder, component)
             {
                 _identifier = identifier;
             }
-            protected override ITask<IOption<ICompositionOf<C>>> NormalResolve(ITokenContext _, IOption<ResObj>[] args)
+            protected override ITask<IOption<ICompositionOf<C>>> StandardResolve(ITokenContext _, IOption<ResObj>[] args)
             {
                 return
                     (args[0].RemapAs(x => (ICompositionOf<C>)x).Check(out var holder)
@@ -279,13 +279,13 @@ namespace FourZeroOne.Core.Tokens
             protected override IOption<string> CustomToString() => $"{ArgTokens[0]}:{{{_identifier}={ArgTokens[1]}}}".AsSome();
             private readonly IComponentIdentifier<C, R> _identifier;
         }
-        public sealed record Without<C> : NormalToken<ICompositionOf<C>> where C : ICompositionType
+        public sealed record Without<C> : StandardToken<ICompositionOf<C>> where C : ICompositionType
         {
             public Without(Resolution.Unsafe.IComponentIdentifier<C> identifier, IToken<ICompositionOf<C>> holder) : base(holder)
             {
                 _identifier = identifier;
             }
-            protected override ITask<IOption<ICompositionOf<C>>> NormalResolve(ITokenContext _, IOption<ResObj>[] args)
+            protected override ITask<IOption<ICompositionOf<C>>> StandardResolve(ITokenContext _, IOption<ResObj>[] args)
             {
                 return args[0].RemapAs(x => ((ICompositionOf<C>)x).WithoutComponents([_identifier])).ToCompletedITask();
             }
@@ -313,9 +313,9 @@ namespace FourZeroOne.Core.Tokens
     {
         public Execute(IToken<r.Boxed.MetaFunction<ROut>> function) : base(function) { }
 
-        protected override EProcessorHandled MakeData(r.Boxed.MetaFunction<ROut> func)
+        protected override EProcessorImplemented MakeData(r.Boxed.MetaFunction<ROut> func)
         {
-            return new EProcessorHandled.MetaExecute
+            return new EProcessorImplemented.MetaExecute
             {
                 FunctionToken = func.Token,
                 StateWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
@@ -331,9 +331,9 @@ namespace FourZeroOne.Core.Tokens
     {
         public Execute(IToken<r.Boxed.MetaFunction<RArg1, ROut>> function, IToken<r.Boxed.MetaArgs<RArg1>> args) : base(function, args) { }
 
-        protected override EProcessorHandled MakeData(r.Boxed.MetaFunction<RArg1, ROut> func, r.Boxed.MetaArgs<RArg1> args)
+        protected override EProcessorImplemented MakeData(r.Boxed.MetaFunction<RArg1, ROut> func, r.Boxed.MetaArgs<RArg1> args)
         {
-            return new EProcessorHandled.MetaExecute
+            return new EProcessorImplemented.MetaExecute
             {
                 FunctionToken = func.Token,
                 StateWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
@@ -350,9 +350,9 @@ namespace FourZeroOne.Core.Tokens
     {
         public Execute(IToken<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> function, IToken<r.Boxed.MetaArgs<RArg1, RArg2>> args) : base(function, args) { }
 
-        protected override EProcessorHandled MakeData(r.Boxed.MetaFunction<RArg1, RArg2, ROut> func, r.Boxed.MetaArgs<RArg1, RArg2> args)
+        protected override EProcessorImplemented MakeData(r.Boxed.MetaFunction<RArg1, RArg2, ROut> func, r.Boxed.MetaArgs<RArg1, RArg2> args)
         {
-            return new EProcessorHandled.MetaExecute
+            return new EProcessorImplemented.MetaExecute
             {
                 FunctionToken = func.Token,
                 StateWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
@@ -370,9 +370,9 @@ namespace FourZeroOne.Core.Tokens
     {
         public Execute(IToken<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> function, IToken<r.Boxed.MetaArgs<RArg1, RArg2, RArg3>> args) : base(function, args) { }
 
-        protected override EProcessorHandled MakeData(r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut> func, r.Boxed.MetaArgs<RArg1, RArg2, RArg3> args)
+        protected override EProcessorImplemented MakeData(r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut> func, r.Boxed.MetaArgs<RArg1, RArg2, RArg3> args)
         {
-            return new EProcessorHandled.MetaExecute
+            return new EProcessorImplemented.MetaExecute
             {
                 FunctionToken = func.Token,
                 StateWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
@@ -465,13 +465,13 @@ namespace FourZeroOne.Core.Tokens
             return new ro.Bool() { IsTrue = obj.IsSome() }.AsSome().ToCompletedITask();
         }
     }
-    public sealed record DynamicAssign<R> : NormalToken<r.Instructions.Assign<R>> where R : class, ResObj
+    public sealed record DynamicAssign<R> : StandardToken<r.Instructions.Assign<R>> where R : class, ResObj
     {
         public DynamicAssign(DynamicAddress<R> address, IToken<R> obj) : base(obj)
         {
             _assigningAddress = address;
         }
-        protected override ITask<IOption<r.Instructions.Assign<R>>> NormalResolve(ITokenContext runtime, IOption<ResObj>[] args)
+        protected override ITask<IOption<r.Instructions.Assign<R>>> StandardResolve(ITokenContext runtime, IOption<ResObj>[] args)
         {
             return args[0].RemapAs(x => new r.Instructions.Assign<R>() { Address = _assigningAddress, Subject = (R)x }).ToCompletedITask();
         }

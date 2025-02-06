@@ -75,7 +75,7 @@ namespace FourZeroOne.FZOSpec
         }
         public sealed record Resolve : EProcessorStep
         {
-            public required IResult<ResOpt, EProcessorHandled> Resolution { get; init; }
+            public required IResult<ResOpt, EProcessorImplemented> Resolution { get; init; }
         }
         public sealed record PushOperation : EProcessorStep
         {

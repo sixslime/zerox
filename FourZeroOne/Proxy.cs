@@ -15,7 +15,7 @@ namespace FourZeroOne.Proxy
     {
         public IToken<R> Realize(TOrig original, IOption<Rule.IRule> realizingRule);
     }
-    public abstract record Proxy<TOrig, R> : IProxy<TOrig, R> where TOrig : IToken where R : class, ResObj
+    public abstract record ProxyBehavior<TOrig, R> : IProxy<TOrig, R> where TOrig : IToken where R : class, ResObj
     {
         // HookLabels are appended to ArgTransform.
         // This is a cringe :P
@@ -74,7 +74,7 @@ namespace FourZeroOne.Proxy.Unsafe
         public IThisProxy _dLabelsRemovals(Updater<IPSet<string>> updater);
     }
     // DEV: perhaps make FunctionProxy follow the same structure as TransformProxy
-    public abstract record ThisProxy<TOrig, R> : Proxy<TOrig, R>, IThisProxy where TOrig : IToken<R> where R : class, ResObj
+    public abstract record ThisProxy<TOrig, R> : ProxyBehavior<TOrig, R>, IThisProxy where TOrig : IToken<R> where R : class, ResObj
     {
         public IPSet<string> LabelRemovals { get; private init; } = new PSet<string>();
         // DEV: this doesn't need to be in '_d' form, but for consistency with other things it is.
@@ -96,7 +96,7 @@ namespace FourZeroOne.Proxy.Unsafe
             .dLabels(x => x.WithoutEntries(LabelRemovals.Elements));
         }
     }
-    public abstract record FunctionProxy<TOrig, R> : Proxy<TOrig, R>
+    public abstract record FunctionProxy<TOrig, R> : ProxyBehavior<TOrig, R>
         where TOrig : IToken
         where R : class, ResObj
     {

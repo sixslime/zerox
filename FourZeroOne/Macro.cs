@@ -15,14 +15,14 @@ namespace FourZeroOne.Macro
     {
         public IToken<R> Expand();
     }
-    public abstract record Macro<R> : Token<R>, IMacro<R> where R : class, ResObj
+    public abstract record MacroBehavior<R> : TokenBehavior<R>, IMacro<R> where R : class, ResObj
     {
         protected abstract Proxy.Unsafe.IProxy<R> InternalProxy { get; }
-        public override IResult<ITask<IOption<R>>, Resolution.EProcessorHandled> Resolve(ITokenContext _, IOption<ResObj>[] __)
+        public override IResult<ITask<IOption<R>>, Resolution.EProcessorImplemented> Resolve(ITokenContext _, IOption<ResObj>[] __)
         {
             throw new Exception("Macro directly resolved without expansion.");
         }
-        protected Macro()
+        protected MacroBehavior()
         {
             _cachedRealization = null;
         }
@@ -41,7 +41,7 @@ namespace FourZeroOne.Macro
     /// <code>(IToken&lt;<typeparamref name="RArg1"/>&gt;)</code>
     /// </summary>
     /// <typeparam name="RArg1"></typeparam>
-    public abstract record OneArg<RArg1, ROut> : Macro<ROut>, IFunction<RArg1, ROut>
+    public abstract record OneArg<RArg1, ROut> : MacroBehavior<ROut>, IFunction<RArg1, ROut>
         where RArg1 : class, ResObj
         where ROut : class, ResObj
     {
@@ -57,7 +57,7 @@ namespace FourZeroOne.Macro
     /// </summary>
     /// <typeparam name="RArg1"></typeparam>
     /// <typeparam name="RArg2"></typeparam>
-    public abstract record TwoArg<RArg1, RArg2, ROut> : Macro<ROut>, IFunction<RArg1, RArg2, ROut>
+    public abstract record TwoArg<RArg1, RArg2, ROut> : MacroBehavior<ROut>, IFunction<RArg1, RArg2, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
         where ROut : class, ResObj
@@ -77,7 +77,7 @@ namespace FourZeroOne.Macro
     /// <typeparam name="RArg1"></typeparam>
     /// <typeparam name="RArg2"></typeparam>
     /// <typeparam name="RArg3"></typeparam>
-    public abstract record ThreeArg<RArg1, RArg2, RArg3, ROut> : Macro<ROut>, IFunction<RArg1, RArg2, RArg3, ROut>
+    public abstract record ThreeArg<RArg1, RArg2, RArg3, ROut> : MacroBehavior<ROut>, IFunction<RArg1, RArg2, RArg3, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
         where RArg3 : class, ResObj

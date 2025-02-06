@@ -45,7 +45,7 @@ namespace FourZeroOne.FZOs.Wania
                 var resolvedOperation =
                     topNode.Operation.UnsafeResolve(tokenContext, argsArray)
                     .CheckOk(out var resolutionTask, out var runtimeHandled)
-                        ? (await resolutionTask).AsOk(Hint<Resolution.EProcessorHandled>.HINT)
+                        ? (await resolutionTask).AsOk(Hint<Resolution.EProcessorImplemented>.HINT)
                         : runtimeHandled.AsErr(Hint<ResOpt>.HINT);
                 return
                     (resolvedOperation.CheckErr(out var _, out var finalResolution) || state.OperationStack.GetAt(1).IsSome())

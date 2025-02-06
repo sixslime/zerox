@@ -116,7 +116,7 @@ namespace FourZeroOne.Core.Macros
         protected override IOption<string> CustomToString() => $"{Arg1} <==! {Arg2}".AsSome();
     }
 
-    public sealed record UpdateComponent<C, R> : Macro<ICompositionOf<C>>, Token.Unsafe.IHasArg1<ICompositionOf<C>>, Token.Unsafe.IHasArg2<r.Boxed.MetaFunction<R, R>>
+    public sealed record UpdateComponent<C, R> : MacroBehavior<ICompositionOf<C>>, Token.Unsafe.IHasArg1<ICompositionOf<C>>, Token.Unsafe.IHasArg2<r.Boxed.MetaFunction<R, R>>
         where C : ICompositionType where R : class, ResObj
     {
         public IComponentIdentifier<C, R> Identifier { get; private init; }
@@ -137,7 +137,7 @@ namespace FourZeroOne.Core.Macros
         }
         protected override IOption<string> CustomToString() => $"{Arg1}-{Identifier} <=! {Arg2}".AsSome();
     }
-    public sealed record Compose<C> : Macro<ICompositionOf<C>> where C : ICompositionType, new()
+    public sealed record Compose<C> : MacroBehavior<ICompositionOf<C>> where C : ICompositionType, new()
     {
         protected override IProxy<ICompositionOf<C>> InternalProxy => PROXY;
         public readonly static IProxy<Compose<C>, ICompositionOf<C>> PROXY = MakeProxy.Statement<Compose<C>, ICompositionOf<C>>(P =>

@@ -22,7 +22,7 @@ namespace FourZeroOne.Rule
     /// </summary>
     /// <typeparam name="TFor"></typeparam>
     /// <typeparam name="R"></typeparam>
-    public record Rule<TFor, R> : IRule where TFor : IToken<R> where R : class, ResObj
+    public record RuleBehavior<TFor, R> : IRule where TFor : IToken<R> where R : class, ResObj
     {
         public required IProxy<TFor, R> Proxy { get; init; }
         public IPSet<string> RequiredLabels { get; init; } = new PSet<string>();

@@ -15,7 +15,7 @@ namespace FourZeroOne.Core.Proxies
     using ro = Resolutions.Objects;
     using ResObj = Resolution.IResolution;
     using Resolution;
-    public sealed record Direct<TOrig, R> : Proxy<TOrig, R> where TOrig : IToken where R : class, ResObj
+    public sealed record Direct<TOrig, R> : ProxyBehavior<TOrig, R> where TOrig : IToken where R : class, ResObj
     {
         public Direct(IToken<R> token)
         {
@@ -27,7 +27,7 @@ namespace FourZeroOne.Core.Proxies
         private readonly IToken<R> _token;
     }
 
-    public sealed record ToBoxedFunction<TOrig, R> : Proxy<TOrig, r.Boxed.MetaFunction<R>> where TOrig : IToken where R : class, ResObj
+    public sealed record ToBoxedFunction<TOrig, R> : ProxyBehavior<TOrig, r.Boxed.MetaFunction<R>> where TOrig : IToken where R : class, ResObj
     {
         public ToBoxedFunction(IProxy<TOrig, R> proxy, DynamicAddress<r.Boxed.MetaFunction<R>> idSelf)
         {
@@ -41,7 +41,7 @@ namespace FourZeroOne.Core.Proxies
         private readonly IProxy<TOrig, R> _functionProxy;
         private readonly DynamicAddress<r.Boxed.MetaFunction<R>> _vSelf;
     }
-    public sealed record ToBoxedFunction<TOrig, RArg1, ROut> : Proxy<TOrig, r.Boxed.MetaFunction<RArg1, ROut>>
+    public sealed record ToBoxedFunction<TOrig, RArg1, ROut> : ProxyBehavior<TOrig, r.Boxed.MetaFunction<RArg1, ROut>>
         where TOrig : IToken
         where RArg1 : class, ResObj
         where ROut : class, ResObj
@@ -61,7 +61,7 @@ namespace FourZeroOne.Core.Proxies
         private readonly DynamicAddress<r.Boxed.MetaFunction<RArg1, ROut>> _vSelf;
         private readonly DynamicAddress<RArg1> _vId1;
     }
-    public sealed record ToBoxedFunction<TOrig, RArg1, RArg2, ROut> : Proxy<TOrig, r.Boxed.MetaFunction<RArg1, RArg2, ROut>>
+    public sealed record ToBoxedFunction<TOrig, RArg1, RArg2, ROut> : ProxyBehavior<TOrig, r.Boxed.MetaFunction<RArg1, RArg2, ROut>>
         where TOrig : IToken
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
@@ -84,7 +84,7 @@ namespace FourZeroOne.Core.Proxies
         private readonly DynamicAddress<RArg1> _vId1;
         private readonly DynamicAddress<RArg2> _vId2;
     }
-    public sealed record ToBoxedFunction<TOrig, RArg1, RArg2, RArg3, ROut> : Proxy<TOrig, r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>
+    public sealed record ToBoxedFunction<TOrig, RArg1, RArg2, RArg3, ROut> : ProxyBehavior<TOrig, r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>>
         where TOrig : IToken
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
@@ -114,7 +114,7 @@ namespace FourZeroOne.Core.Proxies
     
     namespace SpecialCase
     {
-        public sealed record DynamicAssign<TOrig, R> : Proxy<TOrig, r.Instructions.Assign<R>>
+        public sealed record DynamicAssign<TOrig, R> : ProxyBehavior<TOrig, r.Instructions.Assign<R>>
             where TOrig : IToken
             where R : class, ResObj
         {
@@ -136,7 +136,7 @@ namespace FourZeroOne.Core.Proxies
         // similar to functions where there needs to be a constructor matching (identifier, arg1, arg2,...)
         namespace Component
         {
-            public sealed record Get<TOrig, H, R> : Proxy<TOrig, R>
+            public sealed record Get<TOrig, H, R> : ProxyBehavior<TOrig, R>
                 where TOrig : IToken
                 where R : class, ResObj
                 where H : ICompositionType
@@ -153,7 +153,7 @@ namespace FourZeroOne.Core.Proxies
                 private readonly IComponentIdentifier<H, R> _identifier;
                 private readonly IProxy<TOrig, ICompositionOf<H>> _holderProxy;
             }
-            public sealed record With<TOrig, H, R> : Proxy<TOrig, ICompositionOf<H>>
+            public sealed record With<TOrig, H, R> : ProxyBehavior<TOrig, ICompositionOf<H>>
                 where TOrig : IToken
                 where R : class, ResObj
                 where H : ICompositionType
@@ -172,7 +172,7 @@ namespace FourZeroOne.Core.Proxies
                 private readonly IProxy<TOrig, ICompositionOf<H>> _holderProxy;
                 private readonly IProxy<TOrig, R> _componentProxy;
             }
-            public sealed record Without<TOrig, H> : Proxy<TOrig, ICompositionOf<H>>
+            public sealed record Without<TOrig, H> : ProxyBehavior<TOrig, ICompositionOf<H>>
                 where TOrig : IToken
                 where H : ICompositionType
             {
@@ -190,7 +190,7 @@ namespace FourZeroOne.Core.Proxies
             }
 
             // writing specialcases for macros is stupid
-            public sealed record Update<TOrig, H, R> : Proxy<TOrig, ICompositionOf<H>>
+            public sealed record Update<TOrig, H, R> : ProxyBehavior<TOrig, ICompositionOf<H>>
                 where TOrig : IToken
                 where R : class, ResObj
                 where H : ICompositionType
@@ -247,21 +247,21 @@ namespace FourZeroOne.Core.Proxies
     {
         public ThisCombiner(IEnumerable<IProxy<TOrig, RArgs>> args) : base(args) { }
     }
-    public sealed record OriginalArg1<TOrig, RArg> : Proxy<TOrig, RArg> where TOrig : IHasArg1<RArg> where RArg : class, ResObj
+    public sealed record OriginalArg1<TOrig, RArg> : ProxyBehavior<TOrig, RArg> where TOrig : IHasArg1<RArg> where RArg : class, ResObj
     {
         protected override IToken<RArg> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {
             return RuleApplied(rule, original.Arg1);
         }
     }
-    public sealed record OriginalArg2<TOrig, RArg> : Proxy<TOrig, RArg> where TOrig : IHasArg2<RArg> where RArg : class, ResObj
+    public sealed record OriginalArg2<TOrig, RArg> : ProxyBehavior<TOrig, RArg> where TOrig : IHasArg2<RArg> where RArg : class, ResObj
     {
         protected override IToken<RArg> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {
             return RuleApplied(rule, original.Arg2);
         }
     }
-    public sealed record OriginalArg3<TOrig, RArg> : Proxy<TOrig, RArg> where TOrig : IHasArg3<RArg> where RArg : class, ResObj
+    public sealed record OriginalArg3<TOrig, RArg> : ProxyBehavior<TOrig, RArg> where TOrig : IHasArg3<RArg> where RArg : class, ResObj
     {
         protected override IToken<RArg> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
         {
@@ -330,7 +330,7 @@ namespace FourZeroOne.Core.Proxies
         }
     }
     // DEV: *may* not need to exist.
-    public sealed record CombinerTransform<TNew, TOrig, RArg, ROut> : Proxy<TOrig, ROut>
+    public sealed record CombinerTransform<TNew, TOrig, RArg, ROut> : ProxyBehavior<TOrig, ROut>
         where TOrig : IHasCombinerArgs<RArg>, IToken<ROut>
         where TNew : Token.ICombiner<RArg, ROut>
         where RArg : class, ResObj
