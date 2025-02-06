@@ -6,14 +6,7 @@ using PROTO_ZeroxFour_1.Util;
 namespace FourZeroOne.Resolution
 {
     using Handles;
-    public abstract record EProcessorImplemented
-    {
-        public sealed record MetaExecute : EProcessorImplemented
-        {
-            public required Token.Unsafe.IToken FunctionToken { get; init; }
-            public required IEnumerable<ITiple<IStateAddress<IResolution>, IOption<IResolution>>> StateWrites { get; init; }
-        }
-    }
+    
     /// <summary>
     /// all inherits must be by a record class.
     /// </summary>

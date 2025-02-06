@@ -19,6 +19,12 @@ namespace Perfection
             value = transformFunction(value);
         }
     }
+    
+    public static class Casting
+    {
+        public static T IsA<T>(this object value) => (T)value;
+        public static IOption<T> MightBeA<T>(this object value) => (value is T o) ? o.AsSome() : new None<T>();
+    }
     public static class Misc
     {
         public static List<T> Reversed<T>(this List<T> list)

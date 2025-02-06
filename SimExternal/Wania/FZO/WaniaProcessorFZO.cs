@@ -11,14 +11,14 @@ namespace Wania.FZO
 {
     public class WaniaProcessorFZO() : IProcessorFZO
     {
-        public ITask<IResult<EProcessorStep, EProcessorHalt>> GetNextStep(IStateFZO state, IInputFZO input) => StaticImplementation(state, input);
-        private static async ITask<IResult<EProcessorStep, EProcessorHalt>> StaticImplementation(IStateFZO state, IInputFZO input)
+        public ITask<IResult<EDelta, EProcessorHalt>> GetNextStep(IStateFZO state, IInputFZO input) => StaticImplementation(state, input);
+        private static async ITask<IResult<EDelta, EProcessorHalt>> StaticImplementation(IStateFZO state, IInputFZO input)
         {
             // i bet this shit could be written in 1 line.
 
             // - caching
             var stdHint = Hint<EProcessorHalt>.HINT;
-            IResult<EProcessorStep, EProcessorHalt> invalidStateResult = new EProcessorHalt.InvalidState { HaltingState = state }.AsErr(Hint<EProcessorStep>.HINT);
+            IResult<EDelta, EProcessorHalt> invalidStateResult = new EProcessorHalt.InvalidState { HaltingState = state }.AsErr(Hint<EDelta>.HINT);
 
             // assert that both a state and operation are present:
             if (state.OperationStack.GetAt(0).CheckNone(out var topNode) ||
@@ -31,7 +31,7 @@ namespace Wania.FZO
                 CurrentMemory = topState,
                 Input = input
             };
-            var argsArray = topNode.ResolvedArgs.ToArray();
+            var argsArray = topNode.ArgResolutionStack.ToArray();
 
             // assert there are not more resolutions than the operation takes:
             if (argsArray.Length > topNode.Operation.ArgTokens.Length) return invalidStateResult;
@@ -42,12 +42,12 @@ namespace Wania.FZO
                 var resolvedOperation =
                     topNode.Operation.UnsafeResolve(tokenContext, argsArray)
                     .CheckOk(out var resolutionTask, out var runtimeHandled)
-                        ? (await resolutionTask).AsOk(Hint<EProcessorImplemented>.HINT)
+                        ? (await resolutionTask).AsOk(Hint<EExternalImplementation>.HINT)
                         : runtimeHandled.AsErr(Hint<ResOpt>.HINT);
                 return
                     (resolvedOperation.CheckErr(out var _, out var finalResolution) || state.OperationStack.GetAt(1).IsSome())
                     .ToResult(
-                        new EProcessorStep.Resolve() { Resolution = resolvedOperation },
+                        new EDelta.Resolve() { Resolution = resolvedOperation },
                         new EProcessorHalt.Completed() { HaltingState = state, Resolution = finalResolution });
             }
 
@@ -79,7 +79,7 @@ namespace Wania.FZO
 
                     // send 'RuleApplication' if the processing token is rulable by an unapplied rule.
                     if (rule.TryApply(token).Check(out var ruledToken))
-                        return new EProcessorStep.TokenPrep()
+                        return new EDelta.TokenPrep()
                         {
                             Value = new ETokenPrep.RuleApplication()
                             {
@@ -91,7 +91,7 @@ namespace Wania.FZO
 
                 // send 'MacroExpansion' if processing token is a macro
                 if (token is IMacro macro)
-                    return new EProcessorStep.TokenPrep()
+                    return new EDelta.TokenPrep()
                     {
                         Value = new ETokenPrep.MacroExpansion()
                         {
@@ -100,11 +100,11 @@ namespace Wania.FZO
                     }.AsOk(stdHint);
 
                 // send 'PushOperation' if no more preprocessing is needed.
-                return new EProcessorStep.PushOperation() { OperationToken = token }.AsOk(stdHint);
+                return new EDelta.PushOperation() { OperationToken = token }.AsOk(stdHint);
             }
 
             // send 'Identity' if next operation arg is ready to be processed
-            return new EProcessorStep.TokenPrep()
+            return new EDelta.TokenPrep()
             {
                 Value = new ETokenPrep.Identity()
                 {

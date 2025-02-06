@@ -11,14 +11,18 @@ namespace Wania.FZO
 {
     public record WaniaMemoryFZO : IMemoryFZO
     {
-        public IEnumerable<ITiple<IStateAddress, IResolution>> Objects => _objects.Elements;
-        public IEnumerable<IRule> Rules => _rules.Elements;
+        private PMap<IStateAddress, IResolution> _objects;
+        private PSequence<IRule> _rules;
 
         public WaniaMemoryFZO()
         {
             _objects = new();
             _rules = new();
         }
+
+        IEnumerable<ITiple<IStateAddress, IResolution>> IMemoryFZO.Objects => _objects.Elements;
+        IEnumerable<IRule> IMemoryFZO.Rules => _rules.Elements;
+        
         IOption<R> IMemoryFZO.GetObject<R>(IStateAddress<R> address)
         {
             return _objects.At(address).RemapAs(x => (R)x);
@@ -39,7 +43,6 @@ namespace Wania.FZO
             return this with { _objects = _objects.WithoutEntries(removals) };
         }
 
-        private PMap<IStateAddress, IResolution> _objects;
-        private PSequence<IRule> _rules;
+        
     }
 }
