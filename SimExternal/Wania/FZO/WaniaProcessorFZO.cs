@@ -1,17 +1,14 @@
 using MorseCode.ITask;
 using Perfection;
+using FourZeroOne.FZOSpec;
+using FourZeroOne.Resolution;
+using FourZeroOne.Resolution.Unsafe;
+using FourZeroOne.Rule;
+using FourZeroOne.Macro.Unsafe;
+using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
 #nullable enable
-namespace FourZeroOne.FZOs.Wania
+namespace Wania.FZO
 {
-    using FZOSpec;
-    using Token;
-    using IToken = Token.Unsafe.IToken;
-    using ResObj = Resolution.IResolution;
-    using Resolution;
-    using Resolution.Unsafe;
-    using Rule;
-    using ResOpt = IOption<Resolution.IResolution>;
-    
     public class WaniaProcessorFZO() : IProcessorFZO
     {
         public ITask<IResult<EProcessorStep, EProcessorHalt>> GetNextStep(IStateFZO state, IInputFZO input) => StaticImplementation(state, input);
@@ -45,7 +42,7 @@ namespace FourZeroOne.FZOs.Wania
                 var resolvedOperation =
                     topNode.Operation.UnsafeResolve(tokenContext, argsArray)
                     .CheckOk(out var resolutionTask, out var runtimeHandled)
-                        ? (await resolutionTask).AsOk(Hint<Resolution.EProcessorImplemented>.HINT)
+                        ? (await resolutionTask).AsOk(Hint<EProcessorImplemented>.HINT)
                         : runtimeHandled.AsErr(Hint<ResOpt>.HINT);
                 return
                     (resolvedOperation.CheckErr(out var _, out var finalResolution) || state.OperationStack.GetAt(1).IsSome())
@@ -58,7 +55,7 @@ namespace FourZeroOne.FZOs.Wania
             if (state.TokenPrepStack.GetAt(0).Check(out var processingToken))
             {
                 var token = processingToken.Result;
-                Dictionary<Rule.IRule, int> previousApplications = new();
+                Dictionary<IRule, int> previousApplications = new();
 
                 // WARNING:
                 // this method of uncached checking for previously applied rules is inefficient for large amounts of preprocess steps.
@@ -93,7 +90,7 @@ namespace FourZeroOne.FZOs.Wania
                 }
 
                 // send 'MacroExpansion' if processing token is a macro
-                if (token is Macro.Unsafe.IMacro macro)
+                if (token is IMacro macro)
                     return new EProcessorStep.TokenPrep()
                     {
                         Value = new ETokenPrep.MacroExpansion()
@@ -122,37 +119,5 @@ namespace FourZeroOne.FZOs.Wania
             public required IInputFZO Input { get; init; }
         }
     }
-    public record WaniaMemoryFZO : IMemoryFZO
-    {
-        public IEnumerable<ITiple<IStateAddress, IResolution>> Objects => _objects.Elements;
-        public IEnumerable<IRule> Rules => _rules.Elements;
-
-        public WaniaMemoryFZO()
-        {
-            _objects = new();
-            _rules = new();
-        }
-        IOption<R> IMemoryFZO.GetObject<R>(IStateAddress<R> address)
-        {
-            return _objects.At(address).RemapAs(x => (R)x);
-        }
-
-        IMemoryFZO IMemoryFZO.WithRules(IEnumerable<IRule> rules)
-        {
-            return this with { _rules = _rules.WithEntries(rules) };
-        }
-
-        IMemoryFZO IMemoryFZO.WithObjects<R>(IEnumerable<ITiple<IStateAddress<R>, R>> insertions)
-        {
-            return this with { _objects = _objects.WithEntries(insertions) };
-        }
-
-        IMemoryFZO IMemoryFZO.WithClearedAddresses(IEnumerable<IStateAddress> removals)
-        {
-            return this with { _objects = _objects.WithoutEntries(removals) };
-        }
-
-        private PMap<IStateAddress, IResolution> _objects;
-        private PSequence<IRule> _rules;
-    }
+  
 }
