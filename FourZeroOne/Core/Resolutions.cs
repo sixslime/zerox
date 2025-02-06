@@ -60,7 +60,7 @@ namespace FourZeroOne.Core.Resolutions
         {
             public required IStateAddress<D> Address { get; init; }
             public required D Subject { get; init; }
-            public override IMemory ChangeState(IMemory previousState)
+            public override IMemory TransformMemory(IMemory previousState)
             {
                 return previousState.WithObjects([(Address, Subject).Tiple()]);
             }
@@ -71,7 +71,7 @@ namespace FourZeroOne.Core.Resolutions
         public sealed record Redact : Instruction
         {
             public required IStateAddress Address { get; init; }
-            public override IMemory ChangeState(IMemory context)
+            public override IMemory TransformMemory(IMemory context)
             {
                 return context.WithClearedAddresses([Address]);
             }
@@ -79,7 +79,7 @@ namespace FourZeroOne.Core.Resolutions
         public sealed record RuleAdd : Instruction
         {
             public required Rule.IRule Rule { get; init; }
-            public override IMemory ChangeState(IMemory state)
+            public override IMemory TransformMemory(IMemory state)
             {
                 return state.WithRules([Rule]);
             }

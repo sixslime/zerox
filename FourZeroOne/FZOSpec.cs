@@ -27,17 +27,17 @@ namespace FourZeroOne.FZOSpec
     public interface IStateFZO
     {
         public IEnumerable<IOperationNode> OperationStack { get; }
-        public IEnumerable<IMemoryFZO> MemoryStack { get; }
         public IEnumerable<ETokenPrep> TokenPrepStack { get; }
 
         /// <summary>
         /// Implementation <b>must</b> adhere to the following behavior, given <paramref name="step"/> is:<br></br>
         /// <b>Preprocess:</b><br></br>
-        /// - Append 'Value' to <i>PreprocessStack</i><br></br>
+        /// - Push 'Value' to <i>PreprocessStack</i><br></br>
         /// <b>PushOperation:</b><br></br>
-        /// - Append to <i>OperationStack</i><br></br>
-        /// - Set <i>OperationStack[0].Operation</i> to 'OperationToken'<br></br>
-        /// - Set <i>OperationStack[0].ResolvedArgs</i> to empty<br></br>
+        /// - Push the following to <i>OperationStack</i>:<br></br>
+        /// . ~ <i>Operation</i> = 'OperationToken'<br></br>
+        /// . ~ <i>MemoryStack</i> = <i>OperationStack[0].MemoryStack[0]</i><br></br>
+        /// . ~ <i>ArgResolutionStack</i> = (empty)<br></br>
         /// <b>Resolve:</b><br></br>
         /// 'Resolution' is <b>Ok( x )</b>:<br></br>
         /// - Pop from <i>OperationStack</i><br></br>
@@ -59,6 +59,7 @@ namespace FourZeroOne.FZOSpec
         {
             public IToken Operation { get; }
             public IEnumerable<ResOpt> ArgResolutionStack { get; }
+            public IEnumerable<IMemoryFZO> MemoryStack { get; }
         }
     }
     public interface IMemoryFZO

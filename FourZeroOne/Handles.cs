@@ -61,7 +61,7 @@ namespace FourZeroOne.Handles
         public static IInput ToHandle(this FZOSpec.IInputFZO implementation) => new InputHandle(implementation);
         public static IMemory WithResolution(this IMemory state, ResObj resolution)
         {
-            return resolution.Instructions.AccumulateInto(state, (prevState, instruction) => instruction.ChangeState(prevState));
+            return resolution.Instructions.AccumulateInto(state, (prevState, instruction) => instruction.TransformMemory(prevState));
         }
 
     }
