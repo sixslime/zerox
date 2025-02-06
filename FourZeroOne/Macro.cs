@@ -18,7 +18,7 @@ namespace FourZeroOne.Macro
     public abstract record Macro<R> : Token<R>, IMacro<R> where R : class, ResObj
     {
         protected abstract Proxy.Unsafe.IProxy<R> InternalProxy { get; }
-        public override IResult<ITask<IOption<R>>, Resolution.EEvaluatorHandled> Resolve(ITokenContext _, IOption<ResObj>[] __)
+        public override IResult<ITask<IOption<R>>, Resolution.EProcessorHandled> Resolve(ITokenContext _, IOption<ResObj>[] __)
         {
             throw new Exception("Macro directly resolved without expansion.");
         }

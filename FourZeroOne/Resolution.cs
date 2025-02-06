@@ -6,9 +6,9 @@ using PROTO_ZeroxFour_1.Util;
 namespace FourZeroOne.Resolution
 {
     using Handles;
-    public abstract record EEvaluatorHandled
+    public abstract record EProcessorHandled
     {
-        public sealed record MetaExecute : EEvaluatorHandled
+        public sealed record MetaExecute : EProcessorHandled
         {
             public required Token.Unsafe.IToken FunctionToken { get; init; }
             public required IEnumerable<ITiple<IStateAddress<IResolution>, IOption<IResolution>>> StateWrites { get; init; }

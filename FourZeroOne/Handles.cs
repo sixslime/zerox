@@ -31,9 +31,9 @@ namespace FourZeroOne.Handles
     {
         public ITask<int[]> ReadSelection(IHasElements<ResObj> pool, int count);
     }
-    public class MemoryHandle(Logical.IMemory implementation) : IMemory
+    public class MemoryHandle(FZOSpec.IMemoryFZO implementation) : IMemory
     {
-        private readonly Logical.IMemory _implementation = implementation;
+        private readonly FZOSpec.IMemoryFZO _implementation = implementation;
         IEnumerable<ITiple<IStateAddress, ResObj>> IMemory.Objects => _implementation.Objects;
         IEnumerable<IRule> IMemory.Rules => _implementation.Rules;
         IOption<R> IMemory.GetObject<R>(IStateAddress<R> address) => _implementation.GetObject(address);
@@ -43,22 +43,22 @@ namespace FourZeroOne.Handles
         IMemory IMemory.WithObjectsUnsafe(IEnumerable<ITiple<IStateAddress, ResObj>> insertions) => _implementation.WithObjects(insertions.Map(x => ((IStateAddress<ResObj>)x.A, (ResObj)x.B).Tiple())).ToHandle();
         IMemory IMemory.WithRules(IEnumerable<IRule> rules) => _implementation.WithRules(rules).ToHandle();
     }
-    public class TokenContextHandle(Logical.IProcessor.ITokenContext implementation) : ITokenContext
+    public class TokenContextHandle(FZOSpec.IProcessorFZO.ITokenContext implementation) : ITokenContext
     {
-        private readonly Logical.IProcessor.ITokenContext _implementation = implementation;
+        private readonly FZOSpec.IProcessorFZO.ITokenContext _implementation = implementation;
         IMemory ITokenContext.CurrentMemory => _implementation.CurrentMemory.ToHandle();
         IInput ITokenContext.Input => _implementation.Input.ToHandle();
     }
-    public class InputHandle(Logical.IInput implementation) : IInput
+    public class InputHandle(FZOSpec.IInputFZO implementation) : IInput
     {
-        private readonly Logical.IInput _implementation = implementation;
+        private readonly FZOSpec.IInputFZO _implementation = implementation;
         ITask<int[]> IInput.ReadSelection(IHasElements<ResObj> pool, int count) => _implementation.GetSelection(pool, count);
     }
     public static class Extensions
     {
-        public static ITokenContext ToHandle(this Logical.IProcessor.ITokenContext implementation) => new TokenContextHandle(implementation);
-        public static IMemory ToHandle(this Logical.IMemory implementation) => new MemoryHandle(implementation);
-        public static IInput ToHandle(this Logical.IInput implementation) => new InputHandle(implementation);
+        public static ITokenContext ToHandle(this FZOSpec.IProcessorFZO.ITokenContext implementation) => new TokenContextHandle(implementation);
+        public static IMemory ToHandle(this FZOSpec.IMemoryFZO implementation) => new MemoryHandle(implementation);
+        public static IInput ToHandle(this FZOSpec.IInputFZO implementation) => new InputHandle(implementation);
         public static IMemory WithResolution(this IMemory state, ResObj resolution)
         {
             return resolution.Instructions.AccumulateInto(state, (prevState, instruction) => instruction.ChangeState(prevState));

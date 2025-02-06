@@ -1,9 +1,9 @@
 using MorseCode.ITask;
 using Perfection;
 #nullable enable
-namespace FourZeroOne.Implementations.Wania
+namespace FourZeroOne.FZOs.Wania
 {
-    using Logical;
+    using FZOSpec;
     using Token;
     using IToken = Token.Unsafe.IToken;
     using ResObj = Resolution.IResolution;
@@ -12,16 +12,16 @@ namespace FourZeroOne.Implementations.Wania
     using Rule;
     using ResOpt = IOption<Resolution.IResolution>;
     
-    public class Evaluator() : IProcessor
+    public class WaniaProcessorFZO() : IProcessorFZO
     {
-        public ITask<IResult<EStep, EHalt>> GetNextStep(IState state, IInput input) => StaticImplementation(state, input);
-        private static async ITask<IResult<EStep, EHalt>> StaticImplementation(IState state, IInput input)
+        public ITask<IResult<EProcessorStep, EProcessorHalt>> GetNextStep(IStateFZO state, IInputFZO input) => StaticImplementation(state, input);
+        private static async ITask<IResult<EProcessorStep, EProcessorHalt>> StaticImplementation(IStateFZO state, IInputFZO input)
         {
             // i bet this shit could be written in 1 line.
 
             // - caching
-            var stdHint = Hint<EHalt>.HINT;
-            IResult<EStep, EHalt> invalidStateResult = new EHalt.InvalidState { HaltingState = state }.AsErr(Hint<EStep>.HINT);
+            var stdHint = Hint<EProcessorHalt>.HINT;
+            IResult<EProcessorStep, EProcessorHalt> invalidStateResult = new EProcessorHalt.InvalidState { HaltingState = state }.AsErr(Hint<EProcessorStep>.HINT);
 
             // assert that both a state and operation are present:
             if (state.OperationStack.GetAt(0).CheckNone(out var topNode) ||
@@ -45,17 +45,17 @@ namespace FourZeroOne.Implementations.Wania
                 var resolvedOperation =
                     topNode.Operation.UnsafeResolve(tokenContext, argsArray)
                     .CheckOk(out var resolutionTask, out var runtimeHandled)
-                        ? (await resolutionTask).AsOk(Hint<Resolution.EEvaluatorHandled>.HINT)
+                        ? (await resolutionTask).AsOk(Hint<Resolution.EProcessorHandled>.HINT)
                         : runtimeHandled.AsErr(Hint<ResOpt>.HINT);
                 return
                     (resolvedOperation.CheckErr(out var _, out var finalResolution) || state.OperationStack.GetAt(1).IsSome())
                     .ToResult(
-                        new EStep.Resolve() { Resolution = resolvedOperation },
-                        new EHalt.Completed() { HaltingState = state, Resolution = finalResolution });
+                        new EProcessorStep.Resolve() { Resolution = resolvedOperation },
+                        new EProcessorHalt.Completed() { HaltingState = state, Resolution = finalResolution });
             }
 
             // continue token processing if there exists preprocesses on the stack:
-            if (state.PreprocessStack.GetAt(0).Check(out var processingToken))
+            if (state.TokenPrepStack.GetAt(0).Check(out var processingToken))
             {
                 var token = processingToken.Result;
                 Dictionary<Rule.IRule, int> previousApplications = new();
@@ -64,9 +64,9 @@ namespace FourZeroOne.Implementations.Wania
                 // this method of uncached checking for previously applied rules is inefficient for large amounts of preprocess steps.
 
                 // - populate previousApplications
-                foreach (var process in state.PreprocessStack)
+                foreach (var process in state.TokenPrepStack)
                 {
-                    if (process is not EPreprocess.RuleApplication ra) continue;
+                    if (process is not ETokenPrep.RuleApplication ra) continue;
                     var appliedRule = ra.Rule;
                     previousApplications[appliedRule] = previousApplications.TryGetValue(appliedRule, out var count) ? count + 1 : 1;
                 }
@@ -82,9 +82,9 @@ namespace FourZeroOne.Implementations.Wania
 
                     // send 'RuleApplication' if the processing token is rulable by an unapplied rule.
                     if (rule.TryApply(token).Check(out var ruledToken))
-                        return new EStep.Preprocess()
+                        return new EProcessorStep.TokenPrep()
                         {
-                            Value = new EPreprocess.RuleApplication()
+                            Value = new ETokenPrep.RuleApplication()
                             {
                                 Rule = rule,
                                 Result = ruledToken
@@ -94,60 +94,60 @@ namespace FourZeroOne.Implementations.Wania
 
                 // send 'MacroExpansion' if processing token is a macro
                 if (token is Macro.Unsafe.IMacro macro)
-                    return new EStep.Preprocess()
+                    return new EProcessorStep.TokenPrep()
                     {
-                        Value = new EPreprocess.MacroExpansion()
+                        Value = new ETokenPrep.MacroExpansion()
                         {
                             Result = macro.ExpandUnsafe()
                         }
                     }.AsOk(stdHint);
 
                 // send 'PushOperation' if no more preprocessing is needed.
-                return new EStep.PushOperation() { OperationToken = token }.AsOk(stdHint);
+                return new EProcessorStep.PushOperation() { OperationToken = token }.AsOk(stdHint);
             }
 
             // send 'Identity' if next operation arg is ready to be processed
-            return new EStep.Preprocess()
+            return new EProcessorStep.TokenPrep()
             {
-                Value = new EPreprocess.Identity()
+                Value = new ETokenPrep.Identity()
                 {
                     Result = topNode.Operation.ArgTokens[argsArray.Length]
                 }
             }.AsOk(stdHint);
         }
 
-        private class TokenContext : IProcessor.ITokenContext
+        private class TokenContext : IProcessorFZO.ITokenContext
         {
-            public required IMemory CurrentMemory { get; init; }
-            public required IInput Input { get; init; }
+            public required IMemoryFZO CurrentMemory { get; init; }
+            public required IInputFZO Input { get; init; }
         }
     }
-    public record Memory : IMemory
+    public record WaniaMemoryFZO : IMemoryFZO
     {
         public IEnumerable<ITiple<IStateAddress, IResolution>> Objects => _objects.Elements;
         public IEnumerable<IRule> Rules => _rules.Elements;
 
-        public Memory()
+        public WaniaMemoryFZO()
         {
             _objects = new();
             _rules = new();
         }
-        IOption<R> IMemory.GetObject<R>(IStateAddress<R> address)
+        IOption<R> IMemoryFZO.GetObject<R>(IStateAddress<R> address)
         {
             return _objects.At(address).RemapAs(x => (R)x);
         }
 
-        IMemory IMemory.WithRules(IEnumerable<IRule> rules)
+        IMemoryFZO IMemoryFZO.WithRules(IEnumerable<IRule> rules)
         {
             return this with { _rules = _rules.WithEntries(rules) };
         }
 
-        IMemory IMemory.WithObjects<R>(IEnumerable<ITiple<IStateAddress<R>, R>> insertions)
+        IMemoryFZO IMemoryFZO.WithObjects<R>(IEnumerable<ITiple<IStateAddress<R>, R>> insertions)
         {
             return this with { _objects = _objects.WithEntries(insertions) };
         }
 
-        IMemory IMemory.WithClearedAddresses(IEnumerable<IStateAddress> removals)
+        IMemoryFZO IMemoryFZO.WithClearedAddresses(IEnumerable<IStateAddress> removals)
         {
             return this with { _objects = _objects.WithoutEntries(removals) };
         }

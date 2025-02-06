@@ -2,7 +2,7 @@ using MorseCode.ITask;
 using Perfection;
 using FourZeroOne.Handles;
 #nullable enable
-namespace FourZeroOne.Logical
+namespace FourZeroOne.FZOSpec
 {
     using Token;
     using IToken = Token.Unsafe.IToken;
@@ -12,24 +12,24 @@ namespace FourZeroOne.Logical
     using Resolution.Unsafe;
     using Rule;
     
-    public interface IProcessor
+    public interface IProcessorFZO
     {
-        public ITask<IResult<EStep, EHalt>> GetNextStep(IState state, IInput input);
+        public ITask<IResult<EProcessorStep, EProcessorHalt>> GetNextStep(IStateFZO state, IInputFZO input);
         public interface ITokenContext
         {
-            public IMemory CurrentMemory { get; }
-            public IInput Input { get; }
+            public IMemoryFZO CurrentMemory { get; }
+            public IInputFZO Input { get; }
         }
     }
-    public interface IInput
+    public interface IInputFZO
     {
         public ITask<int[]> GetSelection(IHasElements<ResObj> pool, int count);
     }
-    public interface IState
+    public interface IStateFZO
     {
         public IEnumerable<IOperationNode> OperationStack { get; }
-        public IEnumerable<IMemory> MemoryStack { get; }
-        public IEnumerable<EPreprocess> PreprocessStack { get; }
+        public IEnumerable<IMemoryFZO> MemoryStack { get; }
+        public IEnumerable<ETokenPrep> TokenPrepStack { get; }
 
         /// <summary>
         /// Implementation <b>must</b> adhere to the following behavior, given <paramref name="step"/> is:<br></br>
@@ -47,10 +47,10 @@ namespace FourZeroOne.Logical
         /// </summary>
         /// <param name="step"></param>
         /// <returns>
-        /// A new <see cref="IState"/> with the above changes.<br></br>
-        /// This <b>must</b> not mutate the original <see cref="IState"/>.
+        /// A new <see cref="IStateFZO"/> with the above changes.<br></br>
+        /// This <b>must</b> not mutate the original <see cref="IStateFZO"/>.
         /// </returns>
-        public IState WithStep(EStep step);
+        public IStateFZO WithStep(EProcessorStep step);
 
         public interface IOperationNode
         {
@@ -58,45 +58,45 @@ namespace FourZeroOne.Logical
             public IEnumerable<ResOpt> ResolvedArgs { get; }
         }
     }
-    public interface IMemory
+    public interface IMemoryFZO
     {
         public IEnumerable<ITiple<IStateAddress, ResObj>> Objects { get; }
         public IEnumerable<IRule> Rules { get; }
         public IOption<R> GetObject<R>(IStateAddress<R> address) where R : class, ResObj;
-        public IMemory WithRules(IEnumerable<IRule> rules);
-        public IMemory WithObjects<R>(IEnumerable<ITiple<IStateAddress<R>, R>> insertions) where R : class, ResObj;
-        public IMemory WithClearedAddresses(IEnumerable<IStateAddress> removals);
+        public IMemoryFZO WithRules(IEnumerable<IRule> rules);
+        public IMemoryFZO WithObjects<R>(IEnumerable<ITiple<IStateAddress<R>, R>> insertions) where R : class, ResObj;
+        public IMemoryFZO WithClearedAddresses(IEnumerable<IStateAddress> removals);
     }
-    public abstract record EStep
+    public abstract record EProcessorStep
     {
-        public sealed record Preprocess : EStep
+        public sealed record TokenPrep : EProcessorStep
         {
-            public required EPreprocess Value { get; init; }
+            public required ETokenPrep Value { get; init; }
         }
-        public sealed record Resolve : EStep
+        public sealed record Resolve : EProcessorStep
         {
-            public required IResult<ResOpt, Resolution.EEvaluatorHandled> Resolution { get; init; }
+            public required IResult<ResOpt, EProcessorHandled> Resolution { get; init; }
         }
-        public sealed record PushOperation : EStep
+        public sealed record PushOperation : EProcessorStep
         {
             public required IToken OperationToken { get; init; }
         }
     }
-    public abstract record EHalt
+    public abstract record EProcessorHalt
     {
-        public required IState HaltingState { get; init; }
-        public sealed record InvalidState : EHalt { }
-        public sealed record Completed : EHalt
+        public required IStateFZO HaltingState { get; init; }
+        public sealed record InvalidState : EProcessorHalt { }
+        public sealed record Completed : EProcessorHalt
         {
             public required ResOpt Resolution { get; init; }
         }
     }
-    public abstract record EPreprocess
+    public abstract record ETokenPrep
     {
         public required IToken Result { get; init; }
-        public sealed record Identity : EPreprocess { }
-        public sealed record MacroExpansion : EPreprocess { }
-        public sealed record RuleApplication : EPreprocess
+        public sealed record Identity : ETokenPrep { }
+        public sealed record MacroExpansion : ETokenPrep { }
+        public sealed record RuleApplication : ETokenPrep
         {
             public required Rule.IRule Rule { get; init; }
         }
