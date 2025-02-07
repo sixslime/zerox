@@ -22,7 +22,7 @@ namespace Wania.FZO
 
             // assert that both a state and operation are present:
             if (state.OperationStack.GetAt(0).CheckNone(out var topNode) ||
-                state.MemoryStack.GetAt(0).CheckNone(out var topState))
+                topNode.MemoryStack.GetAt(0).CheckNone(out var topState))
                 return invalidStateResult;
 
             // - caching

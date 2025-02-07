@@ -70,9 +70,9 @@ namespace Wania.FZO
                                     MemoryStack =
                                         resolution.Check(out var r)
                                         ? opNode.MemoryStack.WithEntries(
-                                            opNode.MemoryStack.TopValue.Expect("no initial memory value?")
-                                                .ExprAs(lastMemory => r.Instructions.AccumulateInto(
-                                                    lastMemory, (mem, instruction) => instruction.TransformMemoryUnsafe(mem))))
+                                            r.Instructions.AccumulateInto(
+                                                opNode.MemoryStack.TopValue.Expect("no memory in operation node?"),
+                                                (mem, instruction) => instruction.TransformMemoryUnsafe(mem)))
                                         : opNode.MemoryStack
                                 })
                             .IsA<PStack<OperationNode>>()
