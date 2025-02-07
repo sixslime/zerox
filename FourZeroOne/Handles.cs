@@ -5,6 +5,7 @@ using FourZeroOne.Rule;
 using Perfection;
 using System;
 using MorseCode.ITask;
+using FourZeroOne.FZOSpec;
 
 #nullable enable
 namespace FourZeroOne.Handles
@@ -13,6 +14,7 @@ namespace FourZeroOne.Handles
     
     public interface IMemory
     {
+        public FZOSpec.IMemoryFZO InternalValue { get; }
         public IEnumerable<ITiple<IStateAddress, ResObj>> Objects { get; }
         public IEnumerable<Rule.IRule> Rules { get; }
         public IOption<R> GetObject<R>(IStateAddress<R> address) where R : class, ResObj;
@@ -24,16 +26,19 @@ namespace FourZeroOne.Handles
     }
     public interface ITokenContext
     {
+        public FZOSpec.IProcessorFZO.ITokenContext InternalValue { get; }
         public IMemory CurrentMemory { get; }
         public IInput Input { get; }
     }
     public interface IInput
     {
+        public FZOSpec.IInputFZO InternalValue { get; }
         public ITask<int[]> ReadSelection(IHasElements<ResObj> pool, int count);
     }
     public class MemoryHandle(FZOSpec.IMemoryFZO implementation) : IMemory
     {
         private readonly FZOSpec.IMemoryFZO _implementation = implementation;
+        IMemoryFZO IMemory.InternalValue => _implementation;
         IEnumerable<ITiple<IStateAddress, ResObj>> IMemory.Objects => _implementation.Objects;
         IEnumerable<IRule> IMemory.Rules => _implementation.Rules;
         IOption<R> IMemory.GetObject<R>(IStateAddress<R> address) => _implementation.GetObject(address);
@@ -48,10 +53,15 @@ namespace FourZeroOne.Handles
         private readonly FZOSpec.IProcessorFZO.ITokenContext _implementation = implementation;
         IMemory ITokenContext.CurrentMemory => _implementation.CurrentMemory.ToHandle();
         IInput ITokenContext.Input => _implementation.Input.ToHandle();
+
+        IProcessorFZO.ITokenContext ITokenContext.InternalValue => _implementation;
     }
     public class InputHandle(FZOSpec.IInputFZO implementation) : IInput
     {
         private readonly FZOSpec.IInputFZO _implementation = implementation;
+
+        IInputFZO IInput.InternalValue => _implementation;
+
         ITask<int[]> IInput.ReadSelection(IHasElements<ResObj> pool, int count) => _implementation.GetSelection(pool, count);
     }
     public static class Extensions

@@ -5,6 +5,7 @@ using PROTO_ZeroxFour_1.Util;
 #nullable enable
 namespace FourZeroOne.Resolution
 {
+    using FourZeroOne.FZOSpec;
     using Handles;
     
     /// <summary>
@@ -17,6 +18,7 @@ namespace FourZeroOne.Resolution
     public interface IInstruction : IResolution
     {
         public IMemory TransformMemory(IMemory context);
+        public FZOSpec.IMemoryFZO TransformMemoryUnsafe(FZOSpec.IMemoryFZO memory);
     }
     public interface IComponentIdentifier<in H, out R> : Unsafe.IComponentIdentifier<H>, Unsafe.IComponentIdentifierOf<R> where H : ICompositionType where R : IResolution { }
     // pretty fucking silly bro im not going even to even lie even.
@@ -44,6 +46,7 @@ namespace FourZeroOne.Resolution
     public abstract record Instruction : Construct, IInstruction
     {
         public abstract IMemory TransformMemory(IMemory previousState);
+        IMemoryFZO IInstruction.TransformMemoryUnsafe(IMemoryFZO memory) => TransformMemory(memory.ToHandle()).InternalValue;
         public override IEnumerable<IInstruction> Instructions => [this];
     }
     public abstract record Construct : IResolution

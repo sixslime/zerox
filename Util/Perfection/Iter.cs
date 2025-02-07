@@ -161,6 +161,10 @@ namespace Perfection
         {
             return new PStack<T>().WithEntries(enumerable);
         }
+        public static PStack<T> NewFromTop<T>(this IPStack<T> stack)
+        {
+            return (stack.TopValue.Check(out var v)) ? new PStack<T>().WithEntries(v) : new();
+        }
         public static CachingEnumerable<T> Caching<T>(this IEnumerable<T> enumerable) => new(enumerable);
         public static IEnumerable<T> Over<T>(params T[] arr) => arr;
     }

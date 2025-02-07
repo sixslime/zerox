@@ -36,8 +36,8 @@ namespace FourZeroOne.FZOSpec
         /// <b><see cref="EDelta.PushOperation"/>:</b><br></br>
         /// - Push the following to <i>OperationStack</i>:<br></br>
         /// . ~ <i>Operation</i> = 'OperationToken'<br></br>
-        /// . ~ <i>MemoryStack</i> = <i>OperationStack[0].MemoryStack[0]</i><br></br>
-        /// . ~ <i>ArgResolutionStack</i> = (empty)<br></br>
+        /// . ~ <i>MemoryStack</i> = { <i>OperationStack[0].MemoryStack[0]</i> }<br></br>
+        /// . ~ <i>ArgResolutionStack</i> = { }<br></br>
         /// <b><see cref="EDelta.Resolve"/>:</b><br></br>
         /// - Pop from <i>OperationStack</i><br></br>
         /// - If 'Resolution' is <b><see cref="IOk{int,}"/></b>:<br></br>
@@ -51,8 +51,8 @@ namespace FourZeroOne.FZOSpec
         /// - - If 'Value' is <b><see cref="EStateImplemented.MetaExecute"/></b>:<br></br>
         /// - - - Push the following to <i>OperationStack</i>:<br></br>
         /// - - . ~ <i>Operation</i> = 'FunctionToken'<br></br>
-        /// - - . ~ <i>MemoryStack</i> = <i>OperationStack[0].MemoryStack[0]</i><br></br>
-        /// - - . ~ <i>ArgResolutionStack</i> = (empty)<br></br>
+        /// - - . ~ <i>MemoryStack</i> = { <i>OperationStack[0].MemoryStack[0]</i> }<br></br>
+        /// - - . ~ <i>ArgResolutionStack</i> = { }<br></br>
         /// </summary>
         /// <param name="step"></param>
         /// <returns>
