@@ -13,7 +13,7 @@ namespace FourZeroOne.FZOSpec
     
     public interface IProcessorFZO
     {
-        public ITask<IResult<EDelta, EProcessorHalt>> GetNextStep(IStateFZO state, IInputFZO input);
+        public ITask<IResult<EProcessorStep, EProcessorHalt>> GetNextStep(IStateFZO state, IInputFZO input);
         public interface ITokenContext
         {
             public IMemoryFZO CurrentMemory { get; }
@@ -31,14 +31,14 @@ namespace FourZeroOne.FZOSpec
 
         /// <summary>
         /// If <paramref name="step"/> is:<br></br>
-        /// <b><see cref="EDelta.TokenPrep"/>:</b><br></br>
+        /// <b><see cref="EProcessorStep.TokenPrep"/>:</b><br></br>
         /// - Push 'Value' to <i>TokenPrepStack</i><br></br>
-        /// <b><see cref="EDelta.PushOperation"/>:</b><br></br>
+        /// <b><see cref="EProcessorStep.PushOperation"/>:</b><br></br>
         /// - Push the following to <i>OperationStack</i>:<br></br>
         /// . ~ <i>Operation</i> = 'OperationToken'<br></br>
         /// . ~ <i>MemoryStack</i> = { <i>OperationStack[0].MemoryStack[0]</i> }<br></br>
         /// . ~ <i>ArgResolutionStack</i> = { }<br></br>
-        /// <b><see cref="EDelta.Resolve"/>:</b><br></br>
+        /// <b><see cref="EProcessorStep.Resolve"/>:</b><br></br>
         /// - Pop from <i>OperationStack</i><br></br>
         /// - If 'Resolution' is <b><see cref="IOk{int,}"/></b>:<br></br>
         /// - - Push 'Value' to <i>OperationStack[0].ArgResolutionStack</i><br></br>
@@ -59,7 +59,7 @@ namespace FourZeroOne.FZOSpec
         /// A new <see cref="IStateFZO"/> with the above changes.<br></br>
         /// This <b>must</b> not mutate the original <see cref="IStateFZO"/>.
         /// </returns>
-        public IStateFZO WithStep(EDelta step);
+        public IStateFZO WithStep(EProcessorStep step);
         public IStateFZO Initialize(FZOSource source);
         public interface IOperationNode
         {
@@ -83,27 +83,19 @@ namespace FourZeroOne.FZOSpec
         public required IToken Program { get; init; }
         public required IMemoryFZO InitialMemory { get; init; }
     }
-    public abstract record EDelta
+    public abstract record EProcessorStep
     {
-        public sealed record TokenPrep : EDelta
+        public sealed record TokenPrep : EProcessorStep
         {
             public required ETokenPrep Value { get; init; }
         }
-        public sealed record Resolve : EDelta
+        public sealed record Resolve : EProcessorStep
         {
             public required IResult<ResOpt, EStateImplemented> Resolution { get; init; }
         }
-        public sealed record PushOperation : EDelta
+        public sealed record PushOperation : EProcessorStep
         {
             public required IToken OperationToken { get; init; }
-        }
-    }
-    public abstract record EStateImplemented
-    {
-        public sealed record MetaExecute : EStateImplemented
-        {
-            public required IToken FunctionToken { get; init; }
-            public required IEnumerable<ITiple<IStateAddress<ResObj>, ResOpt>> StateWrites { get; init; }
         }
     }
     public abstract record EProcessorHalt
@@ -113,6 +105,14 @@ namespace FourZeroOne.FZOSpec
         public sealed record Completed : EProcessorHalt
         {
             public required ResOpt Resolution { get; init; }
+        }
+    }
+    public abstract record EStateImplemented
+    {
+        public sealed record MetaExecute : EStateImplemented
+        {
+            public required IToken FunctionToken { get; init; }
+            public required IEnumerable<ITiple<IStateAddress<ResObj>, ResOpt>> StateWrites { get; init; }
         }
     }
     public abstract record ETokenPrep

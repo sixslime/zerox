@@ -14,13 +14,11 @@ namespace Wania.FZO
     {
         private bool _isInitialized;
         private PStack<OperationNode> _opStack;
-        private PStack<IMemoryFZO> _memStack;
         private PStack<ETokenPrep> _prepStack;
 
         public WaniaStateFZO()
         {
             _opStack = new();
-            _memStack = new();
             _prepStack = new();
             _isInitialized = false;
         }
@@ -40,15 +38,16 @@ namespace Wania.FZO
                 })
             };
         }
-        IStateFZO IStateFZO.WithStep(EDelta step)
+        IStateFZO IStateFZO.WithStep(EProcessorStep step)
         {
+            if (!_isInitialized) throw new InvalidOperationException("Operation on an uninitialized state");
             return step switch
             {
-                EDelta.TokenPrep v => this with
+                EProcessorStep.TokenPrep v => this with
                 {
                     _prepStack = _prepStack.WithEntries(v.Value)
                 },
-                EDelta.PushOperation v => this with
+                EProcessorStep.PushOperation v => this with
                 {
                     _opStack = _opStack.WithEntries(new OperationNode()
                     {
@@ -58,7 +57,7 @@ namespace Wania.FZO
                         ResolvedArgs = new(),
                     })
                 },
-                EDelta.Resolve v => v.Resolution.CheckOk(out var resolution, out var stateImplemented)
+                EProcessorStep.Resolve v => v.Resolution.CheckOk(out var resolution, out var stateImplemented)
                     ? this with
                     {
                         _opStack = _opStack.At(1).Expect("No parent operation node?")
