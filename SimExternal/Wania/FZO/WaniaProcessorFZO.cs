@@ -42,7 +42,7 @@ namespace Wania.FZO
                 var resolvedOperation =
                     topNode.Operation.UnsafeResolve(tokenContext, argsArray)
                     .CheckOk(out var resolutionTask, out var runtimeHandled)
-                        ? (await resolutionTask).AsOk(Hint<EExternalImplementation>.HINT)
+                        ? (await resolutionTask).AsOk(Hint<EStateImplemented>.HINT)
                         : runtimeHandled.AsErr(Hint<ResOpt>.HINT);
                 return
                     (resolvedOperation.CheckErr(out var _, out var finalResolution) || state.OperationStack.GetAt(1).IsSome())

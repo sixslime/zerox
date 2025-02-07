@@ -30,23 +30,29 @@ namespace FourZeroOne.FZOSpec
         public IEnumerable<ETokenPrep> TokenPrepStack { get; }
 
         /// <summary>
-        /// Implementation <b>must</b> adhere to the following behavior, given <paramref name="step"/> is:<br></br>
-        /// <b>Preprocess:</b><br></br>
-        /// - Push 'Value' to <i>PreprocessStack</i><br></br>
-        /// <b>PushOperation:</b><br></br>
+        /// If <paramref name="step"/> is:<br></br>
+        /// <b><see cref="EDelta.TokenPrep"/>:</b><br></br>
+        /// - Push 'Value' to <i>TokenPrepStack</i><br></br>
+        /// <b><see cref="EDelta.PushOperation"/>:</b><br></br>
         /// - Push the following to <i>OperationStack</i>:<br></br>
         /// . ~ <i>Operation</i> = 'OperationToken'<br></br>
         /// . ~ <i>MemoryStack</i> = <i>OperationStack[0].MemoryStack[0]</i><br></br>
         /// . ~ <i>ArgResolutionStack</i> = (empty)<br></br>
-        /// <b>Resolve:</b><br></br>
-        /// 'Resolution' is <b>Ok( x )</b>:<br></br>
+        /// <b><see cref="EDelta.Resolve"/>:</b><br></br>
         /// - Pop from <i>OperationStack</i><br></br>
-        /// - Append 'x' to <i>OperationStack[0].ResolvedArgs</i><br></br>
-        /// 'Resolution' is <b>Err( x )</b>:<br></br>
-        /// . 'x' is <b>MetaExecute</b>:<br></br>
-        /// . - Append '
-        /// <br></br>
-        /// IEnumerables <b>must</b> behave as top-down stack iterators.
+        /// - If 'Resolution' is <b><see cref="IOk{int,}"/></b>:<br></br>
+        /// - - Push 'Value' to <i>OperationStack[0].ArgResolutionStack</i><br></br>
+        /// - - If 'Value' is <b><see cref="IOk{T, E}"/></b>:<br></br>
+        /// - - - Push the equivalent of the following to <i>OperationStack[0].MemoryStack</i>:<br></br>
+        /// - - . # <c> Value.Instructions </c>\<br></br>
+        /// - - . # <c> .AccumulateInto(OperationStack[0].MemoryStack[0], </c>\<br></br>
+        /// - - . # <c> (memory, instruction) => instruction.TransformMemory(memory)); </c><br></br>
+        /// - If 'Resolution' is <b><see cref="IErr{T, E}"/></b>:<br></br>
+        /// - - If 'Value' is <b><see cref="EStateImplemented.MetaExecute"/></b>:<br></br>
+        /// - - - Push the following to <i>OperationStack</i>:<br></br>
+        /// - - . ~ <i>Operation</i> = 'FunctionToken'<br></br>
+        /// - - . ~ <i>MemoryStack</i> = <i>OperationStack[0].MemoryStack[0]</i><br></br>
+        /// - - . ~ <i>ArgResolutionStack</i> = (empty)<br></br>
         /// </summary>
         /// <param name="step"></param>
         /// <returns>
@@ -85,16 +91,16 @@ namespace FourZeroOne.FZOSpec
         }
         public sealed record Resolve : EDelta
         {
-            public required IResult<ResOpt, EExternalImplementation> Resolution { get; init; }
+            public required IResult<ResOpt, EStateImplemented> Resolution { get; init; }
         }
         public sealed record PushOperation : EDelta
         {
             public required IToken OperationToken { get; init; }
         }
     }
-    public abstract record EExternalImplementation
+    public abstract record EStateImplemented
     {
-        public sealed record MetaExecute : EExternalImplementation
+        public sealed record MetaExecute : EStateImplemented
         {
             public required IToken FunctionToken { get; init; }
             public required IEnumerable<ITiple<IStateAddress<ResObj>, ResOpt>> StateWrites { get; init; }

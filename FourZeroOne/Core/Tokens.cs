@@ -313,9 +313,9 @@ namespace FourZeroOne.Core.Tokens
     {
         public Execute(IToken<r.Boxed.MetaFunction<ROut>> function) : base(function) { }
 
-        protected override EStateImplemented MakeData(r.Boxed.MetaFunction<ROut> func)
+        protected override FZOSpec.EStateImplemented MakeData(r.Boxed.MetaFunction<ROut> func)
         {
-            return new EStateImplemented.MetaExecute
+            return new FZOSpec.EStateImplemented.MetaExecute
             {
                 FunctionToken = func.Token,
                 StateWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
@@ -331,9 +331,9 @@ namespace FourZeroOne.Core.Tokens
     {
         public Execute(IToken<r.Boxed.MetaFunction<RArg1, ROut>> function, IToken<r.Boxed.MetaArgs<RArg1>> args) : base(function, args) { }
 
-        protected override EStateImplemented MakeData(r.Boxed.MetaFunction<RArg1, ROut> func, r.Boxed.MetaArgs<RArg1> args)
+        protected override FZOSpec.EStateImplemented MakeData(r.Boxed.MetaFunction<RArg1, ROut> func, r.Boxed.MetaArgs<RArg1> args)
         {
-            return new EStateImplemented.MetaExecute
+            return new FZOSpec.EStateImplemented.MetaExecute
             {
                 FunctionToken = func.Token,
                 StateWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
@@ -350,9 +350,9 @@ namespace FourZeroOne.Core.Tokens
     {
         public Execute(IToken<r.Boxed.MetaFunction<RArg1, RArg2, ROut>> function, IToken<r.Boxed.MetaArgs<RArg1, RArg2>> args) : base(function, args) { }
 
-        protected override EStateImplemented MakeData(r.Boxed.MetaFunction<RArg1, RArg2, ROut> func, r.Boxed.MetaArgs<RArg1, RArg2> args)
+        protected override FZOSpec.EStateImplemented MakeData(r.Boxed.MetaFunction<RArg1, RArg2, ROut> func, r.Boxed.MetaArgs<RArg1, RArg2> args)
         {
-            return new EStateImplemented.MetaExecute
+            return new FZOSpec.EStateImplemented.MetaExecute
             {
                 FunctionToken = func.Token,
                 StateWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
@@ -370,9 +370,9 @@ namespace FourZeroOne.Core.Tokens
     {
         public Execute(IToken<r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut>> function, IToken<r.Boxed.MetaArgs<RArg1, RArg2, RArg3>> args) : base(function, args) { }
 
-        protected override EStateImplemented MakeData(r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut> func, r.Boxed.MetaArgs<RArg1, RArg2, RArg3> args)
+        protected override FZOSpec.EStateImplemented MakeData(r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut> func, r.Boxed.MetaArgs<RArg1, RArg2, RArg3> args)
         {
-            return new EStateImplemented.MetaExecute
+            return new FZOSpec.EStateImplemented.MetaExecute
             {
                 FunctionToken = func.Token,
                 StateWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>

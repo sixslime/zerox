@@ -66,7 +66,7 @@ namespace Wania.FZO
                                 .MapTopValue(x => x with { ResolvedArgs = x.ResolvedArgs.WithEntries(resolution) })
                                 .IsA<PStack<OperationNode>>()
                         }
-                        : (stateImplemented is EExternalImplementation.MetaExecute metaExecute)
+                        : (stateImplemented is EStateImplemented.MetaExecute metaExecute)
                             ? this with
                             {
 
