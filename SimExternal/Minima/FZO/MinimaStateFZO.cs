@@ -7,40 +7,38 @@ using FourZeroOne.Rule;
 using FourZeroOne.Macro.Unsafe;
 using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
 using FourZeroOne.Token.Unsafe;
+using LookNicePls;
 #nullable enable
-namespace Wania.FZO
+namespace Minima.FZO
 {
-    public record WaniaStateFZO : IStateFZO
+    public record MinimaStateFZO : IStateFZO
     {
-        private bool _isInitialized;
+        private IOption<FZOSource> _initialized;
         private PStack<OperationNode> _opStack;
         private PStack<ETokenPrep> _prepStack;
 
-        public WaniaStateFZO()
+        public MinimaStateFZO()
         {
             _opStack = new();
             _prepStack = new();
-            _isInitialized = false;
+            _initialized = new None<FZOSource>();
         }
         IEnumerable<IStateFZO.IOperationNode> IStateFZO.OperationStack => _opStack.Elements;
         IEnumerable<ETokenPrep> IStateFZO.TokenPrepStack => _prepStack.Elements;
+        IOption<FZOSource> IStateFZO.Initialized => _initialized;
         IStateFZO IStateFZO.Initialize(FZOSource source)
         {
-            return new WaniaStateFZO()
+            if (_initialized.IsSome())
+                throw new InvalidOperationException("Attempted initialization of an already initialized IStateFZO");
+            return new MinimaStateFZO()
             {
-                _isInitialized = true,
-                _opStack = new PStack<OperationNode>().WithEntries(new OperationNode()
-                {
-                    Operation = source.Program,
-                    MemoryStack = new PStack<IMemoryFZO>().WithEntries(source.InitialMemory),
-                    MemCount = 1,
-                    ResolvedArgs = new()
-                })
+                _initialized = _initialized.Some(source)
             };
         }
         IStateFZO IStateFZO.WithStep(EProcessorStep step)
         {
-            if (!_isInitialized) throw new InvalidOperationException("Operation on an uninitialized state");
+            if (_initialized.CheckNone(out var init))
+                throw new InvalidOperationException("Attempted operation on an uninitialized IStateFZO");
             return step switch
             {
                 EProcessorStep.TokenPrep v => this with
@@ -52,19 +50,22 @@ namespace Wania.FZO
                     _opStack = _opStack.WithEntries(new OperationNode()
                     {
                         Operation = v.OperationToken,
-                        MemoryStack = _opStack.TopValue.Expect("No parent operation node?").MemoryStack,
+                        MemoryStack = 
+                            _opStack.TopValue.RemapAs(x => x.MemoryStack)
+                            .Or(new PStack<IMemoryFZO>().WithEntries(init.InitialMemory)),
                         MemCount = 1,
-                        ResolvedArgs = new(),
-                    })
+                        ArgResolutionStack = new(),
+                    }),
+                    _prepStack = new()
                 },
-                EProcessorStep.Resolve v => v.Resolution.CheckOk(out var resolution, out var stateImplemented)
+                EProcessorStep.Resolve v => v.Resolution.Split(out var resolution, out var stateImplemented)
                     ? this with
                     {
                         _opStack = _opStack.At(1).Expect("No parent operation node?")
                             .MapTopValue(
                                 opNode => opNode with
                                 {
-                                    ResolvedArgs = opNode.ResolvedArgs.WithEntries(resolution),
+                                    ArgResolutionStack = opNode.ArgResolutionStack.WithEntries(resolution),
                                     MemCount = opNode.MemCount.ExprAs(x => resolution.IsSome() ? x + 1 : x),
                                     MemoryStack =
                                         resolution.Check(out var r)
@@ -80,13 +81,18 @@ namespace Wania.FZO
                     {
                         EStateImplemented.MetaExecute metaExecute => this with
                         {
-                            _opStack = _opStack.WithEntries(new OperationNode()
+                            _opStack = _opStack.At(1).Expect("No parent operation node?")
+                            .MapTopValue(node => node with
                             {
-                                Operation = metaExecute.FunctionToken,
-                                MemoryStack = _opStack.TopValue.Expect("No parent operation node?").MemoryStack,
-                                MemCount = 1,
-                                ResolvedArgs = new(),
-                            })
+                                MemoryStack = node.MemoryStack.MapTopValue(
+                                    mem => metaExecute.MemoryWrites.ExprAs(
+                                        writes => mem.WithObjects(
+                                                writes.FilterMap(x => x.B.RemapAs(r => (x.A, r).Tiple())))
+                                            .WithClearedAddresses(writes.FilterMap(x => x.B.IsSome().Not().ToOption(x.A)))))
+                                .IsA<PStack<IMemoryFZO>>()
+                            }).IsA<PStack<OperationNode>>(),
+
+                            _prepStack = _prepStack.WithEntries(new ETokenPrep.Identity { Result = metaExecute.FunctionToken})
                         },
                         _ => throw new NotSupportedException()
                     },
@@ -97,9 +103,9 @@ namespace Wania.FZO
         {
             public required int MemCount { get; init; }
             public required IToken Operation { get; init; }
-            public required PStack<ResOpt> ResolvedArgs { get; init; }
+            public required PStack<ResOpt> ArgResolutionStack { get; init; }
             public required PStack<IMemoryFZO> MemoryStack { get; init; }
-            IEnumerable<ResOpt> IStateFZO.IOperationNode.ArgResolutionStack => ResolvedArgs.Elements;
+            IEnumerable<ResOpt> IStateFZO.IOperationNode.ArgResolutionStack => ArgResolutionStack.Elements;
             IEnumerable<IMemoryFZO> IStateFZO.IOperationNode.MemoryStack => MemoryStack.Elements.Take(MemCount);
         }
     }

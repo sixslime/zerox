@@ -24,11 +24,19 @@ namespace Perfection
     
     public record Ok<T, E>(T value) : IOk<T, E>
     {
-        public T Value => value;
+        public T Value { get; } = value;
+        public override string ToString()
+        {
+            return $"Ok({Value})";
+        }
     }
     public record Err<T, E>(E value) : IErr<T, E>
     {
-        public E Value => value;
+        public E Value { get; } = value;
+        public override string ToString()
+        {
+            return $"Err({Value})";
+        }
     }
     public class ExpectedValueException(string message) : Exception(message) { }
     public class Hint<T>
@@ -52,7 +60,7 @@ namespace Perfection
         public static E UnwrapErr<T, E>(this IResult<T, E> result)
             => ExpectErr(result, "'Ok' value unwrapped, expected 'Err'.");
 
-        public static bool CheckOk<T, E>(this IResult<T, E> result, out T ok, out E err)
+        public static bool Split<T, E>(this IResult<T, E> result, out T ok, out E err)
         {
             ok = default!;
             err = default!;
@@ -60,8 +68,10 @@ namespace Perfection
             if (result is IErr<T, E> e) { err = e.Value; return false; }
             throw new Exception("Unsupported IResult type?");
         }
-        public static bool CheckErr<T, E>(this IResult<T, E> result, out E err, out T ok)
-            => !CheckOk(result, out ok, out err);
+        public static bool CheckOk<T, E>(this IResult<T, E> result, out T ok)
+            => Split(result, out ok, out var _);
+        public static bool CheckErr<T, E>(this IResult<T, E> result, out E err)
+            => !Split(result, out var _, out err);
         public static IResult<T, E> AsOk<T, E>(this T value, Hint<E> _) => new Ok<T, E>(value);
         public static IResult<T, E> AsErr<T, E>(this E value, Hint<T> _) => new Err<T, E>(value);
         public static IResult<T, Exception> CatchException<T>(this Func<T> tryExpr)
@@ -76,19 +86,19 @@ namespace Perfection
         }
         public static IResult<TOut, E> RemapOk<T, E, TOut>(this IResult<T, E> result, Func<T, TOut> func)
         {
-            return result.CheckOk(out var ok, out var err)
+            return result.Split(out var ok, out var err)
                 ? new Ok<TOut, E>(func(ok))
                 : new Err<TOut, E>(err);
         }
         public static IResult<T, EOut> RemapErr<T, E, EOut>(this IResult<T, E> result, Func<E, EOut> func)
         {
-            return result.CheckOk(out var ok, out var err)
+            return result.Split(out var ok, out var err)
                 ? new Ok<T, EOut>(ok)
                 : new Err<T, EOut>(func(err));
         }
         public static IResult<E, T> Invert<T, E>(this IResult<T, E> result)
         {
-            return result.CheckOk(out var ok, out var err)
+            return result.Split(out var ok, out var err)
                 ? new Err<E, T>(ok)
                 : new Ok<E, T>(err);
         }
@@ -102,13 +112,13 @@ namespace Perfection
         }
         public static IOption<T> TakeOk<T, E>(this IResult<T, E> result)
         {
-            return result.CheckOk(out var ok, out var _)
+            return result.Split(out var ok, out var _)
                 ? new Some<T>(ok)
                 : new None<T>();
         }
         public static IOption<E> TakeErr<T, E>(this IResult<T, E> result)
         {
-            return result.CheckOk(out var _, out var err)
+            return result.Split(out var _, out var err)
                 ? new Some<E>(err)
                 : new None<E>();
         }
@@ -120,6 +130,16 @@ namespace Perfection
         {
             return condition ? new Ok<T, E>(ok()) : new Err<T, E>(err());
         }
+        public static IOption<T> KeepOk<T, E>(this IResult<T, E> result)
+        {
+            return result.CheckOk(out var v).ToOption(v);
+        }
+        public static IOption<E> KeepErr<T, E>(this IResult<T, E> result)
+        {
+            return result.CheckErr(out var v).ToOption(v);
+        }
+        public static IResult<T, E> Ok<T, E>(this IResult<T, E>? _, T ok) => new Ok<T, E>(ok);
+        public static IResult<T, E> Err<T, E>(this IResult<T, E>? _, E err) => new Err<T, E>(err);
         public static bool IsOk<T, E>(this IResult<T, E> result) => result is IOk<T, E>;
         public static bool IsErr<T, E>(this IResult<T, E> result) => result is IErr<T, E>;
     }

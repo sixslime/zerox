@@ -10,7 +10,7 @@ namespace FourZeroOne.FZOSpec
     using Resolution;
     using Resolution.Unsafe;
     using Rule;
-    
+    using System.Diagnostics.CodeAnalysis;
     public interface IProcessorFZO
     {
         public ITask<IResult<EProcessorStep, EProcessorHalt>> GetNextStep(IStateFZO state, IInputFZO input);
@@ -26,9 +26,11 @@ namespace FourZeroOne.FZOSpec
     }
     public interface IStateFZO
     {
+        public IOption<FZOSource> Initialized { get; }
         public IEnumerable<IOperationNode> OperationStack { get; }
         public IEnumerable<ETokenPrep> TokenPrepStack { get; }
 
+        // MetaExecute is not accurate, plz update.
         /// <summary>
         /// If <paramref name="step"/> is:<br></br>
         /// <b><see cref="EProcessorStep.TokenPrep"/>:</b><br></br>
@@ -60,6 +62,8 @@ namespace FourZeroOne.FZOSpec
         /// This <b>must</b> not mutate the original <see cref="IStateFZO"/>.
         /// </returns>
         public IStateFZO WithStep(EProcessorStep step);
+
+        // FIXME: FZOSource.Program cannot be directly pushed to operation stack if it's a macro
         public IStateFZO Initialize(FZOSource source);
         public interface IOperationNode
         {
@@ -78,6 +82,22 @@ namespace FourZeroOne.FZOSpec
         public IMemoryFZO WithClearedAddresses(IEnumerable<IStateAddress> removals);
     }
 
+    namespace Shorthands
+    {
+        public static class Extensions
+        {
+            public static IMemoryFZO WithResolution(this IMemoryFZO memory, ResObj resolution)
+            {
+                return resolution.Instructions.AccumulateInto(memory, (mem, instruction) => instruction.TransformMemoryUnsafe(mem));
+            }
+            public static IMemoryFZO WithResolution(this IMemoryFZO memory, IOption<ResObj> resolution)
+            {
+                return resolution.Check(out var r) ? memory.WithResolution(r) : memory;
+            }
+        }
+    }
+
+    // FIXME: bandaid fix for initial program macro issue
     public sealed record FZOSource
     {
         public required IToken Program { get; init; }
@@ -112,7 +132,7 @@ namespace FourZeroOne.FZOSpec
         public sealed record MetaExecute : EStateImplemented
         {
             public required IToken FunctionToken { get; init; }
-            public required IEnumerable<ITiple<IStateAddress<ResObj>, ResOpt>> StateWrites { get; init; }
+            public required IEnumerable<ITiple<IStateAddress<ResObj>, ResOpt>> MemoryWrites { get; init; }
         }
     }
     public abstract record ETokenPrep

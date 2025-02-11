@@ -27,7 +27,6 @@ namespace FourZeroOne.Token
         public TokenBehavior(params Unsafe.IToken[] args)
         {
             _argTokens = args;
-            _uniqueId = ++_assigner;
         }
         public TokenBehavior(IEnumerable<Unsafe.IToken> args) : this(args.ToArray()) { }
         public abstract IResult<ITask<IOption<R>>, FZOSpec.EStateImplemented> Resolve(ITokenContext runtime, IOption<ResObj>[] args);
@@ -47,9 +46,7 @@ namespace FourZeroOne.Token
                 : "";
             return mainPart + hookPart;
         }
-        private static int _assigner = 0;
         private Unsafe.IToken[] _argTokens;
-        private int _uniqueId;
         
     }
     public abstract record StandardToken<R> : TokenBehavior<R> where R : class, ResObj

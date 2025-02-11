@@ -18,11 +18,11 @@ namespace FourZeroOne.Macro
     public abstract record MacroBehavior<R> : TokenBehavior<R>, IMacro<R> where R : class, ResObj
     {
         protected abstract Proxy.Unsafe.IProxy<R> InternalProxy { get; }
-        public override IResult<ITask<IOption<R>>, Resolution.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] __)
+        public override IResult<ITask<IOption<R>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] __)
         {
             throw new Exception("Macro directly resolved without expansion.");
         }
-        protected MacroBehavior()
+        protected MacroBehavior(params Token.Unsafe.IToken[] args) : base(args)
         {
             _cachedRealization = null;
         }
@@ -46,7 +46,7 @@ namespace FourZeroOne.Macro
         where ROut : class, ResObj
     {
         public IToken<RArg1> Arg1 { get; }
-        protected OneArg(IToken<RArg1> in1)
+        protected OneArg(IToken<RArg1> in1) : base(in1)
         {
             Arg1 = in1;
         }
@@ -64,7 +64,7 @@ namespace FourZeroOne.Macro
     {
         public IToken<RArg1> Arg1 { get; }
         public IToken<RArg2> Arg2 { get; }
-        protected TwoArg(IToken<RArg1> in1, IToken<RArg2> in2)
+        protected TwoArg(IToken<RArg1> in1, IToken<RArg2> in2) : base(in1, in2)
         {
             Arg1 = in1;
             Arg2 = in2;
@@ -86,7 +86,7 @@ namespace FourZeroOne.Macro
         public IToken<RArg1> Arg1 { get; }
         public IToken<RArg2> Arg2 { get; }
         public IToken<RArg3> Arg3 { get; }
-        protected ThreeArg(IToken<RArg1> in1, IToken<RArg2> in2, IToken<RArg3> in3)
+        protected ThreeArg(IToken<RArg1> in1, IToken<RArg2> in2, IToken<RArg3> in3) : base(in1, in2, in3)
         {
             Arg1 = in1;
             Arg2 = in2;

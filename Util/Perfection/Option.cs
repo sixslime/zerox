@@ -12,18 +12,18 @@ namespace Perfection
     }
     public record Some<T> : ISome<T>
     {
-        public T Value { get; private init; }
+        public T Value { get; }
         public Some(T value) { Value = value; }
         public override string ToString()
         {
-            return $"{Value}";
+            return $"Some({Value})";
         }
     }
     public record None<T> : IOption<T>
     {
         public override string ToString()
         {
-            return $"(None<{typeof(T).Name}>)";
+            return $"None<{typeof(T).Name}>";
         }
     }
     public static class Option
@@ -116,6 +116,8 @@ namespace Perfection
         {
             return option.Check(out var inner) ? (inner.Check(out var val) ? val.AsSome() : new None<T>()) : new None<T>();
         }
+        public static IOption<T> None<T>(this IOption<T>? option) =>  option is null || option.IsSome() ? new None<T>() : option;
+        public static IOption<T> Some<T>(this IOption<T>? _, T value) => new Some<T>(value);
     }
     
 }

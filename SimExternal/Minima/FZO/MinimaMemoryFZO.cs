@@ -7,14 +7,14 @@ using FourZeroOne.Rule;
 using FourZeroOne.Macro.Unsafe;
 using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
 #nullable enable
-namespace Wania.FZO
+namespace Minima.FZO
 {
-    public record WaniaMemoryFZO : IMemoryFZO
+    public record MinimaMemoryFZO : IMemoryFZO
     {
         private PMap<IStateAddress, IResolution> _objects;
         private PSequence<IRule> _rules;
 
-        public WaniaMemoryFZO()
+        public MinimaMemoryFZO()
         {
             _objects = new();
             _rules = new();

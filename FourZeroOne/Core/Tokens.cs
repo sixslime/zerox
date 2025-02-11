@@ -317,8 +317,8 @@ namespace FourZeroOne.Core.Tokens
         {
             return new FZOSpec.EStateImplemented.MetaExecute
             {
-                FunctionToken = func.Token,
-                StateWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
+                FunctionToken = new MetaExecuted<ROut>(func.Token),
+                MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
                     ((func.SelfIdentifier, func.AsSome()))
                     .Map(x => x.Tiple())
             };
@@ -335,8 +335,8 @@ namespace FourZeroOne.Core.Tokens
         {
             return new FZOSpec.EStateImplemented.MetaExecute
             {
-                FunctionToken = func.Token,
-                StateWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
+                FunctionToken = new MetaExecuted<ROut>(func.Token),
+                MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
                     ((func.SelfIdentifier, func.AsSome()), (func.IdentifierA, args.Arg1))
                     .Map(x => x.Tiple())
             };
@@ -354,8 +354,8 @@ namespace FourZeroOne.Core.Tokens
         {
             return new FZOSpec.EStateImplemented.MetaExecute
             {
-                FunctionToken = func.Token,
-                StateWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
+                FunctionToken = new MetaExecuted<ROut>(func.Token),
+                MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
                     ((func.SelfIdentifier, func.AsSome()), (func.IdentifierA, args.Arg1), (func.IdentifierB, args.Arg2))
                     .Map(x => x.Tiple())
             };
@@ -374,15 +374,20 @@ namespace FourZeroOne.Core.Tokens
         {
             return new FZOSpec.EStateImplemented.MetaExecute
             {
-                FunctionToken = func.Token,
-                StateWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
+                FunctionToken = new MetaExecuted<ROut>(func.Token),
+                MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
                     ((func.SelfIdentifier, func.AsSome()), (func.IdentifierA, args.Arg1), (func.IdentifierB, args.Arg2), (func.IdentifierC, args.Arg3))
                     .Map(x => x.Tiple())
             };
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2};".AsSome();
     }
-
+    public record MetaExecuted<R> : PureFunction<R, R>
+        where R : class, ResObj
+    {
+        public MetaExecuted(IToken<R> function) : base(function) { }
+        protected override R EvaluatePure(R in1) => in1;
+    }
     public record ToBoxedArgs<R1> : Function<R1, r.Boxed.MetaArgs<R1>>
         where R1 : class, ResObj
     {
