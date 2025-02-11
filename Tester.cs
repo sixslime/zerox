@@ -5,68 +5,36 @@ namespace PROTO_ZeroxFour_1;
 using FourZeroOne.Core.Syntax;
 using DeTes.Syntax;
 using Minima.FZO;
+using FourZeroOne.FZOSpec;
 using Perfection;
 public class Tester
 {
+    static readonly DeTesFZOSupplier RUN_IMPLEMENTATION = new()
+    {
+        Processor = new MinimaProcessorFZO(),
+        UnitializedState = new MinimaStateFZO()
+    };
+    static readonly IMemoryFZO MEMORY_IMPLEMENTATION = new MinimaMemoryFZO();
     public async Task Run()
     {
+        List<DeTest> tests = new();
 
-        var ideal1 = new DeTest
-        {
-            InitialMemory = new MinimaMemoryFZO(),
-            Token = C =>
-                (1..5).tFixed()
-                .ReferenceAs(C, out var range)
-                .tIOSelectOne()
-                // ideal if this was made possible
-                .DefineSelectionDomain(C, (0..(range.Resolution.Count-1)).ToIter(), out var domain)
-        };
         var test = new DeTest
         {
-            InitialMemory = new MinimaMemoryFZO(),
+            InitialMemory = MEMORY_IMPLEMENTATION,
             Token = C =>
                 (1..5).tFixed()
                 .ReferenceAs(C, out var range)
                 .tIOSelectOne()
-                .DefineSelectionDomain(C, (0..4).ToIter(), out var domain)
+                .DefineSelectionDomain(C, (0..4).Iterate(), out var domain)
                 .tMultiply(2.tFixed())
                 .tAdd(1.tFixed())
         };
-        try
-        {
-            var results = await test.Realize(new()
-            {
-                Processor = new MinimaProcessorFZO(),
-                UnitializedState = new MinimaStateFZO()
-            });
-            Console.WriteLine(results);
-            Console.WriteLine(results.Split(out var ok, out var err) ? ok.CriticalPoint : err);
-        } catch (Exception ex)
-        {
-            Console.WriteLine($"EXCEPTION: {ex}");
-        }
         
     }
-    // Test spec
+
+
     /*
-     * new Test()
-     * {
-     *       InitialMemory = <Memory>
-     *       Token = context =>
-     *          [
-     *            2.tFixed().tAdd(2.tFixed())
-     *            .AssertResolution(x => x.Value == 4, context),
-     *            8.tFixed(),
-     *            12.tFixed()
-     *          ].tUnion()
-     *          .AssertResolution(x => x.Count == 3, context)
-     *          .ReferenceAs(out var pool, context)
-     *          .tIOSelectOne()
-     *          .DefineSelectionDomain(0..3, out var domain, context)
-     *          .tAdd(1.tFixed())
-     *          .AssertResolution(x => x.Value == pool.Resolution.At(domain.SelectedIndex()).Unwrap().Value + 1, context)
-     * }
-     * 
      * Resolution methods should automatically assume and unwrap Some(), failing if None().
      * these methods have 'Unstable' counterparts that do not do this, ex: 'AssertResolutionUnstable()'
      * 
