@@ -79,10 +79,10 @@ public class Tester
                 {
                     InitialMemory = MEMORY_IMPLEMENTATION,
                     Token = C => 
-                        4.tFixed().AssertResolution(C, x => x.Value == 4)
+                        4.tFixed()
+                        .AssertResolution(C, x => x.Value == 4)
                         .AssertResolution(C, _ => false)
                         .tDuplicate(4.tFixed())
-                        .AssertResolution(C, _ => false)
                         .AssertResolution(C, _ => true)
                         .AssertMemory(C, _ => true)
                     //LEFTOFF: assertions arent recognized on macros/meta executes. something with token map.

@@ -4,6 +4,7 @@ using MorseCode.ITask;
 using Perfection;
 using ResObj = FourZeroOne.Resolution.IResolution;
 using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
+using PROTO_ZeroxFour_1.Util;
 #nullable enable
 namespace DeTes.Realization
 {
@@ -40,7 +41,6 @@ namespace DeTes.Realization
         {
             List<EDeTesFrame> frames = new();
             CriticalPointType? critPoint = null;
-
             while (true)
             {
                 IResult<EProcessorStep, EProcessorHalt>? processorStep = null;
@@ -124,15 +124,13 @@ namespace DeTes.Realization
                                     runtime.PreprocessMap[identity.Result] = identity.Result;
                                     break;
                                 default:
-                                    // kinda inefficient but does the alternative is using
-                                    // potentially unproven cache assumptions.
+                                    // kinda inefficient but the alternative is using potentially unproven cache assumptions.
                                     runtime.PreprocessMap[v.Value.Result] =
                                         state.TokenPrepStack.Last().IsA<ETokenPrep.Identity>().Result;
                                     break;
                             }
                         }
                         break;
-                    //FIXME: does not run for the initial program token
                     case EProcessorStep.PushOperation v:
                         {
                             var linkedToken = runtime.GetLinkedToken(v.OperationToken);
@@ -172,8 +170,8 @@ namespace DeTes.Realization
                                 switch (stateImplemented)
                                 {
                                     case EStateImplemented.MetaExecute metaExecute:
-                                        runtime.MetaExecuteMap[metaExecute.FunctionToken] = linkedToken;
-                                        runtime.PreprocessMap[metaExecute.FunctionToken] = metaExecute.FunctionToken;
+                                        //runtime.MetaExecuteMap[metaExecute.FunctionToken] = linkedToken;
+                                        runtime.PreprocessMap[metaExecute.FunctionToken] = linkedToken;
                                         break;
                                     default:
                                         throw new NotSupportedException();
@@ -261,7 +259,7 @@ namespace DeTes.Realization
             public Dictionary<IToken, List<IAssertionAccessor<IMemoryFZO>>> MemoryAssertions = MakeTokenLinkDictionary(context.MemoryAssertions);
             private static Dictionary<IToken, List<A>> MakeTokenLinkDictionary<A>(IEnumerable<A> accessors) where A : ITokenLinked
             {
-                var o = new Dictionary<IToken, List<A>>();
+                var o = new Dictionary<IToken, List<A>>(new EqualityByReference());
                 foreach (var a in accessors)
                 {
                     if (o.TryGetValue(a.LinkedToken, out var list)) list.Add(a);
@@ -269,9 +267,13 @@ namespace DeTes.Realization
                 }
                 return o;
             }
-            public IToken GetLinkedToken(IToken token)
+            public IToken GetLinkedTokenOld(IToken token)
             {
                 return PreprocessMap[token].ExprAs(preV => MetaExecuteMap.TryGetValue(preV, out var metaV) ? metaV : preV);
+            }
+            public IToken GetLinkedToken(IToken token)
+            {
+                return PreprocessMap[token];
             }
         }
         private class Input(Input.Data? data) : IInputFZO

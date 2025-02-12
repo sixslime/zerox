@@ -33,6 +33,15 @@ namespace FourZeroOne.Macro
         }
         public Token.Unsafe.IToken ExpandUnsafe() => Expand();
 
+        public override int GetHashCode()
+        {
+            // this is stupid.
+            var cached = _cachedRealization;
+            _cachedRealization = null;
+            var o = base.GetHashCode();
+            _cachedRealization = cached;
+            return o;
+        }
         private IToken<R>? _cachedRealization;
     }
 

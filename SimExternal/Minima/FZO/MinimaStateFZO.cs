@@ -92,7 +92,7 @@ namespace Minima.FZO
                                 .IsA<PStack<IMemoryFZO>>()
                             }).IsA<PStack<OperationNode>>(),
 
-                            _prepStack = _prepStack.WithEntries(new ETokenPrep.Identity { Result = metaExecute.FunctionToken})
+                            _prepStack = _prepStack.WithEntries(new ETokenPrep.Identity { Result = metaExecute.FunctionToken })
                         },
                         _ => throw new NotSupportedException()
                     },
