@@ -53,7 +53,7 @@ namespace Perfection
         /// <param name="v"></param>
         /// <returns></returns>
         public static bool Not(this bool v) => !v;
-        public static CachedRecursiveEvalTree<O, T> ToEvalTree<O, T>(this O root, Func<O, IResult<T, IEnumerable<O>>> resolveFunc, Func<IEnumerable<T>, T> combineFunc)
+        public static RecursiveEvalTree<O, T> RecursiveEvalTree<O, T>(this O root, Func<O, IResult<T, IEnumerable<O>>> resolveFunc, Func<IEnumerable<T>, T> combineFunc)
         {
             return new(root, resolveFunc, combineFunc);
         }

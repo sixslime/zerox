@@ -338,13 +338,13 @@ namespace Perfection
         }
     }
 
-    public class CachedRecursiveEvalTree<O, T>
+    public class RecursiveEvalTree<O, T>
     {
         public readonly T Evaluation;
         public readonly O Object;
-        public readonly IOption<CachedRecursiveEvalTree<O, T>[]> Branches;
+        public readonly IOption<RecursiveEvalTree<O, T>[]> Branches;
 
-        public CachedRecursiveEvalTree(O root, Func<O, IResult<T, IEnumerable<O>>> resolveFunc, Func<IEnumerable<T>, T> combineFunc)
+        public RecursiveEvalTree(O root, Func<O, IResult<T, IEnumerable<O>>> resolveFunc, Func<IEnumerable<T>, T> combineFunc)
         {
             Object = root;
             if (resolveFunc(root).Split(out Evaluation, out var branches))
@@ -354,7 +354,7 @@ namespace Perfection
             else
             {
                 var branchArr =
-                    branches.Map(obj => new CachedRecursiveEvalTree<O, T>(obj, resolveFunc, combineFunc))
+                    branches.Map(obj => new RecursiveEvalTree<O, T>(obj, resolveFunc, combineFunc))
                     .ToArray();
                 Branches = branchArr.AsSome();
                 Evaluation = combineFunc(branchArr.Map(x => x.Evaluation));

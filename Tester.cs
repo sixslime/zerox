@@ -7,6 +7,7 @@ using DeTes.Syntax;
 using Minima.FZO;
 using FourZeroOne.FZOSpec;
 using Perfection;
+using CatGlance;
 public class Tester
 {
     static readonly DeTesFZOSupplier RUN_IMPLEMENTATION = new()
@@ -17,24 +18,53 @@ public class Tester
     static readonly IMemoryFZO MEMORY_IMPLEMENTATION = new MinimaMemoryFZO();
     public async Task Run()
     {
-        List<DeTest> tests = new();
 
-        var test = new DeTest
+        GlancableTest[] tests =
         {
-            InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
-                (1..5).tFixed()
-                .ReferenceAs(C, out var range)
-                .tIOSelectOne()
-                .DefineSelectionDomain(C, (0..4).Iterate(), out var domain)
-                .tMultiply(2.tFixed())
-                .tAdd(1.tFixed())
+            new()
+            {
+                Name = "trivial",
+                InitialMemory = MEMORY_IMPLEMENTATION,
+                Token = C =>
+                2.tFixed().AssertResolution(C, x => x.Value == 2)
+                .tAdd(
+                    2.tFixed())
+                
+            },
+            new()
+            {
+                Name = "should fail",
+                InitialMemory = MEMORY_IMPLEMENTATION,
+                Token = C =>
+                2.tFixed().AssertResolution(C, x => x.Value == 444)
+                .tAdd(
+                    2.tFixed())
+                // fuck assertions on the last token dont run
+                .AssertResolution(C, x => x.Value == 3)
+            }
         };
-        
+        var glancer = new Glancer
+        {
+            Supplier = RUN_IMPLEMENTATION,
+            Tests = tests
+        };
+        await glancer.Glance();
     }
 
-
-    /*
+    /* CatGlance spec
+     * 
+     * var glance = new CatGlance();
+     * var test = new DeTest
+     * {
+     *  ...
+     * }.Glance("mytest")
+     *
+     *  var test = new GlancableTest
+     *  {
+     *      string Name = "mytest"
+     *      ...
+     *  }
+     *
      * Resolution methods should automatically assume and unwrap Some(), failing if None().
      * these methods have 'Unstable' counterparts that do not do this, ex: 'AssertResolutionUnstable()'
      * 
