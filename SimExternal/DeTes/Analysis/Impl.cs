@@ -5,6 +5,7 @@ using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
 #nullable enable
 namespace DeTes.Analysis
 {
+    using CriticalPointType = IResult<IResult<EProcessorHalt, Exception>, IDeTesSelectionPath[]>;
     internal class DomainDataImpl : IDeTesDomainData
     {
         public required string? Description { get; init; }
@@ -23,13 +24,21 @@ namespace DeTes.Analysis
         public required int[] ThisSelection { get; init; }
         IDeTesDomainData IDeTesSelectionPath.Domain => DomainData;
         int[] IDeTesSelectionPath.Selection => ThisSelection;
-        IResult<IResult<EProcessorHalt, Exception>, IDeTesSelectionPath[]> IDeTesResult.CriticalPoint => ResultObject.CriticalPoint;
+        CriticalPointType IDeTesResult.CriticalPoint => ResultObject.CriticalPoint;
         EDeTesFrame[] IDeTesResult.EvaluationFrames => ResultObject.EvaluationFrames;
     }
     internal class ResultImpl : IDeTesResult
     {
-        public required IResult<IResult<EProcessorHalt, Exception>, IDeTesSelectionPath[]> CriticalPoint { get; init; }
+        public required CriticalPointType CriticalPoint { get; init; }
         public required EDeTesFrame[] EvaluationFrames { get; init; }
     }
-
+    internal class OnResolveAssertionsImpl : IDeTesOnResolveAssertions
+    {
+        public required IDeTesAssertionData<IMemoryFZO>[] Memory { get; init; }
+        public required IDeTesAssertionData<ResOpt>[] Resolution { get; init; }
+    }
+    internal class OnPushAssertionsImpl : IDeTesOnPushAssertions
+    {
+        public required IDeTesAssertionData<IToken>[] Token { get; init; }
+    }
 }

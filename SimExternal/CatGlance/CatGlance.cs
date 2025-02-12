@@ -39,10 +39,13 @@ namespace CatGlance
                                 deTesResult.EvaluationFrames.All(frame => frame switch
                                 {
                                     EDeTesFrame.PushOperation v
-                                        => v.TokenAssertions.All(assert => assert.Result.CheckOk(out var pass) && pass),
+                                        => v.Assertions.Token.All(assert => assert.Result.CheckOk(out var pass) && pass),
                                     EDeTesFrame.Resolve v
-                                        => v.ResolutionAssertions.All(assert => assert.Result.CheckOk(out var pass) && pass) &&
-                                            v.MemoryAssertions.All(assert => assert.Result.CheckOk(out var pass) && pass),
+                                        => v.Assertions.Resolution.All(assert => assert.Result.CheckOk(out var pass) && pass) &&
+                                            v.Assertions.Memory.All(assert => assert.Result.CheckOk(out var pass) && pass),
+                                    EDeTesFrame.Complete v
+                                        => v.Assertions.Resolution.All(assert => assert.Result.CheckOk(out var pass) && pass) &&
+                                            v.Assertions.Memory.All(assert => assert.Result.CheckOk(out var pass) && pass),
                                     _ => true
                                 })),
                             others => others.All(x => x)));

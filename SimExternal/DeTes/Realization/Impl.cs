@@ -12,6 +12,8 @@ namespace DeTes.Realization
     using Analysis;
     using FourZeroOne.FZOSpec.Shorthands;
     using Declaration;
+    using CriticalPointType = IResult<IResult<EProcessorHalt, Exception>, Analysis.IDeTesSelectionPath[]>;
+
     internal class DeTesRealizerImpl
     {
         public async ITask<IResult<IDeTesResult, EDeTesInvalidTest>> Realize(IDeTesTest test, IDeTesFZOSupplier supplier)
@@ -32,10 +34,12 @@ namespace DeTes.Realization
             catch (Exception e) { throw new DeTesInternalException(e); }
 
         }
+
+        // WARNING: can be optimized, particularly with code elegance/repitition
         private static async ITask<ResultImpl> Eval(IStateFZO state, IProcessorFZO processor, RuntimeResources runtime, Input input)
         {
             List<EDeTesFrame> frames = new();
-            IResult<IResult<EProcessorHalt, Exception>, IDeTesSelectionPath[]>? critPoint = null;
+            CriticalPointType? critPoint = null;
 
             while (true)
             {
@@ -88,6 +92,16 @@ namespace DeTes.Realization
                 // set 'critPoint' and break if halt:
                 if (!processorStep.Split(out var step, out var halt))
                 {
+                    if (halt is EProcessorHalt.Completed complete)
+                    {
+                        frames.Add(new EDeTesFrame.Complete
+                        {
+                            PreState = state,
+                            CompletionHalt = complete,
+                            Assertions = GenerateOnResolveAssertionObject(runtime, runtime.GetLinkedToken(GetLastOperation(state)), complete.Resolution, GetLastMemory(state).WithResolution(complete.Resolution))
+                        });
+                    }
+                    
                     critPoint = critPoint.Ok(halt.AsOk(Hint<Exception>.HINT));
                     break;
                 }
@@ -125,44 +139,32 @@ namespace DeTes.Realization
                             {
                                 PreState = state,
                                 NextStep = v,
-                                TokenAssertions =
-                                    runtime.TokenAssertions
-                                    .TryGetValue(linkedToken, out var tokenAssertions)
-                                    .ToOption(tokenAssertions).Or([])
-                                    !.Map(assertion => EvaluateAssertion(assertion, v.OperationToken))
-                                    .ToArray()
+                                Assertions = GenerateOnPushAssertionObject(runtime, linkedToken, v.OperationToken)
                             });
                             if (runtime.Domains.TryGetValue(linkedToken, out var domains))
-                            {
                                 foreach (var domain in domains) runtime.DomainQueue.Enqueue(domain);
-                            }
+                            if (runtime.References.TryGetValue(linkedToken, out var references))
+                                foreach (var reference in references) reference.SetToken(v.OperationToken);
                         }
                         break;
                     case EProcessorStep.Resolve v:
                         {
-                            var linkedToken = runtime.GetLinkedToken(state.OperationStack.First().Operation);
+                            var linkedToken = runtime.GetLinkedToken(GetLastOperation(state));
                             if (v.Resolution.Split(out var resolution, out var stateImplemented))
                             {
+                                var nMemory = GetLastMemory(state).WithResolution(resolution);
                                 frames.Add(new EDeTesFrame.Resolve
                                 {
                                     PreState = state,
                                     NextStep = v,
-                                    ResolutionAssertions =
-                                        runtime.ResolutionAssertions
-                                        .TryGetValue(linkedToken, out var resolutionAssertions)
-                                        .ToOption(resolutionAssertions).Or([])!
-                                        .Map(assertion => EvaluateAssertion(assertion, resolution))
-                                        .ToArray(),
-                                    MemoryAssertions =
-                                        runtime.MemoryAssertions
-                                        .TryGetValue(linkedToken, out var memoryAssertions)
-                                        .ToOption(memoryAssertions).Or([])!
-                                        .Map(assertion =>
-                                            EvaluateAssertion(assertion,
-                                                state.OperationStack.First().MemoryStack.First()
-                                                .WithResolution(resolution)))
-                                        .ToArray(),
+                                    Assertions = GenerateOnResolveAssertionObject(runtime, linkedToken, resolution, nMemory)
                                 });
+                                if (runtime.References.TryGetValue(linkedToken, out var references))
+                                    foreach (var reference in references)
+                                    {
+                                        reference.SetResolution(resolution);
+                                        reference.SetMemory(nMemory);
+                                    }
                             }
                             else
                             {
@@ -189,6 +191,39 @@ namespace DeTes.Realization
             {
                 CriticalPoint = critPoint,
                 EvaluationFrames = frames.ToArray()
+            };
+        }
+        private static IToken GetLastOperation(IStateFZO state) => state.OperationStack.First().Operation;
+        private static IMemoryFZO GetLastMemory(IStateFZO state) => state.OperationStack.First().MemoryStack.First();
+        private static OnPushAssertionsImpl GenerateOnPushAssertionObject(RuntimeResources runtime, IToken linkedToken, IToken operation)
+        {
+            return new()
+            {
+                Token =
+                    runtime.TokenAssertions
+                    .TryGetValue(linkedToken, out var tokenAssertions)
+                    .ToOption(tokenAssertions).Or([])
+                    !.Map(assertion => EvaluateAssertion(assertion, operation))
+                    .ToArray()
+            };
+        }
+        private static OnResolveAssertionsImpl GenerateOnResolveAssertionObject(RuntimeResources runtime, IToken linkedToken, ResOpt resolution, IMemoryFZO nMemory)
+        {
+            return new()
+            {
+                Resolution =
+                    runtime.ResolutionAssertions
+                    .TryGetValue(linkedToken, out var resolutionAssertions)
+                    .ToOption(resolutionAssertions).Or([])!
+                    .Map(assertion => EvaluateAssertion(assertion, resolution))
+                    .ToArray(),
+                Memory =
+                    runtime.MemoryAssertions
+                    .TryGetValue(linkedToken, out var memoryAssertions)
+                    .ToOption(memoryAssertions).Or([])!
+                    .Map(assertion =>
+                        EvaluateAssertion(assertion, nMemory))
+                    .ToArray(),
             };
         }
         private static AssertionDataImpl<A> EvaluateAssertion<A>(IAssertionAccessor<A> assertion, A value)
@@ -266,6 +301,7 @@ namespace DeTes.Realization
         }
         private class RequiresDomainSplit : Exception { }
     }
+    
     internal class EqualityByReference : EqualityComparer<object>
     {
         public override bool Equals(object? x, object? y) => ReferenceEquals(x, y);

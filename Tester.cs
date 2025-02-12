@@ -29,17 +29,17 @@ public class Tester
                 2.tFixed().AssertResolution(C, x => x.Value == 2)
                 .tAdd(
                     2.tFixed())
-                
+                .AssertResolution(C, x => x.Value == 4)
+                .AssertMemory(C, x => !x.Objects.Any())
             },
             new()
             {
                 Name = "should fail",
                 InitialMemory = MEMORY_IMPLEMENTATION,
                 Token = C =>
-                2.tFixed().AssertResolution(C, x => x.Value == 444)
+                2.tFixed()
                 .tAdd(
                     2.tFixed())
-                // fuck assertions on the last token dont run
                 .AssertResolution(C, x => x.Value == 3)
             }
         };

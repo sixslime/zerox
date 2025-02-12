@@ -28,27 +28,6 @@ namespace DeTes.Syntax
         {
             return new DeTesRealizer().Realize(test, supplier);
         }
-        public static bool Passed(this IDeTesResult result)
-        {
-            if (!result.CriticalPoint.Split(out var stop, out var paths) ||
-                (stop.CheckOk(out var halt) && halt is EProcessorHalt.InvalidState))
-                return false;
-
-            foreach (var frame in result.EvaluationFrames)
-            {
-                switch (frame)
-                {
-                    case EDeTesFrame.PushOperation pushOp:
-                        if (!pushOp.TokenAssertions.All(Passed)) return false;
-                        break;
-                    case EDeTesFrame.Resolve resolveOp:
-                        if (!resolveOp.ResolutionAssertions.All(Passed)) return false;
-                        if (!resolveOp.MemoryAssertions.All(Passed)) return false;
-                        break;
-                }
-            }
-            return paths.All(Passed);
-        }
         public static bool Passed<A>(this IDeTesAssertionData<A> assertion)
         {
             return assertion.Result.KeepOk().Or(false);

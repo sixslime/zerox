@@ -27,7 +27,15 @@ namespace DeTes.Analysis
         public string? Description { get; }
         public Predicate<A> Condition { get; }
     }
-
+    public interface IDeTesOnPushAssertions
+    {
+        public IDeTesAssertionData<IToken>[] Token { get; }
+    }
+    public interface IDeTesOnResolveAssertions
+    {
+        public IDeTesAssertionData<IMemoryFZO>[] Memory { get; }
+        public IDeTesAssertionData<ResOpt>[] Resolution { get; }
+    }
     public abstract record EDeTesFrame
     {
         public required IStateFZO PreState { get; init; }
@@ -38,13 +46,17 @@ namespace DeTes.Analysis
         public sealed record PushOperation : EDeTesFrame
         {
             public required EProcessorStep.PushOperation NextStep { get; init; }
-            public required IDeTesAssertionData<IToken>[] TokenAssertions { get; init; }
+            public required IDeTesOnPushAssertions Assertions { get; init; }
         }
         public sealed record Resolve : EDeTesFrame
         {
             public required EProcessorStep.Resolve NextStep { get; init; }
-            public required IDeTesAssertionData<IMemoryFZO>[] MemoryAssertions { get; init; }
-            public required IDeTesAssertionData<ResOpt>[] ResolutionAssertions { get; init; }
+            public required IDeTesOnResolveAssertions Assertions { get; init; }
+        }
+        public sealed record Complete : EDeTesFrame
+        {
+            public required EProcessorHalt.Completed CompletionHalt { get; init; }
+            public required IDeTesOnResolveAssertions Assertions { get; init; }
         }
 
     }
