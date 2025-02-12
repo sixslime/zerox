@@ -78,14 +78,13 @@ public class Tester
                 new()
                 {
                     InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C => 
+                    Token = C =>
                         4.tFixed()
                         .AssertResolution(C, x => x.Value == 4)
-                        .AssertResolution(C, _ => false)
-                        .tDuplicate(4.tFixed())
+                        .AssertResolution(C, _ => {Console.WriteLine("bruh"); return false; })
+                        .tDuplicate(1.tFixed())
                         .AssertResolution(C, _ => true)
                         .AssertMemory(C, _ => true)
-                    //LEFTOFF: assertions arent recognized on macros/meta executes. something with token map.
                 },
                 new()
                 {
@@ -100,6 +99,14 @@ public class Tester
         };
         await shouldFail.Glance();
     }
+
+    // LEFTOFF
+    // advanced solve issue.
+    // originalarg/original proxies are always a different instance of the token due to labels always being applied on proxies.
+    // we can either:
+    // - rethink labels.
+    // - traverse preprocessing proxies recursively to find any instances of OriginalArg/Original and map them.
+    //  (this would also require macro proxies to be public)
 
     /* CatGlance spec
      * 
