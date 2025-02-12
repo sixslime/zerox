@@ -19,20 +19,26 @@ namespace FourZeroOne.Core.Syntax
     public sealed record RHint<R1>
         where R1 : class, ResObj
     {
+        [Obsolete("Use the static property 'HINT'")]
         public static RHint<R1> Hint() => new();
+        public static readonly RHint<R1> HINT = new();
     }
     public sealed record RHint<R1, R2>
         where R1 : class, ResObj
         where R2 : class, ResObj
     {
+        [Obsolete("Use the static property 'HINT'")]
         public static RHint<R1, R2> Hint() => new();
+        public static readonly RHint<R1, R2> HINT = new();
     }
     public sealed record RHint<R1, R2, R3>
         where R1 : class, ResObj
         where R2 : class, ResObj
         where R3 : class, ResObj
     {
+        [Obsolete("Use the static property 'HINT'")]
         public static RHint<R1, R2, R3> Hint() => new();
+        public static readonly RHint<R1, R2, R3> HINT = new();
     }
     public sealed record RHint<R1, R2, R3, R4>
         where R1 : class, ResObj
@@ -40,7 +46,9 @@ namespace FourZeroOne.Core.Syntax
         where R3 : class, ResObj
         where R4 : class, ResObj
     {
+        [Obsolete("Use the static property 'HINT'")]
         public static RHint<R1, R2, R3, R4> Hint() => new();
+        public static readonly RHint<R1, R2, R3, R4> HINT = new();
     }
 
     namespace Structure

@@ -14,12 +14,15 @@ namespace CatGlance
     }
     public class GlancableTest : ICatGlanceable
     {
-        public required string Name { get; init; }
+        public GlancableTest() { Name = "(unnamed)"; }
+        public GlancableTest(string name) { Name = name; }
+        public string Name { get; }
         public required IMemoryFZO InitialMemory { get; init; }
         public required TokenDeclaration Token { get; init; }
     }
     public record Glancer
     {
+        public required string Name { get; init; }
         public required IEnumerable<ICatGlanceable> Tests { get; init; }
         public required IDeTesFZOSupplier Supplier { get; init; }
 
@@ -50,6 +53,7 @@ namespace CatGlance
                                 })),
                             others => others.All(x => x)));
 
+            Console.WriteLine($"==[ DETES GLANCER '{Name}' ]==");
             foreach (var (i, (test, result)) in tests.ZipShort(results).Enumerate())
             {
                 Console.Write($"({i+1}) '{test.Name}': ");

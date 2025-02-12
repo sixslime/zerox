@@ -94,11 +94,12 @@ namespace DeTes.Realization
                 {
                     if (halt is EProcessorHalt.Completed complete)
                     {
+                        var resolution = complete.Resolution;
                         frames.Add(new EDeTesFrame.Complete
                         {
                             PreState = state,
                             CompletionHalt = complete,
-                            Assertions = GenerateOnResolveAssertionObject(runtime, runtime.GetLinkedToken(GetLastOperation(state)), complete.Resolution, GetLastMemory(state).WithResolution(complete.Resolution))
+                            Assertions = GenerateOnResolveAssertionObject(runtime, runtime.GetLinkedToken(GetLastOperation(state)), resolution, GetMemoryAfterResolution(state, resolution))
                         });
                     }
                     
@@ -152,7 +153,7 @@ namespace DeTes.Realization
                             var linkedToken = runtime.GetLinkedToken(GetLastOperation(state));
                             if (v.Resolution.Split(out var resolution, out var stateImplemented))
                             {
-                                var nMemory = GetLastMemory(state).WithResolution(resolution);
+                                var nMemory = GetMemoryAfterResolution(state, resolution);
                                 frames.Add(new EDeTesFrame.Resolve
                                 {
                                     PreState = state,
@@ -194,7 +195,13 @@ namespace DeTes.Realization
             };
         }
         private static IToken GetLastOperation(IStateFZO state) => state.OperationStack.First().Operation;
-        private static IMemoryFZO GetLastMemory(IStateFZO state) => state.OperationStack.First().MemoryStack.First();
+        private static IMemoryFZO GetMemoryAfterResolution(IStateFZO state, ResOpt resolution)
+        {
+            return (state.OperationStack.GetAt(1).Check(out var node)
+                ? node.MemoryStack.First()
+                : state.Initialized.Unwrap().InitialMemory)
+                .WithResolution(resolution);
+        }
         private static OnPushAssertionsImpl GenerateOnPushAssertionObject(RuntimeResources runtime, IToken linkedToken, IToken operation)
         {
             return new()

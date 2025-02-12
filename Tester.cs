@@ -8,6 +8,7 @@ using Minima.FZO;
 using FourZeroOne.FZOSpec;
 using Perfection;
 using CatGlance;
+using ro = FourZeroOne.Core.Resolutions.Objects;
 public class Tester
 {
     static readonly DeTesFZOSupplier RUN_IMPLEMENTATION = new()
@@ -19,36 +20,85 @@ public class Tester
     public async Task Run()
     {
 
-        GlancableTest[] tests =
+        var shouldPass = new Glancer
         {
-            new()
+            Name = "Should Pass",
+            Supplier = RUN_IMPLEMENTATION,
+            Tests = new GlancableTest[]
             {
-                Name = "trivial",
-                InitialMemory = MEMORY_IMPLEMENTATION,
-                Token = C =>
-                2.tFixed().AssertResolution(C, x => x.Value == 2)
-                .tAdd(
-                    2.tFixed())
-                .AssertResolution(C, x => x.Value == 4)
-                .AssertMemory(C, x => !x.Objects.Any())
-            },
-            new()
-            {
-                Name = "should fail",
-                InitialMemory = MEMORY_IMPLEMENTATION,
-                Token = C =>
-                2.tFixed()
-                .tAdd(
-                    2.tFixed())
-                .AssertResolution(C, x => x.Value == 3)
+                new()
+                {
+                    InitialMemory = MEMORY_IMPLEMENTATION,
+                    Token = C => 5.tFixed().AssertResolution(C, x => x.Value == 5)
+                },
+                new()
+                {
+                    InitialMemory = MEMORY_IMPLEMENTATION,
+                    Token = C =>
+                        4.tFixed().AssertResolution(C, x => x.Value == 4)
+                        .tDuplicate(4.tFixed())
+                        .AssertResolution(C, _ => true)
+                        .AssertMemory(C, _ => true)
+                        .AssertResolution(C, x => x.Count == 4)
+                },
+                new()
+                {
+                    InitialMemory = MEMORY_IMPLEMENTATION,
+                    Token = C =>
+                        Core.tSubEnvironment(RHint<ro.Number>.HINT, new()
+                        {
+                            Environment = Core.t_Env(
+                                10.tFixed().tAsVariable(out var ten),
+                                4.tFixed().tAsVariable(out var _),
+                                true.tFixed()
+                                )
+                                .AssertMemory(C, x => x.GetObject(ten).Check(out var v) && v.Value == 10)
+                                .AssertResolution(C, x => x.Count == 3)
+                                .AssertMemory(C, x => x.Objects.Count() == 2),
+                            Value = ten.tRef().tAdd(1.tFixed())
+                        })
+                        .AssertResolution(C, x => x.Value == 11)
+                        .AssertMemory(C, x => !x.Objects.Any())
+                }
             }
         };
-        var glancer = new Glancer
+        await shouldPass.Glance();
+
+        var shouldFail = new Glancer
         {
+            Name = "Should Fail",
             Supplier = RUN_IMPLEMENTATION,
-            Tests = tests
+            Tests = new GlancableTest[]
+            {
+                new()
+                {
+                    InitialMemory = MEMORY_IMPLEMENTATION,
+                    Token = C => 5.tFixed().AssertResolution(C, x => x.Value == 0)
+                },
+                new()
+                {
+                    InitialMemory = MEMORY_IMPLEMENTATION,
+                    Token = C => 
+                        4.tFixed().AssertResolution(C, x => x.Value == 4)
+                        .AssertResolution(C, _ => false)
+                        .tDuplicate(4.tFixed())
+                        .AssertResolution(C, _ => false)
+                        .AssertResolution(C, _ => true)
+                        .AssertMemory(C, _ => true)
+                    //LEFTOFF: assertions arent recognized on macros/meta executes. something with token map.
+                },
+                new()
+                {
+                    InitialMemory = MEMORY_IMPLEMENTATION,
+                    Token = C =>
+                        4.tFixed().AssertResolution(C, x => x.Value == 4).Yield(4).tToMulti()
+                        .AssertResolution(C, _ => false)
+                        .AssertResolution(C, _ => true)
+                        .AssertMemory(C, _ => true)
+                }
+            }
         };
-        await glancer.Glance();
+        await shouldFail.Glance();
     }
 
     /* CatGlance spec
