@@ -108,14 +108,7 @@ public class Tester
     // - traverse preprocessing proxies recursively to find any instances of OriginalArg/Original and map them.
     //  (this would also require macro proxies to be public)
     // ACTUALLY
-    // consider removing proxies alltogether, replacing them with metfunctions
-    // the issue of not evaluating a token should be handled by simply taking metafunctions *as* the input to the macro/rule.
-    // for rules this might be cheugy.
-    // rules expressed by metafunctions with metafunctions as args. with magic
-    // ACTUALLY
-    // change DynamicReference and DynamicAssign to take any IStateAddress.
-    // add 'RuleMatcher' object.
-    // 
+    // proxies may be a necessary evil. generics devastate the possibility of constant pointer based solution.
 
     // labels are specifications that match tokens:
     class Label<T> : ILabel where T : FourZeroOne.Token.Unsafe.IToken
