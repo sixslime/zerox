@@ -107,6 +107,17 @@ public class Tester
     // - rethink labels.
     // - traverse preprocessing proxies recursively to find any instances of OriginalArg/Original and map them.
     //  (this would also require macro proxies to be public)
+    // ACTUALLY
+    // consider removing proxies alltogether, replacing them with metfunctions
+    // the issue of not evaluating a token should be handled by simply taking metafunctions *as* the input to the macro/rule.
+    // for rules this might be cheugy.
+    // rules expressed by metafunctions with metafunctions as args. with magic
+    // labels are specifications that match tokens:
+    class Label<T> : ILabel where T : FourZeroOne.Token.Unsafe.IToken
+    {
+
+    }
+    interface ILabel { }
 
     /* CatGlance spec
      * 
