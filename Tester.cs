@@ -63,7 +63,6 @@ public class Tester
             }
         };
         await shouldPass.Glance();
-
         var shouldFail = new Glancer
         {
             Name = "Should Fail",
@@ -111,10 +110,6 @@ public class Tester
     // proxies may be a necessary evil. generics devastate the possibility of constant pointer based solution.
 
     // labels are specifications that match tokens:
-    class Label<T> : ILabel where T : FourZeroOne.Token.Unsafe.IToken
-    {
-
-    }
     interface ILabel { }
 
     /* CatGlance spec

@@ -96,6 +96,16 @@ namespace FourZeroOne.Core.Resolutions
             public required DynamicAddress<MetaFunction<R>> SelfIdentifier { get; init; }
             public required IToken<R> Token { get; init; }
             public override string ToString() => $"{SelfIdentifier}(){{{Token}}}";
+            public FZOSpec.EStateImplemented.MetaExecute GenerateMetaExecute()
+            {
+                return new FZOSpec.EStateImplemented.MetaExecute
+                {
+                    FunctionToken = new Tokens.MetaExecuted<R>(Token),
+                    MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
+                    ((SelfIdentifier, this.AsSome()))
+                    .Map(x => x.Tiple())
+                };
+            }
         }
         public sealed record MetaFunction<RArg1, ROut> : NoOp
             where RArg1 : class, ResObj
@@ -105,6 +115,16 @@ namespace FourZeroOne.Core.Resolutions
             public required DynamicAddress<RArg1> IdentifierA { get; init; }
             public required IToken<ROut> Token { get; init; }
             public override string ToString() => $"{SelfIdentifier}({IdentifierA})::{{{Token}}}";
+            public FZOSpec.EStateImplemented.MetaExecute GenerateMetaExecute(IOption<RArg1> arg1)
+            {
+                return new FZOSpec.EStateImplemented.MetaExecute
+                {
+                    FunctionToken = new Tokens.MetaExecuted<ROut>(Token),
+                    MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
+                    ((SelfIdentifier, this.AsSome()), (IdentifierA, arg1))
+                    .Map(x => x.Tiple())
+                };
+            }
         }
         public sealed record MetaFunction<RArg1, RArg2, ROut> : NoOp
             where RArg1 : class, ResObj
@@ -116,6 +136,16 @@ namespace FourZeroOne.Core.Resolutions
             public required DynamicAddress<RArg2> IdentifierB { get; init; }
             public required IToken<ROut> Token { get; init; }
             public override string ToString() => $"{SelfIdentifier}({IdentifierA}, {IdentifierB})::{{{Token}}}";
+            public FZOSpec.EStateImplemented.MetaExecute GenerateMetaExecute(IOption<RArg1> arg1, IOption<RArg2> arg2)
+            {
+                return new FZOSpec.EStateImplemented.MetaExecute
+                {
+                    FunctionToken = new Tokens.MetaExecuted<ROut>(Token),
+                    MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
+                    ((SelfIdentifier, this.AsSome()), (IdentifierA, arg1), (IdentifierB, arg2))
+                    .Map(x => x.Tiple())
+                };
+            }
         }
         public sealed record MetaFunction<RArg1, RArg2, RArg3, ROut> : NoOp
             where RArg1 : class, ResObj
@@ -129,6 +159,16 @@ namespace FourZeroOne.Core.Resolutions
             public required DynamicAddress<RArg3> IdentifierC { get; init; }
             public required IToken<ROut> Token { get; init; }
             public override string ToString() => $"{SelfIdentifier}({IdentifierA}, {IdentifierB}, {IdentifierC})::{{{Token}}}";
+            public FZOSpec.EStateImplemented.MetaExecute GenerateMetaExecute(IOption<RArg1> arg1, IOption<RArg2> arg2, IOption<RArg3> arg3)
+            {
+                return new FZOSpec.EStateImplemented.MetaExecute
+                {
+                    FunctionToken = new Tokens.MetaExecuted<ROut>(Token),
+                    MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
+                    ((SelfIdentifier, this.AsSome()), (IdentifierA, arg1), (IdentifierB, arg2), (IdentifierC, arg3))
+                    .Map(x => x.Tiple())
+                };
+            }
         }
 
         public sealed record MetaArgs<R1> : NoOp
@@ -166,11 +206,11 @@ namespace FourZeroOne.Core.Resolutions
     namespace _Private
     {
         // ??
-        public interface IMergeIdentifier
+        internal interface IMergeIdentifier
         {
             public IComponentIdentifier ForComponentUnsafe { get; }
         }
-        public record MergeComponentIdentifier<H, R> : IMergeIdentifier, IComponentIdentifier<MergeSpec<H>, R> where H : ICompositionType where R : class, ResObj
+        internal record MergeComponentIdentifier<H, R> : IMergeIdentifier, IComponentIdentifier<MergeSpec<H>, R> where H : ICompositionType where R : class, ResObj
         {
             public IComponentIdentifier<H, R> ForComponent { get; private init; }
             public IComponentIdentifier ForComponentUnsafe => ForComponent;

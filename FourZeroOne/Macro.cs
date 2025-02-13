@@ -6,111 +6,72 @@ using MorseCode.ITask;
 #nullable enable
 namespace FourZeroOne.Macro
 {
-
-    using ResObj = Resolution.IResolution;
-    using r = Core.Resolutions;
+    using FourZeroOne.FZOSpec;
     using Token;
-    using Handles;
-    public interface IMacro<out R> : IToken<R>, Unsafe.IMacro where R : class, ResObj
-    {
-        public IToken<R> Expand();
-    }
-    public abstract record MacroBehavior<R> : TokenBehavior<R>, IMacro<R> where R : class, ResObj
-    {
-        protected abstract Proxy.Unsafe.IProxy<R> InternalProxy { get; }
-        public override IResult<ITask<IOption<R>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] __)
-        {
-            throw new Exception("Macro directly resolved without expansion.");
-        }
-        protected MacroBehavior(params Token.Unsafe.IToken[] args) : base(args)
-        {
-            _cachedRealization = null;
-        }
-        public IToken<R> Expand()
-        {
-            _cachedRealization ??= InternalProxy.UnsafeTypedRealize(this, new None<Rule.IRule>());
-            return _cachedRealization;
-        }
-        public Token.Unsafe.IToken ExpandUnsafe() => Expand();
+    using ResObj = Resolution.IResolution;
+    using Core.Resolutions.Boxed;
 
-        public override int GetHashCode()
-        {
-            // this is stupid.
-            var cached = _cachedRealization;
-            _cachedRealization = null;
-            var o = base.GetHashCode();
-            _cachedRealization = cached;
-            return o;
-        }
-        private IToken<R>? _cachedRealization;
-    }
-
-    /// <summary>
-    /// Tokens that inherit must have a constructor matching: <br></br>
-    /// <code>(IToken&lt;<typeparamref name="RArg1"/>&gt;)</code>
-    /// </summary>
-    /// <typeparam name="RArg1"></typeparam>
-    public abstract record OneArg<RArg1, ROut> : MacroBehavior<ROut>, IFunction<RArg1, ROut>
-        where RArg1 : class, ResObj
-        where ROut : class, ResObj
-    {
-        public IToken<RArg1> Arg1 { get; }
-        protected OneArg(IToken<RArg1> in1) : base(in1)
-        {
-            Arg1 = in1;
-        }
-    }
-    /// <summary>
-    /// Tokens that inherit must have a constructor matching: <br></br>
-    /// <code>(IToken&lt;<typeparamref name="RArg1"/>&gt;, IToken&lt;<typeparamref name="RArg2"/>&gt;)</code>
-    /// </summary>
-    /// <typeparam name="RArg1"></typeparam>
-    /// <typeparam name="RArg2"></typeparam>
-    public abstract record TwoArg<RArg1, RArg2, ROut> : MacroBehavior<ROut>, IFunction<RArg1, RArg2, ROut>
-        where RArg1 : class, ResObj
-        where RArg2 : class, ResObj
-        where ROut : class, ResObj
-    {
-        public IToken<RArg1> Arg1 { get; }
-        public IToken<RArg2> Arg2 { get; }
-        protected TwoArg(IToken<RArg1> in1, IToken<RArg2> in2) : base(in1, in2)
-        {
-            Arg1 = in1;
-            Arg2 = in2;
-        }
-    }
-    /// <summary>
-    /// Tokens that inherit must have a constructor matching: <br></br>
-    /// <code>(IToken&lt;<typeparamref name="RArg1"/>&gt;, IToken&lt;<typeparamref name="RArg2"/>&gt;, IToken&lt;<typeparamref name="RArg3"/>&gt;)</code>
-    /// </summary>
-    /// <typeparam name="RArg1"></typeparam>
-    /// <typeparam name="RArg2"></typeparam>
-    /// <typeparam name="RArg3"></typeparam>
-    public abstract record ThreeArg<RArg1, RArg2, RArg3, ROut> : MacroBehavior<ROut>, IFunction<RArg1, RArg2, RArg3, ROut>
+    public interface IMacro<R> : Unsafe.IMacro, IToken<R> where R : class, ResObj { }
+    public record Macro<RArg1, RArg2, RArg3, ROut> : RuntimeHandledFunction<RArg1, RArg2, RArg3, ROut>, IMacro<ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
         where RArg3 : class, ResObj
         where ROut : class, ResObj
     {
-        public IToken<RArg1> Arg1 { get; }
-        public IToken<RArg2> Arg2 { get; }
-        public IToken<RArg3> Arg3 { get; }
-        protected ThreeArg(IToken<RArg1> in1, IToken<RArg2> in2, IToken<RArg3> in3) : base(in1, in2, in3)
+        public Macro(IToken<RArg1> in1, IToken<RArg2> in2, IToken<RArg3> in3) : base(in1, in2, in3) { }
+        public required MacroLabel Label { get; init; }
+        public required MetaFunction<RArg1, RArg2, RArg3, ROut> Definition { get; init; }
+        protected override EStateImplemented MakeData(RArg1 in1, RArg2 in2, RArg3 in3)
         {
-            Arg1 = in1;
-            Arg2 = in2;
-            Arg3 = in3;
+            return Definition.GenerateMetaExecute(in1.AsSome(), in2.AsSome(), in3.AsSome());
         }
     }
-}
-
-namespace FourZeroOne.Macro.Unsafe
-{
-    using ResObj = Resolution.IResolution;
-    using r = Core.Resolutions;
-    using Token.Unsafe;
-    public interface IMacro : IToken
+    public record Macro<RArg1, RArg2, ROut> : RuntimeHandledFunction<RArg1, RArg2, ROut>, IMacro<ROut>
+        where RArg1 : class, ResObj
+        where RArg2 : class, ResObj
+        where ROut : class, ResObj
     {
-        public IToken ExpandUnsafe();
+        public Macro(IToken<RArg1> in1, IToken<RArg2> in2) : base(in1, in2) { }
+        public required MacroLabel Label { get; init; }
+        public required MetaFunction<RArg1, RArg2, ROut> Definition { get; init; }
+        protected override EStateImplemented MakeData(RArg1 in1, RArg2 in2)
+        {
+            return Definition.GenerateMetaExecute(in1.AsSome(), in2.AsSome());
+        }
+    }
+    public record Macro<RArg1, ROut> : RuntimeHandledFunction<RArg1, ROut>, IMacro<ROut>
+        where RArg1 : class, ResObj
+        where ROut : class, ResObj
+    {
+        public Macro(IToken<RArg1> in1) : base(in1) { }
+        public required MacroLabel Label { get; init; }
+        public required MetaFunction<RArg1, ROut> Definition { get; init; }
+        protected override EStateImplemented MakeData(RArg1 in1)
+        {
+            return Definition.GenerateMetaExecute(in1.AsSome());
+        }
+    }
+    public record Macro<ROut> : RuntimeHandledValue<ROut>, IMacro<ROut>
+        where ROut : class, ResObj
+    {
+        public Macro() : base() { }
+        public required MacroLabel Label { get; init; }
+        public required MetaFunction<ROut> Definition { get; init; }
+        protected override EStateImplemented MakeData()
+        {
+            return Definition.GenerateMetaExecute();
+        }
+    }
+    public sealed record MacroLabel
+    {
+        public required string Namespace { get; init; }
+        public required string Identifier { get; init; }
+    }
+    namespace Unsafe
+    {
+        public interface IMacro : Token.Unsafe.IToken
+        {
+            public MacroLabel Label { get; }
+        }
     }
 }

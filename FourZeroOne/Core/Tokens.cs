@@ -315,14 +315,7 @@ namespace FourZeroOne.Core.Tokens
             protected override EStateImplemented MakeData(ICompositionOf<D> in1)
             {
                 // nightmare fuel
-                var metaValue = new D().DecompositionFunction;
-                return new FZOSpec.EStateImplemented.MetaExecute
-                {
-                    FunctionToken = metaValue.Token,
-                    MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
-                    ((metaValue.SelfIdentifier, metaValue.AsSome()), (metaValue.IdentifierA, in1.AsSome()))
-                    .Map(x => x.Tiple())
-                };
+                return new D().DecompositionFunction.GenerateMetaExecute(in1.AsSome());
             }
         }
     }
@@ -334,13 +327,7 @@ namespace FourZeroOne.Core.Tokens
 
         protected override FZOSpec.EStateImplemented MakeData(r.Boxed.MetaFunction<ROut> func)
         {
-            return new FZOSpec.EStateImplemented.MetaExecute
-            {
-                FunctionToken = new MetaExecuted<ROut>(func.Token),
-                MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
-                    ((func.SelfIdentifier, func.AsSome()))
-                    .Map(x => x.Tiple())
-            };
+            return func.GenerateMetaExecute();
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}:<>;".AsSome();
     }
@@ -352,13 +339,7 @@ namespace FourZeroOne.Core.Tokens
 
         protected override FZOSpec.EStateImplemented MakeData(r.Boxed.MetaFunction<RArg1, ROut> func, r.Boxed.MetaArgs<RArg1> args)
         {
-            return new FZOSpec.EStateImplemented.MetaExecute
-            {
-                FunctionToken = new MetaExecuted<ROut>(func.Token),
-                MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
-                    ((func.SelfIdentifier, func.AsSome()), (func.IdentifierA, args.Arg1))
-                    .Map(x => x.Tiple())
-            };
+            return func.GenerateMetaExecute(args.Arg1);
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2};".AsSome();
     }
@@ -371,13 +352,7 @@ namespace FourZeroOne.Core.Tokens
 
         protected override FZOSpec.EStateImplemented MakeData(r.Boxed.MetaFunction<RArg1, RArg2, ROut> func, r.Boxed.MetaArgs<RArg1, RArg2> args)
         {
-            return new FZOSpec.EStateImplemented.MetaExecute
-            {
-                FunctionToken = new MetaExecuted<ROut>(func.Token),
-                MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
-                    ((func.SelfIdentifier, func.AsSome()), (func.IdentifierA, args.Arg1), (func.IdentifierB, args.Arg2))
-                    .Map(x => x.Tiple())
-            };
+            return func.GenerateMetaExecute(args.Arg1, args.Arg2);
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2};".AsSome();
     }
@@ -391,13 +366,7 @@ namespace FourZeroOne.Core.Tokens
 
         protected override FZOSpec.EStateImplemented MakeData(r.Boxed.MetaFunction<RArg1, RArg2, RArg3, ROut> func, r.Boxed.MetaArgs<RArg1, RArg2, RArg3> args)
         {
-            return new FZOSpec.EStateImplemented.MetaExecute
-            {
-                FunctionToken = new MetaExecuted<ROut>(func.Token),
-                MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
-                    ((func.SelfIdentifier, func.AsSome()), (func.IdentifierA, args.Arg1), (func.IdentifierB, args.Arg2), (func.IdentifierC, args.Arg3))
-                    .Map(x => x.Tiple())
-            };
+            return func.GenerateMetaExecute(args.Arg1, args.Arg2, args.Arg3);
         }
         protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2};".AsSome();
     }
