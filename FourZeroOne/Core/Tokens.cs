@@ -470,6 +470,7 @@ namespace FourZeroOne.Core.Tokens
             return new ro.Bool() { IsTrue = obj.IsSome() }.AsSome().ToCompletedITask();
         }
     }
+    // DEV: this does not need to be explicitly DynamicReference, it could just be IStateAddress.
     public sealed record DynamicAssign<R> : StandardToken<r.Instructions.Assign<R>> where R : class, ResObj
     {
         public DynamicAssign(DynamicAddress<R> address, IToken<R> obj) : base(obj)
