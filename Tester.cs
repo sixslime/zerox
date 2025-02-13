@@ -100,14 +100,11 @@ public class Tester
     }
 
     // LEFTOFF
-    // advanced solve issue.
-    // originalarg/original proxies are always a different instance of the token due to labels always being applied on proxies.
-    // we can either:
-    // - rethink labels.
-    // - traverse preprocessing proxies recursively to find any instances of OriginalArg/Original and map them.
-    //  (this would also require macro proxies to be public)
-    // ACTUALLY
-    // proxies may be a necessary evil. generics devastate the possibility of constant pointer based solution.
+    // with the new specification for macros, proxies just flat do not work with macros.
+    // we may need to remove proxies
+
+    // WARNING:
+    // reliance on metafunctions is bringing attention to the lack of variable capturing.
 
     // labels are specifications that match tokens:
     interface ILabel { }

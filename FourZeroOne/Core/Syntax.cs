@@ -7,7 +7,6 @@ namespace FourZeroOne.Core.Syntax
     using r = Resolutions;
     using t = Tokens;
     using p = Proxies;
-    using tM = Macros;
     using ro = Resolutions.Objects;
     using Token;
     using Proxy;
@@ -304,7 +303,7 @@ namespace FourZeroOne.Core.Syntax
         { return new(); }
         public static Macro<ICompositionOf<C>> tCompose<C>() where C : ICompositionType, new()
         {
-            return tM.Compose<C>.Construct();
+            return Macros.Compose<C>.Construct();
         }
 
     }
@@ -458,21 +457,21 @@ namespace FourZeroOne.Core.Syntax
         { return new(token, index); }
         public static p.Function<t.Multi.GetIndex<R>, TOrig, IMulti<R>, ro.Number, R> pGetIndex<TOrig, R>(this IProxy<TOrig, IMulti<R>> values, IProxy<TOrig, ro.Number> index) where TOrig : IToken where R : class, ResObj
         { return new(values, index); }
-        public static tM.Multi.Map<RIn, ROut> tMap<RIn, ROut>(this IToken<IMulti<RIn>> source, Func<DynamicAddress<RIn>, IToken<ROut>> mapFunction)
+        public static Macro<IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>> tMap<RIn, ROut>(this IToken<IMulti<RIn>> source, Func<DynamicAddress<RIn>, IToken<ROut>> mapFunction)
             where RIn : class, ResObj
             where ROut : class, ResObj
-        { return new(source, Core.tMetaFunction(new(), mapFunction)); }
-        public static p.Function<tM.Multi.Map<RIn, ROut>, TOrig, IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>> pMap<TOrig, RIn, ROut>(this IProxy<TOrig, IMulti<RIn>> values, IProxy<TOrig, r.Boxed.MetaFunction<RIn, ROut>> mapFunction)
-            where TOrig : IToken where RIn : class, ResObj where ROut : class, ResObj
-        { return new(values, mapFunction); }
-        public static tM.Multi.Duplicate<R> tDuplicate<R>(this IToken<R> value, IToken<ro.Number> count)
+        { return Macros.Map<RIn, ROut>.Construct(source, Core.tMetaFunction(RHint<RIn, ROut>.HINT, mapFunction)); }
+        //public static p.Function<Macro<IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>>, TOrig, IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>> pMap<TOrig, RIn, ROut>(this IProxy<TOrig, IMulti<RIn>> values, IProxy<TOrig, r.Boxed.MetaFunction<RIn, ROut>> mapFunction)
+        //    where TOrig : IToken where RIn : class, ResObj where ROut : class, ResObj
+        //{ return new(values, mapFunction); }
+        public static Macro<R, ro.Number, r.Multi<R>> tDuplicate<R>(this IToken<R> value, IToken<ro.Number> count)
             where R : class, ResObj
-        { return new(value, count); }
-        public static p.Function<tM.Multi.Duplicate<R>, TOrig, R, ro.Number, r.Multi<R>> pDuplicate<TOrig, R>(this IProxy<TOrig, R> value, IProxy<TOrig, ro.Number> count)
-            where TOrig : IToken
-            where R : class, ResObj
-        { return new(value, count); }
+        { return Macros.Duplicate<R>.Construct(value, count); }
 
+        //public static p.Function<tM.Multi.Duplicate<R>, TOrig, R, ro.Number, r.Multi<R>> pDuplicate<TOrig, R>(this IProxy<TOrig, R> value, IProxy<TOrig, ro.Number> count)
+        //    where TOrig : IToken
+        //    where R : class, ResObj
+        //{ return new(value, count); }
         public static t.Number.Add tAdd(this IToken<ro.Number> a, IToken<ro.Number> b)
         { return new(a, b); }
         public static p.Function<t.Number.Add, TOrig, ro.Number, ro.Number, ro.Number> pAdd<TOrig>(this IProxy<TOrig, ro.Number> a, IProxy<TOrig, ro.Number> b) where TOrig : IToken
@@ -508,24 +507,24 @@ namespace FourZeroOne.Core.Syntax
             where H : ICompositionType
             where C : class, ResObj
         { return new(identifier, holder, component); }
-        public static tM.UpdateComponent<H, C> tUpdateComponent<H, C>(this IToken<ICompositionOf<H>> holder, IComponentIdentifier<H, C> componentIdentifier, IToken<r.Boxed.MetaFunction<C, C>> changeFunc)
-            where H : ICompositionType
-            where C : class, ResObj
-        { return new(componentIdentifier, holder, changeFunc); }
-        public static tM.UpdateComponent<H, C> tUpdateComponent<H, C>(this IToken<ICompositionOf<H>> holder, IComponentIdentifier<H, C> componentIdentifier, Func<DynamicAddress<C>, IToken<C>> changeFunc)
-            where H : ICompositionType
-            where C : class, ResObj
-        { return new(componentIdentifier, holder, Core.tMetaFunction(RHint<C, C>.Hint(), changeFunc)); }
-        public static p.SpecialCase.Component.Update<TOrig, H, C> pUpdateComponent<TOrig, H, C>(this IProxy<TOrig, ICompositionOf<H>> holder, IComponentIdentifier<H, C> identifier, IProxy<TOrig, r.Boxed.MetaFunction<C, C>> changeFunc)
-            where TOrig : IToken
-            where H : ICompositionType
-            where C : class, ResObj
-        { return new(identifier, holder, changeFunc); }
-        public static p.SpecialCase.Component.Update<TOrig, H, C> pUpdateComponent<TOrig, H, C>(this IProxy<TOrig, ICompositionOf<H>> holder, IComponentIdentifier<H, C> identifier, Func<DynamicAddress<C>, IProxy<TOrig, C>> changeFunc)
-            where TOrig : IToken
-            where H : ICompositionType
-            where C : class, ResObj
-        { return new(identifier, holder, Core.pMetaFunction(new(), new(), changeFunc)); }
+        public static Macro<ICompositionOf<C>, r.Boxed.MetaFunction<R, R>, ICompositionOf<C>> tUpdateComponent<C, R>(this IToken<ICompositionOf<C>> holder, IComponentIdentifier<C, R> componentIdentifier, IToken<r.Boxed.MetaFunction<R, R>> changeFunc)
+            where C : ICompositionType
+            where R : class, ResObj
+        { return Macros.UpdateComponent<C, R>.Construct(holder, changeFunc, componentIdentifier) ; }
+        public static Macro<ICompositionOf<C>, r.Boxed.MetaFunction<R, R>, ICompositionOf<C>> tUpdateComponent<C, R>(this IToken<ICompositionOf<C>> holder, IComponentIdentifier<C, R> componentIdentifier, Func<DynamicAddress<R>, IToken<R>> changeFunc)
+            where C : ICompositionType
+            where R : class, ResObj
+        { return Macros.UpdateComponent<C, R>.Construct(holder, Core.tMetaFunction(RHint<R, R>.HINT, changeFunc), componentIdentifier); }
+        //public static p.SpecialCase.Component.Update<TOrig, H, C> pUpdateComponent<TOrig, H, C>(this IProxy<TOrig, ICompositionOf<H>> holder, IComponentIdentifier<H, C> identifier, IProxy<TOrig, r.Boxed.MetaFunction<C, C>> changeFunc)
+        //    where TOrig : IToken
+        //    where H : ICompositionType
+        //    where C : class, ResObj
+        //{ return new(identifier, holder, changeFunc); }
+        //public static p.SpecialCase.Component.Update<TOrig, H, C> pUpdateComponent<TOrig, H, C>(this IProxy<TOrig, ICompositionOf<H>> holder, IComponentIdentifier<H, C> identifier, Func<DynamicAddress<C>, IProxy<TOrig, C>> changeFunc)
+        //    where TOrig : IToken
+        //    where H : ICompositionType
+        //    where C : class, ResObj
+        //{ return new(identifier, holder, Core.pMetaFunction(new(), new(), changeFunc)); }
         public static t.Component.Without<H> tWithoutComponent<H>(this IToken<ICompositionOf<H>> holder, Resolution.Unsafe.IComponentIdentifier<H> componentIdentifier)
             where H : ICompositionType
         { return new(componentIdentifier, holder); }
@@ -533,10 +532,10 @@ namespace FourZeroOne.Core.Syntax
             where TOrig : IToken
             where H : ICompositionType
         { return new(identifier, holder); }
-        public static tM.Decompose<D> tDecompose<D>(this IToken<ICompositionOf<D>> composition) where D : IDecomposableType<D>, new()
-        { return new(composition); }
-        public static p.Function<tM.Decompose<D>, TOrig, ICompositionOf<D>, ResObj> pDecompose<TOrig, D>(this IProxy<TOrig, ICompositionOf<D>> composition) where D : IDecomposableType<D>, new() where TOrig : IToken
-        { return new(composition); }
+        public static Macro<ICompositionOf<D>, R> tDecompose<D, R>(this IToken<ICompositionOf<D>> composition) where D : IDecomposableType<D, R>, new() where R : class, ResObj
+        { return Macros.Decompose<D, R>.Construct(composition); }
+        //public static p.Function<tM.Decompose<D>, TOrig, ICompositionOf<D>, ResObj> pDecompose<TOrig, D>(this IProxy<TOrig, ICompositionOf<D>> composition) where D : IDecomposableType<D>, new() where TOrig : IToken
+        //{ return new(composition); }
 
         public static t.Component.With<r.MergeSpec<H>, C> t_WithMerged<H, C>(this IToken<ICompositionOf<r.MergeSpec<H>>> mergeObject, IComponentIdentifier<H, C> mergingIdentifier, IToken<C> component)
             where H : ICompositionType
@@ -554,50 +553,48 @@ namespace FourZeroOne.Core.Syntax
             where TOrig : IToken
             where H : ICompositionType
         { return new(subject, mergeObject); }
-        public static t.Data.Insert<RAddress, RObj> tDataWrite<RAddress, RObj>(this IToken<RAddress> address, IToken<RObj> data)
-            where RAddress : class, IMemoryAddress<RObj>, ResObj
-            where RObj : class, ResObj
+        public static t.Data.Insert<R> tDataWrite<R>(this IToken<IMemoryObject<R>> address, IToken<R> data)
+            where R : class, ResObj
         { return new(address, data); }
-        public static p.Function<t.Data.Insert<RAddress, RObj>, TOrig, RAddress, RObj, r.Instructions.Assign<RObj>> pDataWrite<TOrig, RAddress, RObj>(this IProxy<TOrig, RAddress> address, IProxy<TOrig, RObj> data)
+        public static p.Function<t.Data.Insert<R>, TOrig, IMemoryObject<R>, R, r.Instructions.Assign<R>> pDataWrite<TOrig, R>(this IProxy<TOrig, IMemoryObject<R>> address, IProxy<TOrig, R> data)
             where TOrig : IToken
-            where RAddress : class, IMemoryAddress<RObj>, ResObj
-            where RObj : class, ResObj
+            where R : class, ResObj
         { return new(address, data); }
-        public static t.Data.Get<RAddress, RObj> tDataRead<RAddress, RObj>(this IToken<RAddress> address, RHint<RObj> _)
-            where RAddress : class, IMemoryAddress<RObj>, ResObj
-            where RObj : class, ResObj
+        public static t.Data.Get<R> tDataGet<R>(this IToken<IMemoryObject<R>> address)
+            where R : class, ResObj
         { return new(address); }
-        public static p.Function<t.Data.Get<RAddress, RObj>, TOrig, RAddress, RObj> pRead<TOrig, RAddress, RObj>(this IProxy<TOrig, RAddress> address, RHint<RObj> _)
+        public static p.Function<t.Data.Get<R>, TOrig, IMemoryObject<R>, R> pRead<TOrig, R>(this IProxy<TOrig, IMemoryObject<R>> address)
             where TOrig : IToken
-            where RAddress : class, IMemoryAddress<RObj>, ResObj
-            where RObj : class, ResObj
+            where R : class, ResObj
         { return new(address); }
-        public static t.Data.Remove<RAddress> tDataRedact<RAddress>(this IToken<RAddress> address)
-            where RAddress : class, Resolution.Unsafe.IMemoryAddress, ResObj
+        public static t.Data.Remove tDataRedact(this IToken<IMemoryObject<ResObj>> address)
         { return new(address); }
-        public static p.Function<t.Data.Remove<RAddress>, TOrig, RAddress, r.Instructions.Redact> pDataRedact<TOrig, RAddress>(this IProxy<TOrig, RAddress> address)
+        public static p.Function<t.Data.Remove, TOrig, IMemoryObject<ResObj>, r.Instructions.Redact> pDataRedact<TOrig>(this IProxy<TOrig, IMemoryObject<ResObj>> address)
             where TOrig : IToken
-            where RAddress : class, Resolution.Unsafe.IMemoryAddress, ResObj
         { return new(address); }
-        public static tM.UpdateMemoryObject<RAddress, RObj> tDataUpdate<RAddress, RObj>(this IToken<RAddress> address, IToken<r.Boxed.MetaFunction<RObj, RObj>> updateFunction)
-            where RAddress : class, IMemoryAddress<RObj>, ResObj
-            where RObj : class, ResObj
-        { return new(address, updateFunction); }
-        public static tM.UpdateMemoryObject<RAddress, RObj> tDataUpdate<RAddress, RObj>(this IToken<RAddress> address, RHint<RObj> _, Func<DynamicAddress<RObj>, IToken<RObj>> updateFunction)
-            where RAddress : class, IMemoryAddress<RObj>, ResObj
-            where RObj : class, ResObj
-        { return new(address, Core.tMetaFunction(RHint<RObj, RObj>.Hint(), updateFunction)); }
-        public static p.Function<tM.UpdateMemoryObject<RAddress, RObj>, TOrig, RAddress, r.Boxed.MetaFunction<RObj, RObj>, r.Instructions.Assign<RObj>> pDataUpdate<TOrig, RAddress, RObj>(this IProxy<TOrig, RAddress> address, RHint<RObj> _, IProxy<TOrig, r.Boxed.MetaFunction<RObj, RObj>> updateFunction)
-            where TOrig : IToken
-            where RAddress : class, IMemoryAddress<RObj>, ResObj
-            where RObj : class, ResObj
-        { return new(address, updateFunction); }
-        public static p.Function<tM.UpdateMemoryObject<RAddress, RObj>, TOrig, RAddress, r.Boxed.MetaFunction<RObj, RObj>, r.Instructions.Assign<RObj>> pDataUpdate<TOrig, RAddress, RObj>(this IProxy<TOrig, RAddress> address, RHint<RObj> _, Func<DynamicAddress<RObj>, IProxy<TOrig, RObj>> updateFunction)
-            where TOrig : IToken
-            where RAddress : class, IMemoryAddress<RObj>, ResObj
-            where RObj : class, ResObj
-        { return new(address, Core.pMetaFunction(new OriginalHint<TOrig>(), RHint<RObj, RObj>.Hint(), updateFunction)); }
+        public static Macro<IMemoryObject<R>, r.Boxed.MetaFunction<R, R>, r.Instructions.Assign<R>> tDataUpdate<R>(this IToken<IMemoryObject<R>> address, IToken<r.Boxed.MetaFunction<R, R>> updateFunction)
+            where R : class, ResObj
+        { return Macros.UpdateMemoryObject<R>.Construct(address, updateFunction); }
+        public static Macro<IMemoryObject<R>, r.Boxed.MetaFunction<R, R>, r.Instructions.Assign<R>> tDataUpdate<R>(this IToken<IMemoryObject<R>> address, Func<DynamicAddress<R>, IToken<R>> updateFunction)
+            where R : class, ResObj
+        { return Macros.UpdateMemoryObject<R>.Construct(address, Core.tMetaFunction(RHint<R, R>.HINT, updateFunction)); }
+        //public static p.Function<tM.UpdateMemoryObject<IMemoryObject<R>, R>, TOrig, IMemoryObject<R>, r.Boxed.MetaFunction<R, R>, r.Instructions.Assign<R>> pDataUpdate<TOrig, IMemoryObject<R>, R>(this IProxy<TOrig, IMemoryObject<R>> address, RHint<R> _, IProxy<TOrig, r.Boxed.MetaFunction<R, R>> updateFunction)
+        //    where TOrig : IToken
+        //    where IMemoryObject<R> : class, IMemoryAddress<R>, ResObj
+        //    where R : class, ResObj
+        //{ return new(address, updateFunction); }
+        //public static p.Function<tM.UpdateMemoryObject<IMemoryObject<R>, R>, TOrig, IMemoryObject<R>, r.Boxed.MetaFunction<R, R>, r.Instructions.Assign<R>> pDataUpdate<TOrig, IMemoryObject<R>, R>(this IProxy<TOrig, IMemoryObject<R>> address, RHint<R> _, Func<DynamicAddress<R>, IProxy<TOrig, R>> updateFunction)
+        //    where TOrig : IToken
+        //    where IMemoryObject<R> : class, IMemoryAddress<R>, ResObj
+        //    where R : class, ResObj
+        //{ return new(address, Core.pMetaFunction(new OriginalHint<TOrig>(), RHint<R, R>.Hint(), updateFunction)); }
 
+        public static Macro<R, r.Boxed.MetaFunction<R>, R> tCatchNolla<R>(this IToken<R> value, IToken<r.Boxed.MetaFunction<R>> fallback)
+            where R : class, ResObj
+        { return Macros.CatchNolla<R>.Construct(value, fallback); }
+        public static Macro<R, r.Boxed.MetaFunction<R>, R> tCatchNolla<R>(this IToken<R> value, Func<IToken<R>> fallback)
+            where R : class, ResObj
+        { return Macros.CatchNolla<R>.Construct(value, fallback().tMetaBoxed()); }
         public static t.DynamicReference<R> tRef<R>(this DynamicAddress<R> ident) where R : class, ResObj
         { return new(ident); }
         public static t.Fixed<ro.Bool> tFixed(this bool value)

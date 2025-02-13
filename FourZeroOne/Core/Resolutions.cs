@@ -206,11 +206,11 @@ namespace FourZeroOne.Core.Resolutions
     namespace _Private
     {
         // ??
-        internal interface IMergeIdentifier
+        public interface IMergeIdentifier
         {
             public IComponentIdentifier ForComponentUnsafe { get; }
         }
-        internal record MergeComponentIdentifier<H, R> : IMergeIdentifier, IComponentIdentifier<MergeSpec<H>, R> where H : ICompositionType where R : class, ResObj
+        public record MergeComponentIdentifier<H, R> : IMergeIdentifier, IComponentIdentifier<MergeSpec<H>, R> where H : ICompositionType where R : class, ResObj
         {
             public IComponentIdentifier<H, R> ForComponent { get; private init; }
             public IComponentIdentifier ForComponentUnsafe => ForComponent;

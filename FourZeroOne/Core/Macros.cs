@@ -18,62 +18,59 @@ namespace FourZeroOne.Core.Macros
     using Resolution;
     using ro = Core.Resolutions.Objects;
     using Resolutions.Boxed;
-    namespace Multi
-    {
-        public static class Map<RIn, ROut>
+    public static class Map<RIn, ROut>
             where RIn : class, ResObj
             where ROut : class, ResObj
+    {
+        public static Macro<IMulti<RIn>, MetaFunction<RIn, ROut>, r.Multi<ROut>> Construct(IToken<IMulti<RIn>> multi, IToken<MetaFunction<RIn, ROut>> mapFunction)
         {
-            public static Macro<IMulti<RIn>, MetaFunction<RIn, ROut>, r.Multi<ROut>> Construct(IToken<IMulti<RIn>> multi, IToken<MetaFunction<RIn, ROut>> mapFunction)
+            return new(multi, mapFunction)
             {
-                return new(multi, mapFunction)
-                {
-                    Label = Package.Label("Multi.Duplicate"),
-                    Definition = Core.tMetaFunction(RHint<IMulti<RIn>, MetaFunction<RIn, ROut>, r.Multi<ROut>>.HINT,
-                        (multiI, mapFunctionI) =>
-                            Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<ROut>>.HINT,
-                            (selfFunc, i) =>
-                                i.tRef().tIsGreaterThan(multiI.tRef().tCount())
-                                .t_IfTrue(RHint<r.Multi<ROut>>.HINT, new()
-                                {
-                                    Then = Core.tNolla(RHint<r.Multi<ROut>>.HINT),
-                                    Else = Core.tUnion(RHint<ROut>.HINT,
-                                    [
-                                        mapFunctionI.tRef().tExecuteWith(
+                Label = Package.Label("Map"),
+                Definition = Core.tMetaFunction(RHint<IMulti<RIn>, MetaFunction<RIn, ROut>, r.Multi<ROut>>.HINT,
+                    (multiI, mapFunctionI) =>
+                        Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<ROut>>.HINT,
+                        (selfFunc, i) =>
+                            i.tRef().tIsGreaterThan(multiI.tRef().tCount())
+                            .t_IfTrue(RHint<r.Multi<ROut>>.HINT, new()
+                            {
+                                Then = Core.tNolla(RHint<r.Multi<ROut>>.HINT),
+                                Else = Core.tUnion(RHint<ROut>.HINT,
+                                [
+                                    mapFunctionI.tRef().tExecuteWith(
                                             new() { A = multiI.tRef().tGetIndex(i.tRef()) }).tYield(),
                                         selfFunc.tRef().tExecuteWith(
                                             new() { A = i.tRef().tAdd(1.tFixed()) })
-                                    ])
-                                }))
-                            .tExecuteWith(new() { A = 1.tFixed() }))
-                        .Resolution
-                };
-            }
-        }
-        public static class Duplicate<R>
-            where R : class, ResObj
-        {
-            public static Macro<R, ro.Number, r.Multi<R>> Construct(IToken<R> value, IToken<ro.Number> count) => new(value, count)
-            {
-                Label = Package.Label("Multi.Duplicate"),
-                Definition = Core.tMetaFunction(RHint<R, ro.Number, r.Multi<R>>.HINT,
-                    (valueI, countI) =>
-                        Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<R>>.HINT,
-                        (selfFunc, i) =>
-                            i.tRef().tIsGreaterThan(countI.tRef())
-                            .t_IfTrue(RHint<r.Multi<R>>.HINT, new()
-                            {
-                                Then = Core.tNolla(RHint<r.Multi<R>>.HINT),
-                                Else = Core.tUnion(RHint<R>.HINT,
-                                [
-                                    valueI.tRef().tYield(),
-                                    selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tFixed()) })
                                 ])
                             }))
                         .tExecuteWith(new() { A = 1.tFixed() }))
                     .Resolution
             };
         }
+    }
+    public static class Duplicate<R>
+        where R : class, ResObj
+    {
+        public static Macro<R, ro.Number, r.Multi<R>> Construct(IToken<R> value, IToken<ro.Number> count) => new(value, count)
+        {
+            Label = Package.Label("Duplicate"),
+            Definition = Core.tMetaFunction(RHint<R, ro.Number, r.Multi<R>>.HINT,
+                (valueI, countI) =>
+                    Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<R>>.HINT,
+                    (selfFunc, i) =>
+                        i.tRef().tIsGreaterThan(countI.tRef())
+                        .t_IfTrue(RHint<r.Multi<R>>.HINT, new()
+                        {
+                            Then = Core.tNolla(RHint<r.Multi<R>>.HINT),
+                            Else = Core.tUnion(RHint<R>.HINT,
+                            [
+                                valueI.tRef().tYield(),
+                                    selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tFixed()) })
+                            ])
+                        }))
+                    .tExecuteWith(new() { A = 1.tFixed() }))
+                .Resolution
+        };
     }
 
     // now that macros are data driven, 'decompose' can be functionally replaced with handler macros
@@ -87,18 +84,17 @@ namespace FourZeroOne.Core.Macros
             Definition = new D().DecompositionFunction
         };
     }
-    public static class UpdateMemoryObject<A, R>
-        where A : class, IMemoryAddress<R>, ResObj
+    public static class UpdateMemoryObject<R>
         where R : class, ResObj
     {
-        public static Macro<A, MetaFunction<R, R>, r.Instructions.Assign<R>> Construct(IToken<A> address, IToken<MetaFunction<R, R>> updateFunction) => new(address, updateFunction)
+        public static Macro<IMemoryObject<R>, MetaFunction<R, R>, r.Instructions.Assign<R>> Construct(IToken<IMemoryObject<R>> address, IToken<MetaFunction<R, R>> updateFunction) => new(address, updateFunction)
         {
             Label = Package.Label("UpdateMemoryObject"),
-            Definition = Core.tMetaFunction(RHint<A, MetaFunction<R, R>, r.Instructions.Assign<R>>.HINT,
+            Definition = Core.tMetaFunction(RHint<IMemoryObject<R>, MetaFunction<R, R>, r.Instructions.Assign<R>>.HINT,
                 (addressI, updateFunctionI) =>
                     addressI.tRef().tDataWrite(
                         updateFunctionI.tRef()
-                        .tExecuteWith(new() { A = addressI.tRef().tDataRead(RHint<R>.HINT) })))
+                        .tExecuteWith(new() { A = addressI.tRef().tDataGet() })))
                 .Resolution
         };
     }

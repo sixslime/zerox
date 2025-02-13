@@ -64,6 +64,7 @@ namespace FourZeroOne.Macro
         where ROut : class, ResObj
     {
         public Macro() : base() { }
+        public object[] CustomData { get; init; } = [];
         public required MacroLabel Label { get; init; }
         public required MetaFunction<ROut> Definition { get; init; }
         protected override EStateImplemented MakeData()
