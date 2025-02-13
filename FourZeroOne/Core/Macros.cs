@@ -17,19 +17,19 @@ namespace FourZeroOne.Core.Macros
     using FourZeroOne.Proxy.Unsafe;
     using Resolution;
     using ro = Core.Resolutions.Objects;
-    
+    using Resolutions.Boxed;
     namespace Multi
     {
         public static class Map<RIn, ROut>
             where RIn : class, ResObj
             where ROut : class, ResObj
         {
-            public static Macro<IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>> Construct(IToken<IMulti<RIn>> multi, IToken<r.Boxed.MetaFunction<RIn, ROut>> mapFunction)
+            public static Macro<IMulti<RIn>, MetaFunction<RIn, ROut>, r.Multi<ROut>> Construct(IToken<IMulti<RIn>> multi, IToken<MetaFunction<RIn, ROut>> mapFunction)
             {
                 return new(multi, mapFunction)
                 {
                     Label = Package.Label("Multi.Duplicate"),
-                    Definition = Core.tMetaFunction(RHint<IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>>.HINT,
+                    Definition = Core.tMetaFunction(RHint<IMulti<RIn>, MetaFunction<RIn, ROut>, r.Multi<ROut>>.HINT,
                         (multiI, mapFunctionI) =>
                             Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<ROut>>.HINT,
                             (selfFunc, i) =>
@@ -87,14 +87,14 @@ namespace FourZeroOne.Core.Macros
             Definition = new D().DecompositionFunction
         };
     }
-    public static class UpdateStateObject<A, R>
-        where A : class, IStateAddress<R>, ResObj
+    public static class UpdateMemoryObject<A, R>
+        where A : class, IMemoryAddress<R>, ResObj
         where R : class, ResObj
     {
-        public static Macro<A, r.Boxed.MetaFunction<R, R>, r.Instructions.Assign<R>> Construct(IToken<A> address, IToken<r.Boxed.MetaFunction<R, R>> updateFunction) => new(address, updateFunction)
+        public static Macro<A, MetaFunction<R, R>, r.Instructions.Assign<R>> Construct(IToken<A> address, IToken<MetaFunction<R, R>> updateFunction) => new(address, updateFunction)
         {
-            Label = Package.Label("UpdateStateObject"),
-            Definition = Core.tMetaFunction(RHint<A, r.Boxed.MetaFunction<R, R>, r.Instructions.Assign<R>>.HINT,
+            Label = Package.Label("UpdateMemoryObject"),
+            Definition = Core.tMetaFunction(RHint<A, MetaFunction<R, R>, r.Instructions.Assign<R>>.HINT,
                 (addressI, updateFunctionI) =>
                     addressI.tRef().tDataWrite(
                         updateFunctionI.tRef()
@@ -107,10 +107,42 @@ namespace FourZeroOne.Core.Macros
         where C : ICompositionType
         where R : class, ResObj
     {
-        public static Macro<ICompositionOf<C>, r.Boxed.MetaFunction<R, R>, ICompositionOf<C>> Construct(IToken<ICompositionOf<C>> composition, IToken<r.Boxed.MetaFunction<R, R>> updateFunction, IComponentIdentifier<C, R> component) => new(composition, updateFunction)
+        public static Macro<ICompositionOf<C>, MetaFunction<R, R>, ICompositionOf<C>> Construct(IToken<ICompositionOf<C>> composition, IToken<MetaFunction<R, R>> updateFunction, IComponentIdentifier<C, R> component) => new(composition, updateFunction)
         {
             Label = Package.Label("UpdateComponent"),
-            Definition
+            CustomData = [component],
+            Definition = Core.tMetaFunction(RHint<ICompositionOf<C>, MetaFunction<R, R>, ICompositionOf<C>>.HINT,
+                (compositionI, updateFunctionI) =>
+                    compositionI.tRef().tWithComponent(component, 
+                        updateFunctionI.tRef()
+                        .tExecuteWith(new() { A = compositionI.tRef().tGetComponent(component) })))
+                .Resolution
+        };
+    }
+    public static class Compose<C>
+        where C : ICompositionType, new()
+    {
+        public static Macro<ICompositionOf<C>> Construct() => new()
+        {
+            Label = Package.Label("Compose"),
+            Definition = new t.Fixed<ICompositionOf<C>>(new CompositionOf<C>()).tMetaBoxed().Resolution
+        };
+    }
+    public static class CatchNolla<R>
+        where R : class, ResObj
+    {
+        public static Macro<R, MetaFunction<R>, R> Construct(IToken<R> value, IToken<MetaFunction<R>> fallback) => new(value, fallback)
+        {
+            Label = Package.Label("CatchNolla"),
+            Definition = Core.tMetaFunction(RHint<R, MetaFunction<R>, R>.HINT,
+                (valueI, fallbackI) =>
+                    valueI.tRef().tExists().tIfTrueDirect(RHint<R>.HINT, new()
+                    {
+                        Then = valueI.tRef().tMetaBoxed(),
+                        Else = fallbackI.tRef()
+                    })
+                    .tExecute())
+                .Resolution
         };
     }
     public static class Package

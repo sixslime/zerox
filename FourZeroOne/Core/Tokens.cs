@@ -215,28 +215,30 @@ namespace FourZeroOne.Core.Tokens
     }
     namespace Data
     {
-        public sealed record Get<RAddress, RObj> : Function<RAddress, RObj> where RAddress : class, IStateAddress<RObj>, ResObj where RObj : class, ResObj
+        public sealed record Get<R> : Function<IMemoryObject<R>, R>
+            where R : class, ResObj
         {
-            public Get(IToken<RAddress> address) : base(address) { }
-            protected override ITask<IOption<RObj>> Evaluate(ITokenContext runtime, IOption<RAddress> in1)
+            public Get(IToken<IMemoryObject<R>> address) : base(address) { }
+            protected override ITask<IOption<R>> Evaluate(ITokenContext runtime, IOption<IMemoryObject<R>> in1)
             {
                 return in1.RemapAs(x => runtime.CurrentMemory.GetObject(x)).Press().ToCompletedITask();
             }
             protected override IOption<string> CustomToString() => $"*{Arg1}".AsSome();
         }
-        public sealed record Insert<RAddress, RObj> : PureFunction<RAddress, RObj, r.Instructions.Assign<RObj>> where RAddress : class, IStateAddress<RObj>, ResObj where RObj : class, ResObj
+        public sealed record Insert<R> : PureFunction<IMemoryObject<R>, R, r.Instructions.Assign<R>>
+            where R : class, ResObj
         {
-            public Insert(IToken<RAddress> address, IToken<RObj> obj) : base(address, obj) { }
-            protected override r.Instructions.Assign<RObj> EvaluatePure(RAddress in1, RObj in2)
+            public Insert(IToken<IMemoryObject<R>> address, IToken<R> obj) : base(address, obj) { }
+            protected override r.Instructions.Assign<R> EvaluatePure(IMemoryObject<R> in1, R in2)
             {
                 return new() { Address = in1, Subject = in2 };
             }
             protected override IOption<string> CustomToString() => $"{Arg1} <== {Arg2}".AsSome();
         }
-        public sealed record Remove<RAddress> : PureFunction<RAddress, r.Instructions.Redact> where RAddress : class, Resolution.Unsafe.IStateAddress, ResObj
+        public sealed record Remove : PureFunction<IMemoryObject<ResObj>, r.Instructions.Redact>
         {
-            public Remove(IToken<RAddress> address) : base(address) { }
-            protected override r.Instructions.Redact EvaluatePure(RAddress in1)
+            public Remove(IToken<IMemoryObject<ResObj>> address) : base(address) { }
+            protected override r.Instructions.Redact EvaluatePure(IMemoryObject<ResObj> in1)
             {
                 return new() { Address = in1 };
             }
@@ -458,10 +460,9 @@ namespace FourZeroOne.Core.Tokens
             return new ro.Bool() { IsTrue = obj.IsSome() }.AsSome().ToCompletedITask();
         }
     }
-    // DEV: this does not need to be explicitly DynamicReference, it could just be IStateAddress.
     public sealed record DynamicAssign<R> : StandardToken<r.Instructions.Assign<R>> where R : class, ResObj
     {
-        public DynamicAssign(DynamicAddress<R> address, IToken<R> obj) : base(obj)
+        public DynamicAssign(IMemoryAddress<R> address, IToken<R> obj) : base(obj)
         {
             _assigningAddress = address;
         }
@@ -470,11 +471,11 @@ namespace FourZeroOne.Core.Tokens
             return args[0].RemapAs(x => new r.Instructions.Assign<R>() { Address = _assigningAddress, Subject = (R)x }).ToCompletedITask();
         }
         protected override IOption<string> CustomToString() => $"{_assigningAddress}<- {ArgTokens[0]}".AsSome();
-        private readonly DynamicAddress<R> _assigningAddress;
+        private readonly IMemoryAddress<R> _assigningAddress;
     }
     public sealed record DynamicReference<R> : Value<R> where R : class, ResObj
     {
-        public DynamicReference(DynamicAddress<R> referenceAddress)
+        public DynamicReference(IMemoryAddress<R> referenceAddress)
         {
             _referenceAddress = referenceAddress;
         }
@@ -485,6 +486,6 @@ namespace FourZeroOne.Core.Tokens
         }
         protected override IOption<string> CustomToString() => $"&{_referenceAddress}".AsSome();
 
-        private readonly DynamicAddress<R> _referenceAddress;
+        private readonly IMemoryAddress<R> _referenceAddress;
     }
 }

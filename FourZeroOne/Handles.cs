@@ -15,14 +15,14 @@ namespace FourZeroOne.Handles
     public interface IMemory
     {
         public FZOSpec.IMemoryFZO InternalValue { get; }
-        public IEnumerable<ITiple<IStateAddress, ResObj>> Objects { get; }
+        public IEnumerable<ITiple<IMemoryAddress, ResObj>> Objects { get; }
         public IEnumerable<Rule.IRule> Rules { get; }
-        public IOption<R> GetObject<R>(IStateAddress<R> address) where R : class, ResObj;
-        public IOption<ResObj> GetObjectUnsafe(IStateAddress address);
+        public IOption<R> GetObject<R>(IMemoryAddress<R> address) where R : class, ResObj;
+        public IOption<ResObj> GetObjectUnsafe(IMemoryAddress address);
         public IMemory WithRules(IEnumerable<Rule.IRule> rules);
-        public IMemory WithObjects<R>(IEnumerable<ITiple<IStateAddress<R>, R>> insertions) where R : class, ResObj;
-        public IMemory WithObjectsUnsafe(IEnumerable<ITiple<IStateAddress, ResObj>> insertions);
-        public IMemory WithClearedAddresses(IEnumerable<IStateAddress> removals);
+        public IMemory WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions) where R : class, ResObj;
+        public IMemory WithObjectsUnsafe(IEnumerable<ITiple<IMemoryAddress, ResObj>> insertions);
+        public IMemory WithClearedAddresses(IEnumerable<IMemoryAddress> removals);
     }
     public interface ITokenContext
     {
@@ -39,13 +39,13 @@ namespace FourZeroOne.Handles
     {
         private readonly FZOSpec.IMemoryFZO _implementation = implementation;
         IMemoryFZO IMemory.InternalValue => _implementation;
-        IEnumerable<ITiple<IStateAddress, ResObj>> IMemory.Objects => _implementation.Objects;
+        IEnumerable<ITiple<IMemoryAddress, ResObj>> IMemory.Objects => _implementation.Objects;
         IEnumerable<IRule> IMemory.Rules => _implementation.Rules;
-        IOption<R> IMemory.GetObject<R>(IStateAddress<R> address) => _implementation.GetObject(address);
-        IOption<ResObj> IMemory.GetObjectUnsafe(IStateAddress address) => _implementation.GetObject((IStateAddress<ResObj>)address);
-        IMemory IMemory.WithClearedAddresses(IEnumerable<IStateAddress> removals) => _implementation.WithClearedAddresses(removals).ToHandle();
-        IMemory IMemory.WithObjects<R>(IEnumerable<ITiple<IStateAddress<R>, R>> insertions) => _implementation.WithObjects(insertions).ToHandle();
-        IMemory IMemory.WithObjectsUnsafe(IEnumerable<ITiple<IStateAddress, ResObj>> insertions) => _implementation.WithObjects(insertions.Map(x => ((IStateAddress<ResObj>)x.A, (ResObj)x.B).Tiple())).ToHandle();
+        IOption<R> IMemory.GetObject<R>(IMemoryAddress<R> address) => _implementation.GetObject(address);
+        IOption<ResObj> IMemory.GetObjectUnsafe(IMemoryAddress address) => _implementation.GetObject((IMemoryAddress<ResObj>)address);
+        IMemory IMemory.WithClearedAddresses(IEnumerable<IMemoryAddress> removals) => _implementation.WithClearedAddresses(removals).ToHandle();
+        IMemory IMemory.WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions) => _implementation.WithObjects(insertions).ToHandle();
+        IMemory IMemory.WithObjectsUnsafe(IEnumerable<ITiple<IMemoryAddress, ResObj>> insertions) => _implementation.WithObjects(insertions.Map(x => ((IMemoryAddress<ResObj>)x.A, (ResObj)x.B).Tiple())).ToHandle();
         IMemory IMemory.WithRules(IEnumerable<IRule> rules) => _implementation.WithRules(rules).ToHandle();
     }
     public class TokenContextHandle(FZOSpec.IProcessorFZO.ITokenContext implementation) : ITokenContext

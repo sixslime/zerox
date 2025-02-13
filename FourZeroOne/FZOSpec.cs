@@ -74,12 +74,12 @@ namespace FourZeroOne.FZOSpec
     }
     public interface IMemoryFZO
     {
-        public IEnumerable<ITiple<IStateAddress, ResObj>> Objects { get; }
+        public IEnumerable<ITiple<IMemoryAddress, ResObj>> Objects { get; }
         public IEnumerable<IRule> Rules { get; }
-        public IOption<R> GetObject<R>(IStateAddress<R> address) where R : class, ResObj;
+        public IOption<R> GetObject<R>(IMemoryAddress<R> address) where R : class, ResObj;
         public IMemoryFZO WithRules(IEnumerable<IRule> rules);
-        public IMemoryFZO WithObjects<R>(IEnumerable<ITiple<IStateAddress<R>, R>> insertions) where R : class, ResObj;
-        public IMemoryFZO WithClearedAddresses(IEnumerable<IStateAddress> removals);
+        public IMemoryFZO WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions) where R : class, ResObj;
+        public IMemoryFZO WithClearedAddresses(IEnumerable<IMemoryAddress> removals);
     }
 
     namespace Shorthands
@@ -132,7 +132,7 @@ namespace FourZeroOne.FZOSpec
         public sealed record MetaExecute : EStateImplemented
         {
             public required IToken FunctionToken { get; init; }
-            public required IEnumerable<ITiple<IStateAddress<ResObj>, ResOpt>> MemoryWrites { get; init; }
+            public required IEnumerable<ITiple<IMemoryAddress<ResObj>, ResOpt>> MemoryWrites { get; init; }
         }
     }
     public abstract record ETokenPrep

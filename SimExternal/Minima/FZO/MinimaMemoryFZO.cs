@@ -11,7 +11,7 @@ namespace Minima.FZO
 {
     public record MinimaMemoryFZO : IMemoryFZO
     {
-        private PMap<IStateAddress, IResolution> _objects;
+        private PMap<IMemoryAddress, IResolution> _objects;
         private PSequence<IRule> _rules;
 
         public MinimaMemoryFZO()
@@ -20,10 +20,10 @@ namespace Minima.FZO
             _rules = new();
         }
 
-        IEnumerable<ITiple<IStateAddress, IResolution>> IMemoryFZO.Objects => _objects.Elements;
+        IEnumerable<ITiple<IMemoryAddress, IResolution>> IMemoryFZO.Objects => _objects.Elements;
         IEnumerable<IRule> IMemoryFZO.Rules => _rules.Elements;
         
-        IOption<R> IMemoryFZO.GetObject<R>(IStateAddress<R> address)
+        IOption<R> IMemoryFZO.GetObject<R>(IMemoryAddress<R> address)
         {
             return _objects.At(address).RemapAs(x => (R)x);
         }
@@ -33,12 +33,12 @@ namespace Minima.FZO
             return this with { _rules = _rules.WithEntries(rules) };
         }
 
-        IMemoryFZO IMemoryFZO.WithObjects<R>(IEnumerable<ITiple<IStateAddress<R>, R>> insertions)
+        IMemoryFZO IMemoryFZO.WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions)
         {
             return this with { _objects = _objects.WithEntries(insertions) };
         }
 
-        IMemoryFZO IMemoryFZO.WithClearedAddresses(IEnumerable<IStateAddress> removals)
+        IMemoryFZO IMemoryFZO.WithClearedAddresses(IEnumerable<IMemoryAddress> removals)
         {
             return this with { _objects = _objects.WithoutEntries(removals) };
         }

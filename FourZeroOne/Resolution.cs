@@ -42,8 +42,8 @@ namespace FourZeroOne.Resolution
     public interface IMulti<out R> : IHasElements<R>, IIndexReadable<int, IOption<R>>, IResolution where R : IResolution
     { }
 
-    public interface IStateObject<out R> : IStateAddress<R>, IResolution where R : class, IResolution { }
-    public interface IStateAddress<out R> : Unsafe.IStateAddress where R : class, IResolution { }
+    public interface IMemoryObject<out R> : IMemoryAddress<R>, IResolution where R : class, IResolution { }
+    public interface IMemoryAddress<out R> : Unsafe.IMemoryAddress where R : class, IResolution { }
     public abstract record Instruction : Construct, IInstruction
     {
         public abstract IMemory TransformMemory(IMemory previousState);
@@ -100,7 +100,7 @@ namespace FourZeroOne.Resolution
     {
         public override IEnumerable<IInstruction> Instructions => [];
     }
-    public sealed record DynamicAddress<R> : IStateAddress<R> where R : class, IResolution
+    public sealed record DynamicAddress<R> : IMemoryAddress<R> where R : class, IResolution
     {
         public int DynamicId { get; }
 
@@ -140,5 +140,5 @@ namespace FourZeroOne.Resolution.Unsafe
     }
     public interface IComponentIdentifierOf<out R> : IComponentIdentifier where R : IResolution { }
     public interface IComponentIdentifier<in H> : IComponentIdentifier where H : ICompositionType { }
-    public interface IStateAddress { }
+    public interface IMemoryAddress { }
 }

@@ -58,7 +58,7 @@ namespace FourZeroOne.Core.Resolutions
         using Objects;
         public sealed record Assign<D> : Instruction where D : class, ResObj
         {
-            public required IStateAddress<D> Address { get; init; }
+            public required IMemoryAddress<D> Address { get; init; }
             public required D Subject { get; init; }
             public override IMemory TransformMemory(IMemory previousState)
             {
@@ -70,7 +70,7 @@ namespace FourZeroOne.Core.Resolutions
 
         public sealed record Redact : Instruction
         {
-            public required IStateAddress Address { get; init; }
+            public required IMemoryAddress Address { get; init; }
             public override IMemory TransformMemory(IMemory context)
             {
                 return context.WithClearedAddresses([Address]);
@@ -101,7 +101,7 @@ namespace FourZeroOne.Core.Resolutions
                 return new FZOSpec.EStateImplemented.MetaExecute
                 {
                     FunctionToken = new Tokens.MetaExecuted<R>(Token),
-                    MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
+                    MemoryWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
                     ((SelfIdentifier, this.AsSome()))
                     .Map(x => x.Tiple())
                 };
@@ -120,7 +120,7 @@ namespace FourZeroOne.Core.Resolutions
                 return new FZOSpec.EStateImplemented.MetaExecute
                 {
                     FunctionToken = new Tokens.MetaExecuted<ROut>(Token),
-                    MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
+                    MemoryWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
                     ((SelfIdentifier, this.AsSome()), (IdentifierA, arg1))
                     .Map(x => x.Tiple())
                 };
@@ -141,7 +141,7 @@ namespace FourZeroOne.Core.Resolutions
                 return new FZOSpec.EStateImplemented.MetaExecute
                 {
                     FunctionToken = new Tokens.MetaExecuted<ROut>(Token),
-                    MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
+                    MemoryWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
                     ((SelfIdentifier, this.AsSome()), (IdentifierA, arg1), (IdentifierB, arg2))
                     .Map(x => x.Tiple())
                 };
@@ -164,7 +164,7 @@ namespace FourZeroOne.Core.Resolutions
                 return new FZOSpec.EStateImplemented.MetaExecute
                 {
                     FunctionToken = new Tokens.MetaExecuted<ROut>(Token),
-                    MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
+                    MemoryWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
                     ((SelfIdentifier, this.AsSome()), (IdentifierA, arg1), (IdentifierB, arg2), (IdentifierC, arg3))
                     .Map(x => x.Tiple())
                 };
