@@ -134,17 +134,19 @@ namespace FourZeroOne.Plugins.Axiom.Resolutions
     }
     namespace Action
     {
-        public interface IAction<Self> : IDecomposableType<Self> where Self : IAction<Self>, new() { }
+        public interface IAction<Self> : IDecomposableType<Self, ResObj> where Self : IAction<Self>, new() { }
         public record Change<A, C> : IAction<Change<A, C>> where A : class, IStateAddress<ICompositionOf<C>>, ResObj where C : ICompositionType
         {
-            public IProxy<Decompose<Change<A, C>>, ResObj> DecompositionProxy => MakeProxy.Statement<Decompose<Change<A, C>>, ResObj>(
-                P =>
-                    P.pSubEnvironment(RHint<ResObj>.Hint(), new()
-                    {
-                        Environment = P.pOriginalA().pAsVariable(out var thisObj),
-                        Value = thisObj.tRef().tGetComponent(ADDRESS).tDataUpdate(RHint<ICompositionOf<C>>.Hint(),
-                            subject => subject.tRef().tMerge(thisObj.tRef().tGetComponent(CHANGE))).pDirect(P)
-                    }));
+            public r.Boxed.MetaFunction<ICompositionOf<Change<A, C>>, ResObj> DecompositionFunction => 
+                Core.tMetaFunction(RHint<ICompositionOf<Change<A, C>>, ResObj>.HINT,
+                thisObj => 
+                    thisObj.tRef()
+                    .tGetComponent(ADDRESS)
+                    .tDataUpdate(RHint<ICompositionOf<C>>.HINT,
+                    subject =>
+                        subject.tRef()
+                        .tMerge(thisObj.tRef().tGetComponent(CHANGE))))
+                .Resolution;
             public readonly static StaticComponentIdentifier<Change<A, C>, A> ADDRESS = new("axiom", "address");
             public readonly static StaticComponentIdentifier<Change<A, C>, ICompositionOf<r.MergeSpec<C>>> CHANGE = new("axiom", "change");
         }

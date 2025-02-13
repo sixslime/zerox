@@ -35,9 +35,9 @@ namespace FourZeroOne.Resolution
     /// Yup! thats how I'm doing things!
     /// </summary>
     public interface ICompositionType { }
-    public interface IDecomposableType<Self> : ICompositionType where Self : IDecomposableType<Self>, new()
+    public interface IDecomposableType<Self, R> : ICompositionType where Self : IDecomposableType<Self, R>, new() where R : class, IResolution
     {
-        public Proxy.IProxy<Core.Macros.Decompose<Self>, IResolution> DecompositionProxy { get; }
+        public Core.Resolutions.Boxed.MetaFunction<ICompositionOf<Self>, R> DecompositionFunction { get; }
     }
     public interface IMulti<out R> : IHasElements<R>, IIndexReadable<int, IOption<R>>, IResolution where R : IResolution
     { }

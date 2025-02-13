@@ -17,6 +17,8 @@ namespace FourZeroOne.Core.Tokens
     using ro = Resolutions.Objects;
     using Resolution;
     using Handles;
+    using FourZeroOne.FZOSpec;
+
     namespace IO
     {
         namespace Select
@@ -305,6 +307,23 @@ namespace FourZeroOne.Core.Tokens
                     .ToCompletedITask();
             }
             protected override IOption<string> CustomToString() => $"{Arg1}>>{Arg2}".AsSome();
+        }
+        public sealed record Decompose<D, R> : RuntimeHandledFunction<ICompositionOf<D>, R> where D : IDecomposableType<D, R>, new() where R : class, ResObj
+        {
+            public Decompose(IToken<ICompositionOf<D>> composition) : base(composition) { }
+
+            protected override EStateImplemented MakeData(ICompositionOf<D> in1)
+            {
+                // nightmare fuel
+                var metaValue = new D().DecompositionFunction;
+                return new FZOSpec.EStateImplemented.MetaExecute
+                {
+                    FunctionToken = metaValue.Token,
+                    MemoryWrites = Iter.Over<(IStateAddress<ResObj>, IOption<ResObj>)>
+                    ((metaValue.SelfIdentifier, metaValue.AsSome()), (metaValue.IdentifierA, in1.AsSome()))
+                    .Map(x => x.Tiple())
+                };
+            }
         }
     }
 
