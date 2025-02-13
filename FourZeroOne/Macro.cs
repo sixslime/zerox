@@ -25,6 +25,8 @@ namespace FourZeroOne.Macro
         {
             return Definition.GenerateMetaExecute(in1.AsSome(), in2.AsSome(), in3.AsSome());
         }
+        protected override IOption<string> CustomToString()
+            => $"{Label.Namespace}.{Label.Identifier}({Arg1}, {Arg2}, {Arg3})".AsSome();
     }
     public record Macro<RArg1, RArg2, ROut> : RuntimeHandledFunction<RArg1, RArg2, ROut>, IMacro<ROut>
         where RArg1 : class, ResObj
@@ -38,6 +40,8 @@ namespace FourZeroOne.Macro
         {
             return Definition.GenerateMetaExecute(in1.AsSome(), in2.AsSome());
         }
+        protected override IOption<string> CustomToString()
+            => $"{Label.Namespace}.{Label.Identifier}({Arg1}, {Arg2})".AsSome();
     }
     public record Macro<RArg1, ROut> : RuntimeHandledFunction<RArg1, ROut>, IMacro<ROut>
         where RArg1 : class, ResObj
@@ -50,6 +54,8 @@ namespace FourZeroOne.Macro
         {
             return Definition.GenerateMetaExecute(in1.AsSome());
         }
+        protected override IOption<string> CustomToString()
+            => $"{Label.Namespace}.{Label.Identifier}({Arg1})".AsSome();
     }
     public record Macro<ROut> : RuntimeHandledValue<ROut>, IMacro<ROut>
         where ROut : class, ResObj
@@ -61,6 +67,8 @@ namespace FourZeroOne.Macro
         {
             return Definition.GenerateMetaExecute();
         }
+        protected override IOption<string> CustomToString()
+            => $"{Label.Namespace}.{Label.Identifier}()".AsSome();
     }
     public sealed record MacroLabel
     {

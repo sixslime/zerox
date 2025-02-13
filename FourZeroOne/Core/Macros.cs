@@ -17,154 +17,105 @@ namespace FourZeroOne.Core.Macros
     using FourZeroOne.Proxy.Unsafe;
     using Resolution;
     using ro = Core.Resolutions.Objects;
+    
     namespace Multi
     {
-        public sealed record Map<RIn, ROut> : TwoArg<IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>>
+        public static class Map<RIn, ROut>
             where RIn : class, ResObj
             where ROut : class, ResObj
         {
-            protected override IProxy<r.Multi<ROut>> InternalProxy => PROXY;
-            public Map(IToken<IMulti<RIn>> values, IToken<r.Boxed.MetaFunction<RIn, ROut>> mapFunction) : base(values, mapFunction) { }
-
-            // DEV - Consider not storing the map function as a variable, so that the Token *does* re-evaluate every iteration.
-            private readonly static IProxy<Map<RIn, ROut>, r.Multi<ROut>> PROXY = MakeProxy.Statement<Map<RIn, ROut>, r.Multi<ROut>>(P =>
+            public static Macro<IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>> Construct(IToken<IMulti<RIn>> multi, IToken<r.Boxed.MetaFunction<RIn, ROut>> mapFunction)
             {
-                return
-                P.pSubEnvironment(RHint<r.Multi<ROut>>.Hint(), new()
+                return new(multi, mapFunction)
                 {
-                    Environment = P.p_Env(
-                        P.pOriginalA().pAsVariable(out var enumerable),
-                        P.pOriginalB().pAsVariable(out var mapFunction)),
-                    Value =
-                    Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<ROut>>.Hint(),
-                        (selfFunc, i) =>
-                            i.tRef().tIsGreaterThan(enumerable.tRef().tCount())
-                            .tIfTrueDirect(RHint<r.Multi<ROut>>.Hint(), new()
-                            {
-                                Then = Core.tNolla(RHint<r.Multi<ROut>>.Hint()).tMetaBoxed(),
-                                Else = Core.tUnion(RHint<ROut>.Hint(),
-                                [
-                                    mapFunction.tRef().tExecuteWith(new() { A = enumerable.tRef().tGetIndex(i.tRef()) }).tYield(),
-                                    selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tFixed()) })
-                                ]).tMetaBoxed()
-                            }).tExecute())
-                    .tExecuteWith(new() { A = 1.tFixed() }).pDirect(P)
-                });
-            });
-            protected override IOption<string> CustomToString() => $"{Arg1}=>{Arg2}".AsSome();
+                    Label = Package.Label("Multi.Duplicate"),
+                    Definition = Core.tMetaFunction(RHint<IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>>.HINT,
+                        (multiI, mapFunctionI) =>
+                            Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<ROut>>.HINT,
+                            (selfFunc, i) =>
+                                i.tRef().tIsGreaterThan(multiI.tRef().tCount())
+                                .t_IfTrue(RHint<r.Multi<ROut>>.HINT, new()
+                                {
+                                    Then = Core.tNolla(RHint<r.Multi<ROut>>.HINT),
+                                    Else = Core.tUnion(RHint<ROut>.HINT,
+                                    [
+                                        mapFunctionI.tRef().tExecuteWith(
+                                            new() { A = multiI.tRef().tGetIndex(i.tRef()) }).tYield(),
+                                        selfFunc.tRef().tExecuteWith(
+                                            new() { A = i.tRef().tAdd(1.tFixed()) })
+                                    ])
+                                }))
+                            .tExecuteWith(new() { A = 1.tFixed() }))
+                        .Resolution
+                };
+            }
         }
-        public sealed record Duplicate<R> : TwoArg<R, ro.Number, r.Multi<R>>
+        public static class Duplicate<R>
             where R : class, ResObj
         {
-            public Duplicate(IToken<R> value, IToken<ro.Number> count) : base(value, count) { }
-            protected override IProxy<r.Multi<R>> InternalProxy => PROXY;
-            private readonly static IProxy<Duplicate<R>, r.Multi<R>> PROXY = MakeProxy.Statement<Duplicate<R>, r.Multi<R>>(
-                P =>
-                    P.pSubEnvironment(RHint<r.Multi<R>>.Hint(), new() {
-                        Environment = P.p_Env(
-                            P.pOriginalA().pAsVariable(out var value),
-                            P.pOriginalB().pAsVariable(out var duplicateCount)),
-                        Value =
-                            Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<R>>.Hint(),
-                                (selfFunc, i) =>
-                                    i.tRef().tIsGreaterThan(duplicateCount.tRef())
-                                    .tIfTrueDirect(RHint<r.Multi<R>>.Hint(), new()
-                                    {
-                                        Then = Core.tNolla(RHint<r.Multi<R>>.Hint()).tMetaBoxed(),
-                                        Else = Core.tUnion(RHint<R>.Hint(),
-                                        [
-                                            value.tRef().tYield(),
-                                            selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tFixed()) })
-                                        ]).tMetaBoxed()
-                                    }).tExecute())
-                            .tExecuteWith(new() { A = 1.tFixed() }).pDirect(P)
-                    }
-            ));
-            protected override IOption<string> CustomToString() => $"{Arg1}**({Arg2})".AsSome();
-
+            public static Macro<R, ro.Number, r.Multi<R>> Construct(IToken<R> value, IToken<ro.Number> count) => new(value, count)
+            {
+                Label = Package.Label("Multi.Duplicate"),
+                Definition = Core.tMetaFunction(RHint<R, ro.Number, r.Multi<R>>.HINT,
+                    (valueI, countI) =>
+                        Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<R>>.HINT,
+                        (selfFunc, i) =>
+                            i.tRef().tIsGreaterThan(countI.tRef())
+                            .t_IfTrue(RHint<r.Multi<R>>.HINT, new()
+                            {
+                                Then = Core.tNolla(RHint<r.Multi<R>>.HINT),
+                                Else = Core.tUnion(RHint<R>.HINT,
+                                [
+                                    valueI.tRef().tYield(),
+                                    selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tFixed()) })
+                                ])
+                            }))
+                        .tExecuteWith(new() { A = 1.tFixed() }))
+                    .Resolution
+            };
         }
     }
-    
-    public sealed record Decompose<D> : OneArg<ICompositionOf<D>, ResObj> where D : IDecomposableType<D>, new()
-    {
-        public Decompose(IToken<ICompositionOf<D>> composition) : base(composition) { }
 
-        // this is nightmare fuel.
-        protected override IProxy<ResObj> InternalProxy => new D().DecompositionProxy;
-        protected override IOption<string> CustomToString() => $"~{Arg1}".AsSome();
-    }
-    public sealed record UpdateStateObject<A, D> : TwoArg<A, r.Boxed.MetaFunction<D, D>, r.Instructions.Assign<D>> where A : class, IStateAddress<D>, ResObj where D : class, ResObj
+    // now that macros are data driven, 'decompose' can be functionally replaced with handler macros
+    public static class Decompose<D, R>
+        where D : IDecomposableType<D, R>, new()
+        where R : class, ResObj
     {
-        public UpdateStateObject(IToken<A> in1, IToken<r.Boxed.MetaFunction<D, D>> in2) : base(in1, in2) { }
-        protected override IProxy<r.Instructions.Assign<D>> InternalProxy => PROXY;
-
-        public readonly static IProxy<UpdateStateObject<A, D>, r.Instructions.Assign<D>> PROXY = MakeProxy.Statement<UpdateStateObject<A, D>, r.Instructions.Assign<D>>(P =>
+        public static Macro<ICompositionOf<D>, R> Construct(IToken<ICompositionOf<D>> composition) => new(composition)
         {
-            return P.pSubEnvironment(RHint<r.Instructions.Assign<D>>.Hint(), new()
-            {
-                Environment = P.pMultiOf(RHint<ResObj>.Hint(),
-                [
-                    P.pOriginalA().pAsVariable(out var address),
-                    P.pOriginalB().pAsVariable(out var updateFunc)
-                ]),
-                Value = address.tRef().tDataWrite(updateFunc.tRef().tExecuteWith(new()
-                {
-                    A = address.tRef().tDataRead(RHint<D>.Hint())
-                })).pDirect(P)
-            });
-        });
-        protected override IOption<string> CustomToString() => $"{Arg1} <==! {Arg2}".AsSome();
+            Label = Package.Label("Decompose"),
+            Definition = new D().DecompositionFunction
+        };
+    }
+    public static class UpdateStateObject<A, R>
+        where A : class, IStateAddress<R>, ResObj
+        where R : class, ResObj
+    {
+        public static Macro<A, r.Boxed.MetaFunction<R, R>, r.Instructions.Assign<R>> Construct(IToken<A> address, IToken<r.Boxed.MetaFunction<R, R>> updateFunction) => new(address, updateFunction)
+        {
+            Label = Package.Label("UpdateStateObject"),
+            Definition = Core.tMetaFunction(RHint<A, r.Boxed.MetaFunction<R, R>, r.Instructions.Assign<R>>.HINT,
+                (addressI, updateFunctionI) =>
+                    addressI.tRef().tDataWrite(
+                        updateFunctionI.tRef()
+                        .tExecuteWith(new() { A = addressI.tRef().tDataRead(RHint<R>.HINT) })))
+                .Resolution
+        };
     }
 
-    public sealed record UpdateComponent<C, R> : MacroBehavior<ICompositionOf<C>>, Token.Unsafe.IHasArg1<ICompositionOf<C>>, Token.Unsafe.IHasArg2<r.Boxed.MetaFunction<R, R>>
-        where C : ICompositionType where R : class, ResObj
+    public static class UpdateComponent<C, R>
+        where C : ICompositionType
+        where R : class, ResObj
     {
-        public IComponentIdentifier<C, R> Identifier { get; private init; }
-        protected override IProxy<ICompositionOf<C>> InternalProxy => MakeProxy.Statement<UpdateComponent<C, R>, ICompositionOf<C>>(
-            P => P.pSubEnvironment(RHint<ICompositionOf<C>>.Hint(), new()
-            {
-                Environment = P.p_Env(P.pOriginalA().pAsVariable(out var comp), P.pOriginalB().pAsVariable(out var func)),
-                Value = comp.tRef().tWithComponent(Identifier, func.tRef().tExecuteWith(new() { A = comp.tRef().tGetComponent(Identifier) })).pDirect(P)
-            }));
-        public IToken<ICompositionOf<C>> Arg1 { get; private init; }
-        public IToken<r.Boxed.MetaFunction<R, R>> Arg2 { get; private init; }
-
-        public UpdateComponent(IComponentIdentifier<C, R> identifier, IToken<ICompositionOf<C>> composition, IToken<r.Boxed.MetaFunction<R, R>> func)
+        public static Macro<ICompositionOf<C>, r.Boxed.MetaFunction<R, R>, ICompositionOf<C>> Construct(IToken<ICompositionOf<C>> composition, IToken<r.Boxed.MetaFunction<R, R>> updateFunction, IComponentIdentifier<C, R> component) => new(composition, updateFunction)
         {
-            Identifier = identifier;
-            Arg1 = composition;
-            Arg2 = func;
-        }
-        protected override IOption<string> CustomToString() => $"{Arg1}-{Identifier} <=! {Arg2}".AsSome();
+            Label = Package.Label("UpdateComponent"),
+            Definition
+        };
     }
-    public sealed record Compose<C> : MacroBehavior<ICompositionOf<C>> where C : ICompositionType, new()
+    public static class Package
     {
-        protected override IProxy<ICompositionOf<C>> InternalProxy => PROXY;
-        public readonly static IProxy<Compose<C>, ICompositionOf<C>> PROXY = MakeProxy.Statement<Compose<C>, ICompositionOf<C>>(P =>
-        {
-            return new CompositionOf<C>().tFixed().pDirect(P);
-        });
-        protected override IOption<string> CustomToString() => $"{typeof(C).Namespace!.Split(".")[^1]}.{typeof(C).Name}".AsSome();
+        public const string NAMESPACE = "CORE";
+        internal static MacroLabel Label(string identifier) => new() { Namespace = NAMESPACE, Identifier = identifier };
     }
-    public sealed record CatchNolla<R> : TwoArg<R, R, R> where R : class, ResObj
-    {
-        protected override IProxy<R> InternalProxy => PROXY;
-        public CatchNolla(IToken<R> value, IToken<R> fallback) : base(value, fallback) { }
-        public readonly static IProxy<CatchNolla<R>, R> PROXY = MakeProxy.Statement<CatchNolla<R>, R>(P =>
-        {
-            return
-            P.pSubEnvironment(RHint<R>.Hint(), new()
-            {
-                Environment = P.pOriginalA().pAsVariable(out var value),
-                Value = value.tRef().tExists().pDirect(P).pIfTrueDirect(RHint<R>.Hint(), new()
-                {
-                    Then = value.tRef().pDirect(P).pMetaBoxed(),
-                    Else = P.pOriginalB().pMetaBoxed()
-                })
-                .pExecute()
-            });
-        });
-        protected override IOption<string> CustomToString() => $"{Arg1} or {Arg2}".AsSome();
-    }
-
 }

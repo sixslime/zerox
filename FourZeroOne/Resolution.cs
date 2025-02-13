@@ -42,6 +42,7 @@ namespace FourZeroOne.Resolution
     public interface IMulti<out R> : IHasElements<R>, IIndexReadable<int, IOption<R>>, IResolution where R : IResolution
     { }
 
+    public interface IStateObject<out R> : IStateAddress<R>, IResolution where R : class, IResolution { }
     public interface IStateAddress<out R> : Unsafe.IStateAddress where R : class, IResolution { }
     public abstract record Instruction : Construct, IInstruction
     {
