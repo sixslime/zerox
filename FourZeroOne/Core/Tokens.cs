@@ -377,6 +377,7 @@ namespace FourZeroOne.Core.Tokens
     {
         public MetaExecuted(IToken<R> function) : base(function) { }
         protected override R EvaluatePure(R in1) => in1;
+        protected override IOption<string> CustomToString() => $"|>{Arg1}".AsSome();
     }
     public record ToBoxedArgs<R1> : Function<R1, r.Boxed.MetaArgs<R1>>
         where R1 : class, ResObj

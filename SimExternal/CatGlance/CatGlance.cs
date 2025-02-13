@@ -48,14 +48,14 @@ namespace CatGlance
                                             v.Assertions.Memory.All(assert => assert.Result.CheckOk(out var pass) && pass),
                                     EDeTesFrame.Complete v
                                         => //DEBUG
-                                            new Func<bool>(() => { Console.WriteLine(v.CompletionHalt.Resolution); return true; })() &&
+                                            /*new Func<bool>(() => { Console.WriteLine(v.CompletionHalt.Resolution); return true; })() &&*/
                                             v.Assertions.Resolution.All(assert => assert.Result.CheckOk(out var pass) && pass) &&
                                             v.Assertions.Memory.All(assert => assert.Result.CheckOk(out var pass) && pass),
                                     _ => true
                                 })),
                             others => others.All(x => x)));
 
-            Console.WriteLine($"==[ DETES GLANCER '{Name}' ]==");
+            Console.WriteLine($"==[ GLANCER '{Name}' ]==");
             foreach (var (i, (test, result)) in tests.ZipShort(results).Enumerate())
             {
                 Console.Write($"({i+1}) '{test.Name}': ");

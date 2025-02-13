@@ -80,7 +80,7 @@ public class Tester
                     Token = C =>
                         4.tFixed()
                         .AssertResolution(C, x => x.Value == 4)
-                        .AssertResolution(C, _ => {Console.WriteLine("bruh"); return false; })
+                        .AssertResolution(C, _ => false)
                         .tDuplicate(1.tFixed())
                         .AssertResolution(C, _ => true)
                         .AssertMemory(C, _ => true)

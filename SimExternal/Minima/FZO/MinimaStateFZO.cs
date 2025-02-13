@@ -8,6 +8,7 @@ using FourZeroOne.Macro.Unsafe;
 using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
 using FourZeroOne.Token.Unsafe;
 using LookNicePls;
+using System.Diagnostics;
 #nullable enable
 namespace Minima.FZO
 {
@@ -23,7 +24,7 @@ namespace Minima.FZO
             _prepStack = new();
             _initialized = new None<FZOSource>();
         }
-        IEnumerable<IStateFZO.IOperationNode> IStateFZO.OperationStack => _opStack.Elements;
+        IEnumerable<IStateFZO.IOperationNode> IStateFZO.OperationStack => _opStack.Elements.Take(_opStack.Count - 1);
         IEnumerable<ETokenPrep> IStateFZO.TokenPrepStack => _prepStack.Elements;
         IOption<FZOSource> IStateFZO.Initialized => _initialized;
         IStateFZO IStateFZO.Initialize(FZOSource source)
@@ -32,7 +33,15 @@ namespace Minima.FZO
                 throw new InvalidOperationException("Attempted initialization of an already initialized IStateFZO");
             return new MinimaStateFZO()
             {
-                _initialized = _initialized.Some(source)
+                _initialized = _initialized.Some(source),
+                _opStack = _opStack.WithEntries(new OperationNode
+                {
+                    Operation = new DummyOperation(),
+                    MemCount = 1,
+                    MemoryStack = new PStack<IMemoryFZO>().WithEntries(source.InitialMemory),
+                    ArgResolutionStack = new()
+                    
+                })
             };
         }
         IStateFZO IStateFZO.WithStep(EProcessorStep step)
@@ -50,9 +59,7 @@ namespace Minima.FZO
                     _opStack = _opStack.WithEntries(new OperationNode()
                     {
                         Operation = v.OperationToken,
-                        MemoryStack = 
-                            _opStack.TopValue.RemapAs(x => x.MemoryStack)
-                            .Or(new PStack<IMemoryFZO>().WithEntries(init.InitialMemory)),
+                        MemoryStack = _opStack.TopValue.Unwrap().MemoryStack,
                         MemCount = 1,
                         ArgResolutionStack = new(),
                     }),
@@ -84,14 +91,14 @@ namespace Minima.FZO
                             _opStack = _opStack.At(1).Expect("No parent operation node?")
                             .MapTopValue(node => node with
                             {
-                                MemoryStack = node.MemoryStack.MapTopValue(
-                                    mem => metaExecute.MemoryWrites.ExprAs(
-                                        writes => mem.WithObjects(
-                                                writes.FilterMap(x => x.B.RemapAs(r => (x.A, r).Tiple())))
-                                            .WithClearedAddresses(writes.FilterMap(x => x.B.IsSome().Not().ToOption(x.A)))))
-                                .IsA<PStack<IMemoryFZO>>()
+                                MemoryStack = node.MemoryStack.WithEntries(
+                                    node.MemoryStack.TopValue.Unwrap().ExprAs(
+                                        mem => metaExecute.MemoryWrites.ExprAs(
+                                            writes => mem.WithObjects(
+                                                    writes.FilterMap(x => x.B.RemapAs(r => (x.A, r).Tiple())))
+                                                .WithClearedAddresses(writes.FilterMap(x => x.B.IsSome().Not().ToOption(x.A)))))
+                                )
                             }).IsA<PStack<OperationNode>>(),
-
                             _prepStack = _prepStack.WithEntries(new ETokenPrep.Identity { Result = metaExecute.FunctionToken })
                         },
                         _ => throw new NotSupportedException()
@@ -107,6 +114,23 @@ namespace Minima.FZO
             public required PStack<IMemoryFZO> MemoryStack { get; init; }
             IEnumerable<ResOpt> IStateFZO.IOperationNode.ArgResolutionStack => ArgResolutionStack.Elements;
             IEnumerable<IMemoryFZO> IStateFZO.IOperationNode.MemoryStack => MemoryStack.Elements.Take(MemCount);
+        }
+        private class DummyOperation : IToken
+        {
+            public IToken[] ArgTokens => throw new UnreachableException();
+            public IPSet<string> Labels => throw new UnreachableException();
+            public IResult<ITask<ResOpt>, EStateImplemented> UnsafeResolve(IProcessorFZO.ITokenContext runtime, ResOpt[] args)
+            {
+                throw new UnreachableException();
+            }
+            public IToken UnsafeWithArgs(IToken[] args)
+            {
+                throw new UnreachableException();
+            }
+            public IToken _dLabels(Updater<IPSet<string>> updater)
+            {
+                throw new UnreachableException();
+            }
         }
     }
 

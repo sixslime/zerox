@@ -215,15 +215,15 @@ namespace DeTes.Realization
         private static OnResolveAssertionsImpl GenerateOnResolveAssertionObject(RuntimeResources runtime, IToken linkedToken, ResOpt resolution, IMemoryFZO nMemory)
         {
             // DEBUG
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine(linkedToken);
-            foreach (var (key, value) in runtime.ResolutionAssertions)
-            {
-                Console.ForegroundColor = ConsoleColor.DarkGray;
-                if (key.GetHashCode().Equals(linkedToken.GetHashCode())) Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"{key} : {linkedToken} - {key.Equals(linkedToken)}");
-            }
-            Console.ResetColor();
+            //Console.ForegroundColor = ConsoleColor.Blue;
+            //Console.WriteLine(linkedToken);
+            //foreach (var (key, value) in runtime.ResolutionAssertions)
+            //{
+            //    Console.ForegroundColor = ConsoleColor.DarkGray;
+            //    if (key.GetHashCode().Equals(linkedToken.GetHashCode())) Console.ForegroundColor = ConsoleColor.Green;
+            //    Console.WriteLine($"{key} : {linkedToken} - {key.Equals(linkedToken)}");
+            //}
+            //Console.ResetColor();
             return new()
             {
                 Resolution =

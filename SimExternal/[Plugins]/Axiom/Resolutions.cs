@@ -16,13 +16,13 @@ namespace FourZeroOne.Plugins.Axiom.Resolutions
     // 'current turn' static player pointer?
     namespace State
     {
-        public record ActingPlayer : NoOp, IMemoryAddress<ax.Player.Address>
+        public record ActingPlayer : IMemoryAddress<ax.Player.Address>
         {
             private ActingPlayer() { }
             public readonly static ActingPlayer PTR = new();
             public override string ToString() => "ACTING_PLAYER";
         }
-        public record TurnCount : NoOp, IMemoryAddress<ro.Number>
+        public record TurnCount : IMemoryAddress<ro.Number>
         {
             private TurnCount() { }
             public readonly static TurnCount PTR = new();
@@ -40,7 +40,7 @@ namespace FourZeroOne.Plugins.Axiom.Resolutions
                 public readonly static StaticComponentIdentifier<Data, Player.Address> OWNER = new("axiom", "owner");
                 public readonly static StaticComponentIdentifier<Data, r.Multi<NEffect>> EFFECTS = new("axiom", "effects");
             }
-            public record Address : NoOp, IMemoryAddress<CompositionOf<Data>>
+            public record Address : NoOp, IMemoryObject<CompositionOf<Data>>
             {
                 public required int ID { get; init; }
                 public Address() { }
@@ -59,7 +59,7 @@ namespace FourZeroOne.Plugins.Axiom.Resolutions
                 public readonly static StaticComponentIdentifier<Data, ro.Bool> WALL = new("axiom", "wall");
                 public readonly static StaticComponentIdentifier<Data, Player.Address> PLAYER_BASE = new("axiom", "player_base");
             }
-            public sealed record Position : NoOp, IMemoryAddress<CompositionOf<Data>>
+            public sealed record Position : NoOp, IMemoryObject<CompositionOf<Data>>
             {
                 public required int R { get; init; }
                 public required int U { get; init; }
@@ -135,20 +135,20 @@ namespace FourZeroOne.Plugins.Axiom.Resolutions
     namespace Action
     {
         public interface IAction<Self> : IDecomposableType<Self, ResObj> where Self : IAction<Self>, new() { }
-        public record Change<A, C> : IAction<Change<A, C>> where A : class, IMemoryAddress<ICompositionOf<C>>, ResObj where C : ICompositionType
+        public record Change<C> : IAction<Change<C>> where C : ICompositionType
         {
-            public r.Boxed.MetaFunction<ICompositionOf<Change<A, C>>, ResObj> DecompositionFunction => 
-                Core.tMetaFunction(RHint<ICompositionOf<Change<A, C>>, ResObj>.HINT,
+            public r.Boxed.MetaFunction<ICompositionOf<Change<C>>, ResObj> DecompositionFunction => 
+                Core.tMetaFunction(RHint<ICompositionOf<Change<C>>, ResObj>.HINT,
                 thisObj => 
                     thisObj.tRef()
                     .tGetComponent(ADDRESS)
-                    .tDataUpdate(RHint<ICompositionOf<C>>.HINT,
+                    .tDataUpdate(
                     subject =>
                         subject.tRef()
                         .tMerge(thisObj.tRef().tGetComponent(CHANGE))))
                 .Resolution;
-            public readonly static StaticComponentIdentifier<Change<A, C>, A> ADDRESS = new("axiom", "address");
-            public readonly static StaticComponentIdentifier<Change<A, C>, ICompositionOf<r.MergeSpec<C>>> CHANGE = new("axiom", "change");
+            public readonly static StaticComponentIdentifier<Change<C>, IMemoryObject<ICompositionOf<C>>> ADDRESS = new("axiom", "address");
+            public readonly static StaticComponentIdentifier<Change<C>, ICompositionOf<r.MergeSpec<C>>> CHANGE = new("axiom", "change");
         }
 
     }

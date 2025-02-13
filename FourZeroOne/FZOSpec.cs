@@ -139,7 +139,6 @@ namespace FourZeroOne.FZOSpec
     {
         public required IToken Result { get; init; }
         public sealed record Identity : ETokenPrep { }
-        public sealed record MacroExpansion : ETokenPrep { }
         public sealed record RuleApplication : ETokenPrep
         {
             public required Rule.IRule Rule { get; init; }

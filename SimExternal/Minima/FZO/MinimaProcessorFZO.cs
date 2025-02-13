@@ -67,16 +67,11 @@ namespace Minima.FZO
                             }
                         }.AsOk(stdHint);
                 }
-                // send 'MacroExpansion' if processing token is a macro:
-                if (token is IMacro macro)
-                    return new EProcessorStep.TokenPrep()
-                    {
-                        Value = new ETokenPrep.MacroExpansion()
-                        {
-                            Result = macro.ExpandUnsafe()
-                        }
-                    }.AsOk(stdHint);
 
+                // DEBUG
+                //Console.ForegroundColor = ConsoleColor.Green;
+                //Console.WriteLine(token);
+                //Console.ResetColor();
                 // send 'PushOperation' if no more preprocessing is needed:
                 return new EProcessorStep.PushOperation() { OperationToken = token }.AsOk(stdHint);
             }
@@ -109,6 +104,9 @@ namespace Minima.FZO
                     .Split(out var resolutionTask, out var runtimeHandled)
                         ? (await resolutionTask).AsOk(Hint<EStateImplemented>.HINT)
                         : runtimeHandled.AsErr(Hint<ResOpt>.HINT);
+                // DEBUG
+                //if (resolvedOperation.CheckOk(out var r)) Console.WriteLine(r);
+                //Console.ResetColor();
                 return
                     (resolvedOperation.CheckOk(out var finalResolution) && !state.OperationStack.GetAt(1).IsSome())
                     .Not().ToResult(

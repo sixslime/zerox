@@ -188,27 +188,6 @@ namespace FourZeroOne.Core.Proxies
                 private readonly Resolution.Unsafe.IComponentIdentifier<H> _identifier;
                 private readonly IProxy<TOrig, ICompositionOf<H>> _holderProxy;
             }
-
-            // writing specialcases for macros is stupid
-            public sealed record Update<TOrig, H, R> : ProxyBehavior<TOrig, ICompositionOf<H>>
-                where TOrig : IToken
-                where R : class, ResObj
-                where H : ICompositionType
-            {
-                public Update(IComponentIdentifier<H, R> identifier, IProxy<TOrig, ICompositionOf<H>> holderProxy, IProxy<TOrig, r.Boxed.MetaFunction<R, R>> funcProxy)
-                {
-                    _identifier = identifier;
-                    _holderProxy = holderProxy;
-                    _funcProxy = funcProxy;
-                }
-                protected override IToken<ICompositionOf<H>> RealizeInternal(TOrig original, IOption<Rule.IRule> rule)
-                {
-                    return new Macros.UpdateComponent<H, R>(_identifier, _holderProxy.Realize(original, rule), _funcProxy.Realize(original, rule));
-                }
-                private readonly IComponentIdentifier<H, R> _identifier;
-                private readonly IProxy<TOrig, ICompositionOf<H>> _holderProxy;
-                private readonly IProxy<TOrig, r.Boxed.MetaFunction<R, R>> _funcProxy;
-            }
         }
     }
     
