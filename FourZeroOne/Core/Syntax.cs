@@ -453,9 +453,9 @@ namespace FourZeroOne.Core.Syntax
         { return new(from, element); }
         public static p.Function<t.Multi.Contains<R>, TOrig, IMulti<R>, R, ro.Bool> pContains<TOrig, R>(this IProxy<TOrig, IMulti<R>> source, IProxy<TOrig, R> element) where TOrig : IToken where R : class, ResObj
         { return new(source, element); }
-        public static t.Multi.GetIndex<R> tGetIndex<R>(this IToken<IMulti<R>> token, IToken<ro.Number> index) where R : class, ResObj
+        public static t.Multi.GetIndex<R> tAtIndex<R>(this IToken<IMulti<R>> token, IToken<ro.Number> index) where R : class, ResObj
         { return new(token, index); }
-        public static p.Function<t.Multi.GetIndex<R>, TOrig, IMulti<R>, ro.Number, R> pGetIndex<TOrig, R>(this IProxy<TOrig, IMulti<R>> values, IProxy<TOrig, ro.Number> index) where TOrig : IToken where R : class, ResObj
+        public static p.Function<t.Multi.GetIndex<R>, TOrig, IMulti<R>, ro.Number, R> pAtIndex<TOrig, R>(this IProxy<TOrig, IMulti<R>> values, IProxy<TOrig, ro.Number> index) where TOrig : IToken where R : class, ResObj
         { return new(values, index); }
         public static Macro<IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>> tMap<RIn, ROut>(this IToken<IMulti<RIn>> source, Func<DynamicAddress<RIn>, IToken<ROut>> mapFunction)
             where RIn : class, ResObj

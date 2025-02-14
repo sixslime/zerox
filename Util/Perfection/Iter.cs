@@ -168,7 +168,7 @@ namespace Perfection
         public static CachingEnumerable<T> Caching<T>(this IEnumerable<T> enumerable) => new(enumerable);
         public static IEnumerable<T> Over<T>(params T[] arr) => arr;
 
-        public static IEnumerable<int> Iterate(this Range range, bool inclusiveEnd = false)
+        public static IEnumerable<int> RangeIter(this Range range, bool inclusiveEnd = false)
             => range.Start.Value.Sequence(x => x + 1)
                 .Take((range.End.Value - range.Start.Value) + (inclusiveEnd ? 1 : 0));
     }

@@ -48,7 +48,7 @@ namespace CatGlance
                                             v.Assertions.Memory.All(assert => assert.Result.CheckOk(out var pass) && pass),
                                     EDeTesFrame.Complete v
                                         => //DEBUG
-                                            /*new Func<bool>(() => { Console.WriteLine(v.CompletionHalt.Resolution); return true; })() &&*/
+                                            new Func<bool>(() => { Console.WriteLine(v.CompletionHalt.Resolution); return true; })() &&
                                             v.Assertions.Resolution.All(assert => assert.Result.CheckOk(out var pass) && pass) &&
                                             v.Assertions.Memory.All(assert => assert.Result.CheckOk(out var pass) && pass),
                                     _ => true

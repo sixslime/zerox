@@ -62,6 +62,7 @@ namespace DeTes.Realization
                     for (int i = 0; i < paths.Length; i++)
                     {
                         var thisSelection = domain.Selections[i];
+                        domain.MetaIndex = i;
                         paths[i] = new SelectionPathImpl
                         {
                             ResultObject = await Eval(state, processor, runtime, new(new()

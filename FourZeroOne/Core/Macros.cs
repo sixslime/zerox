@@ -38,7 +38,7 @@ namespace FourZeroOne.Core.Macros
                                 Else = Core.tUnion(RHint<ROut>.HINT,
                                 [
                                     mapFunctionI.tRef().tExecuteWith(
-                                            new() { A = multiI.tRef().tGetIndex(i.tRef()) }).tYield(),
+                                            new() { A = multiI.tRef().tAtIndex(i.tRef()) }).tYield(),
                                         selfFunc.tRef().tExecuteWith(
                                             new() { A = i.tRef().tAdd(1.tFixed()) })
                                 ])
