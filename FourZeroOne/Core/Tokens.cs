@@ -286,7 +286,7 @@ namespace FourZeroOne.Core.Tokens
         {
             public required IComponentIdentifier<C> ComponentIdentifier { get; init; }
             IComponentIdentifier<C> IHasAttachedComponentIdentifier<C, ICompositionOf<C>>.AttachedComponentIdentifier => ComponentIdentifier;
-            public Without(Resolution.Unsafe.IComponentIdentifier<C> identifier, IToken<ICompositionOf<C>> holder) : base(holder) { }
+            public Without(IToken<ICompositionOf<C>> holder) : base(holder) { }
             protected override ITask<IOption<ICompositionOf<C>>> StandardResolve(ITokenContext _, IOption<ResObj>[] args)
             {
                 return args[0].RemapAs(x => ((ICompositionOf<C>)x).WithoutComponents([ComponentIdentifier])).ToCompletedITask();

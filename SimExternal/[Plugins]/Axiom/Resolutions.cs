@@ -8,7 +8,6 @@ namespace FourZeroOne.Plugins.Axiom.Resolutions
     using ro = Core.Resolutions.Objects;
     using ax = GameObjects;
     using Resolution;
-    using FourZeroOne.Proxy;
     using FourZeroOne.Core.Macros;
     using Core.Syntax;
 
