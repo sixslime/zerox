@@ -141,8 +141,8 @@ namespace FourZeroOne.Rule
     {
         public RuleID ID => RuleIDGenerator.Next();
         protected abstract IRuleMatcher<IToken<R>> InternalMatcher { get; }
-        IRuleMatcher<IToken<R>> IRule<R>.MatcherUnsafe => InternalMatcher;
         protected abstract IBoxedMetaFunction<R> InternalDefinition { get; }
+        IRuleMatcher<IToken<R>> IRule<R>.MatcherUnsafe => InternalMatcher;
         IBoxedMetaFunction<R> IRule<R>.DefinitionUnsafe => InternalDefinition;
 
         public IOption<IRuledToken<R>> TryApply(any_token token)

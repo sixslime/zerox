@@ -157,6 +157,11 @@ public class Tester
     // WARNING:
     // reliance on metafunctions is bringing attention to the lack of variable capturing.
 
+    // ACTUALLY
+    // 'Type<R>' is a resolution type.
+    // Generic macros are pointers to constant functions that take types, returning the actual function: (TypeA, TypeB) => (a, b)<TypeA, TypeB> => ...
+    // The evil 'Cast<R>' token makes this possible.
+
     // labels are specifications that match tokens:
     interface ILabel { }
 

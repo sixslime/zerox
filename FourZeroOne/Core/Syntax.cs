@@ -289,6 +289,8 @@ namespace FourZeroOne.Core.Syntax
         { return new(value); }
         public static t.Fixed<R> tFixed<R>(this R value) where R : class, ResObj
         { return new(value); }
+        public static t.Fixed<r.Multi<R>> tFixed<R>(this IEnumerable<R> values) where R : class, ResObj
+        { return new(new() { Values = values.ToPSequence() }); }
         //public static t.Fixed<r.Instructions.RuleAdd> tAddRule(this Rule.IRule value)
         //{
         //    return new(new() { Rule = value });
@@ -296,12 +298,6 @@ namespace FourZeroOne.Core.Syntax
 
         public static t.Fixed<r.Multi<R>> t_ToConstMulti<R>(this IEnumerable<t.Fixed<R>> values) where R : class, ResObj
         { return new(new() { Values = values.Map(x => x.Resolution).ToPSequence() }); }
-
-        public static IOption<ro.Number> rAsRes(this int v) => new ro.Number() { Value = v }.AsSome();
-        public static IOption<ro.Bool> rAsRes(this bool v) => new ro.Bool() { IsTrue = v }.AsSome();
-        public static IOption<r.Multi<R>> rAsRes<R>(this IEnumerable<IOption<R>> v) where R : class, ResObj
-        {
-            return new r.Multi<R>() { Values = v.FilterMap(x => x).ToPSequence() }.AsSome();
-        }
+        
     }
 }

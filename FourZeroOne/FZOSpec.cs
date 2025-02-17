@@ -77,7 +77,7 @@ namespace FourZeroOne.FZOSpec
     public interface IMemoryFZO
     {
         public IEnumerable<ITiple<mem_address, any_res>> Objects { get; }
-        public IEnumerable<any_res> Rules { get; }
+        public IEnumerable<any_rule> Rules { get; }
         public IEnumerable<ITiple<RuleID, int>> RuleMutes { get; }
         public IOption<R> GetObject<R>(IMemoryAddress<R> address) where R : class, any_res;
         public int GetRuleMuteCount(RuleID ruleId);
@@ -85,7 +85,7 @@ namespace FourZeroOne.FZOSpec
         // 'WithRules' appends.
         // 'WithoutRules' removes the *first* instance of each rule in sequence.
         // Rules have a public ID assigned at creation, equality is based on ID.
-        public IMemoryFZO WithRules(IEnumerable<any_res> rules);
+        public IMemoryFZO WithRules(IEnumerable<any_rule> rules);
         public IMemoryFZO WithRuleMutes(IEnumerable<RuleID> mutes);
         public IMemoryFZO WithoutRuleMutes(IEnumerable<RuleID> mutes);
         public IMemoryFZO WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions) where R : class, any_res;

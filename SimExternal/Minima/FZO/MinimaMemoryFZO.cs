@@ -4,45 +4,62 @@ using FourZeroOne.FZOSpec;
 using FourZeroOne.Resolution;
 using FourZeroOne.Resolution.Unsafe;
 using FourZeroOne.Rule;
-using FourZeroOne.Macro.Unsafe;
 using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
 #nullable enable
 namespace Minima.FZO
 {
+    using Addr = IMemoryAddress<IResolution>;
+    using Res = IResolution;
+    using Rule = FourZeroOne.Rule.Unsafe.IRule<IResolution>;
     public record MinimaMemoryFZO : IMemoryFZO
     {
-        private PMap<IMemoryAddress, IResolution> _objects;
-        private PSequence<IRule> _rules;
+        private PMap<Addr, Res> _objects;
+        private PSequence<Rule> _rules;
+        private PMap<RuleID, int> _ruleMutes;
 
         public MinimaMemoryFZO()
         {
             _objects = new();
             _rules = new();
+            _ruleMutes = new();
         }
 
-        IEnumerable<ITiple<IMemoryAddress, IResolution>> IMemoryFZO.Objects => _objects.Elements;
-        IEnumerable<IRule> IMemoryFZO.Rules => _rules.Elements;
-        
-        IOption<R> IMemoryFZO.GetObject<R>(IMemoryAddress<R> address)
+        IEnumerable<ITiple<Addr, Res>> IMemoryFZO.Objects => _objects.Elements;
+        IEnumerable<Rule> IMemoryFZO.Rules => _rules.Elements;
+        IEnumerable<ITiple<RuleID, int>> IMemoryFZO.RuleMutes => _ruleMutes.Elements;
+
+        IOption<R> IMemoryFZO.GetObject<R>(IMemoryAddress<R> address) => _objects.At(address).RemapAs(x => (R)x);
+        int IMemoryFZO.GetRuleMuteCount(RuleID ruleId) => _ruleMutes.At(ruleId).Or(0);
+
+        IMemoryFZO IMemoryFZO.WithRules(IEnumerable<Rule> rules) => this with
         {
-            return _objects.At(address).RemapAs(x => (R)x);
-        }
+            _rules = _rules.WithEntries(rules)
+        };
 
-        IMemoryFZO IMemoryFZO.WithRules(IEnumerable<IRule> rules)
+        IMemoryFZO IMemoryFZO.WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions) => this with
         {
-            return this with { _rules = _rules.WithEntries(rules) };
-        }
+            _objects = _objects.WithEntries(insertions)
+        };
 
-        IMemoryFZO IMemoryFZO.WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions)
+        IMemoryFZO IMemoryFZO.WithClearedAddresses(IEnumerable<Addr> removals) => this with
         {
-            return this with { _objects = _objects.WithEntries(insertions) };
-        }
+            _objects = _objects.WithoutEntries(removals)
+        };
 
-        IMemoryFZO IMemoryFZO.WithClearedAddresses(IEnumerable<IMemoryAddress> removals)
+        IMemoryFZO IMemoryFZO.WithRuleMutes(IEnumerable<RuleID> mutes) => this with
         {
-            return this with { _objects = _objects.WithoutEntries(removals) };
-        }
+            _ruleMutes = _ruleMutes.WithEntries(
+                mutes.Map(mute =>
+                    (mute, _ruleMutes.At(mute).Or(0) + 1))
+                .Tipled())
+        };
 
-        
+        IMemoryFZO IMemoryFZO.WithoutRuleMutes(IEnumerable<RuleID> mutes) => this with
+        {
+            _ruleMutes = mutes.AccumulateInto(_ruleMutes,
+                (set, x) =>
+                    set.WithEntries((x, set.At(x).Or(0) - 1).Tiple())
+                    .WithoutEntries<PMap<RuleID, int>, RuleID>(set.At(x).Or(0) > 0 ? [] : [x]))
+        };
     }
 }
