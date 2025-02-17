@@ -1,15 +1,11 @@
-
-using System.Collections.Generic;
 using Perfection;
-using ControlledFlows;
-using MorseCode.ITask;
 #nullable enable
 namespace FourZeroOne.Macro
 {
+    using Core.Resolutions.Boxed;
     using FourZeroOne.FZOSpec;
     using Token;
     using ResObj = Resolution.IResolution;
-    using Core.Resolutions.Boxed;
 
     public interface IMacro<R> : IToken<R> where R : class, ResObj
     {
@@ -64,13 +60,13 @@ namespace FourZeroOne.Macro
         protected override IOption<string> CustomToString()
             => $"{Label.Namespace}.{Label.Identifier}({Arg1})".AsSome();
     }
-    public record Macro<ROut> : RuntimeHandledValue<ROut>, IMacro<ROut>
-        where ROut : class, ResObj
+    public record Macro<RVal> : RuntimeHandledValue<RVal>, IMacro<RVal>
+        where RVal : class, ResObj
     {
         public Macro() : base() { }
         public object[] CustomData { get; init; } = [];
         public required MacroLabel Label { get; init; }
-        public required MetaFunction<ROut> Definition { get; init; }
+        public required MetaFunction<RVal> Definition { get; init; }
         protected override EStateImplemented MakeData()
         {
             return Definition.GenerateMetaExecute();

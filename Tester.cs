@@ -46,7 +46,7 @@ public class Tester
                 {
                     InitialMemory = MEMORY_IMPLEMENTATION,
                     Token = C =>
-                        Core.tSubEnvironment(RHint<ro.Number>.HINT, new()
+                        Core.tSubEnvironment<ro.Number>(new()
                         {
                             Environment = Core.t_Env(
                                 10.tFixed().tAsVariable(out var ten),
@@ -157,7 +157,7 @@ public class Tester
     // WARNING:
     // reliance on metafunctions is bringing attention to the lack of variable capturing.
 
-    // ACTUALLY
+    // *ACTUALLY* INSANE IDEA
     // 'Type<R>' is a resolution type.
     // Generic macros are pointers to constant functions that take types, returning the actual function: (TypeA, TypeB) => (a, b)<TypeA, TypeB> => ...
     // The evil 'Cast<R>' token makes this possible.

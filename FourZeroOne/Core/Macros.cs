@@ -12,9 +12,7 @@ namespace FourZeroOne.Core.Macros
     using Macro;
     using t = Core.Tokens;
     using r = Core.Resolutions;
-    using FourZeroOne.Proxy;
     using Syntax;
-    using FourZeroOne.Proxy.Unsafe;
     using Resolution;
     using ro = Core.Resolutions.Objects;
     using Resolutions.Boxed;
@@ -27,15 +25,15 @@ namespace FourZeroOne.Core.Macros
             return new(multi, mapFunction)
             {
                 Label = Package.Label("Map"),
-                Definition = Core.tMetaFunction(RHint<IMulti<RIn>, MetaFunction<RIn, ROut>, r.Multi<ROut>>.HINT,
+                Definition = Core.tMetaFunction<IMulti<RIn>, MetaFunction<RIn, ROut>, r.Multi<ROut>>(
                     (multiI, mapFunctionI) =>
-                        Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<ROut>>.HINT,
+                        Core.tMetaRecursiveFunction<ro.Number, r.Multi<ROut>>(
                         (selfFunc, i) =>
                             i.tRef().tIsGreaterThan(multiI.tRef().tCount())
-                            .t_IfTrue(RHint<r.Multi<ROut>>.HINT, new()
+                            .t_IfTrue<r.Multi<ROut>>(new()
                             {
-                                Then = Core.tNolla(RHint<r.Multi<ROut>>.HINT),
-                                Else = Core.tUnion(RHint<ROut>.HINT,
+                                Then = Core.tNolla<r.Multi<ROut>>(),
+                                Else = Core.tUnion<ROut>(
                                 [
                                     mapFunctionI.tRef().tExecuteWith(
                                             new() { A = multiI.tRef().tAtIndex(i.tRef()) }).tYield(),
@@ -54,15 +52,15 @@ namespace FourZeroOne.Core.Macros
         public static Macro<R, ro.Number, r.Multi<R>> Construct(IToken<R> value, IToken<ro.Number> count) => new(value, count)
         {
             Label = Package.Label("Duplicate"),
-            Definition = Core.tMetaFunction(RHint<R, ro.Number, r.Multi<R>>.HINT,
+            Definition = Core.tMetaFunction<R, ro.Number, r.Multi<R>>(
                 (valueI, countI) =>
-                    Core.tMetaRecursiveFunction(RHint<ro.Number, r.Multi<R>>.HINT,
+                    Core.tMetaRecursiveFunction<ro.Number, r.Multi<R>>(
                     (selfFunc, i) =>
                         i.tRef().tIsGreaterThan(countI.tRef())
-                        .t_IfTrue(RHint<r.Multi<R>>.HINT, new()
+                        .t_IfTrue<r.Multi<R>>(new()
                         {
-                            Then = Core.tNolla(RHint<r.Multi<R>>.HINT),
-                            Else = Core.tUnion(RHint<R>.HINT,
+                            Then = Core.tNolla<r.Multi<R>>(),
+                            Else = Core.tUnion<R>(
                             [
                                 valueI.tRef().tYield(),
                                     selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tFixed()) })
@@ -90,7 +88,7 @@ namespace FourZeroOne.Core.Macros
         public static Macro<IMemoryObject<R>, MetaFunction<R, R>, r.Instructions.Assign<R>> Construct(IToken<IMemoryObject<R>> address, IToken<MetaFunction<R, R>> updateFunction) => new(address, updateFunction)
         {
             Label = Package.Label("UpdateMemoryObject"),
-            Definition = Core.tMetaFunction(RHint<IMemoryObject<R>, MetaFunction<R, R>, r.Instructions.Assign<R>>.HINT,
+            Definition = Core.tMetaFunction<IMemoryObject<R>, MetaFunction<R, R>, r.Instructions.Assign<R>>(
                 (addressI, updateFunctionI) =>
                     addressI.tRef().tDataWrite(
                         updateFunctionI.tRef()
@@ -107,7 +105,7 @@ namespace FourZeroOne.Core.Macros
         {
             Label = Package.Label("UpdateComponent"),
             CustomData = [component],
-            Definition = Core.tMetaFunction(RHint<ICompositionOf<C>, MetaFunction<R, R>, ICompositionOf<C>>.HINT,
+            Definition = Core.tMetaFunction<ICompositionOf<C>, MetaFunction<R, R>, ICompositionOf<C>>(
                 (compositionI, updateFunctionI) =>
                     compositionI.tRef().tWithComponent(component, 
                         updateFunctionI.tRef()
@@ -130,9 +128,9 @@ namespace FourZeroOne.Core.Macros
         public static Macro<R, MetaFunction<R>, R> Construct(IToken<R> value, IToken<MetaFunction<R>> fallback) => new(value, fallback)
         {
             Label = Package.Label("CatchNolla"),
-            Definition = Core.tMetaFunction(RHint<R, MetaFunction<R>, R>.HINT,
+            Definition = Core.tMetaFunction<R, MetaFunction<R>, R>(
                 (valueI, fallbackI) =>
-                    valueI.tRef().tExists().tIfTrueDirect(RHint<R>.HINT, new()
+                    valueI.tRef().tExists().tIfTrueDirect<R>(new()
                     {
                         Then = valueI.tRef().tMetaBoxed(),
                         Else = fallbackI.tRef()
