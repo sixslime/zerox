@@ -1,11 +1,13 @@
 using FourZeroOne.FZOSpec;
-using FourZeroOne.Token.Unsafe;
 using Perfection;
-using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
+using FourZeroOne.Resolution;
+using FourZeroOne.Token;
 #nullable enable
 namespace DeTes.Analysis
 {
     using CriticalPointType = IResult<IResult<EProcessorHalt, Exception>, IDeTesSelectionPath[]>;
+    using IToken = IToken<IResolution>;
+    using ResOpt = IOption<IResolution>;
     internal class DomainDataImpl : IDeTesDomainData
     {
         public required string? Description { get; init; }

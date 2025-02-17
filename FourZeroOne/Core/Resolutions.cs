@@ -102,9 +102,7 @@ namespace FourZeroOne.Core.Resolutions
                     Token = new Tokens.MetaExecuted<R>(Token),
                     ObjectWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
                     ((SelfIdentifier, this.AsSome()))
-                    .Map(x => x.Tiple()).ToPSequence(),
-                    RuleMutes = new PSequence<Rule.RuleID>(),
-                    RuleAllows = new PSequence<Rule.RuleID>(),
+                    .Tipled()
                 };
             }
         }
@@ -125,9 +123,7 @@ namespace FourZeroOne.Core.Resolutions
                     Token = new Tokens.MetaExecuted<ROut>(Token),
                     ObjectWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
                     ((SelfIdentifier, this.AsSome()), (IdentifierA, arg1))
-                    .Map(x => x.Tiple()).ToPSequence(),
-                    RuleMutes = new PSequence<Rule.RuleID>(),
-                    RuleAllows = new PSequence<Rule.RuleID>(),
+                    .Tipled()
                 };
             }
         }
@@ -151,9 +147,7 @@ namespace FourZeroOne.Core.Resolutions
                     Token = new Tokens.MetaExecuted<ROut>(Token),
                     ObjectWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
                     ((SelfIdentifier, this.AsSome()), (IdentifierA, arg1), (IdentifierB, arg2))
-                    .Map(x => x.Tiple()).ToPSequence(),
-                    RuleMutes = new PSequence<Rule.RuleID>(),
-                    RuleAllows = new PSequence<Rule.RuleID>(),
+                    .Tipled()
                 };
             }
         }
@@ -181,9 +175,7 @@ namespace FourZeroOne.Core.Resolutions
                     Token = new Tokens.MetaExecuted<ROut>(Token),
                     ObjectWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
                     ((SelfIdentifier, this.AsSome()), (IdentifierA, arg1), (IdentifierB, arg2), (IdentifierC, arg3))
-                    .Map(x => x.Tiple()).ToPSequence(),
-                    RuleMutes = new PSequence<Rule.RuleID>(),
-                    RuleAllows = new PSequence<Rule.RuleID>(),
+                    .Tipled()
                 };
             }
         }
@@ -217,9 +209,7 @@ namespace FourZeroOne.Core.Resolutions
                     Token = new Tokens.MetaExecuted<ROut>(Token),
                     ObjectWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
                     ((SelfIdentifier, this.AsSome()), (IdentifierA, arg1), (IdentifierB, arg2), (IdentifierC, arg3), (IdentifierD, arg4))
-                    .Map(x => x.Tiple()).ToPSequence(),
-                    RuleMutes = new PSequence<Rule.RuleID>(),
-                    RuleAllows = new PSequence<Rule.RuleID>(),
+                    .Tipled()
                 };
             }
         }

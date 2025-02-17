@@ -1,7 +1,6 @@
 using MorseCode.ITask;
 using Perfection;
 using FourZeroOne.FZOSpec;
-using FourZeroOne.Token.Unsafe;
 using FourZeroOne.Token;
 using ResObj = FourZeroOne.Resolution.IResolution;
 using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
@@ -10,6 +9,7 @@ namespace DeTes.Declaration
 {
     using Analysis;
     using Realization;
+    using IToken = IToken<ResObj>;
     internal class ContextImpl : IDeTesContext, IContextAccessor
     {
         private List<IDomainAccessor> _domains = [];

@@ -32,8 +32,8 @@ namespace FourZeroOne.Core.Macros
                             i.tRef().tIsGreaterThan(multiI.tRef().tCount())
                             .t_IfTrue<r.Multi<ROut>>(new()
                             {
-                                Then = Core.tNolla<r.Multi<ROut>>(),
-                                Else = Core.tUnion<ROut>(
+                                Then = Core.tNollaFor<r.Multi<ROut>>(),
+                                Else = Core.tUnionOf<ROut>(
                                 [
                                     mapFunctionI.tRef().tExecuteWith(
                                             new() { A = multiI.tRef().tAtIndex(i.tRef()) }).tYield(),
@@ -59,8 +59,8 @@ namespace FourZeroOne.Core.Macros
                         i.tRef().tIsGreaterThan(countI.tRef())
                         .t_IfTrue<r.Multi<R>>(new()
                         {
-                            Then = Core.tNolla<r.Multi<R>>(),
-                            Else = Core.tUnion<R>(
+                            Then = Core.tNollaFor<r.Multi<R>>(),
+                            Else = Core.tUnionOf<R>(
                             [
                                 valueI.tRef().tYield(),
                                     selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tFixed()) })
@@ -142,6 +142,6 @@ namespace FourZeroOne.Core.Macros
     public static class Package
     {
         public const string NAMESPACE = "CORE";
-        internal static MacroLabel Label(string identifier) => new() { Namespace = NAMESPACE, Identifier = identifier };
+        internal static MacroLabel Label(string identifier) => new() { Package = NAMESPACE, Identifier = identifier };
     }
 }

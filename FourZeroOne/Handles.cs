@@ -10,19 +10,20 @@ using FourZeroOne.FZOSpec;
 #nullable enable
 namespace FourZeroOne.Handles
 {
-    using ResObj = IResolution;
-    
+    using Res = IResolution;
+    using Addr = IMemoryAddress<IResolution>;
+    using Rule = Rule.Unsafe.IRule<IResolution>;
     public interface IMemory
     {
         public FZOSpec.IMemoryFZO InternalValue { get; }
-        public IEnumerable<ITiple<IMemoryAddress, ResObj>> Objects { get; }
-        public IEnumerable<Rule.IRule> Rules { get; }
-        public IOption<R> GetObject<R>(IMemoryAddress<R> address) where R : class, ResObj;
-        public IOption<ResObj> GetObjectUnsafe(IMemoryAddress address);
-        public IMemory WithRules(IEnumerable<Rule.IRule> rules);
-        public IMemory WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions) where R : class, ResObj;
-        public IMemory WithObjectsUnsafe(IEnumerable<ITiple<IMemoryAddress, ResObj>> insertions);
-        public IMemory WithClearedAddresses(IEnumerable<IMemoryAddress> removals);
+        public IEnumerable<ITiple<Addr, Res>> Objects { get; }
+        public IEnumerable<Rule> Rules { get; }
+        public IOption<R> GetObject<R>(IMemoryAddress<R> address) where R : class, Res;
+        public IOption<Res> GetObjectUnsafe(Addr address);
+        public IMemory WithRules(IEnumerable<Rule> rules);
+        public IMemory WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions) where R : class, Res;
+        public IMemory WithObjectsUnsafe(IEnumerable<ITiple<Addr, Res>> insertions);
+        public IMemory WithClearedAddresses(IEnumerable<Addr> removals);
     }
     public interface ITokenContext
     {
@@ -33,20 +34,20 @@ namespace FourZeroOne.Handles
     public interface IInput
     {
         public FZOSpec.IInputFZO InternalValue { get; }
-        public ITask<int[]> ReadSelection(IHasElements<ResObj> pool, int count);
+        public ITask<int[]> ReadSelection(IHasElements<Res> pool, int count);
     }
     public class MemoryHandle(FZOSpec.IMemoryFZO implementation) : IMemory
     {
         private readonly FZOSpec.IMemoryFZO _implementation = implementation;
         IMemoryFZO IMemory.InternalValue => _implementation;
-        IEnumerable<ITiple<IMemoryAddress, ResObj>> IMemory.Objects => _implementation.Objects;
-        IEnumerable<IRule> IMemory.Rules => _implementation.Rules;
+        IEnumerable<ITiple<Addr, Res>> IMemory.Objects => _implementation.Objects;
+        IEnumerable<Rule> IMemory.Rules => _implementation.Rules;
         IOption<R> IMemory.GetObject<R>(IMemoryAddress<R> address) => _implementation.GetObject(address);
-        IOption<ResObj> IMemory.GetObjectUnsafe(IMemoryAddress address) => _implementation.GetObject((IMemoryAddress<ResObj>)address);
-        IMemory IMemory.WithClearedAddresses(IEnumerable<IMemoryAddress> removals) => _implementation.WithClearedAddresses(removals).ToHandle();
+        IOption<Res> IMemory.GetObjectUnsafe(Addr address) => _implementation.GetObject((IMemoryAddress<Res>)address);
+        IMemory IMemory.WithClearedAddresses(IEnumerable<Addr> removals) => _implementation.WithClearedAddresses(removals).ToHandle();
         IMemory IMemory.WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions) => _implementation.WithObjects(insertions).ToHandle();
-        IMemory IMemory.WithObjectsUnsafe(IEnumerable<ITiple<IMemoryAddress, ResObj>> insertions) => _implementation.WithObjects(insertions.Map(x => ((IMemoryAddress<ResObj>)x.A, (ResObj)x.B).Tiple())).ToHandle();
-        IMemory IMemory.WithRules(IEnumerable<IRule> rules) => _implementation.WithRules(rules).ToHandle();
+        IMemory IMemory.WithObjectsUnsafe(IEnumerable<ITiple<Addr, Res>> insertions) => _implementation.WithObjects(insertions.Map(x => ((IMemoryAddress<Res>)x.A, (Res)x.B).Tiple())).ToHandle();
+        IMemory IMemory.WithRules(IEnumerable<Rule> rules) => _implementation.WithRules(rules).ToHandle();
     }
     public class TokenContextHandle(FZOSpec.IProcessorFZO.ITokenContext implementation) : ITokenContext
     {
@@ -62,14 +63,14 @@ namespace FourZeroOne.Handles
 
         IInputFZO IInput.InternalValue => _implementation;
 
-        ITask<int[]> IInput.ReadSelection(IHasElements<ResObj> pool, int count) => _implementation.GetSelection(pool, count);
+        ITask<int[]> IInput.ReadSelection(IHasElements<Res> pool, int count) => _implementation.GetSelection(pool, count);
     }
     public static class Extensions
     {
         public static ITokenContext ToHandle(this FZOSpec.IProcessorFZO.ITokenContext implementation) => new TokenContextHandle(implementation);
         public static IMemory ToHandle(this FZOSpec.IMemoryFZO implementation) => new MemoryHandle(implementation);
         public static IInput ToHandle(this FZOSpec.IInputFZO implementation) => new InputHandle(implementation);
-        public static IMemory WithResolution(this IMemory state, ResObj resolution)
+        public static IMemory WithResolution(this IMemory state, Res resolution)
         {
             return resolution.Instructions.AccumulateInto(state, (prevState, instruction) => instruction.TransformMemory(prevState));
         }

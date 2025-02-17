@@ -1,10 +1,10 @@
 using FourZeroOne.FZOSpec;
-using FourZeroOne.Token.Unsafe;
 using MorseCode.ITask;
 using Perfection;
-using ResObj = FourZeroOne.Resolution.IResolution;
+using Res = FourZeroOne.Resolution.IResolution;
 using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
 using PROTO_ZeroxFour_1.Util;
+using FourZeroOne.Token;
 #nullable enable
 namespace DeTes.Realization
 {
@@ -14,6 +14,7 @@ namespace DeTes.Realization
     using FourZeroOne.FZOSpec.Shorthands;
     using Declaration;
     using CriticalPointType = IResult<IResult<EProcessorHalt, Exception>, Analysis.IDeTesSelectionPath[]>;
+    using IToken = IToken<Res>;
 
     internal class DeTesRealizerImpl
     {
@@ -291,7 +292,7 @@ namespace DeTes.Realization
         {
 
             private Data? _data = data;
-            ITask<int[]> IInputFZO.GetSelection(IHasElements<ResObj> pool, int count)
+            ITask<int[]> IInputFZO.GetSelection(IHasElements<Res> pool, int count)
             {
                 if (_data is null) throw new RequiresDomainSplit();
                 var data = _data;

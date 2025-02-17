@@ -1,11 +1,12 @@
 using FourZeroOne.FZOSpec;
-using FourZeroOne.Token.Unsafe;
+using FourZeroOne.Token;
+using FourZeroOne.Resolution;
 using Perfection;
-using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
+using NollableRes = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
 #nullable enable
 namespace DeTes.Analysis
 {
-
+    using IToken = IToken<IResolution>;
     public interface IDeTesResult
     {
         public IResult<IResult<EProcessorHalt, Exception>, IDeTesSelectionPath[]> CriticalPoint { get; }
@@ -34,7 +35,7 @@ namespace DeTes.Analysis
     public interface IDeTesOnResolveAssertions
     {
         public IDeTesAssertionData<IMemoryFZO>[] Memory { get; }
-        public IDeTesAssertionData<ResOpt>[] Resolution { get; }
+        public IDeTesAssertionData<NollableRes>[] Resolution { get; }
     }
     public abstract record EDeTesFrame
     {

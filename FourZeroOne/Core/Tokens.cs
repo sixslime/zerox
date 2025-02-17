@@ -460,16 +460,29 @@ namespace FourZeroOne.Core.Tokens
     }
     public sealed record DynamicAssign<R> : StandardToken<r.Instructions.Assign<R>> where R : class, ResObj
     {
+        public readonly IMemoryAddress<R> AssigningAddress;
         public DynamicAssign(IMemoryAddress<R> address, IToken<R> obj) : base(obj)
         {
-            _assigningAddress = address;
+            AssigningAddress = address;
         }
         protected override ITask<IOption<r.Instructions.Assign<R>>> StandardResolve(ITokenContext runtime, IOption<ResObj>[] args)
         {
-            return args[0].RemapAs(x => new r.Instructions.Assign<R>() { Address = _assigningAddress, Subject = (R)x }).ToCompletedITask();
+            return args[0].RemapAs(x => new r.Instructions.Assign<R>() { Address = AssigningAddress, Subject = (R)x }).ToCompletedITask();
         }
-        protected override IOption<string> CustomToString() => $"{_assigningAddress}<- {ArgTokens[0]}".AsSome();
-        private readonly IMemoryAddress<R> _assigningAddress;
+        protected override IOption<string> CustomToString() => $"{AssigningAddress}<- {ArgTokens[0]}".AsSome();
+    }
+
+    public sealed record AddRule : PureValue<r.Instructions.RuleAdd>
+    {
+        public readonly Rule.Unsafe.IRule<ResObj> Rule;
+        public AddRule(Rule.Unsafe.IRule<ResObj> rule)
+        {
+            Rule = rule;
+        }
+        protected override r.Instructions.RuleAdd EvaluatePure()
+        {
+            return new() { Rule = Rule };
+        }
     }
     public sealed record DynamicReference<R> : Value<R> where R : class, ResObj
     {

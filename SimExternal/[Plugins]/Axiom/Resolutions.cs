@@ -137,7 +137,7 @@ namespace FourZeroOne.Plugins.Axiom.Resolutions
         public record Change<C> : IAction<Change<C>> where C : ICompositionType
         {
             public r.Boxed.MetaFunction<ICompositionOf<Change<C>>, ResObj> DecompositionFunction => 
-                Core.tMetaFunction(RHint<ICompositionOf<Change<C>>, ResObj>.HINT,
+                Core.tMetaFunction<ICompositionOf<Change<C>>, ResObj>(
                 thisObj => 
                     thisObj.tRef()
                     .tGetComponent(ADDRESS)

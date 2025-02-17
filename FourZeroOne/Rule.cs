@@ -42,8 +42,7 @@ namespace FourZeroOne.Rule
             protected override IBoxedMetaFunction<ROut> InternalDefinition => Definition;
             protected override IRuleMatcher<IToken<ROut>> InternalMatcher => Matcher;
         }
-        public record RuleForFunction<TMatch, RArg1, RArg2, RArg3, ROut> : RuleBehavior<ROut>, IRuleOfFunction<RArg1, RArg2, RArg3, ROut>
-            where TMatch : IHasArgs<RArg1, RArg2, RArg3, ROut>
+        public record RuleForFunction<RArg1, RArg2, RArg3, ROut> : RuleBehavior<ROut>, IRuleOfFunction<RArg1, RArg2, RArg3, ROut>
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where RArg3 : class, ResObj
@@ -57,16 +56,17 @@ namespace FourZeroOne.Rule
     }
     namespace Matchers
     {
+        using Macro;
         public record AnyMatcher<TRestriction> : IRuleMatcher<TRestriction>
         where TRestriction : any_token
         {
-            public required IHasElements<IRuleMatcher<TRestriction>> Entries { get; init; }
+            public required IPSet<IRuleMatcher<TRestriction>> Entries { get; init; }
             public bool MatchesToken(any_token token) => Entries.Elements.Any(x => x.MatchesToken(token));
         }
         public record AllMatcher<TRestriction> : IRuleMatcher<TRestriction>
             where TRestriction : any_token
         {
-            public required IHasElements<IRuleMatcher<TRestriction>> Entries { get; init; }
+            public required IPSet<IRuleMatcher<TRestriction>> Entries { get; init; }
             public bool MatchesToken(any_token token) => Entries.Elements.All(x => x.MatchesToken(token));
         }
         public record TypeMatcher<TMatch> : IRuleMatcher<TMatch>
@@ -76,20 +76,20 @@ namespace FourZeroOne.Rule
         }
         //DEV:
         // Macro matchers should be 'IRuleMatcher<Macro<...>>' but like thats not an interface and I dont want to make 4 IMacro<...>s
-        public record MacroMatcher<RVal> : IRuleMatcher<IHasNoArgs<RVal>>
+        public record MacroMatcher<RVal> : IRuleMatcher<IMacroValue<RVal>>
             where RVal : class, ResObj
         {
             public required Macro.MacroLabel Label { get; init; }
             public bool MatchesToken(any_token token) => token is Macro.Macro<RVal> macro && macro.Label.Equals(Label);
         }
-        public record MacroMatcher<RArg1, ROut> : IRuleMatcher<IHasArgs<RArg1, ROut>>
+        public record MacroMatcher<RArg1, ROut> : IRuleMatcher<IMacroFunction<RArg1, ROut>>
             where RArg1 : class, ResObj
             where ROut : class, ResObj
         {
             public required Macro.MacroLabel Label { get; init; }
             public bool MatchesToken(any_token token) => token is Macro.Macro<RArg1, ROut> macro && macro.Label.Equals(Label);
         }
-        public record MacroMatcher<RArg1, RArg2, ROut> : IRuleMatcher<IHasArgs<RArg1, RArg2, ROut>>
+        public record MacroMatcher<RArg1, RArg2, ROut> : IRuleMatcher<IMacroFunction<RArg1, RArg2, ROut>>
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where ROut : class, ResObj
@@ -97,7 +97,7 @@ namespace FourZeroOne.Rule
             public required Macro.MacroLabel Label { get; init; }
             public bool MatchesToken(any_token token) => token is Macro.Macro<RArg1, RArg2, ROut> macro && macro.Label.Equals(Label);
         }
-        public record MacroMatcher<RArg1, RArg2, RArg3, ROut> : IRuleMatcher<IHasArgs<RArg1, RArg2, RArg3, ROut>>
+        public record MacroMatcher<RArg1, RArg2, RArg3, ROut> : IRuleMatcher<IMacroFunction<RArg1, RArg2, RArg3, ROut>>
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where RArg3 : class, ResObj

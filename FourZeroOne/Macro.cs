@@ -5,18 +5,37 @@ namespace FourZeroOne.Macro
     using Core.Resolutions.Boxed;
     using FourZeroOne.FZOSpec;
     using Token;
-    using ResObj = Resolution.IResolution;
+    using Res = Resolution.IResolution;
 
-    public interface IMacro<R> : IToken<R> where R : class, ResObj
+    public interface IMacro<R> : IToken<R> where R : class, Res
     {
         public MacroLabel Label { get; }
         public object[] CustomData { get; }
     }
-    public record Macro<RArg1, RArg2, RArg3, ROut> : RuntimeHandledFunction<RArg1, RArg2, RArg3, ROut>, IMacro<ROut>
-        where RArg1 : class, ResObj
-        where RArg2 : class, ResObj
-        where RArg3 : class, ResObj
-        where ROut : class, ResObj
+    public interface IMacroValue<RVal> : IMacro<RVal>, IHasNoArgs<RVal>
+        where RVal : class, Res
+    { }
+    public interface IMacroFunction<RArg1, ROut> : IMacro<ROut>, IHasArgs<RArg1, ROut>
+        where RArg1 : class, Res
+        where ROut : class, Res
+    { }
+    public interface IMacroFunction<RArg1, RArg2, ROut> : IMacro<ROut>, IHasArgs<RArg1, RArg2, ROut>
+        where RArg1 : class, Res
+        where RArg2 : class, Res
+        where ROut : class, Res
+    { }
+    public interface IMacroFunction<RArg1, RArg2, RArg3, ROut> : IMacro<ROut>, IHasArgs<RArg1, RArg2, RArg3, ROut>
+        where RArg1 : class, Res
+        where RArg2 : class, Res
+        where RArg3 : class, Res
+        where ROut : class, Res
+    { }
+
+    public record Macro<RArg1, RArg2, RArg3, ROut> : RuntimeHandledFunction<RArg1, RArg2, RArg3, ROut>, IMacroFunction<RArg1, RArg2, RArg3, ROut>
+        where RArg1 : class, Res
+        where RArg2 : class, Res
+        where RArg3 : class, Res
+        where ROut : class, Res
     {
         public Macro(IToken<RArg1> in1, IToken<RArg2> in2, IToken<RArg3> in3) : base(in1, in2, in3) { }
         public required MacroLabel Label { get; init; }
@@ -27,12 +46,12 @@ namespace FourZeroOne.Macro
             return Definition.GenerateMetaExecute(in1.AsSome(), in2.AsSome(), in3.AsSome());
         }
         protected override IOption<string> CustomToString()
-            => $"{Label.Namespace}.{Label.Identifier}({Arg1}, {Arg2}, {Arg3})".AsSome();
+            => $"{Label.Package}.{Label.Identifier}({Arg1}, {Arg2}, {Arg3})".AsSome();
     }
-    public record Macro<RArg1, RArg2, ROut> : RuntimeHandledFunction<RArg1, RArg2, ROut>, IMacro<ROut>
-        where RArg1 : class, ResObj
-        where RArg2 : class, ResObj
-        where ROut : class, ResObj
+    public record Macro<RArg1, RArg2, ROut> : RuntimeHandledFunction<RArg1, RArg2, ROut>, IMacroFunction<RArg1, RArg2, ROut>
+        where RArg1 : class, Res
+        where RArg2 : class, Res
+        where ROut : class, Res
     {
         public Macro(IToken<RArg1> in1, IToken<RArg2> in2) : base(in1, in2) { }
         public required MacroLabel Label { get; init; }
@@ -43,11 +62,11 @@ namespace FourZeroOne.Macro
             return Definition.GenerateMetaExecute(in1.AsSome(), in2.AsSome());
         }
         protected override IOption<string> CustomToString()
-            => $"{Label.Namespace}.{Label.Identifier}({Arg1}, {Arg2})".AsSome();
+            => $"{Label.Package}.{Label.Identifier}({Arg1}, {Arg2})".AsSome();
     }
-    public record Macro<RArg1, ROut> : RuntimeHandledFunction<RArg1, ROut>, IMacro<ROut>
-        where RArg1 : class, ResObj
-        where ROut : class, ResObj
+    public record Macro<RArg1, ROut> : RuntimeHandledFunction<RArg1, ROut>, IMacroFunction<RArg1, ROut>
+        where RArg1 : class, Res
+        where ROut : class, Res
     {
         public Macro(IToken<RArg1> in1) : base(in1) { }
         public required MacroLabel Label { get; init; }
@@ -58,10 +77,10 @@ namespace FourZeroOne.Macro
             return Definition.GenerateMetaExecute(in1.AsSome());
         }
         protected override IOption<string> CustomToString()
-            => $"{Label.Namespace}.{Label.Identifier}({Arg1})".AsSome();
+            => $"{Label.Package}.{Label.Identifier}({Arg1})".AsSome();
     }
-    public record Macro<RVal> : RuntimeHandledValue<RVal>, IMacro<RVal>
-        where RVal : class, ResObj
+    public record Macro<RVal> : RuntimeHandledValue<RVal>, IMacro<RVal>, IMacroValue<RVal>
+        where RVal : class, Res
     {
         public Macro() : base() { }
         public object[] CustomData { get; init; } = [];
@@ -72,11 +91,11 @@ namespace FourZeroOne.Macro
             return Definition.GenerateMetaExecute();
         }
         protected override IOption<string> CustomToString()
-            => $"{Label.Namespace}.{Label.Identifier}()".AsSome();
+            => $"{Label.Package}.{Label.Identifier}()".AsSome();
     }
     public sealed record MacroLabel
     {
-        public required string Namespace { get; init; }
+        public required string Package { get; init; }
         public required string Identifier { get; init; }
     }
 }
