@@ -141,9 +141,9 @@ namespace FourZeroOne.FZOSpec
         public sealed record MetaExecute : EStateImplemented
         {
             public required any_token Token { get; init; }
-            public IHasElements<ITiple<mem_address, res_opt>> ObjectWrites { get; init; } = new PSequence<ITiple<mem_address, res_opt>>();
-            public IHasElements<RuleID> RuleMutes { get; init; } = new PSequence<RuleID>();
-            public IHasElements<RuleID> RuleAllows { get; init; } = new PSequence<RuleID>();
+            public IEnumerable<ITiple<mem_address, res_opt>> ObjectWrites { get; init; } = [];
+            public IEnumerable<RuleID> RuleMutes { get; init; } = [];
+            public IEnumerable<RuleID> RuleAllows { get; init; } = [];
         }
     }
     public abstract record ETokenMutation

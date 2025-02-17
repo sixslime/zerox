@@ -3,13 +3,14 @@ using Perfection;
 using FourZeroOne.FZOSpec;
 using FourZeroOne.Resolution;
 using FourZeroOne.Resolution.Unsafe;
+using FourZeroOne.Rule.Unsafe;
 using FourZeroOne.Rule;
-using FourZeroOne.Macro.Unsafe;
 using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
 using LookNicePls;
 #nullable enable
 namespace Minima.FZO
 {
+    using any_rule = IRule<IResolution>;
     public class MinimaProcessorFZO() : IProcessorFZO
     {
         public ITask<IResult<EProcessorStep, EProcessorHalt>> GetNextStep(IStateFZO state, IInputFZO input) => StaticImplementation(state, input);
@@ -34,39 +35,33 @@ namespace Minima.FZO
             if (state.TokenPrepStack.GetAt(0).Check(out var processingToken))
             {
                 var token = processingToken.Result;
-                Dictionary<IRule, int> previousApplications = new();
-
-                // WARNING:
-                // this method of uncached checking for previously applied rules is inefficient for large amounts of preprocess steps.
-
-                // - populate previousApplications:
-                foreach (var process in state.TokenPrepStack)
+                
+                if (state.OperationStack.GetAt(0).Check(out var t) && t.MemoryStack.GetAt(0).Check(out var topMem))
                 {
-                    if (process is not ETokenMutation.RuleApply ra) continue;
-                    var appliedRule = ra.Rule;
-                    previousApplications[appliedRule] = previousApplications.TryGetValue(appliedRule, out var count) ? count + 1 : 1;
-                }
-                foreach (var rule in state.OperationStack.GetAt(0)
-                    .RemapAs(x => x.MemoryStack.GetAt(0).Unwrap().Rules).Or([]))
-                {
-                    // - skip already applied rules:
-                    if (previousApplications.TryGetValue(rule, out var count) && count > 0)
+                    Dictionary<RuleID, int> seenRules = new();
+                    foreach (var rule in topMem.Rules)
                     {
-                        previousApplications[rule] = count - 1;
-                        continue;
-                    }
-
-                    // send 'RuleApplication' if the processing token is rulable by an unapplied rule:
-                    if (rule.TryApply(token).Check(out var ruledToken))
-                        return new EProcessorStep.TokenMutate()
+                        // - skip muted rules:
+                        var timesSeen = seenRules.At(rule.ID).Or(0);
+                        if (topMem.GetRuleMuteCount(rule.ID) > timesSeen)
                         {
-                            Mutation = new ETokenMutation.RuleApply()
+                            seenRules[rule.ID] = timesSeen + 1;
+                            continue;
+                        }
+
+                        // send 'RuleApplication' if the processing token is rulable by an unapplied rule:
+                        if (rule.TryApply(token).Check(out var ruledToken))
+                        return new EProcessorStep.TokenMutate
+                        {
+                            Mutation = new ETokenMutation.RuleApply
                             {
                                 Rule = rule,
                                 Result = ruledToken
                             }
                         }.AsOk(stdHint);
+                    }
                 }
+                
 
                 // DEBUG
                 //Console.ForegroundColor = ConsoleColor.Green;
@@ -100,7 +95,7 @@ namespace Minima.FZO
             if (argsArray.Length == topNode.Operation.ArgTokens.Length)
             {
                 var resolvedOperation =
-                    topNode.Operation.UnsafeResolve(tokenContext, argsArray)
+                    topNode.Operation.ResolveWith(tokenContext, argsArray)
                     .Split(out var resolutionTask, out var runtimeHandled)
                         ? (await resolutionTask).AsOk(Hint<EStateImplemented>.HINT)
                         : runtimeHandled.AsErr(Hint<ResOpt>.HINT);

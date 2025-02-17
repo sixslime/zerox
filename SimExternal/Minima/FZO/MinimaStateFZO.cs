@@ -2,16 +2,14 @@ using MorseCode.ITask;
 using Perfection;
 using FourZeroOne.FZOSpec;
 using FourZeroOne.Resolution;
-using FourZeroOne.Resolution.Unsafe;
-using FourZeroOne.Rule;
-using FourZeroOne.Macro.Unsafe;
 using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
-using FourZeroOne.Token.Unsafe;
 using LookNicePls;
 using System.Diagnostics;
+using FourZeroOne.Token;
 #nullable enable
 namespace Minima.FZO
 {
+    using any_token = IToken<IResolution>;
     public record MinimaStateFZO : IStateFZO
     {
         private IOption<FZOSource> _initialized;
@@ -93,11 +91,13 @@ namespace Minima.FZO
                             {
                                 MemoryStack = node.MemoryStack.WithEntries(
                                     node.MemoryStack.TopValue.Unwrap().ExprAs(
-                                        mem => metaExecute.ObjectWrites.ExprAs(
-                                            writes => mem.WithObjects(
-                                                    writes.FilterMap(x => x.B.RemapAs(r => (x.A, r).Tiple())))
-                                                .WithClearedAddresses(writes.FilterMap(x => x.B.IsSome().Not().ToOption(x.A)))))
-                                )
+                                        mem =>
+                                        metaExecute.ObjectWrites.ExprAs(
+                                            writes =>
+                                            mem.WithObjects(writes.FilterMap(x => x.B.RemapAs(r => (x.A, r).Tiple())))
+                                            .WithClearedAddresses(writes.FilterMap(x => x.B.IsSome().Not().ToOption(x.A))))
+                                        .WithRuleMutes(metaExecute.RuleMutes)
+                                        .WithoutRuleMutes(metaExecute.RuleAllows)))
                             }).IsA<PStack<OperationNode>>(),
                             _prepStack = _prepStack.WithEntries(new ETokenMutation.Identity { Result = metaExecute.Token })
                         },
@@ -109,25 +109,16 @@ namespace Minima.FZO
         private record OperationNode : IStateFZO.IOperationNode
         {
             public required int MemCount { get; init; }
-            public required IToken Operation { get; init; }
+            public required any_token Operation { get; init; }
             public required PStack<ResOpt> ArgResolutionStack { get; init; }
             public required PStack<IMemoryFZO> MemoryStack { get; init; }
             IEnumerable<ResOpt> IStateFZO.IOperationNode.ArgResolutionStack => ArgResolutionStack.Elements;
             IEnumerable<IMemoryFZO> IStateFZO.IOperationNode.MemoryStack => MemoryStack.Elements.Take(MemCount);
         }
-        private class DummyOperation : IToken
+        private class DummyOperation : any_token
         {
-            public IToken[] ArgTokens => throw new UnreachableException();
-            public IPSet<string> Labels => throw new UnreachableException();
-            public IResult<ITask<ResOpt>, EStateImplemented> UnsafeResolve(IProcessorFZO.ITokenContext runtime, ResOpt[] args)
-            {
-                throw new UnreachableException();
-            }
-            public IToken UnsafeWithArgs(IToken[] args)
-            {
-                throw new UnreachableException();
-            }
-            public IToken _dLabels(Updater<IPSet<string>> updater)
+            public any_token[] ArgTokens => throw new UnreachableException();
+            public IResult<ITask<ResOpt>, EStateImplemented> ResolveWith(IProcessorFZO.ITokenContext runtime, ResOpt[] args)
             {
                 throw new UnreachableException();
             }

@@ -118,7 +118,7 @@ namespace FourZeroOne.Rule
                 return new EStateImplemented.MetaExecute
                 {
                     Token = proxy.Token,
-                    RuleAllows = new PSequence<RuleID>().WithEntries(proxy.ReallowsRule ? proxy.FromRule.Yield() : []),
+                    RuleAllows = proxy.ReallowsRule ? proxy.FromRule.Yield() : [],
                 };
             }
         }
@@ -187,9 +187,8 @@ namespace FourZeroOne.Rule
                         definition.IsA<ResObj>().Yield()
                         .Concat(Proxies)
                         .Map(x => x.AsSome()))
-                    .Tipled()
-                    .ToPSequence(),
-                RuleMutes = AppliedRule.ID.Yield().ToPSequence()
+                    .Tipled(),
+                RuleMutes = [AppliedRule.ID]
             };
         }
     }
