@@ -111,7 +111,7 @@ namespace DeTes.Realization
                 // main runtime/processor loop logic:
                 switch (step)
                 {
-                    case EProcessorStep.TokenPrep v:
+                    case EProcessorStep.TokenMutate v:
                         {
                             frames.Add(new EDeTesFrame.TokenPrep
                             {
@@ -119,15 +119,15 @@ namespace DeTes.Realization
                                 NextStep = v
                             });
                             //tokenmap can get pretty large because its just 1 mutable object.
-                            switch (v.Value)
+                            switch (v.Mutation)
                             {
-                                case ETokenPrep.Identity identity:
+                                case ETokenMutation.Identity identity:
                                     runtime.PreprocessMap[identity.Result] = identity.Result;
                                     break;
                                 default:
                                     // kinda inefficient but the alternative is using potentially unproven cache assumptions.
-                                    runtime.PreprocessMap[v.Value.Result] =
-                                        state.TokenPrepStack.Last().IsA<ETokenPrep.Identity>().Result;
+                                    runtime.PreprocessMap[v.Mutation.Result] =
+                                        state.TokenPrepStack.Last().IsA<ETokenMutation.Identity>().Result;
                                     break;
                             }
                         }
@@ -172,7 +172,7 @@ namespace DeTes.Realization
                                 {
                                     case EStateImplemented.MetaExecute metaExecute:
                                         //runtime.MetaExecuteMap[metaExecute.FunctionToken] = linkedToken;
-                                        runtime.PreprocessMap[metaExecute.FunctionToken] = linkedToken;
+                                        runtime.PreprocessMap[metaExecute.Token] = linkedToken;
                                         break;
                                     default:
                                         throw new NotSupportedException();

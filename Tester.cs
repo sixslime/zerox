@@ -94,7 +94,6 @@ public class Tester
                 }
             }
         };
-        
         var shouldFail = new Glancer
         {
             Name = "Should Fail",
@@ -155,10 +154,6 @@ public class Tester
 
     }
 
-    // LEFTOFF
-    // with the new specification for macros, proxies just flat do not work with macros.
-    // we may need to remove proxies
-    // now we need rules!
     // WARNING:
     // reliance on metafunctions is bringing attention to the lack of variable capturing.
 

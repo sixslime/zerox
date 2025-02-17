@@ -196,14 +196,14 @@ namespace FourZeroOne.Core.Proxies
         public This() : base() { }
     }
     public sealed record ThisFunction<TOrig, RArg1, ROut> : ThisProxy<TOrig, ROut>
-        where TOrig : IFunction<RArg1, ROut>
+        where TOrig : IHasArgs<RArg1, ROut>
         where RArg1 : class, ResObj
         where ROut : class, ResObj
     {
         public ThisFunction(IProxy<TOrig, RArg1> in1) : base(in1) { }
     }
     public sealed record ThisFunction<TOrig, RArg1, RArg2, ROut> : ThisProxy<TOrig, ROut>
-        where TOrig : IFunction<RArg1, RArg2, ROut>
+        where TOrig : IHasArgs<RArg1, RArg2, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
         where ROut : class, ResObj
@@ -211,7 +211,7 @@ namespace FourZeroOne.Core.Proxies
         public ThisFunction(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2) : base(in1, in2) { }
     }
     public sealed record ThisFunction<TOrig, RArg1, RArg2, RArg3, ROut> : ThisProxy<TOrig, ROut>
-        where TOrig : IFunction<RArg1, RArg2, RArg3, ROut>
+        where TOrig : IHasArgs<RArg1, RArg2, RArg3, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
         where RArg3 : class, ResObj
@@ -220,7 +220,7 @@ namespace FourZeroOne.Core.Proxies
         public ThisFunction(IProxy<TOrig, RArg1> in1, IProxy<TOrig, RArg2> in2, IProxy<TOrig, RArg3> in3) : base(in1, in2, in3) { }
     }
     public sealed record ThisCombiner<TOrig, RArgs, ROut> : ThisProxy<TOrig, ROut>
-        where TOrig : ICombiner<RArgs, ROut>
+        where TOrig : IHasCombinerArgs<RArgs, ROut>
         where RArgs : class, ResObj
         where ROut : class, ResObj
     {
@@ -250,7 +250,7 @@ namespace FourZeroOne.Core.Proxies
 
     public record Function<TNew, TOrig, RArg1, ROut> : FunctionProxy<TOrig, ROut>
         where TOrig : IToken
-        where TNew : IFunction<RArg1, ROut>
+        where TNew : IHasArgs<RArg1, ROut>
         where RArg1 : class, ResObj
         where ROut : class, ResObj
     {
@@ -264,7 +264,7 @@ namespace FourZeroOne.Core.Proxies
     }
     public record Function<TNew, TOrig, RArg1, RArg2, ROut> : FunctionProxy<TOrig, ROut>
         where TOrig : IToken
-        where TNew : IFunction<RArg1, RArg2, ROut>
+        where TNew : IHasArgs<RArg1, RArg2, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
         where ROut : class, ResObj
@@ -279,7 +279,7 @@ namespace FourZeroOne.Core.Proxies
     }
     public record Function<TNew, TOrig, RArg1, RArg2, RArg3, ROut> : FunctionProxy<TOrig, ROut>
         where TOrig : IToken
-        where TNew : IFunction<RArg1, RArg2, RArg3, ROut>
+        where TNew : IHasArgs<RArg1, RArg2, RArg3, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
         where RArg3 : class, ResObj
@@ -295,7 +295,7 @@ namespace FourZeroOne.Core.Proxies
         }
     }
     public record Combiner<TNew, TOrig, RArgs, ROut> : FunctionProxy<TOrig, ROut>
-        where TNew : Token.ICombiner<RArgs, ROut>
+        where TNew : Token.IHasCombinerArgs<RArgs, ROut>
         where TOrig : IToken
         where RArgs : class, ResObj
         where ROut : class, ResObj
@@ -311,7 +311,7 @@ namespace FourZeroOne.Core.Proxies
     // DEV: *may* not need to exist.
     public sealed record CombinerTransform<TNew, TOrig, RArg, ROut> : ProxyBehavior<TOrig, ROut>
         where TOrig : IHasCombinerArgs<RArg>, IToken<ROut>
-        where TNew : Token.ICombiner<RArg, ROut>
+        where TNew : Token.IHasCombinerArgs<RArg, ROut>
         where RArg : class, ResObj
         where ROut : class, ResObj
     {

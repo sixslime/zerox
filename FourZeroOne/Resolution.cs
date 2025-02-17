@@ -6,6 +6,7 @@ using PROTO_ZeroxFour_1.Util;
 namespace FourZeroOne.Resolution
 {
     using FourZeroOne.FZOSpec;
+    using FourZeroOne.Token;
     using Handles;
     
     /// <summary>
@@ -20,13 +21,14 @@ namespace FourZeroOne.Resolution
         public IMemory TransformMemory(IMemory context);
         public FZOSpec.IMemoryFZO TransformMemoryUnsafe(FZOSpec.IMemoryFZO memory);
     }
-    public interface IComponentIdentifier<in H, out R> : Unsafe.IComponentIdentifier<H>, Unsafe.IComponentIdentifierOf<R> where H : ICompositionType where R : IResolution { }
+    public interface IComponentIdentifier<in C, in R> : Unsafe.IComponentIdentifier<C> where C : ICompositionType where R : IResolution { }
+
     // pretty fucking silly bro im not going even to even lie even.
-    // DEV: MAY NOT ACTUALLY BE 'out' COMPATIBLE
-    public interface ICompositionOf<out C> : Unsafe.ICompositionOf, IResolution where C : ICompositionType
+    public interface ICompositionOf<out C> : IResolution where C : ICompositionType
     {
         public IEnumerable<ITiple<Unsafe.IComponentIdentifier, IResolution>> ComponentsUnsafe { get; }
         public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : IResolution;
+        public ICompositionOf<C> WithComponentsUnsafe(IEnumerable<ITiple<Unsafe.IComponentIdentifier<C>, IResolution>> components);
         public ICompositionOf<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses);
         public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : IResolution;
     }
@@ -43,7 +45,7 @@ namespace FourZeroOne.Resolution
     { }
 
     public interface IMemoryObject<out R> : IMemoryAddress<R>, IResolution where R : class, IResolution { }
-    public interface IMemoryAddress<out R> : Unsafe.IMemoryAddress where R : class, IResolution { }
+    public interface IMemoryAddress<out R> where R : class, IResolution { }
     public abstract record Instruction : Construct, IInstruction
     {
         public abstract IMemory TransformMemory(IMemory previousState);
@@ -58,15 +60,18 @@ namespace FourZeroOne.Resolution
     // this is mega stupid.
     public record CompositionOf<C> : NoOp, ICompositionOf<C> where C : ICompositionType, new()
     {
-        private PMap<Unsafe.IComponentIdentifier, IResolution> _componentMap { get; init; }
+        private PMap<Unsafe.IComponentIdentifier<C>, IResolution> _componentMap { get; init; }
         public IEnumerable<ITiple<Unsafe.IComponentIdentifier, IResolution>> ComponentsUnsafe => _componentMap.Elements;
         public CompositionOf()
         {
             _componentMap = new();
         }
         // UNBELIEVABLY stupid
-        public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : IResolution => (ICompositionOf<C>)WithComponentsUnsafe(((Unsafe.IComponentIdentifier)identifier, (IResolution)data).Tiple().Yield());
-        public Unsafe.ICompositionOf WithComponentsUnsafe(IEnumerable<ITiple<Unsafe.IComponentIdentifier, IResolution>> components)
+        public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : IResolution
+        {
+            return this with { _componentMap = _componentMap.WithEntries((identifier.IsA<Unsafe.IComponentIdentifier<C>>(), data.IsA<IResolution>()).Tiple()) };
+        }
+        public ICompositionOf<C> WithComponentsUnsafe(IEnumerable<ITiple<Unsafe.IComponentIdentifier<C>, IResolution>> components)
         {
             return this with { _componentMap = _componentMap.WithEntries(components) };
         }
@@ -77,11 +82,7 @@ namespace FourZeroOne.Resolution
 
         public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : IResolution
         {
-            return GetComponentUnsafe(address).RemapAs(x => (R)x);
-        }
-        public IOption<IResolution> GetComponentUnsafe(Unsafe.IComponentIdentifier address)
-        {
-            return _componentMap.At(address);
+            return _componentMap.At(address).RemapAs(x => (R)x);
         }
         public override string ToString()
         {
@@ -95,6 +96,8 @@ namespace FourZeroOne.Resolution
         {
             return ComponentsUnsafe.GetHashCode();
         }
+
+        
     }
     public abstract record NoOp : Construct
     {
@@ -116,29 +119,30 @@ namespace FourZeroOne.Resolution
     }
     public record StaticComponentIdentifier<H, R> : IComponentIdentifier<H, R> where H : ICompositionType where R : class, IResolution
     {
-        public string Source { get; }
+        public string Package { get; }
         public string Identity { get; }
         public StaticComponentIdentifier(string source, string fixedIdentity)
         {
-            Source = source;
+            Package = source;
             Identity = fixedIdentity;
         }
         public override string ToString() => $"{Identity}";
     }
-}
-namespace FourZeroOne.Resolution.Unsafe
-{
-    public interface ICompositionOf : IResolution
+
+    namespace Unsafe
     {
-        public IOption<IResolution> GetComponentUnsafe(IComponentIdentifier address);
-        public ICompositionOf WithComponentsUnsafe(IEnumerable<ITiple<IComponentIdentifier, IResolution>> components);
+        public interface IComponentIdentifier<in C> : IComponentIdentifier where C : ICompositionType { }
+        public interface IComponentIdentifier
+        {
+            public string Identity { get; }
+            public string Package { get; }
+        }
+        public interface IBoxedMetaFunction<out R> : IResolution
+            where R : class, IResolution
+        {
+            public Token.IToken<R> Token { get; }
+            public IMemoryAddress<IBoxedMetaFunction<R>> SelfIdentifier { get; }
+            public IEnumerable<IMemoryAddress<IResolution>> ArgAddresses { get; }
+        }
     }
-    public interface IComponentIdentifier
-    { 
-        public string Source { get; }
-        public string Identity { get; }
-    }
-    public interface IComponentIdentifierOf<out R> : IComponentIdentifier where R : IResolution { }
-    public interface IComponentIdentifier<in H> : IComponentIdentifier where H : ICompositionType { }
-    public interface IMemoryAddress { }
 }

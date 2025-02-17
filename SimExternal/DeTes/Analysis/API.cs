@@ -41,7 +41,7 @@ namespace DeTes.Analysis
         public required IStateFZO PreState { get; init; }
         public sealed record TokenPrep : EDeTesFrame
         {
-            public required EProcessorStep.TokenPrep NextStep { get; init; }
+            public required EProcessorStep.TokenMutate NextStep { get; init; }
         }
         public sealed record PushOperation : EDeTesFrame
         {

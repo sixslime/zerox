@@ -8,84 +8,76 @@ using FourZeroOne.Resolution;
 #nullable enable
 namespace FourZeroOne.Token
 {
+    using any_token = IToken<IResolution>;
     using ResObj = Resolution.IResolution;
     using r = Core.Resolutions;
     using PROTO_ZeroxFour_1.Util;
     using Handles;
-    public interface IToken<out R> : Unsafe.IToken where R : class, ResObj
+    
+    public interface IToken<out R> where R : class, ResObj
     {
-        // "ToNodes(IRuntime runtime)".
-        // "Resolve(IOption<ResObj>[]...)"
-        public IResult<ITask<IOption<R>>, FZOSpec.EStateImplemented> Resolve(ITokenContext runtime, IOption<ResObj>[] args);
-        public IToken<R> UnsafeTypedWithArgs(Unsafe.IToken[] args);
+        public any_token[] ArgTokens { get; }
+        public IResult<ITask<IOption<R>>, FZOSpec.EStateImplemented> ResolveWith(FZOSpec.IProcessorFZO.ITokenContext runtime, IOption<ResObj>[] args);
     }
     public abstract record TokenBehavior<R> : IToken<R> where R : class, ResObj
     {
-        public Unsafe.IToken[] ArgTokens => _argTokens;
-        public IPSet<string> Labels { get; private init; } = new PSet<string>();
-        public Unsafe.IToken _dLabels(Updater<IPSet<string>> updater) => this with { Labels = updater(Labels) };
-        public TokenBehavior(params Unsafe.IToken[] args)
+        public any_token[] ArgTokens { get; }
+        public TokenBehavior(params any_token[] args)
         {
-            _argTokens = args;
+            ArgTokens = args;
         }
-        public TokenBehavior(IEnumerable<Unsafe.IToken> args) : this(args.ToArray()) { }
-        public abstract IResult<ITask<IOption<R>>, FZOSpec.EStateImplemented> Resolve(ITokenContext runtime, IOption<ResObj>[] args);
-        public IResult<ITask<IOption<ResObj>>, FZOSpec.EStateImplemented> UnsafeResolve(FZOSpec.IProcessorFZO.ITokenContext tokenContext, IOption<ResObj>[] args) { return Resolve(tokenContext.ToHandle(), args); }
-        // WithArgs() is smelly
-        public Unsafe.IToken UnsafeWithArgs(Unsafe.IToken[] args) => UnsafeTypedWithArgs(args);
-        public IToken<R> UnsafeTypedWithArgs(Unsafe.IToken[] args) => this with { _argTokens = args };
+        public TokenBehavior(IEnumerable<any_token> args) : this(args.ToArray()) { }
+        public IResult<ITask<IOption<R>>, FZOSpec.EStateImplemented> ResolveWith(FZOSpec.IProcessorFZO.ITokenContext tokenContext, IOption<ResObj>[] args) { return Resolve(tokenContext.ToHandle(), args); }
+        protected abstract IResult<ITask<IOption<R>>, FZOSpec.EStateImplemented> Resolve(ITokenContext runtime, IOption<ResObj>[] args);
         protected virtual IOption<string> CustomToString() => new None<string>();
-
         public sealed override string ToString()
         {
-            var mainPart = CustomToString().Check(out var custom)
-                ? custom
-                : $"{this.GetType().Name}( {_argTokens.AccumulateInto("", (msg, arg) => $"{msg}{arg} ")})";
-            var hookPart = Labels.Count > 0
-                ? $"-HOOKS[{string.Join(",", Labels.Elements)}]"
-                : "";
-            return mainPart + hookPart;
+            return CustomToString()
+                .OrElse(() => $"{this.GetType().Name}( {ArgTokens.AccumulateInto("", (msg, arg) => $"{msg}{arg} ")})");
         }
-        private Unsafe.IToken[] _argTokens;
-        
     }
     public abstract record StandardToken<R> : TokenBehavior<R> where R : class, ResObj
     {
         protected abstract ITask<IOption<R>> StandardResolve(ITokenContext runtime, IOption<ResObj>[] args);
-        public override IResult<ITask<IOption<R>>, FZOSpec.EStateImplemented> Resolve(ITokenContext runtime, IOption<ResObj>[] args)
+        protected override IResult<ITask<IOption<R>>, FZOSpec.EStateImplemented> Resolve(ITokenContext runtime, IOption<ResObj>[] args)
         {
             return new Ok<ITask<IOption<R>>, FZOSpec.EStateImplemented>(StandardResolve(runtime, args));
         }
-        public StandardToken(params Unsafe.IToken[] args) : base(args) { }
-        public StandardToken(IEnumerable<Unsafe.IToken> args) : base(args) { }
-    }
-    public static class SelfAssumptions
-    {
-        public static Self dLabels<Self>(this Self s, Updater<IPSet<string>> updater) where Self : Unsafe.IToken
-            => (Self)s._dLabels(updater);
+        public StandardToken(params any_token[] args) : base(args) { }
+        public StandardToken(IEnumerable<any_token> args) : base(args) { }
     }
 
-    public interface IFunction<RArg1, ROut> : Unsafe.IHasArg1<RArg1>, Unsafe.IFunction<ROut>
+    public interface IHasNoArgs<out RVal> : IToken<RVal>
+        where RVal : class, ResObj
+    { }
+    public interface IHasArgs<out RArg1, out ROut> : IToken<ROut>
         where RArg1 : class, ResObj
         where ROut : class, ResObj
-    { }
-    public interface IFunction<RArg1, RArg2, ROut> : Unsafe.IHasArg1<RArg1>, Unsafe.IHasArg2<RArg2>, Unsafe.IFunction<ROut>
+    { public IToken<RArg1> Arg1 { get; } }
+    public interface IHasArgs<out RArg1, out RArg2, out ROut> : IHasArgs<RArg1, ROut>
     where RArg1 : class, ResObj
     where RArg2 : class, ResObj
     where ROut : class, ResObj
-    { }
-    public interface IFunction<RArg1, RArg2, RArg3, ROut> : Unsafe.IHasArg1<RArg1>, Unsafe.IHasArg2<RArg2>, Unsafe.IHasArg3<RArg3>, Unsafe.IFunction<ROut>
+    { public IToken<RArg2> Arg2 { get; } }
+    public interface IHasArgs<out RArg1, out RArg2, out RArg3, out ROut> : IHasArgs<RArg1, RArg2, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
         where RArg3 : class, ResObj
         where ROut : class, ResObj
-    { }
-    public interface ICombiner<RArgs, ROut> : Unsafe.IHasCombinerArgs<RArgs>, Unsafe.IFunction<ROut>
+    { public IToken<RArg3> Arg3 { get; } }
+    public interface IHasCombinerArgs<out RArgs, out ROut> : IToken<ROut>
     where RArgs : class, ResObj
     where ROut : class, ResObj
-    { }
-
-    public abstract record Value<R> : StandardToken<R> where R : class, ResObj
+    { public IEnumerable<IToken<RArgs>> Args { get; } }
+    
+    public interface IHasAttachedComponentIdentifier<in C, out R> : IToken<R>
+        where C : ICompositionType
+        where R : class, ResObj
+    {
+        public Resolution.Unsafe.IComponentIdentifier<C> AttachedComponentIdentifier { get; }
+    }
+    public abstract record Value<R> : StandardToken<R>, IHasNoArgs<R>
+        where R : class, ResObj
     {
         protected sealed override ITask<IOption<R>> StandardResolve(ITokenContext runtime, IOption<ResObj>[] _)
         {
@@ -94,7 +86,8 @@ namespace FourZeroOne.Token
         protected Value() : base() { }
         protected abstract ITask<IOption<R>> Evaluate(ITokenContext runtime);
     }
-    public abstract record PureValue<R> : Value<R> where R : class, ResObj
+    public abstract record PureValue<R> : Value<R>
+        where R : class, ResObj
     {
         protected PureValue() : base() { }
         protected sealed override ITask<IOption<R>> Evaluate(ITokenContext _)
@@ -109,7 +102,7 @@ namespace FourZeroOne.Token
     /// </summary>
     /// <typeparam name="RArg1"></typeparam>
     public abstract record Function<RArg1, ROut> : StandardToken<ROut>,
-        IFunction<RArg1, ROut>
+        IHasArgs<RArg1, ROut>
         where RArg1 : class, ResObj
         where ROut : class, ResObj
     {
@@ -130,7 +123,7 @@ namespace FourZeroOne.Token
     /// <typeparam name="RArg1"></typeparam>
     /// <typeparam name="RArg2"></typeparam>
     public abstract record Function<RArg1, RArg2, ROut> : StandardToken<ROut>,
-        IFunction<RArg1, RArg2, ROut>
+        IHasArgs<RArg1, RArg2, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
         where ROut : class, ResObj
@@ -154,7 +147,7 @@ namespace FourZeroOne.Token
     /// <typeparam name="RArg2"></typeparam>
     /// <typeparam name="RArg3"></typeparam>
     public abstract record Function<RArg1, RArg2, RArg3, ROut> : StandardToken<ROut>,
-        IFunction<RArg1, RArg2, RArg3, ROut>
+        IHasArgs<RArg1, RArg2, RArg3, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
         where RArg3 : class, ResObj
@@ -178,7 +171,7 @@ namespace FourZeroOne.Token
     /// <code>(IEnumerable&lt;IToken&lt;<typeparamref name="RArg"/>&gt;&gt;)</code>
     /// </summary>
     /// <typeparam name="RArg"></typeparam>
-    public abstract record Combiner<RArg, ROut> : StandardToken<ROut>, ICombiner<RArg, ROut>
+    public abstract record Combiner<RArg, ROut> : StandardToken<ROut>, IHasCombinerArgs<RArg, ROut>
         where RArg : class, ResObj
         where ROut : class, ResObj
     {
@@ -192,10 +185,11 @@ namespace FourZeroOne.Token
         protected Combiner(IEnumerable<IToken<RArg>> tokens) : base(tokens) { }
 
     }
-    public abstract record RuntimeHandledValue<ROut> : TokenBehavior<ROut>
+    public abstract record RuntimeHandledValue<ROut> : TokenBehavior<ROut>,
+        IHasNoArgs<ROut>
         where ROut : class, ResObj
     {
-        public sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
+        protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
         {
             return new Err<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(MakeData());
         }
@@ -203,12 +197,12 @@ namespace FourZeroOne.Token
         protected RuntimeHandledValue() : base() { }
     }
     public abstract record RuntimeHandledFunction<RArg1, ROut> : TokenBehavior<ROut>,
-        IFunction<RArg1, ROut>
+        IHasArgs<RArg1, ROut>
         where RArg1 : class, ResObj
         where ROut : class, ResObj
     {
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
-        public sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
+        protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
         {
             return (args[0].Check(out var in1))
                 ? new Err<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(MakeData((RArg1)in1))
@@ -218,14 +212,14 @@ namespace FourZeroOne.Token
         protected RuntimeHandledFunction(IToken<RArg1> in1) : base(in1) { }
     }
     public abstract record RuntimeHandledFunction<RArg1, RArg2, ROut> : TokenBehavior<ROut>,
-        IFunction<RArg1, RArg2, ROut>
+        IHasArgs<RArg1, RArg2, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
         where ROut : class, ResObj
     {
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
         public IToken<RArg2> Arg2 => (IToken<RArg2>)ArgTokens[1];
-        public sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
+        protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
         {
             return (args[0].Check(out var in1) && args[1].Check(out var in2))
                 ? new Err<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(MakeData((RArg1)in1, (RArg2)in2))
@@ -235,7 +229,7 @@ namespace FourZeroOne.Token
         protected RuntimeHandledFunction(IToken<RArg1> in1, IToken<RArg2> in2) : base(in1, in2) { }
     }
     public abstract record RuntimeHandledFunction<RArg1, RArg2, RArg3, ROut> : TokenBehavior<ROut>,
-        IFunction<RArg1, RArg2, ROut>
+        IHasArgs<RArg1, RArg2, ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
         where RArg3 : class, ResObj
@@ -244,7 +238,7 @@ namespace FourZeroOne.Token
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
         public IToken<RArg2> Arg2 => (IToken<RArg2>)ArgTokens[1];
         public IToken<RArg3> Arg3 => (IToken<RArg3>)ArgTokens[2];
-        public sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
+        protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
         {
             return (args[0].Check(out var in1) && args[1].Check(out var in2) && args[2].Check(out var in3))
                 ? new Err<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(MakeData((RArg1)in1, (RArg2)in2, (RArg3)in3))
@@ -307,38 +301,4 @@ namespace FourZeroOne.Token
         protected sealed override ITask<IOption<ROut>> Evaluate(ITokenContext _, IEnumerable<IOption<RArg>> inputs) => EvaluatePure(inputs.Where(x => x.IsSome()).Map(x => x.Unwrap())).AsSome().ToCompletedITask();
     }
 
-}
-namespace FourZeroOne.Token.Unsafe
-{
-    using ResObj = Resolution.IResolution;
-    using Token;
-    using Handles;
-    public interface IToken
-    {
-        public IToken[] ArgTokens { get; }
-        public IPSet<string> Labels { get; } 
-        public IToken _dLabels(Updater<IPSet<string>> updater);
-        // SMELL: 'UnsafeResolve()' takes a direct 'ITokenContext' while 'Resolve()' takes a handle.
-        public IResult<ITask<IOption<ResObj>>, FZOSpec.EStateImplemented> UnsafeResolve(FZOSpec.IProcessorFZO.ITokenContext runtime, IOption<ResObj>[] args);
-        public IToken UnsafeWithArgs(IToken[] args);
-    }
-
-    public interface IHasArg1<RArg> : IHasArg1 where RArg : class, ResObj
-    { public IToken<RArg> Arg1 { get; } }
-    public interface IHasArg2<RArg> : IHasArg2 where RArg : class, ResObj
-    { public IToken<RArg> Arg2 { get; } }
-    public interface IHasArg3<RArg> : IHasArg3 where RArg : class, ResObj
-    { public IToken<RArg> Arg3 { get; } }
-    public interface IHasCombinerArgs<RArgs> : IToken where RArgs : class, ResObj
-    {
-        public IEnumerable<IToken<RArgs>> Args { get; }
-    }
-
-    // shitty name for this interface-set. consider something like 'FromArgs', 'ProductOfArgs', 'ArgTransformer', or something.
-    public interface IFunction<ROut> : IFunction, IToken<ROut> where ROut : class, ResObj { }
-    public interface IFunction : IToken { }
-
-    public interface IHasArg1 : IToken { }
-    public interface IHasArg2 : IHasArg1 { }
-    public interface IHasArg3 : IHasArg2 { }
 }

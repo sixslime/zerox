@@ -42,7 +42,7 @@ namespace Minima.FZO
                 // - populate previousApplications:
                 foreach (var process in state.TokenPrepStack)
                 {
-                    if (process is not ETokenPrep.RuleApplication ra) continue;
+                    if (process is not ETokenMutation.RuleApply ra) continue;
                     var appliedRule = ra.Rule;
                     previousApplications[appliedRule] = previousApplications.TryGetValue(appliedRule, out var count) ? count + 1 : 1;
                 }
@@ -58,9 +58,9 @@ namespace Minima.FZO
 
                     // send 'RuleApplication' if the processing token is rulable by an unapplied rule:
                     if (rule.TryApply(token).Check(out var ruledToken))
-                        return new EProcessorStep.TokenPrep()
+                        return new EProcessorStep.TokenMutate()
                         {
-                            Value = new ETokenPrep.RuleApplication()
+                            Mutation = new ETokenMutation.RuleApply()
                             {
                                 Rule = rule,
                                 Result = ruledToken
@@ -78,9 +78,9 @@ namespace Minima.FZO
 
             // send initial 'Identity' if no operations are on the stack:
             if (state.OperationStack.GetAt(0).CheckNone(out var topNode))
-                return new EProcessorStep.TokenPrep
+                return new EProcessorStep.TokenMutate
                 {
-                    Value = new ETokenPrep.Identity
+                    Mutation = new ETokenMutation.Identity
                     {
                         Result = init.Program
                     }
@@ -117,9 +117,9 @@ namespace Minima.FZO
             
 
             // send 'Identity' if next operation arg is ready to be processed
-            return new EProcessorStep.TokenPrep()
+            return new EProcessorStep.TokenMutate()
             {
-                Value = new ETokenPrep.Identity()
+                Mutation = new ETokenMutation.Identity()
                 {
                     Result = topNode.Operation.ArgTokens[argsArray.Length]
                 }

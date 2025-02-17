@@ -16,7 +16,7 @@ namespace Minima.FZO
     {
         private IOption<FZOSource> _initialized;
         private PStack<OperationNode> _opStack;
-        private PStack<ETokenPrep> _prepStack;
+        private PStack<ETokenMutation> _prepStack;
 
         public MinimaStateFZO()
         {
@@ -25,7 +25,7 @@ namespace Minima.FZO
             _initialized = new None<FZOSource>();
         }
         IEnumerable<IStateFZO.IOperationNode> IStateFZO.OperationStack => _opStack.Elements.Take(_opStack.Count - 1);
-        IEnumerable<ETokenPrep> IStateFZO.TokenPrepStack => _prepStack.Elements;
+        IEnumerable<ETokenMutation> IStateFZO.TokenPrepStack => _prepStack.Elements;
         IOption<FZOSource> IStateFZO.Initialized => _initialized;
         IStateFZO IStateFZO.Initialize(FZOSource source)
         {
@@ -50,9 +50,9 @@ namespace Minima.FZO
                 throw new InvalidOperationException("Attempted operation on an uninitialized IStateFZO");
             return step switch
             {
-                EProcessorStep.TokenPrep v => this with
+                EProcessorStep.TokenMutate v => this with
                 {
-                    _prepStack = _prepStack.WithEntries(v.Value)
+                    _prepStack = _prepStack.WithEntries(v.Mutation)
                 },
                 EProcessorStep.PushOperation v => this with
                 {
@@ -93,13 +93,13 @@ namespace Minima.FZO
                             {
                                 MemoryStack = node.MemoryStack.WithEntries(
                                     node.MemoryStack.TopValue.Unwrap().ExprAs(
-                                        mem => metaExecute.MemoryWrites.ExprAs(
+                                        mem => metaExecute.ObjectWrites.ExprAs(
                                             writes => mem.WithObjects(
                                                     writes.FilterMap(x => x.B.RemapAs(r => (x.A, r).Tiple())))
                                                 .WithClearedAddresses(writes.FilterMap(x => x.B.IsSome().Not().ToOption(x.A)))))
                                 )
                             }).IsA<PStack<OperationNode>>(),
-                            _prepStack = _prepStack.WithEntries(new ETokenPrep.Identity { Result = metaExecute.FunctionToken })
+                            _prepStack = _prepStack.WithEntries(new ETokenMutation.Identity { Result = metaExecute.Token })
                         },
                         _ => throw new NotSupportedException()
                     },

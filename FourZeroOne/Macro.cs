@@ -11,7 +11,11 @@ namespace FourZeroOne.Macro
     using ResObj = Resolution.IResolution;
     using Core.Resolutions.Boxed;
 
-    public interface IMacro<R> : Unsafe.IMacro, IToken<R> where R : class, ResObj { }
+    public interface IMacro<R> : IToken<R> where R : class, ResObj
+    {
+        public MacroLabel Label { get; }
+        public object[] CustomData { get; }
+    }
     public record Macro<RArg1, RArg2, RArg3, ROut> : RuntimeHandledFunction<RArg1, RArg2, RArg3, ROut>, IMacro<ROut>
         where RArg1 : class, ResObj
         where RArg2 : class, ResObj
@@ -78,13 +82,5 @@ namespace FourZeroOne.Macro
     {
         public required string Namespace { get; init; }
         public required string Identifier { get; init; }
-    }
-    namespace Unsafe
-    {
-        public interface IMacro : Token.Unsafe.IToken
-        {
-            public MacroLabel Label { get; }
-            public object[] CustomData { get; }
-        }
     }
 }

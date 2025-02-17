@@ -4,9 +4,11 @@ using Perfection;
 namespace FourZeroOne.FZOSpec
 {
     using Token;
-    using IToken = Token.Unsafe.IToken;
-    using ResObj = Resolution.IResolution;
-    using ResOpt = IOption<Resolution.IResolution>;
+    using any_res = Resolution.IResolution;
+    using any_rule = Rule.Unsafe.IRule<Resolution.IResolution>;
+    using res_opt = IOption<Resolution.IResolution>;
+    using any_token = Token.IToken<Resolution.IResolution>;
+    using mem_address = Resolution.IMemoryAddress<Resolution.IResolution>;
     using Resolution;
     using Resolution.Unsafe;
     using Rule;
@@ -22,18 +24,18 @@ namespace FourZeroOne.FZOSpec
     }
     public interface IInputFZO
     {
-        public ITask<int[]> GetSelection(IHasElements<ResObj> pool, int count);
+        public ITask<int[]> GetSelection(IHasElements<any_res> pool, int count);
     }
     public interface IStateFZO
     {
         public IOption<FZOSource> Initialized { get; }
         public IEnumerable<IOperationNode> OperationStack { get; }
-        public IEnumerable<ETokenPrep> TokenPrepStack { get; }
+        public IEnumerable<ETokenMutation> TokenPrepStack { get; }
 
         // MetaExecute is not accurate, plz update.
         /// <summary>
         /// If <paramref name="step"/> is:<br></br>
-        /// <b><see cref="EProcessorStep.TokenPrep"/>:</b><br></br>
+        /// <b><see cref="EProcessorStep.TokenMutate"/>:</b><br></br>
         /// - Push 'Value' to <i>TokenPrepStack</i><br></br>
         /// <b><see cref="EProcessorStep.PushOperation"/>:</b><br></br>
         /// - Push the following to <i>OperationStack</i>:<br></br>
@@ -67,55 +69,62 @@ namespace FourZeroOne.FZOSpec
         public IStateFZO Initialize(FZOSource source);
         public interface IOperationNode
         {
-            public IToken Operation { get; }
-            public IEnumerable<ResOpt> ArgResolutionStack { get; }
+            public any_token Operation { get; }
+            public IEnumerable<res_opt> ArgResolutionStack { get; }
             public IEnumerable<IMemoryFZO> MemoryStack { get; }
         }
     }
     public interface IMemoryFZO
     {
-        public IEnumerable<ITiple<IMemoryAddress, ResObj>> Objects { get; }
-        public IEnumerable<IRule> Rules { get; }
-        public IOption<R> GetObject<R>(IMemoryAddress<R> address) where R : class, ResObj;
-        public IMemoryFZO WithRules(IEnumerable<IRule> rules);
-        public IMemoryFZO WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions) where R : class, ResObj;
-        public IMemoryFZO WithClearedAddresses(IEnumerable<IMemoryAddress> removals);
+        public IEnumerable<ITiple<mem_address, any_res>> Objects { get; }
+        public IEnumerable<any_res> Rules { get; }
+        public IEnumerable<ITiple<RuleID, int>> RuleMutes { get; }
+        public IOption<R> GetObject<R>(IMemoryAddress<R> address) where R : class, any_res;
+        public int GetRuleMuteCount(RuleID ruleId);
+        // Rules is an ordered sequence allowing duplicates.
+        // 'WithRules' appends.
+        // 'WithoutRules' removes the *first* instance of each rule in sequence.
+        // Rules have a public ID assigned at creation, equality is based on ID.
+        public IMemoryFZO WithRules(IEnumerable<any_res> rules);
+        public IMemoryFZO WithRuleMutes(IEnumerable<RuleID> mutes);
+        public IMemoryFZO WithoutRuleMutes(IEnumerable<RuleID> mutes);
+        public IMemoryFZO WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions) where R : class, any_res;
+        public IMemoryFZO WithClearedAddresses(IEnumerable<mem_address> removals);
     }
 
     namespace Shorthands
     {
         public static class Extensions
         {
-            public static IMemoryFZO WithResolution(this IMemoryFZO memory, ResObj resolution)
+            public static IMemoryFZO WithResolution(this IMemoryFZO memory, any_res resolution)
             {
                 return resolution.Instructions.AccumulateInto(memory, (mem, instruction) => instruction.TransformMemoryUnsafe(mem));
             }
-            public static IMemoryFZO WithResolution(this IMemoryFZO memory, IOption<ResObj> resolution)
+            public static IMemoryFZO WithResolution(this IMemoryFZO memory, res_opt resolution)
             {
                 return resolution.Check(out var r) ? memory.WithResolution(r) : memory;
             }
         }
     }
 
-    // FIXME: bandaid fix for initial program macro issue
     public sealed record FZOSource
     {
-        public required IToken Program { get; init; }
+        public required any_token Program { get; init; }
         public required IMemoryFZO InitialMemory { get; init; }
     }
     public abstract record EProcessorStep
     {
-        public sealed record TokenPrep : EProcessorStep
+        public sealed record TokenMutate : EProcessorStep
         {
-            public required ETokenPrep Value { get; init; }
+            public required ETokenMutation Mutation { get; init; }
         }
         public sealed record Resolve : EProcessorStep
         {
-            public required IResult<ResOpt, EStateImplemented> Resolution { get; init; }
+            public required IResult<res_opt, EStateImplemented> Resolution { get; init; }
         }
         public sealed record PushOperation : EProcessorStep
         {
-            public required IToken OperationToken { get; init; }
+            public required any_token OperationToken { get; init; }
         }
     }
     public abstract record EProcessorHalt
@@ -124,24 +133,26 @@ namespace FourZeroOne.FZOSpec
         public sealed record InvalidState : EProcessorHalt { }
         public sealed record Completed : EProcessorHalt
         {
-            public required ResOpt Resolution { get; init; }
+            public required res_opt Resolution { get; init; }
         }
     }
     public abstract record EStateImplemented
     {
         public sealed record MetaExecute : EStateImplemented
         {
-            public required IToken FunctionToken { get; init; }
-            public required IEnumerable<ITiple<IMemoryAddress<ResObj>, ResOpt>> MemoryWrites { get; init; }
+            public required any_token Token { get; init; }
+            public IHasElements<ITiple<mem_address, res_opt>> ObjectWrites { get; init; } = new PSequence<ITiple<mem_address, res_opt>>();
+            public IHasElements<RuleID> RuleMutes { get; init; } = new PSequence<RuleID>();
+            public IHasElements<RuleID> RuleAllows { get; init; } = new PSequence<RuleID>();
         }
     }
-    public abstract record ETokenPrep
+    public abstract record ETokenMutation
     {
-        public required IToken Result { get; init; }
-        public sealed record Identity : ETokenPrep { }
-        public sealed record RuleApplication : ETokenPrep
+        public required any_token Result { get; init; }
+        public sealed record Identity : ETokenMutation { }
+        public sealed record RuleApply : ETokenMutation
         {
-            public required Rule.IRule Rule { get; init; }
+            public required any_rule Rule { get; init; }
         }
     }
 }

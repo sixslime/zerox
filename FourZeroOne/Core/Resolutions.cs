@@ -1,15 +1,15 @@
 
 using Perfection;
-using System.Collections.Generic;
 
 #nullable enable
 namespace FourZeroOne.Core.Resolutions
 {
-    using ResObj = Resolution.IResolution;
-    using Token;
+    using Handles;
     using Resolution;
     using Resolution.Unsafe;
-    using Handles;
+    using Token;
+    using IMemoryAddress = Resolution.IMemoryAddress<Resolution.IResolution>;
+    using ResObj = Resolution.IResolution;
     namespace Objects
     {
         public sealed record Number : NoOp
@@ -52,10 +52,6 @@ namespace FourZeroOne.Core.Resolutions
     }
     namespace Instructions
     {
-        using FourZeroOne.Core.Macros;
-        using FourZeroOne.Proxy;
-        using FourZeroOne.Core.Syntax;
-        using Objects;
         public sealed record Assign<D> : Instruction where D : class, ResObj
         {
             public required IMemoryAddress<D> Address { get; init; }
@@ -78,7 +74,7 @@ namespace FourZeroOne.Core.Resolutions
         }
         public sealed record RuleAdd : Instruction
         {
-            public required Rule.IRule Rule { get; init; }
+            public required Rule.Unsafe.IRule<ResObj> Rule { get; init; }
             public override IMemory TransformMemory(IMemory state)
             {
                 return state.WithRules([Rule]);
@@ -91,6 +87,9 @@ namespace FourZeroOne.Core.Resolutions
     }
     namespace Boxed
     {
+        // DEV:
+        // consider making MetaFunction construction/data similar to Token and the 'Function' abstractions.
+        // where 'ArgAddresses' is to 'ArgTokens' and 'IdentifierX' is to 'ArgX'
         public sealed record MetaFunction<R> : NoOp where R : class, ResObj
         {
             public required DynamicAddress<MetaFunction<R>> SelfIdentifier { get; init; }
@@ -100,54 +99,65 @@ namespace FourZeroOne.Core.Resolutions
             {
                 return new FZOSpec.EStateImplemented.MetaExecute
                 {
-                    FunctionToken = new Tokens.MetaExecuted<R>(Token),
-                    MemoryWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
+                    Token = new Tokens.MetaExecuted<R>(Token),
+                    ObjectWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
                     ((SelfIdentifier, this.AsSome()))
-                    .Map(x => x.Tiple())
+                    .Map(x => x.Tiple()).ToPSequence(),
+                    RuleMutes = new PSequence<Rule.RuleID>(),
+                    RuleAllows = new PSequence<Rule.RuleID>(),
                 };
             }
         }
-        public sealed record MetaFunction<RArg1, ROut> : NoOp
+        public sealed record MetaFunction<RArg1, ROut> : NoOp, IBoxedMetaFunction<ROut>
             where RArg1 : class, ResObj
             where ROut : class, ResObj
         {
-            public required DynamicAddress <MetaFunction<RArg1, ROut>> SelfIdentifier { get; init; }
+            public required DynamicAddress<MetaFunction<RArg1, ROut>> SelfIdentifier { get; init; }
             public required DynamicAddress<RArg1> IdentifierA { get; init; }
             public required IToken<ROut> Token { get; init; }
+            IMemoryAddress<IBoxedMetaFunction<ROut>> IBoxedMetaFunction<ROut>.SelfIdentifier => SelfIdentifier;
+            IEnumerable<IMemoryAddress<ResObj>> IBoxedMetaFunction<ROut>.ArgAddresses => [IdentifierA];
             public override string ToString() => $"{SelfIdentifier}({IdentifierA})::{{{Token}}}";
             public FZOSpec.EStateImplemented.MetaExecute GenerateMetaExecute(IOption<RArg1> arg1)
             {
                 return new FZOSpec.EStateImplemented.MetaExecute
                 {
-                    FunctionToken = new Tokens.MetaExecuted<ROut>(Token),
-                    MemoryWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
+                    Token = new Tokens.MetaExecuted<ROut>(Token),
+                    ObjectWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
                     ((SelfIdentifier, this.AsSome()), (IdentifierA, arg1))
-                    .Map(x => x.Tiple())
+                    .Map(x => x.Tiple()).ToPSequence(),
+                    RuleMutes = new PSequence<Rule.RuleID>(),
+                    RuleAllows = new PSequence<Rule.RuleID>(),
                 };
             }
         }
-        public sealed record MetaFunction<RArg1, RArg2, ROut> : NoOp
+        public sealed record MetaFunction<RArg1, RArg2, ROut> : NoOp, IBoxedMetaFunction<ROut>
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where ROut : class, ResObj
         {
-            public required DynamicAddress <MetaFunction<RArg1, RArg2, ROut>> SelfIdentifier { get; init; }
+            public required DynamicAddress<MetaFunction<RArg1, RArg2, ROut>> SelfIdentifier { get; init; }
             public required DynamicAddress<RArg1> IdentifierA { get; init; }
             public required DynamicAddress<RArg2> IdentifierB { get; init; }
             public required IToken<ROut> Token { get; init; }
+            IMemoryAddress<IBoxedMetaFunction<ROut>> IBoxedMetaFunction<ROut>.SelfIdentifier => SelfIdentifier;
+            IEnumerable<IMemoryAddress<ResObj>> IBoxedMetaFunction<ROut>.ArgAddresses => [IdentifierA, IdentifierB];
+
             public override string ToString() => $"{SelfIdentifier}({IdentifierA}, {IdentifierB})::{{{Token}}}";
             public FZOSpec.EStateImplemented.MetaExecute GenerateMetaExecute(IOption<RArg1> arg1, IOption<RArg2> arg2)
             {
                 return new FZOSpec.EStateImplemented.MetaExecute
                 {
-                    FunctionToken = new Tokens.MetaExecuted<ROut>(Token),
-                    MemoryWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
+                    Token = new Tokens.MetaExecuted<ROut>(Token),
+                    ObjectWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
                     ((SelfIdentifier, this.AsSome()), (IdentifierA, arg1), (IdentifierB, arg2))
-                    .Map(x => x.Tiple())
+                    .Map(x => x.Tiple()).ToPSequence(),
+                    RuleMutes = new PSequence<Rule.RuleID>(),
+                    RuleAllows = new PSequence<Rule.RuleID>(),
                 };
             }
         }
-        public sealed record MetaFunction<RArg1, RArg2, RArg3, ROut> : NoOp
+        public sealed record MetaFunction<RArg1, RArg2, RArg3, ROut> : NoOp, IBoxedMetaFunction<ROut>
             where RArg1 : class, ResObj
             where RArg2 : class, ResObj
             where RArg3 : class, ResObj
@@ -158,15 +168,58 @@ namespace FourZeroOne.Core.Resolutions
             public required DynamicAddress<RArg2> IdentifierB { get; init; }
             public required DynamicAddress<RArg3> IdentifierC { get; init; }
             public required IToken<ROut> Token { get; init; }
+
+            IMemoryAddress<IBoxedMetaFunction<ROut>> IBoxedMetaFunction<ROut>.SelfIdentifier => SelfIdentifier;
+
+            IEnumerable<IMemoryAddress<ResObj>> IBoxedMetaFunction<ROut>.ArgAddresses => [IdentifierA, IdentifierB, IdentifierC];
+
             public override string ToString() => $"{SelfIdentifier}({IdentifierA}, {IdentifierB}, {IdentifierC})::{{{Token}}}";
             public FZOSpec.EStateImplemented.MetaExecute GenerateMetaExecute(IOption<RArg1> arg1, IOption<RArg2> arg2, IOption<RArg3> arg3)
             {
                 return new FZOSpec.EStateImplemented.MetaExecute
                 {
-                    FunctionToken = new Tokens.MetaExecuted<ROut>(Token),
-                    MemoryWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
+                    Token = new Tokens.MetaExecuted<ROut>(Token),
+                    ObjectWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
                     ((SelfIdentifier, this.AsSome()), (IdentifierA, arg1), (IdentifierB, arg2), (IdentifierC, arg3))
-                    .Map(x => x.Tiple())
+                    .Map(x => x.Tiple()).ToPSequence(),
+                    RuleMutes = new PSequence<Rule.RuleID>(),
+                    RuleAllows = new PSequence<Rule.RuleID>(),
+                };
+            }
+        }
+        /// <summary>
+        /// <b>Strictly for internal workings (e.g. Rule definitions).</b><br></br> 
+        /// Not for normal use.
+        /// </summary>
+        public sealed record OverflowingMetaFunction<RArg1, RArg2, RArg3, RArg4, ROut> : NoOp, IBoxedMetaFunction<ROut>
+            where RArg1 : class, ResObj
+            where RArg2 : class, ResObj
+            where RArg3 : class, ResObj
+            where RArg4 : class, ResObj
+            where ROut : class, ResObj
+        {
+            public required DynamicAddress<OverflowingMetaFunction<RArg1, RArg2, RArg3, RArg4, ROut>> SelfIdentifier { get; init; }
+            public required DynamicAddress<RArg1> IdentifierA { get; init; }
+            public required DynamicAddress<RArg2> IdentifierB { get; init; }
+            public required DynamicAddress<RArg3> IdentifierC { get; init; }
+            public required DynamicAddress<RArg4> IdentifierD { get; init; }
+            public required IToken<ROut> Token { get; init; }
+
+            IMemoryAddress<IBoxedMetaFunction<ROut>> IBoxedMetaFunction<ROut>.SelfIdentifier => SelfIdentifier;
+
+            IEnumerable<IMemoryAddress<ResObj>> IBoxedMetaFunction<ROut>.ArgAddresses => [IdentifierA, IdentifierB, IdentifierC, IdentifierD];
+
+            public override string ToString() => $"{SelfIdentifier}({IdentifierA}, {IdentifierB}, {IdentifierC}, {IdentifierD})::{{{Token}}}";
+            public FZOSpec.EStateImplemented.MetaExecute GenerateMetaExecute(IOption<RArg1> arg1, IOption<RArg2> arg2, IOption<RArg3> arg3, IOption<RArg4> arg4)
+            {
+                return new FZOSpec.EStateImplemented.MetaExecute
+                {
+                    Token = new Tokens.MetaExecuted<ROut>(Token),
+                    ObjectWrites = Iter.Over<(IMemoryAddress<ResObj>, IOption<ResObj>)>
+                    ((SelfIdentifier, this.AsSome()), (IdentifierA, arg1), (IdentifierB, arg2), (IdentifierC, arg3), (IdentifierD, arg4))
+                    .Map(x => x.Tiple()).ToPSequence(),
+                    RuleMutes = new PSequence<Rule.RuleID>(),
+                    RuleAllows = new PSequence<Rule.RuleID>(),
                 };
             }
         }
@@ -206,17 +259,18 @@ namespace FourZeroOne.Core.Resolutions
     namespace _Private
     {
         // ??
-        public interface IMergeIdentifier
+        public interface IMergeIdentifier<in C>
+            where C : ICompositionType
         {
-            public IComponentIdentifier ForComponentUnsafe { get; }
+            public IComponentIdentifier<C> ForComponentUnsafe { get; }
         }
-        public record MergeComponentIdentifier<H, R> : IMergeIdentifier, IComponentIdentifier<MergeSpec<H>, R> where H : ICompositionType where R : class, ResObj
+        public record MergeComponentIdentifier<C, R> : IMergeIdentifier<C>, IComponentIdentifier<MergeSpec<C>, R> where C : ICompositionType where R : class, ResObj
         {
-            public IComponentIdentifier<H, R> ForComponent { get; private init; }
-            public IComponentIdentifier ForComponentUnsafe => ForComponent;
-            public string Source => "CORE";
+            public IComponentIdentifier<C, R> ForComponent { get; private init; }
+            public IComponentIdentifier<C> ForComponentUnsafe => ForComponent;
+            public string Package => "CORE";
             public string Identity => $"merge-{ForComponent.Identity}";
-            public MergeComponentIdentifier(IComponentIdentifier<H, R> component)
+            public MergeComponentIdentifier(IComponentIdentifier<C, R> component)
             {
                 ForComponent = component;
             }

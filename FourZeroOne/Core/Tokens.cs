@@ -18,6 +18,7 @@ namespace FourZeroOne.Core.Tokens
     using Resolution;
     using Handles;
     using FourZeroOne.FZOSpec;
+    using FourZeroOne.Resolution.Unsafe;
 
     namespace IO
     {
@@ -250,51 +251,47 @@ namespace FourZeroOne.Core.Tokens
     // not that it's bad, it just *may* be bad
     namespace Component
     {
-        public sealed record Get<C, R> : StandardToken<R> where R : class, ResObj where C : ICompositionType
+        public sealed record Get<C, R> : StandardToken<R>, IHasAttachedComponentIdentifier<C, R> where R : class, ResObj where C : ICompositionType
         {
-            public Get(IComponentIdentifier<C, R> identifier, IToken<ICompositionOf<C>> holder) : base(holder)
-            {
-                _identifier = identifier;
-            }
+            public required IComponentIdentifier<C, R> ComponentIdentifier { get; init; }
+            IComponentIdentifier<C> IHasAttachedComponentIdentifier<C, R>.AttachedComponentIdentifier => ComponentIdentifier;
+            public Get(IToken<ICompositionOf<C>> holder) : base(holder) { }
             protected override ITask<IOption<R>> StandardResolve(ITokenContext _, IOption<ResObj>[] args)
             {
-                return args[0].RemapAs(x => ((ICompositionOf<C>)x).GetComponent(_identifier)).Press().ToCompletedITask();
+                return args[0].RemapAs(x => ((ICompositionOf<C>)x).GetComponent(ComponentIdentifier)).Press().ToCompletedITask();
             }
-            protected override IOption<string> CustomToString() => $"{ArgTokens[0]}->{_identifier}".AsSome();
-            private readonly IComponentIdentifier<C, R> _identifier;
+            protected override IOption<string> CustomToString() => $"{ArgTokens[0]}->{ComponentIdentifier}".AsSome();
         }
-        public sealed record With<C, R> : StandardToken<ICompositionOf<C>> where R : class, ResObj where C : ICompositionType
+        public sealed record With<C, R> : StandardToken<ICompositionOf<C>>, IHasAttachedComponentIdentifier<C, ICompositionOf<C>> where R : class, ResObj where C : ICompositionType
         {
-            public With(IComponentIdentifier<C, R> identifier, IToken<ICompositionOf<C>> holder, IToken<R> component) : base(holder, component)
-            {
-                _identifier = identifier;
-            }
+
+            public required IComponentIdentifier<C, R> ComponentIdentifier { get; init; }
+            IComponentIdentifier<C> IHasAttachedComponentIdentifier<C, ICompositionOf<C>>.AttachedComponentIdentifier =>  ComponentIdentifier;
+            public With(IToken<ICompositionOf<C>> holder, IToken<R> component) : base(holder, component) { }
             protected override ITask<IOption<ICompositionOf<C>>> StandardResolve(ITokenContext _, IOption<ResObj>[] args)
             {
                 return
                     (args[0].RemapAs(x => (ICompositionOf<C>)x).Check(out var holder)
                     ?  (args[1].RemapAs(x => (R)x).Check(out var component)
-                        ? holder.WithComponent(_identifier, component)
+                        ? holder.WithComponent(ComponentIdentifier, component)
                         : holder
                         ).AsSome()
                     : new None<ICompositionOf<C>>()
                     ).ToCompletedITask();
             }
-            protected override IOption<string> CustomToString() => $"{ArgTokens[0]}:{{{_identifier}={ArgTokens[1]}}}".AsSome();
-            private readonly IComponentIdentifier<C, R> _identifier;
+            protected override IOption<string> CustomToString() => $"{ArgTokens[0]}:{{{ComponentIdentifier}={ArgTokens[1]}}}".AsSome();
+
         }
-        public sealed record Without<C> : StandardToken<ICompositionOf<C>> where C : ICompositionType
+        public sealed record Without<C> : StandardToken<ICompositionOf<C>>, IHasAttachedComponentIdentifier<C, ICompositionOf<C>> where C : ICompositionType
         {
-            public Without(Resolution.Unsafe.IComponentIdentifier<C> identifier, IToken<ICompositionOf<C>> holder) : base(holder)
-            {
-                _identifier = identifier;
-            }
+            public required IComponentIdentifier<C> ComponentIdentifier { get; init; }
+            IComponentIdentifier<C> IHasAttachedComponentIdentifier<C, ICompositionOf<C>>.AttachedComponentIdentifier => ComponentIdentifier;
+            public Without(Resolution.Unsafe.IComponentIdentifier<C> identifier, IToken<ICompositionOf<C>> holder) : base(holder) { }
             protected override ITask<IOption<ICompositionOf<C>>> StandardResolve(ITokenContext _, IOption<ResObj>[] args)
             {
-                return args[0].RemapAs(x => ((ICompositionOf<C>)x).WithoutComponents([_identifier])).ToCompletedITask();
+                return args[0].RemapAs(x => ((ICompositionOf<C>)x).WithoutComponents([ComponentIdentifier])).ToCompletedITask();
             }
-            protected override IOption<string> CustomToString() => $"{ArgTokens[0]}:{{{_identifier} X}}".AsSome();
-            private readonly Resolution.Unsafe.IComponentIdentifier<C> _identifier;
+            protected override IOption<string> CustomToString() => $"{ArgTokens[0]}:{{{ComponentIdentifier} X}}".AsSome();
         }
         public sealed record DoMerge<C> : Function<ICompositionOf<C>, ICompositionOf<r.MergeSpec<C>>, ICompositionOf<C>> where C : ICompositionType
         {
@@ -303,9 +300,9 @@ namespace FourZeroOne.Core.Tokens
             protected override ITask<IOption<ICompositionOf<C>>> Evaluate(ITokenContext runtime, IOption<ICompositionOf<C>> in1, IOption<ICompositionOf<r.MergeSpec<C>>> in2)
             {
                 return (in1.Check(out var subject) & in2.Check(out var merger)).ToOptionLazy(() =>
-                    (ICompositionOf<C>)subject.WithComponentsUnsafe(
+                    subject.WithComponentsUnsafe(
                             merger.ComponentsUnsafe
-                            .FilterMap(x => (x.A as r._Private.IMergeIdentifier).NullToNone().RemapAs(y => (y.ForComponentUnsafe, x.B).Tiple()))))
+                            .FilterMap(x => (x.A as r._Private.IMergeIdentifier<C>).NullToNone().RemapAs(y => (y.ForComponentUnsafe, x.B).Tiple()))))
                     .ToCompletedITask();
             }
             protected override IOption<string> CustomToString() => $"{Arg1}>>{Arg2}".AsSome();

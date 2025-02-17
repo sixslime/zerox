@@ -95,7 +95,7 @@ namespace Perfection
 
     public class PMap<K, T>() : IPMap<K, T> where K : notnull
     {
-        private readonly Dictionary<K, T> _dict = new();
+        private readonly Dictionary<K, T> _dict = new(0);
         public int Count => _dict.Count;
 
         public IEnumerable<ITiple<K, T>> Elements => _dict.Map(x => (x.Key, x.Value).Tiple());
@@ -129,9 +129,8 @@ namespace Perfection
     }
     public class PSet<T>() : IPSet<T>
     {
-        private readonly HashSet<T> _set = new();
+        private readonly HashSet<T> _set = new(0);
         public int Count => _set.Count;
-
         public IEnumerable<T> Elements => _set;
 
         private PSet(HashSet<T> set) : this() { _set = set; }
@@ -177,9 +176,8 @@ namespace Perfection
     }
     public class PSequence<T>() : IPSequence<T>
     {
-        private readonly CachingEnumerable<T> _list = new([]);
+        private readonly CachingEnumerable<T> _list = new([], 0);
         public int Count => _list.CountAndCache();
-
         public IEnumerable<T> Elements => _list;
 
         public T At(int index)
