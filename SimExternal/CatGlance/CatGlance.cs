@@ -6,6 +6,7 @@ using DeTes.Realization;
 using DeTes.Syntax;
 using Perfection;
 using FourZeroOne.FZOSpec;
+using LookNicePls;
 namespace CatGlance
 {
     using CCol = ConsoleColor;
@@ -40,11 +41,11 @@ namespace CatGlance
             WriteLn($"==[ GLANCER '{Name}' ]==", CCol.Yellow);
             foreach (var (i, (test, result)) in Tests.ZipShort(results).Enumerate())
             {
-                Write($"({i+1})", CCol.Blue);
-                Write($" \"{test.Name}\"", CCol.Blue);
-                C.WriteLine();
+                Write($"({i+1}) ", CCol.Blue);
+                Write($"\"{test.Name}\" ", CCol.Blue);
                 if (result.Split(out var rootTree, out var invalid))
                 {
+                    C.WriteLine();
                     PrintEvalSummary(rootTree, 1);
                 }
                 else
@@ -112,13 +113,7 @@ namespace CatGlance
             {
                 Write("PASS", CCol.Green);
                 if (tree.Object.CriticalPoint.CheckErr(out var p)) Write($"[{p.Length}]", CCol.Gray);
-                if (tokenAsserts.Count + resolutionAsserts.Count + memoryAsserts.Count > 0)
-                {
-                    Write(" | ", CCol.DarkGray);
-                    Write(tokenAsserts.Count.ExprAs(x => x > 0 ? $"{x}" : "-") + " | ", CCol.DarkGray);
-                    Write(resolutionAsserts.Count.ExprAs(x => x > 0 ? $"{x}" : "-") + " | ", CCol.DarkGray);
-                    Write(memoryAsserts.Count.ExprAs(x => x > 0 ? $"{x}" : "-") + " | ", CCol.DarkGray);
-                }
+                PrintPostHeader(tokenAsserts, resolutionAsserts, memoryAsserts, tree.Object.TimeTaken);
                 C.WriteLine();
                 return;
             }
@@ -134,13 +129,17 @@ namespace CatGlance
                 }
                 if (halt is EProcessorHalt.InvalidState invalid)
                 {
-                    WriteLn("INVALID STATE", CCol.Magenta);
+                    Write("INVALID STATE", CCol.Magenta);
+                    Write(" : ");
+                    Write(invalid.HaltingState.LookNicePls(), CCol.DarkRed);
                     return;
                 }
             }
             if (Iter.Over<IEnumerable<IDeTesAssertionDataUntyped>>(tokenAsserts, resolutionAsserts, memoryAsserts).Flatten().Any(x => !AssertPassed(x)))
             {
-                WriteLn("FAILED", CCol.Red);
+                Write("FAILED", CCol.Red);
+                PrintPostHeader(tokenAsserts, resolutionAsserts, memoryAsserts, tree.Object.TimeTaken);
+                C.WriteLine();
                 PrintFailedAssertionSummary(tokenAsserts, "t: ", depth);
                 PrintFailedAssertionSummary(resolutionAsserts, "r: ", depth);
                 PrintFailedAssertionSummary(memoryAsserts, "m: ", depth);
@@ -152,6 +151,30 @@ namespace CatGlance
             {
                 PrintEvalSummary(subTree, depth + 1);
             }
+        }
+        private static void PrintPostHeader(IEnumerable<IDeTesAssertionData<Token>> tokenAsserts, IEnumerable<IDeTesAssertionData<ResOpt>> resolutionAsserts, IEnumerable<IDeTesAssertionData<IMemoryFZO>> memoryAsserts, TimeSpan time)
+        {
+            var blankColor = CCol.DarkGray;
+            var failedColor = CCol.DarkYellow;
+            var timerColor = CCol.DarkGray;
+            foreach(var (total, failed) in Iter.Over<IEnumerable<IDeTesAssertionDataUntyped>>(tokenAsserts, resolutionAsserts, memoryAsserts).Map(x => (x.Count(), x.Where(x => !AssertPassed(x)).Count())))
+            {
+                Write(" | ", blankColor);
+                if (total == 0)
+                {
+                    Write("-", blankColor);
+                    continue;
+                }
+                if (failed > 0)
+                {
+                    Write(failed.ToString(), failedColor);
+                    Write("/" + total.ToString());
+                    continue;
+                }
+                Write($"{total}", blankColor);
+            }
+            Write(" | ", blankColor);
+            //Write($"{Math.Round(time.TotalMilliseconds, 0)}ms", timerColor);
         }
         private static void PrintFailedAssertionSummary(IEnumerable<IDeTesAssertionDataUntyped> assertions, string starter, int depth)
         {

@@ -42,6 +42,8 @@ namespace DeTes.Realization
         {
             List<EDeTesFrame> frames = new();
             CriticalPointType? critPoint = null;
+            Stopwatch timer = new();
+            timer.Start();
             while (true)
             {
                 IResult<EProcessorStep, EProcessorHalt>? processorStep = null;
@@ -188,9 +190,11 @@ namespace DeTes.Realization
                 state = state.WithStep(step);
             }
             // 'critPoint' must have a value after the above loop:
+            timer.Stop();
             if (critPoint is null) throw new UnreachableException();
             return new()
             {
+                TimeTaken = timer.Elapsed,
                 CriticalPoint = critPoint,
                 EvaluationFrames = frames.ToArray()
             };

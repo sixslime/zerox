@@ -29,9 +29,11 @@ namespace DeTes.Analysis
         int[] IDeTesSelectionPath.Selection => ThisSelection;
         CriticalPointType IDeTesResult.CriticalPoint => ResultObject.CriticalPoint;
         EDeTesFrame[] IDeTesResult.EvaluationFrames => ResultObject.EvaluationFrames;
+        TimeSpan IDeTesResult.TimeTaken => ResultObject.TimeTaken;
     }
     internal class ResultImpl : IDeTesResult
     {
+        public required TimeSpan TimeTaken { get; init; }
         public required CriticalPointType CriticalPoint { get; init; }
         public required EDeTesFrame[] EvaluationFrames { get; init; }
     }

@@ -29,7 +29,7 @@ public class Tester
             Supplier = RUN_IMPLEMENTATION,
             Tests = new GlancableTest[]
             {
-                new()
+                new("give 1D expect 2D domain")
                 {
                     InitialMemory = MEMORY_IMPLEMENTATION,
                     Token = C =>
@@ -46,15 +46,23 @@ public class Tester
             Supplier = RUN_IMPLEMENTATION,
             Tests = new GlancableTest[]
             {
-                new("trivial memory fail")
+                new("trivial t")
                 {
                     InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C => 0.tFixed().AssertMemory(C, x => false)
+                    Token = C => 0.tFixed()
+                    .AssertToken(C, u => u is not t.Fixed<ro.Number>)
                 },
-                new("trivial resolution fail")
+                new("trivial m")
                 {
                     InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C => 0.tFixed().AssertResolution(C, x => false)
+                    Token = C => 0.tFixed()
+                    .AssertMemory(C, u => u.Objects.Any())
+                },
+                new("trivial r")
+                {
+                    InitialMemory = MEMORY_IMPLEMENTATION,
+                    Token = C => 0.tFixed()
+                    .AssertResolution(C, u => u.Value != 0)
                 },
                 new("assertion within macro")
                 {
@@ -83,11 +91,26 @@ public class Tester
             Supplier = RUN_IMPLEMENTATION,
             Tests = new GlancableTest[]
             {
-                new("5")
+                new("trivial t")
                 {
                     InitialMemory = MEMORY_IMPLEMENTATION,
                     Token = C =>
-                        5.tFixed().AssertResolution(C, u => u.Value == 5)
+                        400.tFixed().tAdd(1.tFixed())
+                        .AssertToken(C, u => u is t.Number.Add add && add.Arg1 is t.Fixed<ro.Number> a && a.Resolution.Value == 400)
+                },
+                new("trivial r")
+                {
+                    InitialMemory = MEMORY_IMPLEMENTATION,
+                    Token = C =>
+                        400.tFixed().tAdd(1.tFixed())
+                        .AssertResolution(C, u => u.Value == 401)
+                },
+                new("trivial m")
+                {
+                    InitialMemory = MEMORY_IMPLEMENTATION,
+                    Token = C =>
+                        400.tFixed().tAdd(1.tFixed())
+                        .AssertMemory(C, u => !u.Objects.Any())
                 },
                 new("4 duplicate")
                 {
@@ -179,6 +202,7 @@ public class Tester
                         .AssertToken(C, u => u is t.MetaExecuted<ro.Number> exe && exe.Arg1 is t.Number.Add)
                         .AssertResolution(C, u => u.Value == 15)
                         .tAdd(1.tFixed())
+                        .AssertResolution(C, u => u.Value == 16)
                 }
             }
         };
