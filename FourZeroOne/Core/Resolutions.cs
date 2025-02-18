@@ -15,14 +15,12 @@ namespace FourZeroOne.Core.Resolutions
         public sealed record Number : NoOp
         {
             public required int Value { get; init; }
-            public Updater<int> dValue { init => Value = value(Value); }
             public static implicit operator Number(int value) => new() { Value = value };
             public override string ToString() => $"{Value}";
         }
         public sealed record Bool : NoOp
         {
             public required bool IsTrue { get; init; }
-            public Updater<bool> dIsTrue { init => IsTrue = value(IsTrue); }
             public static implicit operator Bool(bool value) => new() { IsTrue = value };
             public override string ToString() => $"{IsTrue}";
         }

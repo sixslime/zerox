@@ -31,37 +31,14 @@ namespace CatGlance
         public required IEnumerable<ICatGlanceable> Tests { get; init; }
         public required IDeTesFZOSupplier Supplier { get; init; }
 
+        private IOption<IResult<RecursiveEvalTree<IDeTesResult, bool>, EDeTesInvalidTest>[]> _testEvals = new None<IResult<RecursiveEvalTree<IDeTesResult, bool>, EDeTesInvalidTest>[]>();
+        
         public async Task Glance()
         {
-            var tests = Tests.ToArray();
-            var count = tests.Length;
-            var results = new IResult<RecursiveEvalTree<IDeTesResult, bool>, EDeTesInvalidTest>[count];
-
-            for (int i = 0; i < count; i++)
-                results[i] = (await new DeTesRealizer().Realize(tests[i], Supplier))
-                    .RemapOk(x =>
-                        x.RecursiveEvalTree(
-                            deTesResult => deTesResult.CriticalPoint.RemapOk(stop =>
-                                stop.CheckOk(out var halt) &&
-                                halt is EProcessorHalt.Completed &&
-                                deTesResult.EvaluationFrames.All(frame => frame switch
-                                {
-                                    EDeTesFrame.PushOperation v
-                                        => v.Assertions.Token.All(assert => assert.Result.CheckOk(out var pass) && pass),
-                                    EDeTesFrame.Resolve v
-                                        => v.Assertions.Resolution.All(assert => assert.Result.CheckOk(out var pass) && pass) &&
-                                            v.Assertions.Memory.All(assert => assert.Result.CheckOk(out var pass) && pass),
-                                    EDeTesFrame.Complete v
-                                        => //DEBUG
-                                            //new Func<bool>(() => { Console.WriteLine(v.CompletionHalt.Resolution); return true; })() &&
-                                            v.Assertions.Resolution.All(assert => assert.Result.CheckOk(out var pass) && pass) &&
-                                            v.Assertions.Memory.All(assert => assert.Result.CheckOk(out var pass) && pass),
-                                    _ => true
-                                })),
-                            others => others.All(x => x)));
-
+            await EvalTests();
+            var results = _testEvals.Unwrap();
             WriteLn($"==[ GLANCER '{Name}' ]==", CCol.Yellow);
-            foreach (var (i, (test, result)) in tests.ZipShort(results).Enumerate())
+            foreach (var (i, (test, result)) in Tests.ZipShort(results).Enumerate())
             {
                 Write($"({i+1})", CCol.Blue);
                 Write($" \"{test.Name}\"", CCol.Blue);
@@ -76,6 +53,37 @@ namespace CatGlance
                 }
             }
         }
+        private async Task EvalTests()
+        {
+            if (_testEvals.IsSome()) return;
+            var tests = Tests.ToArray();
+            var count = tests.Length;
+            var results = new IResult<RecursiveEvalTree<IDeTesResult, bool>, EDeTesInvalidTest>[count];
+
+            for (int i = 0; i < count; i++)
+                results[i] = (await new DeTesRealizer().Realize(tests[i], Supplier))
+                    .RemapOk(x =>
+                        x.RecursiveEvalTree(
+                            deTesResult => deTesResult.CriticalPoint.RemapOk(stop =>
+                                stop.CheckOk(out var halt) &&
+                                halt is EProcessorHalt.Completed &&
+                                deTesResult.EvaluationFrames.All(frame => frame switch
+                                {
+                                    EDeTesFrame.Resolve v
+                                        => v.Assertions.Token.All(AssertPassed) &&
+                                            v.Assertions.Resolution.All(AssertPassed) &&
+                                            v.Assertions.Memory.All(AssertPassed),
+                                    EDeTesFrame.Complete v
+                                        => //DEBUG
+                                           //new Func<bool>(() => { Console.WriteLine(v.CompletionHalt.Resolution); return true; })() &&
+                                            v.Assertions.Token.All(AssertPassed) &&
+                                            v.Assertions.Resolution.All(AssertPassed) &&
+                                            v.Assertions.Memory.All(AssertPassed),
+                                    _ => true
+                                })),
+                            others => others.All(x => x)));
+            _testEvals = results.AsSome();
+        }
         private static void PrintEvalSummary(RecursiveEvalTree<IDeTesResult, bool> tree, int depth)
         {
             List<IDeTesAssertionData<Token>> tokenAsserts = new();
@@ -85,14 +93,13 @@ namespace CatGlance
             {
                 switch (frame)
                 {
-                    case EDeTesFrame.PushOperation v:
-                        tokenAsserts.AddRange(v.Assertions.Token);
-                        break;
                     case EDeTesFrame.Resolve v:
+                        tokenAsserts.AddRange(v.Assertions.Token);
                         resolutionAsserts.AddRange(v.Assertions.Resolution);
                         memoryAsserts.AddRange(v.Assertions.Memory);
                         break;
                     case EDeTesFrame.Complete v:
+                        tokenAsserts.AddRange(v.Assertions.Token);
                         resolutionAsserts.AddRange(v.Assertions.Resolution);
                         memoryAsserts.AddRange(v.Assertions.Memory);
                         break;
@@ -152,7 +159,7 @@ namespace CatGlance
             {
                 DepthPad(depth);
                 Write(starter);
-                Write($"[{failed.OnToken}] {failed.Description.NullToNone().RemapAs(desc => $"\"{desc}\"").Or("")}", CCol.Red);
+                Write($"[{failed.OnToken}] {failed.Description.NullToNone().RemapAs(desc => $"\"{desc}\"").Or("")}", CCol.DarkYellow);
                 if (failed.Result.CheckErr(out var exception))
                 {
                     Write($" threw: '{exception.Message}'", CCol.DarkMagenta);

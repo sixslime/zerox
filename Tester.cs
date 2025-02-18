@@ -23,44 +23,6 @@ public class Tester
     {
 
         
-        var shouldFail = new Glancer
-        {
-            Name = "Should Fail",
-            Supplier = RUN_IMPLEMENTATION,
-            Tests = new GlancableTest[]
-            {
-                new()
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C => 0.tFixed().AssertMemory(C, x => false)
-                },
-                new()
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C => 0.tFixed().AssertResolution(C, x => false)
-                },
-                new()
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        5.tFixed()
-                        .AssertResolution(C, _ => false)
-                        .tDuplicate(2.tFixed())
-                        .AssertResolution(C, _ => true)
-                        .AssertMemory(C, _ => true)
-                },
-                new()
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        4.tFixed().AssertResolution(C, x => x.Value == 4).Yield(4).tToMulti()
-                        .AssertResolution(C, _ => false)
-                        .AssertResolution(C, _ => true)
-                        .AssertMemory(C, _ => true)
-                }
-            }
-        };
-
         var shouldInvalid = new Glancer
         {
             Name = "Should Invalid",
@@ -74,6 +36,43 @@ public class Tester
                         (1..10).tFixed()
                         .tIOSelectMany(2.tFixed())
                         .DefineSelectionDomain(C, (0..10).RangeIter(), out var domain)
+                }
+            }
+        };
+
+        var shouldFail = new Glancer
+        {
+            Name = "Should Fail",
+            Supplier = RUN_IMPLEMENTATION,
+            Tests = new GlancableTest[]
+            {
+                new("trivial memory fail")
+                {
+                    InitialMemory = MEMORY_IMPLEMENTATION,
+                    Token = C => 0.tFixed().AssertMemory(C, x => false)
+                },
+                new("trivial resolution fail")
+                {
+                    InitialMemory = MEMORY_IMPLEMENTATION,
+                    Token = C => 0.tFixed().AssertResolution(C, x => false)
+                },
+                new("assertion within macro")
+                {
+                    InitialMemory = MEMORY_IMPLEMENTATION,
+                    Token = C =>
+                        5.tFixed()
+                        .AssertResolution(C, _ => false)
+                        .tDuplicate(2.tFixed())
+                        .AssertResolution(C, _ => true)
+                        .AssertMemory(C, _ => true)
+                },
+                new("3 duplicate resolution fails")
+                {
+                    InitialMemory = MEMORY_IMPLEMENTATION,
+                    Token = C =>
+                        3.tFixed().AssertResolution(C, _ => false).Yield(3).tToMulti()
+                        .AssertResolution(C, _ => true)
+                        .AssertMemory(C, _ => true)
                 }
             }
         };
@@ -164,14 +163,22 @@ public class Tester
                                         origin.tRef().tRealize().tSubtract(1.tFixed())
                                 })),
                             Value = 2.tFixed().tAdd(2.tFixed())
-                            .AssertToken(C, u => { return true; })
+                            .AssertToken(C, u => u is t.Number.Subtract)
                             .AssertResolution(C, u => u.Value == 3)
                         })
                         .AssertResolution(C, u => u.Value == 3)
                 },
                 new("trivial meta excute test")
                 {
-                    InitialMemory = MemberAccessExcep
+                    InitialMemory = MEMORY_IMPLEMENTATION,
+                    Token = C =>
+                        Core.tMetaFunction<ro.Number, ro.Number>(
+                            x =>
+                            x.tRef().tAdd(10.tFixed()))
+                        .tExecuteWith(new() { A = 5.tFixed() })
+                        .AssertToken(C, u => u is t.MetaExecuted<ro.Number> exe && exe.Arg1 is t.Number.Add)
+                        .AssertResolution(C, u => u.Value == 15)
+                        .tAdd(1.tFixed())
                 }
             }
         };

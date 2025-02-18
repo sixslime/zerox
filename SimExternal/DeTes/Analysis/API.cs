@@ -32,12 +32,9 @@ namespace DeTes.Analysis
         public IResult<bool, Exception> Result { get; }
         public string? Description { get; }
     }
-    public interface IDeTesOnPushAssertions
-    {
-        public IDeTesAssertionData<Token>[] Token { get; }
-    }
     public interface IDeTesOnResolveAssertions
     {
+        public IDeTesAssertionData<Token>[] Token { get; }
         public IDeTesAssertionData<IMemoryFZO>[] Memory { get; }
         public IDeTesAssertionData<NollableRes>[] Resolution { get; }
     }
@@ -51,7 +48,6 @@ namespace DeTes.Analysis
         public sealed record PushOperation : EDeTesFrame
         {
             public required EProcessorStep.PushOperation NextStep { get; init; }
-            public required IDeTesOnPushAssertions Assertions { get; init; }
         }
         public sealed record Resolve : EDeTesFrame
         {

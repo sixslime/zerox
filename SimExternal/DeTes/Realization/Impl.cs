@@ -101,7 +101,7 @@ namespace DeTes.Realization
                         {
                             PreState = state,
                             CompletionHalt = complete,
-                            Assertions = GenerateOnResolveAssertionObject(runtime, runtime.GetLinkedToken(GetLastOperation(state)), resolution, GetMemoryAfterResolution(state, resolution))
+                            Assertions = GenerateOnResolveAssertionObject(runtime, runtime.GetLinkedToken(GetLastOperation(state)), resolution, GetMemoryAfterResolution(state, resolution), GetLastOperation(state))
                         });
                     }
                     
@@ -140,7 +140,6 @@ namespace DeTes.Realization
                             {
                                 PreState = state,
                                 NextStep = v,
-                                Assertions = GenerateOnPushAssertionObject(runtime, linkedToken, v.OperationToken)
                             });
                             if (runtime.Domains.TryGetValue(linkedToken, out var domains))
                                 foreach (var domain in domains) runtime.DomainQueue.Enqueue(domain);
@@ -154,17 +153,19 @@ namespace DeTes.Realization
                             if (v.Resolution.Split(out var resolution, out var stateImplemented))
                             {
                                 var nMemory = GetMemoryAfterResolution(state, resolution);
+                                var nToken = GetLastOperation(state);
                                 frames.Add(new EDeTesFrame.Resolve
                                 {
                                     PreState = state,
                                     NextStep = v,
-                                    Assertions = GenerateOnResolveAssertionObject(runtime, linkedToken, resolution, nMemory)
+                                    Assertions = GenerateOnResolveAssertionObject(runtime, linkedToken, resolution, nMemory, nToken)
                                 });
                                 if (runtime.References.TryGetValue(linkedToken, out var references))
                                     foreach (var reference in references)
                                     {
                                         reference.SetResolution(resolution);
                                         reference.SetMemory(nMemory);
+                                        reference.SetToken(nToken);
                                     }
                             }
                             else
@@ -202,19 +203,7 @@ namespace DeTes.Realization
                 : state.Initialized.Unwrap().InitialMemory)
                 .WithResolution(resolution);
         }
-        private static OnPushAssertionsImpl GenerateOnPushAssertionObject(RuntimeResources runtime, IToken linkedToken, IToken operation)
-        {
-            return new()
-            {
-                Token =
-                    runtime.TokenAssertions
-                    .TryGetValue(linkedToken, out var tokenAssertions)
-                    .ToOption(tokenAssertions).Or([])
-                    !.Map(assertion => EvaluateAssertion(assertion, linkedToken, operation))
-                    .ToArray()
-            };
-        }
-        private static OnResolveAssertionsImpl GenerateOnResolveAssertionObject(RuntimeResources runtime, IToken linkedToken, ResOpt resolution, IMemoryFZO nMemory)
+        private static OnResolveAssertionsImpl GenerateOnResolveAssertionObject(RuntimeResources runtime, IToken linkedToken, ResOpt resolution, IMemoryFZO nMemory, IToken token)
         {
             // DEBUG
             //Console.ForegroundColor = ConsoleColor.Blue;
@@ -240,6 +229,13 @@ namespace DeTes.Realization
                     .ToOption(memoryAssertions).Or([])!
                     .Map(assertion =>
                         EvaluateAssertion(assertion, linkedToken, nMemory))
+                    .ToArray(),
+                Token =
+                    runtime.TokenAssertions
+                    .TryGetValue(linkedToken, out var tokenAssertions)
+                    .ToOption(tokenAssertions).Or([])!
+                    .Map(assertion =>
+                        EvaluateAssertion(assertion, linkedToken, token))
                     .ToArray(),
             };
         }
