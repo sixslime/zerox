@@ -32,12 +32,16 @@ namespace Minima.FZO
             }
 
             // continue token prep if prep stack has at least 1 element:
-            if (state.TokenPrepStack.GetAt(0).Check(out var processingToken))
+            if (state.TokenMutationStack.GetAt(0).Check(out var processingToken))
             {
                 var token = processingToken.Result;
                 
                 if (state.OperationStack.GetAt(0).Check(out var t) && t.MemoryStack.GetAt(0).Check(out var topMem))
                 {
+                    // DEBUG
+                    //Console.ForegroundColor = ConsoleColor.Yellow;
+                    //Console.WriteLine(topMem.LookNicePls());
+                    //Console.ResetColor();
                     Dictionary<RuleID, int> seenRules = new();
                     foreach (var rule in topMem.Rules)
                     {
@@ -51,18 +55,22 @@ namespace Minima.FZO
 
                         // send 'RuleApplication' if the processing token is rulable by an unapplied rule:
                         if (rule.TryApply(token).Check(out var ruledToken))
-                        return new EProcessorStep.TokenMutate
                         {
-                            Mutation = new ETokenMutation.RuleApply
+                            // DEBUG
+                            //Console.ForegroundColor = ConsoleColor.Blue;
+                            //Console.WriteLine("RULE: " + token + " => " + ruledToken);
+                            //Console.ResetColor();
+                            return new EProcessorStep.TokenMutate
                             {
-                                Rule = rule,
-                                Result = ruledToken
-                            }
-                        }.AsOk(stdHint);
+                                Mutation = new ETokenMutation.RuleApply
+                                {
+                                    Rule = rule,
+                                    Result = ruledToken
+                                }
+                            }.AsOk(stdHint);
+                        }
                     }
                 }
-                
-
                 // DEBUG
                 //Console.ForegroundColor = ConsoleColor.Green;
                 //Console.WriteLine(token);
@@ -100,16 +108,15 @@ namespace Minima.FZO
                         ? (await resolutionTask).AsOk(Hint<EStateImplemented>.HINT)
                         : runtimeHandled.AsErr(Hint<ResOpt>.HINT);
                 // DEBUG
+                //Console.ForegroundColor = ConsoleColor.Red;
                 //if (resolvedOperation.CheckOk(out var r)) Console.WriteLine(r);
-                //Console.ResetColor();
+                Console.ResetColor();
                 return
                     (resolvedOperation.CheckOk(out var finalResolution) && !state.OperationStack.GetAt(1).IsSome())
                     .Not().ToResult(
                         new EProcessorStep.Resolve() { Resolution = resolvedOperation },
                         new EProcessorHalt.Completed() { HaltingState = state, Resolution = finalResolution });
             }
-
-            
 
             // send 'Identity' if next operation arg is ready to be processed
             return new EProcessorStep.TokenMutate()

@@ -17,6 +17,10 @@ namespace Perfection
         public Tb B { get; private init; } = b;
         public static implicit operator Tiple<Ta, Tb>(ValueTuple<Ta, Tb> tup) => new(tup.Item1, tup.Item2);
         public static implicit operator ValueTuple<Ta, Tb>(Tiple<Ta, Tb> tup) => new(tup.A, tup.B);
+        public override string ToString()
+        {
+            return $"({A}, {B})";
+        }
     }
     public static class TipleExtensions
     {

@@ -192,7 +192,7 @@ namespace FourZeroOne.Core.Syntax
             return Macros.Compose<C>.Construct();
         }
 
-        public static t.AddRule tAddRuleForValueOf<RVal>(Structure.Rule.Block<RVal> block)
+        public static t.AddRule tAddRule<RVal>(Structure.Rule.Block<RVal> block)
             where RVal : class, Res
         {
             var vs = new DynamicAddress<r.Boxed.MetaFunction<OriginalProxy<RVal>, RVal>>();
@@ -204,7 +204,7 @@ namespace FourZeroOne.Core.Syntax
                 Matcher = block.Matches(new())
             });
         }
-        public static t.AddRule tAddRuleForFunctionOf<RArg1, ROut>(Structure.Rule.Block<RArg1, ROut> block)
+        public static t.AddRule tAddRule<RArg1, ROut>(Structure.Rule.Block<RArg1, ROut> block)
             where RArg1 : class, Res
             where ROut : class, Res
         {
@@ -217,7 +217,7 @@ namespace FourZeroOne.Core.Syntax
                 Matcher = block.Matches(new())
             });
         }
-        public static t.AddRule tAddRuleForFunctionOf<RArg1, RArg2, ROut>(Structure.Rule.Block<RArg1, RArg2, ROut> block)
+        public static t.AddRule tAddRule<RArg1, RArg2, ROut>(Structure.Rule.Block<RArg1, RArg2, ROut> block)
             where RArg1 : class, Res
             where RArg2 : class, Res
             where ROut : class, Res
@@ -231,7 +231,7 @@ namespace FourZeroOne.Core.Syntax
                 Matcher = block.Matches(new())
             });
         }
-        public static t.AddRule tAddRuleForFunctionOf<RArg1, RArg2, RArg3, ROut>(Structure.Rule.Block<RArg1, RArg2, RArg3, ROut> block)
+        public static t.AddRule tAddRule<RArg1, RArg2, RArg3, ROut>(Structure.Rule.Block<RArg1, RArg2, RArg3, ROut> block)
             where RArg1 : class, Res
             where RArg2 : class, Res
             where RArg3 : class, Res
@@ -380,7 +380,7 @@ namespace FourZeroOne.Core.Syntax
         public static Macro<R, r.Boxed.MetaFunction<R>, R> tCatchNolla<R>(this IToken<R> value, Func<IToken<R>> fallback)
             where R : class, Res
         { return Macros.CatchNolla<R>.Construct(value, fallback().tMetaBoxed()); }
-        public static t.DynamicReference<R> tRef<R>(this DynamicAddress<R> ident) where R : class, Res
+        public static t.DynamicReference<R> tRef<R>(this IMemoryAddress<R> ident) where R : class, Res
         { return new(ident); }
         public static t.Fixed<ro.Bool> tFixed(this bool value)
         { return new(value); }
@@ -395,68 +395,72 @@ namespace FourZeroOne.Core.Syntax
 
         public static t.Fixed<r.Multi<R>> t_ToConstMulti<R>(this IEnumerable<t.Fixed<R>> values) where R : class, Res
         { return new(new() { Values = values.Map(x => x.Resolution).ToPSequence() }); }
+
+        public static RealizeProxy<R> tRealize<R>(this IToken<IProxy<R>> proxy)
+            where R : class, Res
+        { return new(proxy); }
         
     }
     public static class RuleMatcherSyntax
     {
         
-        public static TypeMatcher<TMatch> IsType<TMatch>(this Structure.Rule.IMatcherBuilder _)
+        public static TypeMatcher<TMatch> mIsType<TMatch>(this Structure.Rule.IMatcherBuilder _)
             where TMatch : IToken<Res>
         { return new(); }
 
-        public static MacroMatcher<RVal> IsMacro<RVal>(this Structure.Rule.MatcherBuilder<RVal> _, string package, string identifier)
+        public static MacroMatcher<RVal> mIsMacro<RVal>(this Structure.Rule.MatcherBuilder<RVal> _, string package, string identifier)
             where RVal : class, Res
         { return new() { Label = new() { Package = package, Identifier = identifier } }; }
-        public static MacroMatcher<RArg1, ROut> IsMacro<RArg1, ROut>(this Structure.Rule.MatcherBuilder<RArg1, ROut> _, string package, string identifier)
+        public static MacroMatcher<RArg1, ROut> mIsMacro<RArg1, ROut>(this Structure.Rule.MatcherBuilder<RArg1, ROut> _, string package, string identifier)
             where RArg1 : class, Res
             where ROut : class, Res
         { return new() { Label = new() { Package = package, Identifier = identifier } }; }
-        public static MacroMatcher<RArg1, RArg2, ROut> IsMacro<RArg1, RArg2, ROut>(this Structure.Rule.MatcherBuilder<RArg1, RArg2, ROut> _, string package, string identifier)
+        public static MacroMatcher<RArg1, RArg2, ROut> mIsMacro<RArg1, RArg2, ROut>(this Structure.Rule.MatcherBuilder<RArg1, RArg2, ROut> _, string package, string identifier)
             where RArg1 : class, Res
             where RArg2 : class, Res
             where ROut : class, Res
         { return new() { Label = new() { Package = package, Identifier = identifier } }; }
-        public static MacroMatcher<RArg1, RArg2, RArg3, ROut> IsMacro<RArg1, RArg2, RArg3, ROut>(this Structure.Rule.MatcherBuilder<RArg1, RArg2, RArg3, ROut> _, string package, string identifier)
+        public static MacroMatcher<RArg1, RArg2, RArg3, ROut> mIsMacro<RArg1, RArg2, RArg3, ROut>(this Structure.Rule.MatcherBuilder<RArg1, RArg2, RArg3, ROut> _, string package, string identifier)
             where RArg1 : class, Res
             where RArg2 : class, Res
             where RArg3 : class, Res
             where ROut : class, Res
         { return new() { Label = new() { Package = package, Identifier = identifier } }; }
 
-        public static AnyMatcher<IHasNoArgs<RVal>> MatchesAny<RVal>(this Structure.Rule.MatcherBuilder<RVal> _, List<IRuleMatcher<IHasNoArgs<RVal>>> entries)
+        public static AnyMatcher<IHasNoArgs<RVal>> mAny<RVal>(this Structure.Rule.MatcherBuilder<RVal> _, List<IRuleMatcher<IHasNoArgs<RVal>>> entries)
             where RVal : class, Res
         { return new() { Entries = entries.ToPSet() }; }
 
-        public static AnyMatcher<IHasArgs<RArg1, ROut>> MatchesAny<RArg1, ROut>(this Structure.Rule.MatcherBuilder<RArg1, ROut> _, List<IRuleMatcher<IHasArgs<RArg1, ROut>>> entries)
+        public static AnyMatcher<IHasArgs<RArg1, ROut>> mAny<RArg1, ROut>(this Structure.Rule.MatcherBuilder<RArg1, ROut> _, List<IRuleMatcher<IHasArgs<RArg1, ROut>>> entries)
             where RArg1 : class, Res
             where ROut : class, Res
         { return new() { Entries = entries.ToPSet() }; }
-        public static AnyMatcher<IHasArgs<RArg1, RArg2, ROut>> MatchesAny<RArg1, RArg2, ROut>(this Structure.Rule.MatcherBuilder<RArg1, RArg2, ROut> _, List<IRuleMatcher<IHasArgs<RArg1, RArg2, ROut>>> entries)
+        public static AnyMatcher<IHasArgs<RArg1, RArg2, ROut>> mAny<RArg1, RArg2, ROut>(this Structure.Rule.MatcherBuilder<RArg1, RArg2, ROut> _, List<IRuleMatcher<IHasArgs<RArg1, RArg2, ROut>>> entries)
             where RArg1 : class, Res
             where RArg2 : class, Res
             where ROut : class, Res
         { return new() { Entries = entries.ToPSet() }; }
-        public static AnyMatcher<IHasArgs<RArg1, RArg2, RArg3, ROut>> MatchesAny<RArg1, RArg2, RArg3, ROut>(this Structure.Rule.MatcherBuilder<RArg1, RArg2, RArg3, ROut> _, List<IRuleMatcher<IHasArgs<RArg1, RArg2, RArg3, ROut>>> entries)
+        public static AnyMatcher<IHasArgs<RArg1, RArg2, RArg3, ROut>> mAny<RArg1, RArg2, RArg3, ROut>(this Structure.Rule.MatcherBuilder<RArg1, RArg2, RArg3, ROut> _, List<IRuleMatcher<IHasArgs<RArg1, RArg2, RArg3, ROut>>> entries)
             where RArg1 : class, Res
             where RArg2 : class, Res
             where RArg3 : class, Res
             where ROut : class, Res
         { return new() { Entries = entries.ToPSet() }; }
 
-        public static AllMatcher<IHasNoArgs<RVal>> MatchesAll<RVal>(this Structure.Rule.MatcherBuilder<RVal> _, List<IRuleMatcher<IHasNoArgs<RVal>>> entries)
+        public static AllMatcher<IHasNoArgs<RVal>> mAll<RVal>(this Structure.Rule.MatcherBuilder<RVal> _, List<IRuleMatcher<IHasNoArgs<RVal>>> entries)
             where RVal : class, Res
         { return new() { Entries = entries.ToPSet() }; }
 
-        public static AllMatcher<IHasArgs<RArg1, ROut>> MatchesAll<RArg1, ROut>(this Structure.Rule.MatcherBuilder<RArg1, ROut> _, List<IRuleMatcher<IHasArgs<RArg1, ROut>>> entries)
+        public static AllMatcher<IHasArgs<RArg1, ROut>> mAll<RArg1, ROut>(this Structure.Rule.MatcherBuilder<RArg1, ROut> _, List<IRuleMatcher<IHasArgs<RArg1, ROut>>> entries)
             where RArg1 : class, Res
             where ROut : class, Res
         { return new() { Entries = entries.ToPSet() }; }
-        public static AllMatcher<IHasArgs<RArg1, RArg2, ROut>> MatchesAll<RArg1, RArg2, ROut>(this Structure.Rule.MatcherBuilder<RArg1, RArg2, ROut> _, List<IRuleMatcher<IHasArgs<RArg1, RArg2, ROut>>> entries)
+        public static AllMatcher<IHasArgs<RArg1, RArg2, ROut>> mAll<RArg1, RArg2, ROut>(this Structure.Rule.MatcherBuilder<RArg1, RArg2, ROut> _, List<IRuleMatcher<IHasArgs<RArg1, RArg2, ROut>>> entries)
             where RArg1 : class, Res
             where RArg2 : class, Res
             where ROut : class, Res
         { return new() { Entries = entries.ToPSet() }; }
-        public static AllMatcher<IHasArgs<RArg1, RArg2, RArg3, ROut>> MatchesAll<RArg1, RArg2, RArg3, ROut>(this Structure.Rule.MatcherBuilder<RArg1, RArg2, RArg3, ROut> _, List<IRuleMatcher<IHasArgs<RArg1, RArg2, RArg3, ROut>>> entries)
+        public static AllMatcher<IHasArgs<RArg1, RArg2, RArg3, ROut>> mAll<RArg1, RArg2, RArg3, ROut>(this Structure.Rule.MatcherBuilder<RArg1, RArg2, RArg3, ROut> _, List<IRuleMatcher<IHasArgs<RArg1, RArg2, RArg3, ROut>>> entries)
             where RArg1 : class, Res
             where RArg2 : class, Res
             where RArg3 : class, Res

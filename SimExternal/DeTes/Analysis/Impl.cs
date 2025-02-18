@@ -6,7 +6,7 @@ using FourZeroOne.Token;
 namespace DeTes.Analysis
 {
     using CriticalPointType = IResult<IResult<EProcessorHalt, Exception>, IDeTesSelectionPath[]>;
-    using IToken = IToken<IResolution>;
+    using Token = IToken<IResolution>;
     using ResOpt = IOption<IResolution>;
     internal class DomainDataImpl : IDeTesDomainData
     {
@@ -15,6 +15,7 @@ namespace DeTes.Analysis
     }
     internal class AssertionDataImpl<A> : IDeTesAssertionData<A>
     {
+        public required Token OnToken { get; init; }
         public required IResult<bool, Exception> Result { get; init; }
         public required string? Description { get; init; }
         public required Predicate<A> Condition { get; init; }
@@ -41,6 +42,6 @@ namespace DeTes.Analysis
     }
     internal class OnPushAssertionsImpl : IDeTesOnPushAssertions
     {
-        public required IDeTesAssertionData<IToken>[] Token { get; init; }
+        public required IDeTesAssertionData<Token>[] Token { get; init; }
     }
 }

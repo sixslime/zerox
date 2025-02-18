@@ -17,6 +17,10 @@ namespace Perfection
         {
             foreach (var e in enumerable) if (mapFunction(e).Check(out var some)) yield return some;
         }
+        public static IEnumerable<TCast> FilterCast<TCast>(this IEnumerable<object> enumerable)
+        {
+            foreach (var e in enumerable) if (e is TCast casted) yield return casted;
+        }
         public static IEnumerable<T> Also<T>(this IEnumerable<T> enumerable, IEnumerable<T> also)
         {
             // same situation as 'Map()'

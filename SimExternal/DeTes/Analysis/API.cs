@@ -6,7 +6,7 @@ using NollableRes = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
 #nullable enable
 namespace DeTes.Analysis
 {
-    using IToken = IToken<IResolution>;
+    using Token = IToken<IResolution>;
     public interface IDeTesResult
     {
         public IResult<IResult<EProcessorHalt, Exception>, IDeTesSelectionPath[]> CriticalPoint { get; }
@@ -22,15 +22,19 @@ namespace DeTes.Analysis
         public string? Description { get; }
         public int[][] Values { get; }
     }
-    public interface IDeTesAssertionData<A>
+    public interface IDeTesAssertionData<A> : IDeTesAssertionDataUntyped
     {
+        public Predicate<A> Condition { get; }
+    }
+    public interface IDeTesAssertionDataUntyped
+    {
+        public Token OnToken { get; }
         public IResult<bool, Exception> Result { get; }
         public string? Description { get; }
-        public Predicate<A> Condition { get; }
     }
     public interface IDeTesOnPushAssertions
     {
-        public IDeTesAssertionData<IToken>[] Token { get; }
+        public IDeTesAssertionData<Token>[] Token { get; }
     }
     public interface IDeTesOnResolveAssertions
     {
@@ -65,35 +69,35 @@ namespace DeTes.Analysis
     {
         public sealed record ReferenceUsedBeforeEvaluated : EDeTesInvalidTest
         {
-        public required IToken NearToken { get; init; }
+        public required Token NearToken { get; init; }
             public required string? Description { get; init; }
         }
         public sealed record EmptyDomain : EDeTesInvalidTest
         {
-        public required IToken NearToken { get; init; }
+        public required Token NearToken { get; init; }
             public required string? Description { get; init; }
         }
         public sealed record NoSelectionDomainDefined : EDeTesInvalidTest
         {
-            public required IToken SelectionToken { get; init; }
+            public required Token SelectionToken { get; init; }
         }
         public sealed record DomainUsedOutsideOfScope : EDeTesInvalidTest
         {
-        public required IToken NearToken { get; init; }
+        public required Token NearToken { get; init; }
             public required string? Description { get; init; }
             public required int[][] Domain { get; init; }
         }
         public sealed record InvalidDomainSelection : EDeTesInvalidTest
         {
-            public required IToken NearToken { get; init; }
+            public required Token NearToken { get; init; }
             public required string? Description { get; init; }
-            public required IToken SelectionToken { get; init; }
+            public required Token SelectionToken { get; init; }
             public required int[][] Domain { get; init; }
             public required int[] InvalidSelection { get; init; }
             public required int ExpectedSelectionSize { get; init; }
             public required int ExpectedMaxIndex { get; init; }
         }
     }
-    public class UnexpectedNollaException() : Exception { }
-    public class UnexpectedResolutionTypeException() : Exception { }
+    public class UnexpectedNollaException() : Exception("Nolla value not expected.") { }
+    public class UnexpectedResolutionTypeException(Type got, Type expected) : Exception($"Got type ${got.Name}, expected ${expected.Name}") { }
 }

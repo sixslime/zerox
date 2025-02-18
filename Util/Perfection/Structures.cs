@@ -103,7 +103,7 @@ namespace Perfection
         private PMap(Dictionary<K, T> dict) : this() { _dict = dict; }
         public IOption<T> At(K index)
         {
-            return _dict.TryGetValue(index, out var v).ToOption(v)!;
+            return _dict.TryGetValue(index, out var v) ? v.AsSome() : new None<T>();
         }
 
         IMergable<IPMap<K, T>> IMergable<IPMap<K, T>>._MergedWith(IPMap<K, T> union)
@@ -125,6 +125,10 @@ namespace Perfection
             var ndict = new Dictionary<K, T>(_dict);
             foreach (var r in entries) _ = ndict.Remove(r);
             return new PMap<K, T>(ndict);
+        }
+        public override string ToString()
+        {
+            return $"PMap[{string.Join(", ", Elements)}]";
         }
     }
     public class PSet<T>() : IPSet<T>
@@ -223,6 +227,10 @@ namespace Perfection
             return new PSequence<T>(nlist);
             
         }
+        public override string ToString()
+        {
+            return $"PSeq[{string.Join(", ", Elements)}]";
+        }
     }
     public class PStack<T>() : IPStack<T>
     {
@@ -264,7 +272,10 @@ namespace Perfection
             foreach(var (i, v) in entries.Enumerate()) o = new(v, o, Count + i+1);
             return o;
         }
-
+        public override string ToString()
+        {
+            return $"PStack[{string.Join(", ", Elements)}]";
+        }
     }
 
     public class CachingEnumerable<T> : IEnumerable<T>, IIndexReadable<int, T>

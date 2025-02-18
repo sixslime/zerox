@@ -36,7 +36,7 @@ namespace DeTes.Declaration
                 Description = description,
                 LinkedToken = subject,
                 Condition = x => x.Check(out var res)
-                    ? res is R r ? assertion(r) : throw new UnexpectedResolutionTypeException()
+                    ? res is R r ? assertion(r) : throw new UnexpectedResolutionTypeException(res.GetType(), typeof(R))
                     : throw new UnexpectedNollaException(),
             });
         }
@@ -47,7 +47,7 @@ namespace DeTes.Declaration
             {
                 Description = description,
                 LinkedToken = subject,
-                Condition = x => x is IOption<R> r ? assertion(r) : throw new UnexpectedResolutionTypeException()
+                Condition = x => x is IOption<R> r ? assertion(r) : throw new UnexpectedResolutionTypeException(x.GetType(), typeof(IOption<R>))
             });
         }
         public void AddAssertionToken<R>(IToken<R> subject, Predicate<IToken<R>> assertion, string? description)
@@ -157,7 +157,7 @@ namespace DeTes.Declaration
         }
         void IReferenceAccessor.SetResolution(ResOpt resolution)
         {
-            if (resolution is not IOption<R> r) throw new UnexpectedResolutionTypeException();
+            if (resolution is not IOption<R> r) throw new UnexpectedResolutionTypeException(resolution.GetType(), typeof(IOption<R>));
             _resolution = r.AsSome();
         }
 

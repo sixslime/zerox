@@ -11,8 +11,8 @@ namespace FourZeroOne.Rule
     using Define;
     using Proxies;
     using any_token = Token.IToken<ResObj>;
+    using System.Diagnostics.CodeAnalysis;
 
-    
     namespace Define
     {
         public record RuleForValue<RVal> : RuleBehavior<RVal>, IRuleOfValue<RVal>
@@ -110,7 +110,7 @@ namespace FourZeroOne.Rule
     namespace Proxies
     {
         public record RealizeProxy<R> : RuntimeHandledFunction<IProxy<R>, R>
-    where R : class, ResObj
+            where R : class, ResObj
         {
             public RealizeProxy(IToken<IProxy<R>> proxy) : base(proxy) { }
             protected override EStateImplemented MakeData(IProxy<R> proxy)
@@ -141,7 +141,7 @@ namespace FourZeroOne.Rule
     public abstract record RuleBehavior<R> : IRule<R>
         where R : class, ResObj
     {
-        public RuleID ID => RuleIDGenerator.Next();
+        public RuleID ID { get; } = RuleIDGenerator.Next();
         protected abstract IRuleMatcher<IToken<R>> InternalMatcher { get; }
         protected abstract IBoxedMetaFunction<R> InternalDefinition { get; }
         IRuleMatcher<IToken<R>> IRule<R>.MatcherUnsafe => InternalMatcher;
@@ -161,7 +161,7 @@ namespace FourZeroOne.Rule
                         .Map(x =>
                         (x.index > 0)
                             ? new ArgProxy<ResObj>() { Token = x.value, FromRule = ID }.IsA<IProxy<ResObj>>()
-                            : new OriginalProxy<ResObj>() { Token = x.value, FromRule = ID }.IsA<IProxy<ResObj>>())
+                            : new OriginalProxy<R>() { Token = token.IsA<IToken<R>>(), FromRule = ID }.IsA<IProxy<ResObj>>())
                         .ToArray()
                 });
         }
@@ -245,7 +245,11 @@ namespace FourZeroOne.Rule
         public static RuleID Next() => new(_currentID++);
     }
 
-    public readonly struct RuleID(int id) { public readonly int ID = id; }
+    public readonly struct RuleID(int id)
+    {
+        public readonly int ID = id;
+        public override string ToString() => $"RuleID({ID})";
+    }
     
     namespace Unsafe
     {

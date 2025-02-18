@@ -23,7 +23,7 @@ namespace Minima.FZO
             _initialized = new None<FZOSource>();
         }
         IEnumerable<IStateFZO.IOperationNode> IStateFZO.OperationStack => _opStack.Elements.Take(_opStack.Count - 1);
-        IEnumerable<ETokenMutation> IStateFZO.TokenPrepStack => _prepStack.Elements;
+        IEnumerable<ETokenMutation> IStateFZO.TokenMutationStack => _prepStack.Elements;
         IOption<FZOSource> IStateFZO.Initialized => _initialized;
         IStateFZO IStateFZO.Initialize(FZOSource source)
         {

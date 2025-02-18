@@ -128,7 +128,7 @@ namespace DeTes.Realization
                                 default:
                                     // kinda inefficient but the alternative is using potentially unproven cache assumptions.
                                     runtime.PreprocessMap[v.Mutation.Result] =
-                                        state.TokenPrepStack.Last().IsA<ETokenMutation.Identity>().Result;
+                                        state.TokenMutationStack.Last().IsA<ETokenMutation.Identity>().Result;
                                     break;
                             }
                         }
@@ -210,7 +210,7 @@ namespace DeTes.Realization
                     runtime.TokenAssertions
                     .TryGetValue(linkedToken, out var tokenAssertions)
                     .ToOption(tokenAssertions).Or([])
-                    !.Map(assertion => EvaluateAssertion(assertion, operation))
+                    !.Map(assertion => EvaluateAssertion(assertion, linkedToken, operation))
                     .ToArray()
             };
         }
@@ -232,24 +232,25 @@ namespace DeTes.Realization
                     runtime.ResolutionAssertions
                     .TryGetValue(linkedToken, out var resolutionAssertions)
                     .ToOption(resolutionAssertions).Or([])!
-                    .Map(assertion => EvaluateAssertion(assertion, resolution))
+                    .Map(assertion => EvaluateAssertion(assertion, linkedToken, resolution))
                     .ToArray(),
                 Memory =
                     runtime.MemoryAssertions
                     .TryGetValue(linkedToken, out var memoryAssertions)
                     .ToOption(memoryAssertions).Or([])!
                     .Map(assertion =>
-                        EvaluateAssertion(assertion, nMemory))
+                        EvaluateAssertion(assertion, linkedToken, nMemory))
                     .ToArray(),
             };
         }
-        private static AssertionDataImpl<A> EvaluateAssertion<A>(IAssertionAccessor<A> assertion, A value)
+        private static AssertionDataImpl<A> EvaluateAssertion<A>(IAssertionAccessor<A> assertion, IToken linkedToken, A value)
         {
             IResult<bool, Exception>? result = null;
             try { result = result.Ok(assertion.Condition(value)); }
             catch (Exception e) { result = result.Err(e); }
             return new()
             {
+                OnToken = linkedToken,
                 Condition = assertion.Condition,
                 Description = assertion.Description,
                 Result = result
