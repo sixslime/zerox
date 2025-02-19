@@ -11,6 +11,8 @@ using CatGlance;
 using ro = FourZeroOne.Core.Resolutions.Objects;
 using t = FourZeroOne.Core.Tokens;
 using Rule = FourZeroOne.Rule;
+using LookNicePls;
+using GlanceResult = Perfection.IResult<Perfection.RecursiveEvalTree<DeTes.Analysis.IDeTesResult, bool>, DeTes.Analysis.EDeTesInvalidTest>;
 public class Tester
 {
     static readonly DeTesFZOSupplier RUN_IMPLEMENTATION = new()
@@ -19,208 +21,220 @@ public class Tester
         UnitializedState = new MinimaStateFZO()
     };
     static readonly IMemoryFZO MEMORY_IMPLEMENTATION = new MinimaMemoryFZO();
+    static readonly GlancableTest[] SANITY_CHECKS_PASS = new GlancableTest[]
+    {
+        new("t")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                400.tFixed().tAdd(1.tFixed())
+                .AssertToken(C, u => u is t.Number.Add add && add.Arg1 is t.Fixed<ro.Number> a && a.Resolution.Value == 400)
+        },
+        new("r")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                400.tFixed().tAdd(1.tFixed())
+                .AssertResolution(C, u => u.Value == 401)
+        },
+        new("m")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                400.tFixed().tAdd(1.tFixed())
+                .AssertMemory(C, u => !u.Objects.Any())
+        },
+
+        new("rule")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                Core.tSubEnvironment<ro.Number>(new()
+                {
+                    Environment = Core.t_Env(
+                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
+                        {
+                            Matches = x => x.mIsType<t.Number.Add>(),
+                            Definition = (origin, a, b) =>
+                                origin.tRef().tRealize().tSubtract(1.tFixed())
+                        })),
+                    Value = 2.tFixed().tAdd(2.tFixed())
+                    .AssertToken(C, u => u is t.Number.Subtract)
+                })
+                .AssertResolution(C, u => u.Value == 3)
+        },
+        new("env var")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                Core.tSubEnvironment<ro.Number>(new()
+                {
+                    Environment = 10.tFixed().tAsVariable(out var xVar),
+                    Value =
+                        xVar.tRef().tAdd(1.tFixed())
+                        .AssertMemory(C, u => u.Objects.Count() == 1)
+                        .AssertMemory(C, u => u.GetObject(xVar).Unwrap().Value is 10)
+                })
+                .AssertResolution(C, u => u.Value is 11)
+        },
+        new("meta execute")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                Core.tMetaFunction<ro.Number, ro.Number>(
+                    x =>
+                    x.tRef().tAdd(10.tFixed()))
+                .tExecuteWith(new() { A = 5.tFixed() })
+                .AssertToken(C, u => u is t.MetaExecuted<ro.Number> exe && exe.Arg1 is t.Number.Add)
+                .AssertResolution(C, u => u.Value == 15)
+        },
+        new("size 1 domain")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                (1..10).tFixed()
+                .tIOSelectOne()
+                .DefineSelectionDomain(C, (0..5).RangeIter(), out var domain)
+                .tMultiply(2.tFixed())
+                .AssertResolution(C, u => u.Value == (domain.SelectedIndex()+1) * 2)
+        },
+        new("size 4 domain")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                (1..10).tFixed()
+                .tIOSelectMany(4.tFixed())
+                .DefineSelectionDomain(C, (0..5).RangeIter().Map(x => (x..(x+4)).RangeIter()), out var domain)
+                .tAtIndex(2.tFixed())
+                .AssertResolution(C, u => u.Value == domain.SelectedIndicies()[1] + 1)
+        },
+        new("2D domain")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                (1..10).tFixed()
+                .tIOSelectOne()
+                .DefineSelectionDomain(C, (0..5).RangeIter(), out var d1)
+                .tMultiply(
+                    (1..10).tFixed()
+                    .tIOSelectOne()
+                    .DefineSelectionDomain(C, (0..5).RangeIter(), out var d2))
+                .AssertResolution(C, u => u.Value == (d1.SelectedIndex()+1) * (d2.SelectedIndex()+1))
+        },
+    };
+    static readonly GlancableTest[] SANITY_CHECKS_FAIL = new GlancableTest[]
+    {
+        new("t")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C => 0.tFixed()
+            .AssertToken(C, u => u is not t.Fixed<ro.Number>)
+        },
+        new("m")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C => 0.tFixed()
+            .AssertMemory(C, u => u.Objects.Any())
+        },
+        new("r")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C => 0.tFixed()
+            .AssertResolution(C, u => u.Value != 0)
+        },
+        new("size 1 domain")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                (1..10).tFixed()
+                .tIOSelectOne()
+                .DefineSelectionDomain(C, (0..5).RangeIter(), out var domain)
+                .tMultiply(2.tFixed())
+                .AssertResolution(C, u => u.Value is not 2)
+        },
+        new("size 4 domain")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                (1..10).tFixed()
+                .tIOSelectMany(4.tFixed())
+                .DefineSelectionDomain(C, (0..5).RangeIter().Map(x => (x..(x+4)).RangeIter()), out var domain)
+                .tAtIndex(2.tFixed())
+                .AssertResolution(C, u => u.Value is not 2)
+        },
+        new("2D domain")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                (1..10).tFixed()
+                .tIOSelectOne()
+                .DefineSelectionDomain(C, (0..5).RangeIter(), out var d1, "left arg")
+                .tMultiply(
+                    (1..10).tFixed()
+                    .tIOSelectOne()
+                    .DefineSelectionDomain(C, (0..5).RangeIter(), out var d2, "right arg"))
+                .AssertResolution(C, u => u.Value is not 4)
+        },
+    };
+    static readonly GlancableTest[] SANITY_CHECKS_INVALID = new GlancableTest[]
+    {
+        new("give 1D expect 2D domain")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                (1..10).tFixed()
+                .tIOSelectMany(2.tFixed())
+                .DefineSelectionDomain(C, (0..10).RangeIter(), out var domain, "bad domain")
+        },
+    };
     public async Task Run()
     {
-
-        
-        var shouldInvalid = new Glancer
+        if (!(await SanityCheck()))
         {
-            Name = "Should Invalid",
-            Supplier = RUN_IMPLEMENTATION,
-            Tests = new GlancableTest[]
-            {
-                new("give 1D expect 2D domain")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        (1..10).tFixed()
-                        .tIOSelectMany(2.tFixed())
-                        .DefineSelectionDomain(C, (0..10).RangeIter(), out var domain, "bad domain")
-                }
-            }
-        };
-
-        var shouldFail = new Glancer
-        {
-            Name = "Should Fail",
-            Supplier = RUN_IMPLEMENTATION,
-            Tests = new GlancableTest[]
-            {
-                new("trivial t")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C => 0.tFixed()
-                    .AssertToken(C, u => u is not t.Fixed<ro.Number>)
-                },
-                new("trivial m")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C => 0.tFixed()
-                    .AssertMemory(C, u => u.Objects.Any())
-                },
-                new("trivial r")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C => 0.tFixed()
-                    .AssertResolution(C, u => u.Value != 0)
-                },
-                new("assertion within macro")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        5.tFixed()
-                        .AssertResolution(C, _ => false)
-                        .tDuplicate(2.tFixed())
-                        .AssertResolution(C, _ => true)
-                        .AssertMemory(C, _ => true)
-                },
-                new("3 duplicate resolution fails")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        3.tFixed().AssertResolution(C, _ => false).Yield(3).tToMulti()
-                        .AssertResolution(C, _ => true)
-                        .AssertMemory(C, _ => true)
-                },
-                new("fail on index 1 & 4")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        (1..5).tFixed()
-                        .tIOSelectOne()
-                        .DefineSelectionDomain(C, (0..5).RangeIter(), out var domain, "failhere")
-                        .AssertResolution(C, _ => domain.SelectedIndex() is not 1 and not 4)
-                },
-            }
-        };
-
-        var shouldPass = new Glancer
-        {
-            Name = "Should Pass",
-            Supplier = RUN_IMPLEMENTATION,
-            Tests = new GlancableTest[]
-            {
-                new("trivial t")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        400.tFixed().tAdd(1.tFixed())
-                        .AssertToken(C, u => u is t.Number.Add add && add.Arg1 is t.Fixed<ro.Number> a && a.Resolution.Value == 400)
-                },
-                new("trivial r")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        400.tFixed().tAdd(1.tFixed())
-                        .AssertResolution(C, u => u.Value == 401)
-                },
-                new("trivial m")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        400.tFixed().tAdd(1.tFixed())
-                        .AssertMemory(C, u => !u.Objects.Any())
-                },
-                new("4 duplicate")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        4.tFixed().AssertResolution(C, u => u.Value == 4)
-                        .tDuplicate(4.tFixed())
-                        .AssertResolution(C, _ => true)
-                        .AssertMemory(C, _ => true)
-                        .AssertResolution(C, u => u.Count == 4)
-                },
-                new("subenv")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        Core.tSubEnvironment<ro.Number>(new()
-                        {
-                            Environment = Core.t_Env(
-                                10.tFixed().tAsVariable(out var ten),
-                                4.tFixed().tAsVariable(out var _),
-                                true.tFixed()
-                                )
-                                .AssertMemory(C, u => u.GetObject(ten).Check(out var v) && v.Value == 10)
-                                .AssertResolution(C, u => u.Count == 3)
-                                .AssertMemory(C, u => u.Objects.Count() == 2),
-                            Value = ten.tRef().tAdd(1.tFixed())
-                        })
-                        .AssertResolution(C, u => u.Value == 11)
-                        .AssertMemory(C, u => !u.Objects.Any())
-                },
-                new("10x mult map")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        (1..10).tFixed()
-                        .tMap(
-                        x =>
-                            x.tRef()
-                            .AssertResolution(C, u => u.Value <= 10)
-                            .tMultiply(10.tFixed()))
-                        .AssertResolution(C, u => u.Elements.Enumerate().All(y => (y.index+1)*10 == y.value.Value))
-                },
-                new("1..8 domain")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        (1..10).tFixed()
-                        .tIOSelectOne()
-                        .DefineSelectionDomain(C, (0..8).RangeIter(), out var domain)
-                        .AssertResolution(C, u => u.Value <= 8)
-                        .AssertResolution(C, u => u.Value == domain.SelectedIndex() + 1)
-                },
-                new("4x4 selection domain")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        (1..10).tFixed()
-                        .tIOSelectMany(4.tFixed())
-                        .DefineSelectionDomain(C, Iter.Over(0, 2, 4, 6).Map(x => (x..(x+3)).RangeIter(true)), out var domain)
-                        .AssertResolution(C, u => u.Count == 4)
-                },
-                new("trivial rule test")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        Core.tSubEnvironment<ro.Number>(new()
-                        {
-                            Environment = Core.t_Env(
-                                Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
-                                {
-                                    Matches = x => x.mIsType<t.Number.Add>(),
-                                    Definition = (origin, a, b) =>
-                                        origin.tRef().tRealize().tSubtract(1.tFixed())
-                                })),
-                            Value = 2.tFixed().tAdd(2.tFixed())
-                            .AssertToken(C, u => u is t.Number.Subtract)
-                            .AssertResolution(C, u => u.Value == 3)
-                        })
-                        .AssertResolution(C, u => u.Value == 3)
-                },
-                new("trivial meta excute test")
-                {
-                    InitialMemory = MEMORY_IMPLEMENTATION,
-                    Token = C =>
-                        Core.tMetaFunction<ro.Number, ro.Number>(
-                            x =>
-                            x.tRef().tAdd(10.tFixed()))
-                        .tExecuteWith(new() { A = 5.tFixed() })
-                        .AssertToken(C, u => u is t.MetaExecuted<ro.Number> exe && exe.Arg1 is t.Number.Add)
-                        .AssertResolution(C, u => u.Value == 15)
-                        .tAdd(1.tFixed())
-                        .AssertResolution(C, u => u.Value == 16)
-                }
-            }
-        };
-        await shouldInvalid.Glance();
-        await shouldFail.Glance();
-        await shouldPass.Glance();
-
+            Console.WriteLine("Sanity check failed!");
+            return;
+        }
     }
 
+    private async static Task<bool> SanityCheck()
+    {
+        var invalid = GetNotInvalid(await new Glancer
+        {
+            Name = "Sanity Check (Invalid)",
+            Supplier = RUN_IMPLEMENTATION,
+            Tests = SANITY_CHECKS_INVALID
+        }.Glance());
+        var fail = GetNotFailed(await new Glancer
+        {
+            Name = "Sanity Check (Fail)",
+            Supplier = RUN_IMPLEMENTATION,
+            Tests = SANITY_CHECKS_FAIL
+        }.Glance());
+        var pass = GetNotPassed(await new Glancer
+        {
+            Name = "Sanity Check (Pass)",
+            Supplier = RUN_IMPLEMENTATION,
+            Tests = SANITY_CHECKS_PASS
+        }.Glance());
+
+        Console.WriteLine();
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine("==[ SANITY CHECK ]==");
+        Console.WriteLine("PASS: " + ((pass.Length == 0) ? "SANE" : "UNEXPECT " + pass.LookNicePls()));
+        Console.WriteLine("FAIL: " + ((fail.Length == 0) ? "SANE" : "UNEXPECT " + fail.LookNicePls()));
+        Console.WriteLine("INVALID: " + ((invalid.Length == 0) ? "SANE" : "UNEXPECT" + invalid.LookNicePls()));
+        Console.WriteLine("====================");
+        Console.ResetColor();
+        return (pass.Length + fail.Length + invalid.Length == 0);
+    }
+
+    private static int[] GetNotPassed(IEnumerable<GlanceResult> glance) => GetWhereCondition(glance, x => !(x.CheckOk(out var tree) && tree.Evaluation));
+    private static int[] GetNotFailed(IEnumerable<GlanceResult> glance) => GetWhereCondition(glance, x => !(x.CheckOk(out var tree) && !tree.Evaluation));
+    private static int[] GetNotInvalid(IEnumerable<GlanceResult> glance) => GetWhereCondition(glance, x => !x.IsErr());
+    private static int[] GetWhereCondition(IEnumerable<GlanceResult> glance, Predicate<GlanceResult> pred)
+    {
+        return glance.Enumerate().Where(x => pred(x.value)).Map(x => x.index + 1).ToArray();
+    }
     // WARNING:
     // reliance on metafunctions is bringing attention to the lack of variable capturing.
 

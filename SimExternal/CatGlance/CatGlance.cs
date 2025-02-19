@@ -37,7 +37,7 @@ namespace CatGlance
 
         private IOption<IResult<RecursiveEvalTree<IDeTesResult, bool>, EDeTesInvalidTest>[]> _testEvals = new None<IResult<RecursiveEvalTree<IDeTesResult, bool>, EDeTesInvalidTest>[]>();
         
-        public async Task Glance()
+        public async Task<IResult<RecursiveEvalTree<IDeTesResult, bool>, EDeTesInvalidTest>[]> Glance()
         {
             await EvalTests();
             var results = _testEvals.Unwrap();
@@ -49,13 +49,14 @@ namespace CatGlance
                 C.WriteLine();
                 if (result.Split(out var rootTree, out var invalid))
                 {
-                    PrintEvalSummary(rootTree, 1);
+                    PrintEvalSummary(rootTree, 0);
                 }
                 else
                 {
                     PrintInvalidTest(invalid);
                 }
             }
+            return _testEvals.Unwrap();
         }
         private static void PrintInvalidTest(EDeTesInvalidTest test)
         {
@@ -218,8 +219,8 @@ namespace CatGlance
             }
             var subTrees = tree.Branches.Expect("All cases where branches are not present should have been covered.");
             var nextInfo = subTrees[0].Object.IsA<IDeTesSelectionPath>();
-            Write("FAIL IN DOMAIN ", CCol.Red);
-            Write($"{FormatDescription(nextInfo.Domain.Description)} ", CCol.Red);
+            Write("IN ", CCol.DarkBlue);
+            Write($"{FormatDescription(nextInfo.Domain.Description)}", CCol.DarkCyan);
             Write($": {nextInfo.RootSelectionToken}", CCol.DarkGray);
             C.WriteLine();
             foreach (var subTree in subTrees)
@@ -227,7 +228,7 @@ namespace CatGlance
                 PrintEvalSummary(subTree, depth + 1);
             }
         }
-        private static string FormatDescription(string? desc) => desc.NullToNone().RemapAs(desc => $"\"{desc}\"").Or("");
+        private static string FormatDescription(string? desc) => desc.NullToNone().RemapAs(desc => $"\"{desc}\" ").Or("");
         private static void PrintPostHeader(IEnumerable<IDeTesAssertionData<Token>> tokenAsserts, IEnumerable<IDeTesAssertionData<ResOpt>> resolutionAsserts, IEnumerable<IDeTesAssertionData<IMemoryFZO>> memoryAsserts, TimeSpan time)
         {
             var blankColor = CCol.DarkGray;
@@ -273,7 +274,7 @@ namespace CatGlance
         }
         private static void DepthPad(int depth)
         {
-            Write(string.Concat(" ".Yield(depth)));
+            Write(" " + string.Concat("  ".Yield(depth)));
         }
         private static void Write(string? text, CCol color = CCol.Gray)
         {
