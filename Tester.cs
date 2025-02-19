@@ -89,6 +89,30 @@ public class Tester
                 })
                 .AssertResolution(C, u => u.Count == 4)
         },
+        new("rule stacking")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                Core.tSubEnvironment<ro.Number>(new()
+                {
+                    Environment = Core.t_Env(
+                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
+                        {
+                            Matches = x => x.mIsType<t.Number.Add>(),
+                            Definition = (_, a, b) =>
+                                a.tRef().tRealize().tSubtract(b.tRef().tRealize())
+                        }),
+                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
+                        {
+                            Matches = x => x.mIsType<t.Number.Subtract>(),
+                            Definition = (_, _, _) =>
+                                999.tFixed()
+                        })),
+                    Value = 400.tFixed().tAdd(1.tFixed())
+                        .AssertToken(C, u => u is t.Fixed<ro.Number> num && num.Resolution.Value == 999)
+                })
+                .AssertResolution(C, u => u.Value == 999)
+        },
         new("env var")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
@@ -302,7 +326,89 @@ public class Tester
                 .tMetaBoxed()
                 .tExecute()
                 .AssertMemory(C, _ => true)
-        }
+        },
+        new("rule t")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                Core.tSubEnvironment<ro.Number>(new()
+                {
+                    Environment = Core.t_Env(
+                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
+                        {
+                            Matches = x => x.mIsType<t.Number.Add>(),
+                            Definition = (_, a, b) =>
+                                a.tRef().tRealize().tSubtract(b.tRef().tRealize())
+                        })),
+                    Value = 400.tFixed().tAdd(1.tFixed())
+                        .AssertToken(C, u => u is not t.Number.Subtract)
+                })
+        },
+        new("rule token tracking t")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                Core.tSubEnvironment<ro.Number>(new()
+                {
+                    Environment = Core.t_Env(
+                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
+                        {
+                            Matches = x => x.mIsType<t.Number.Add>(),
+                            Definition = (_, a, b) =>
+                                a.tRef().tRealize().tSubtract(b.tRef().tRealize())
+                        })),
+                    Value = 400.tFixed().tAdd(1.tFixed())
+                        .AssertToken(C, _ => false)
+                })
+        },
+        new("stacked rule token tracking t")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                Core.tSubEnvironment<ro.Number>(new()
+                {
+                    Environment = Core.t_Env(
+                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
+                        {
+                            Matches = x => x.mIsType<t.Number.Add>(),
+                            Definition = (_, a, b) =>
+                                a.tRef().tRealize().tSubtract(b.tRef().tRealize())
+                        }),
+                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
+                        {
+                            Matches = x => x.mIsType<t.Number.Subtract>(),
+                            Definition = (_, _, _) =>
+                                999.tFixed()
+                        })),
+                    Value = 
+                        400.tFixed().tAdd(1.tFixed())
+                        .AssertToken(C, _ => false)
+                })
+        },
+        new("stacked rule token tracking r")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                Core.tSubEnvironment<ro.Number>(new()
+                {
+                    Environment = Core.t_Env(
+                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
+                        {
+                            Matches = x => x.mIsType<t.Number.Add>(),
+                            Definition = (_, a, b) =>
+                                a.tRef().tRealize().tSubtract(b.tRef().tRealize())
+                        }),
+                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
+                        {
+                            Matches = x => x.mIsType<t.Number.Subtract>(),
+                            Definition = (_, _, _) =>
+                                999.tFixed()
+                        })),
+                    Value =
+                        400.tFixed().tAdd(1.tFixed())
+                        .AssertResolution(C, _ => false)
+                })
+        },
     };
     static readonly GlancableTest[] SANITY_CHECKS_INVALID = new GlancableTest[]
     {
