@@ -17,5 +17,8 @@ namespace DeTes.Realization
             => new DeTesRealizerImpl().Realize(test, supplier);
     }
     public class DeTesInternalException(Exception inner) : Exception("Internal DeTes error.", inner);
-
+    public class DeTesInvalidTestException : Exception
+    {
+        public required EDeTesInvalidTest Value { get; init; }
+    }
 }

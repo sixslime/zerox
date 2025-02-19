@@ -144,7 +144,7 @@ namespace DeTes.Declaration
         IMemoryFZO IDeTesReference<R>.Memory =>
             _memory.Check(out var v) ? v : throw MakeUnevaluatedException();
 
-        private InvalidTestException MakeUnevaluatedException()
+        private DeTesInvalidTestException MakeUnevaluatedException()
         {
             return new()
             {
@@ -188,7 +188,7 @@ namespace DeTes.Declaration
         int IDomainAccessor.MetaIndex { get => _index; set => _index = value; }
         int IDeTesSingleDomain.SelectedIndex() => _index >= 0 ? Selections[_index][0] : throw MakeOutsideScopeException();
         int[] IDeTesMultiDomain.SelectedIndicies() => _index >= 0 ? Selections[_index] : throw MakeOutsideScopeException();
-        private InvalidTestException MakeOutsideScopeException()
+        private DeTesInvalidTestException MakeOutsideScopeException()
         {
             return new()
             {

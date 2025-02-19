@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using DeTes.Declaration;
 using DeTes.Analysis;
 using DeTes.Realization;
-using DeTes.Syntax;
+using DeTes;
 using Perfection;
 using FourZeroOne.FZOSpec;
 using LookNicePls;

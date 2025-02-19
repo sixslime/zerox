@@ -5,7 +5,7 @@ using FourZeroOne.Token;
 using ResObj = FourZeroOne.Resolution.IResolution;
 using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
 #nullable enable
-namespace DeTes.Syntax
+namespace DeTes
 {
     using Declaration;
     using Analysis;

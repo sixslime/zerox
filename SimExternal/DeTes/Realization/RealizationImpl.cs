@@ -33,7 +33,7 @@ namespace DeTes.Realization
                 return (await Eval(evalState, processor, new(context), new(null)))
                     .AsOk(Hint<EDeTesInvalidTest>.HINT);
             }
-            catch (InvalidTestException invalid) { return Invalid(invalid.Value); }
+            catch (DeTesInvalidTestException invalid) { return Invalid(invalid.Value); }
             catch (Exception e) { throw new DeTesInternalException(e); }
 
         }
@@ -55,7 +55,7 @@ namespace DeTes.Realization
                 catch (RequiresDomainSplit)
                 {
                     if (!runtime.DomainQueue.TryDequeue(out var domain))
-                        throw new InvalidTestException
+                        throw new DeTesInvalidTestException
                         {
                             Value = new EDeTesInvalidTest.NoSelectionDomainDefined
                             {
@@ -88,7 +88,7 @@ namespace DeTes.Realization
                     critPoint = critPoint.Err(paths);
                 }
                 // send invalid test exceptions up:
-                catch (InvalidTestException) { throw; }
+                catch (DeTesInvalidTestException) { throw; }
                 // catch non-DeTes exceptions and store it in critical point:
                 catch (Exception e) { critPoint = critPoint.Ok(e.AsErr(Hint<EProcessorHalt>.HINT)); }
 
@@ -257,7 +257,7 @@ namespace DeTes.Realization
         {
             IResult<bool, Exception>? result = null;
             try { result = result.Ok(assertion.Condition(value)); }
-            catch (InvalidTestException) { throw; }
+            catch (DeTesInvalidTestException) { throw; }
             catch (Exception e) { result = result.Err(e); }
             return new()
             {
@@ -310,7 +310,7 @@ namespace DeTes.Realization
                 var data = _data;
                 _data = null;
 
-                if (data.Selection.Length != count || data.Selection.Any(i => i >= pool.Count)) throw new InvalidTestException
+                if (data.Selection.Length != count || data.Selection.Any(i => i >= pool.Count)) throw new DeTesInvalidTestException
                 {
                     Value = new EDeTesInvalidTest.InvalidDomainSelection
                     {
@@ -340,9 +340,6 @@ namespace DeTes.Realization
         public override bool Equals(object? x, object? y) => ReferenceEquals(x, y);
         public override int GetHashCode([DisallowNull] object obj) => obj.GetHashCode();
     }
-    internal class InvalidTestException : Exception
-    {
-        public required EDeTesInvalidTest Value { get; init; }
-    }
+    
 
 }
