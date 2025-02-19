@@ -9,6 +9,7 @@ using FourZeroOne.FZOSpec;
 using Perfection;
 using CatGlance;
 using ro = FourZeroOne.Core.Resolutions.Objects;
+using r = FourZeroOne.Core.Resolutions;
 using t = FourZeroOne.Core.Tokens;
 using Rule = FourZeroOne.Rule;
 using LookNicePls;
@@ -44,7 +45,15 @@ public class Tester
                 400.tFixed().tAdd(1.tFixed())
                 .AssertMemory(C, u => !u.Objects.Any())
         },
-
+        new("meta execute internal assert")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                400.tFixed().tAdd(1.tFixed())
+                .AssertResolution(C, u => u.Value == 401)
+                .tMetaBoxed()
+                .tExecute()
+        },
         new("rule")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
@@ -62,6 +71,23 @@ public class Tester
                     .AssertToken(C, u => u is t.Number.Subtract)
                 })
                 .AssertResolution(C, u => u.Value == 3)
+        },
+        new("rule macro")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                Core.tSubEnvironment<r.Multi<ro.Number>>(new()
+                {
+                    Environment = Core.t_Env(
+                        Core.tAddRule<ro.Number, ro.Number, r.Multi<ro.Number>>(new()
+                        {
+                            Matches = x => x.mIsMacro("core", "duplicate"),
+                            Definition = (_, a, b) =>
+                                a.tRef().tRealize().tDuplicate(b.tRef().tRealize().tAdd(1.tFixed()))
+                        })),
+                    Value = 401.tFixed().tDuplicate(3.tFixed())
+                })
+                .AssertResolution(C, u => u.Count == 4)
         },
         new("env var")
         {
@@ -121,6 +147,51 @@ public class Tester
                     .DefineSelectionDomain(C, (0..5).RangeIter(), out var d2))
                 .AssertResolution(C, u => u.Value == (d1.SelectedIndex()+1) * (d2.SelectedIndex()+1))
         },
+        new("reference resolution")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                400.tFixed()
+                .ReferenceAs(C, out var reference)
+                .tAdd(1.tFixed())
+                .AssertResolution(C, u => u.Value == reference.Resolution.Value + 1)
+        },
+        new("reference token")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                400.tFixed()
+                .ReferenceAs(C, out var reference)
+                .tAdd(1.tFixed().AssertToken(C, u => u.GetType() == reference.Token.GetType()))
+                .AssertToken(C, u => u is t.Number.Add add && add.Arg1 == reference.Token)
+        },
+        new("reference in selection")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                (0..9).tFixed()
+                .tIOSelectOne()
+                .DefineSelectionDomain(C, (0..3).RangeIter(), out var d1)
+                .tMultiply(10.tFixed())
+                .ReferenceAs(C, out var reference)
+                .tSubtract(4.tFixed())
+                .AssertResolution(C, u => u.Value == reference.Resolution.Value - 4)
+        },
+        new("2D domain reference")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                (1..10).tFixed()
+                .tIOSelectOne()
+                .DefineSelectionDomain(C, (0..5).RangeIter(), out var d1)
+                .ReferenceAs(C, out var r1, "a")
+                .tMultiply(
+                    (1..8).tFixed()
+                    .tIOSelectOne()
+                    .DefineSelectionDomain(C, (0..5).RangeIter(), out var d2)
+                    .ReferenceAs(C, out var r2, "b"))
+                .AssertResolution(C, u => u.Value == r1.Resolution.Value * r2.Resolution.Value)
+        },
     };
     static readonly GlancableTest[] SANITY_CHECKS_FAIL = new GlancableTest[]
     {
@@ -175,6 +246,63 @@ public class Tester
                     .DefineSelectionDomain(C, (0..5).RangeIter(), out var d2, "right arg"))
                 .AssertResolution(C, u => u.Value is not 4)
         },
+        new("reference in selection")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                (0..9).tFixed()
+                .tIOSelectOne()
+                .DefineSelectionDomain(C, (0..3).RangeIter(), out var d1)
+                .tMultiply(10.tFixed())
+                .ReferenceAs(C, out var reference)
+                .tSubtract(4.tFixed())
+                .AssertResolution(C, u => u.Value == reference.Resolution.Value)
+        },
+        new("2D domain reference")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                (1..10).tFixed()
+                .tIOSelectOne()
+                .DefineSelectionDomain(C, (7..10).RangeIter(), out var d1)
+                .ReferenceAs(C, out var r1, "a")
+                .tMultiply(
+                    (1..8).tFixed()
+                    .tIOSelectOne()
+                    .DefineSelectionDomain(C, (0..3).RangeIter(), out var d2)
+                    .ReferenceAs(C, out var r2, "b"))
+                .AssertResolution(C, u => u.Value != r1.Resolution.Value * r2.Resolution.Value)
+        },
+        new("meta execute r")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                400.tFixed().tAdd(1.tFixed())
+                .AssertResolution(C, _ => false)
+                .tMetaBoxed()
+                .tExecute()
+                .AssertResolution(C, _ => true)
+        },
+        new("meta execute t")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                400.tFixed().tAdd(1.tFixed())
+                .AssertToken(C, _ => false)
+                .tMetaBoxed()
+                .tExecute()
+                .AssertToken(C, _ => true)
+        },
+        new("meta execute m")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                400.tFixed().tAdd(1.tFixed())
+                .AssertMemory(C, _ => false)
+                .tMetaBoxed()
+                .tExecute()
+                .AssertMemory(C, _ => true)
+        }
     };
     static readonly GlancableTest[] SANITY_CHECKS_INVALID = new GlancableTest[]
     {

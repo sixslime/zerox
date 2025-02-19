@@ -24,7 +24,7 @@ namespace FourZeroOne.Core.Macros
         {
             return new(multi, mapFunction)
             {
-                Label = Package.Label("Map"),
+                Label = Package.Label("map"),
                 Definition = Core.tMetaFunction<IMulti<RIn>, MetaFunction<RIn, ROut>, r.Multi<ROut>>(
                     (multiI, mapFunctionI) =>
                         Core.tMetaRecursiveFunction<ro.Number, r.Multi<ROut>>(

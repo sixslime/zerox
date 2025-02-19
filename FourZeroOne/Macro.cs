@@ -95,7 +95,13 @@ namespace FourZeroOne.Macro
     }
     public sealed record MacroLabel
     {
-        public required string Package { get; init; }
-        public required string Identifier { get; init; }
+        private string _package;
+        private string _identifier;
+        public required string Package { get => _package; init => _package = value.ToLower(); }
+        public required string Identifier { get => _identifier; init => _identifier = value.ToLower(); }
+        public override string ToString()
+        {
+            return $"{Package}~{Identifier}";
+        }
     }
 }

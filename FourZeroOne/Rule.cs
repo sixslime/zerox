@@ -130,7 +130,10 @@ namespace FourZeroOne.Rule
             public abstract bool ReallowsRule { get; }
         }
         public record OriginalProxy<R> : ProxyBehavior<R> where R : class, ResObj
-        { public override bool ReallowsRule => false; }
+        {
+            public override bool ReallowsRule => false;
+        }
+        
         public record ArgProxy<R> : ProxyBehavior<R> where R : class, ResObj
         { public override bool ReallowsRule => true; }
         
@@ -160,6 +163,8 @@ namespace FourZeroOne.Rule
                         .Enumerate()
                         .Map(x =>
                         (x.index > 0)
+                        // LEFTOFF:
+                        // Need to make protected function so ArgProxies can be constructed with correct type.
                             ? new ArgProxy<ResObj>() { Token = x.value, FromRule = ID }.IsA<IProxy<ResObj>>()
                             : new OriginalProxy<R>() { Token = token.IsA<IToken<R>>(), FromRule = ID }.IsA<IProxy<ResObj>>())
                         .ToArray()

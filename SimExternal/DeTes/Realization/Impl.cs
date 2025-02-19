@@ -5,6 +5,7 @@ using Res = FourZeroOne.Resolution.IResolution;
 using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
 using PROTO_ZeroxFour_1.Util;
 using FourZeroOne.Token;
+using LookNicePls;
 #nullable enable
 namespace DeTes.Realization
 {
@@ -164,9 +165,16 @@ namespace DeTes.Realization
                                     NextStep = v,
                                     Assertions = GenerateOnResolveAssertionObject(runtime, linkedToken, resolution, nMemory, nToken)
                                 });
+                                // DEBUG
+                                //Console.WriteLine($"{linkedToken}");
+                                //Console.WriteLine($"{runtime.References.ToArray().LookNicePls()}");
                                 if (runtime.References.TryGetValue(linkedToken, out var references))
                                     foreach (var reference in references)
                                     {
+                                        // DEBUG
+                                        //Console.ForegroundColor = ConsoleColor.DarkYellow;
+                                        //Console.WriteLine($"set {reference.Description} to {resolution}");
+                                        //Console.ResetColor();
                                         reference.SetResolution(resolution);
                                         reference.SetMemory(nMemory);
                                         reference.SetToken(nToken);
@@ -249,6 +257,7 @@ namespace DeTes.Realization
         {
             IResult<bool, Exception>? result = null;
             try { result = result.Ok(assertion.Condition(value)); }
+            catch (InvalidTestException) { throw; }
             catch (Exception e) { result = result.Err(e); }
             return new()
             {
