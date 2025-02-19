@@ -35,7 +35,7 @@ public class Tester
                     Token = C =>
                         (1..10).tFixed()
                         .tIOSelectMany(2.tFixed())
-                        .DefineSelectionDomain(C, (0..10).RangeIter(), out var domain)
+                        .DefineSelectionDomain(C, (0..10).RangeIter(), out var domain, "bad domain")
                 }
             }
         };
@@ -81,7 +81,16 @@ public class Tester
                         3.tFixed().AssertResolution(C, _ => false).Yield(3).tToMulti()
                         .AssertResolution(C, _ => true)
                         .AssertMemory(C, _ => true)
-                }
+                },
+                new("fail on index 1 & 4")
+                {
+                    InitialMemory = MEMORY_IMPLEMENTATION,
+                    Token = C =>
+                        (1..5).tFixed()
+                        .tIOSelectOne()
+                        .DefineSelectionDomain(C, (0..5).RangeIter(), out var domain, "failhere")
+                        .AssertResolution(C, _ => domain.SelectedIndex() is not 1 and not 4)
+                },
             }
         };
 

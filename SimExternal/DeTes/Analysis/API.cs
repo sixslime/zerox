@@ -15,6 +15,7 @@ namespace DeTes.Analysis
     }
     public interface IDeTesSelectionPath : IDeTesResult
     {
+        public Token RootSelectionToken { get; }
         public IDeTesDomainData Domain { get; }
         public int[] Selection { get; }
     }

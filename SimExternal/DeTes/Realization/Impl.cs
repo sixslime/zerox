@@ -66,13 +66,15 @@ namespace DeTes.Realization
                     {
                         var thisSelection = domain.Selections[i];
                         domain.MetaIndex = i;
+                        var selToken = state.OperationStack.First().Operation;
                         paths[i] = new SelectionPathImpl
                         {
+                            RootSelectionToken = selToken,
                             ResultObject = await Eval(state, processor, runtime, new(new()
                             {
                                 Domain = domain,
                                 Selection = thisSelection,
-                                SelectionToken = state.OperationStack.First().Operation
+                                SelectionToken = selToken
                             })),
                             DomainData = new()
                             {

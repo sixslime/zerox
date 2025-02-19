@@ -7,6 +7,9 @@ using DeTes.Syntax;
 using Perfection;
 using FourZeroOne.FZOSpec;
 using LookNicePls;
+using System.Text;
+
+// quite a mess, but being clean is not in CatGlance's objectives
 namespace CatGlance
 {
     using CCol = ConsoleColor;
@@ -43,16 +46,82 @@ namespace CatGlance
             {
                 Write($"({i+1}) ", CCol.Blue);
                 Write($"\"{test.Name}\" ", CCol.Blue);
+                C.WriteLine();
                 if (result.Split(out var rootTree, out var invalid))
                 {
-                    C.WriteLine();
                     PrintEvalSummary(rootTree, 1);
                 }
                 else
                 {
-                    C.WriteLine(invalid);
+                    PrintInvalidTest(invalid);
                 }
             }
+        }
+        private static void PrintInvalidTest(EDeTesInvalidTest test)
+        {
+            WriteLn("-- INVALID TEST --", CCol.Magenta);
+            var nearTokenColor = CCol.DarkGray;
+            switch (test)
+            {
+                case EDeTesInvalidTest.EmptyDomain v:
+                    {
+                        Write("empty domain: ");
+                        if (v.Description is not null) Write($"\"{v.Description}\" ", CCol.DarkCyan);
+                        Write(FormatLinkedToken(v.NearToken), nearTokenColor);
+                    }break;
+                case EDeTesInvalidTest.NoSelectionDomainDefined v:
+                    {
+                        Write("no domain defined for: ");
+                        Write(v.SelectionToken.ToString(), CCol.DarkYellow);
+                    }break;
+                case EDeTesInvalidTest.InvalidDomainSelection v:
+                    {
+                        Write("invalid domain: ");
+                        if (v.Description is not null) Write($"\"{v.Description}\" ", CCol.DarkCyan);
+                        WriteLn(FormatLinkedToken(v.NearToken), nearTokenColor);
+                        Write(v.InvalidSelection.LookNicePls(), CCol.DarkYellow);
+                        if (v.InvalidSelection.Length != v.ExpectedSelectionSize)
+                        {
+                            Write(" expects ");
+                            Write(v.ExpectedSelectionSize.ToString(), CCol.DarkGreen);
+                            Write(" elements got ");
+                            Write(v.InvalidSelection.Length.ToString(), CCol.Red);
+                        }
+                        if (v.InvalidSelection.Any(x => x < 0))
+                        {
+                            Write(" contains negative indicies");
+                        }
+                        if (v.InvalidSelection.Any(x => x > v.ExpectedMaxIndex))
+                        {
+                            Write(" expects max of ");
+                            Write(v.ExpectedMaxIndex.ToString(), CCol.DarkGreen);
+                            Write(" found ");
+                            Write(v.InvalidSelection.FirstMatch(x => x > v.ExpectedMaxIndex).Unwrap().ToString(), CCol.Red);
+                        }
+                        C.WriteLine();
+                        Write("of: ", CCol.DarkGray);
+                        Write(v.Domain.Map(x => x.LookNicePls()).ToArray().LookNicePls(), CCol.DarkGray);
+                    }
+                    break;
+                case EDeTesInvalidTest.DomainUsedOutsideOfScope v:
+                    {
+                        Write("domain referenced outside of scope: ");
+                        if (v.Description is not null) Write($"\"{v.Description}\" ", CCol.DarkCyan);
+                        Write(FormatLinkedToken(v.NearToken), nearTokenColor);
+                    }break;
+                case EDeTesInvalidTest.ReferenceUsedBeforeEvaluated v:
+                    {
+                        Write("referenced used before valid: ");
+                        if (v.Description is not null) Write($"\"{v.Description}\" ", CCol.DarkCyan);
+                        Write(FormatLinkedToken(v.NearToken), nearTokenColor);
+                    }break;
+            }
+            C.WriteLine();
+            WriteLn("------------------", CCol.Magenta);
+        }
+        private static string FormatLinkedToken(Token token)
+        {
+            return $"{{{token}}}";
         }
         private async Task EvalTests()
         {
@@ -108,6 +177,8 @@ namespace CatGlance
             }
             DepthPad(depth);
             Write("└");
+            if (tree.Object is IDeTesSelectionPath selectionPath)
+                Write($"{selectionPath.Selection.LookNicePls()} ");
 
             if (tree.Evaluation)
             {
@@ -121,7 +192,7 @@ namespace CatGlance
             {
                 if (stopped.Invert().Split(out var exception, out var halt))
                 {
-                    Write("EXCEPTION", CCol.Magenta);
+                    Write("EXCEPTION!", CCol.Magenta);
                     Write(" : ");
                     Write(exception.ToString(), CCol.DarkRed);
                     C.WriteLine();
@@ -129,7 +200,7 @@ namespace CatGlance
                 }
                 if (halt is EProcessorHalt.InvalidState invalid)
                 {
-                    Write("INVALID STATE", CCol.Magenta);
+                    Write("INVALID STATE!", CCol.Magenta);
                     Write(" : ");
                     Write(invalid.HaltingState.LookNicePls(), CCol.DarkRed);
                     return;
@@ -137,7 +208,7 @@ namespace CatGlance
             }
             if (Iter.Over<IEnumerable<IDeTesAssertionDataUntyped>>(tokenAsserts, resolutionAsserts, memoryAsserts).Flatten().Any(x => !AssertPassed(x)))
             {
-                Write("FAILED", CCol.Red);
+                Write("FAIL", CCol.Red);
                 PrintPostHeader(tokenAsserts, resolutionAsserts, memoryAsserts, tree.Object.TimeTaken);
                 C.WriteLine();
                 PrintFailedAssertionSummary(tokenAsserts, "t: ", depth);
@@ -146,12 +217,17 @@ namespace CatGlance
                 return;
             }
             var subTrees = tree.Branches.Expect("All cases where branches are not present should have been covered.");
-            WriteLn($"{{{subTrees.Length}}}");
+            var nextInfo = subTrees[0].Object.IsA<IDeTesSelectionPath>();
+            Write("FAIL IN DOMAIN ", CCol.Red);
+            Write($"{FormatDescription(nextInfo.Domain.Description)} ", CCol.Red);
+            Write($": {nextInfo.RootSelectionToken}", CCol.DarkGray);
+            C.WriteLine();
             foreach (var subTree in subTrees)
             {
                 PrintEvalSummary(subTree, depth + 1);
             }
         }
+        private static string FormatDescription(string? desc) => desc.NullToNone().RemapAs(desc => $"\"{desc}\"").Or("");
         private static void PrintPostHeader(IEnumerable<IDeTesAssertionData<Token>> tokenAsserts, IEnumerable<IDeTesAssertionData<ResOpt>> resolutionAsserts, IEnumerable<IDeTesAssertionData<IMemoryFZO>> memoryAsserts, TimeSpan time)
         {
             var blankColor = CCol.DarkGray;
@@ -180,9 +256,10 @@ namespace CatGlance
         {
             foreach (var failed in assertions.Where(x => !AssertPassed(x)))
             {
-                DepthPad(depth);
-                Write(starter);
-                Write($"[{failed.OnToken}] {failed.Description.NullToNone().RemapAs(desc => $"\"{desc}\"").Or("")}", CCol.DarkYellow);
+                DepthPad(depth + 1);
+                Write(starter, CCol.DarkYellow);
+                Write($"{FormatDescription(failed.Description)}", CCol.DarkYellow);
+                Write($"{FormatLinkedToken(failed.OnToken)}", CCol.DarkGray);
                 if (failed.Result.CheckErr(out var exception))
                 {
                     Write($" threw: '{exception.Message}'", CCol.DarkMagenta);
@@ -198,13 +275,13 @@ namespace CatGlance
         {
             Write(string.Concat(" ".Yield(depth)));
         }
-        private static void Write(string text, CCol color = CCol.Gray)
+        private static void Write(string? text, CCol color = CCol.Gray)
         {
             C.ForegroundColor = color;
             C.Write(text);
             C.ResetColor();
         }
-        private static void WriteLn(string text, CCol color = CCol.Gray)
+        private static void WriteLn(string? text, CCol color = CCol.Gray)
         {
             C.ForegroundColor = color;
             C.WriteLine(text);
