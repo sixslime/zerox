@@ -242,6 +242,21 @@ public class Tester
                         .AssertToken(C, u => u is t.Number.Multiply)
                 })
                 .AssertResolution(C, u => u.Value == 800)
+        },
+        new("double metaboxed")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                400.tFixed().tAdd(1.tFixed())
+                .AssertResolution(C, u => u.Value is 401)
+                .tMetaBoxed()
+                .AssertToken(C, u => u is t.Fixed<r.Boxed.MetaFunction<ro.Number>>)
+                .tMetaBoxed()
+                .AssertToken(C, u => u is t.Fixed<r.Boxed.MetaFunction<r.Boxed.MetaFunction<ro.Number>>>)
+                .tExecute()
+                .AssertToken(C, u => u is t.MetaExecuted<r.Boxed.MetaFunction<ro.Number>>)
+                .tExecute()
+                .AssertResolution(C, u => u.Value is 401)
         }
     };
 
@@ -264,6 +279,10 @@ public class Tester
         }
     }
 
+    private async static Task<bool> GeneralTests()
+    {
+
+    }
     private async static Task<bool> SanityCheck()
     {
         var pass = GetNotPassed(await new Glancer
