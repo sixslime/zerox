@@ -278,11 +278,6 @@ public class Tester
             return;
         }
     }
-
-    private async static Task<bool> GeneralTests()
-    {
-
-    }
     private async static Task<bool> SanityCheck()
     {
         var pass = GetNotPassed(await new Glancer
