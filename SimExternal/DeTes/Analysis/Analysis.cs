@@ -43,6 +43,7 @@ namespace DeTes.Analysis
     public abstract record EDeTesFrame
     {
         public required IStateFZO PreState { get; init; }
+        public required Token Origin { get; init; }
         public sealed record TokenPrep : EDeTesFrame
         {
             public required EProcessorStep.TokenMutate NextStep { get; init; }

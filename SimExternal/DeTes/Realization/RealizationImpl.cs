@@ -101,12 +101,14 @@ namespace DeTes.Realization
                 {
                     if (halt is EProcessorHalt.Completed complete)
                     {
+                        var linkedToken = runtime.GetLinkedToken(GetLastOperation(state));
                         var resolution = complete.Resolution;
                         frames.Add(new EDeTesFrame.Complete
                         {
+                            Origin = linkedToken,
                             PreState = state,
                             CompletionHalt = complete,
-                            Assertions = GenerateOnResolveAssertionObject(runtime, runtime.GetLinkedToken(GetLastOperation(state)), resolution, GetMemoryAfterResolution(state, resolution), GetLastOperation(state))
+                            Assertions = GenerateOnResolveAssertionObject(runtime, linkedToken, resolution, GetMemoryAfterResolution(state, resolution), GetLastOperation(state))
                         });
                     }
                     
@@ -129,11 +131,7 @@ namespace DeTes.Realization
                             //    Console.WriteLine(v.Mutation.Result);
                             //    Console.ResetColor();
                             //}
-                            frames.Add(new EDeTesFrame.TokenPrep
-                            {
-                                PreState = state,
-                                NextStep = v
-                            });
+                            
                             //tokenmap can get pretty large because its just 1 mutable object.
                             switch (v.Mutation)
                             {
@@ -143,9 +141,15 @@ namespace DeTes.Realization
                                 default:
                                     // kinda inefficient but the alternative is using potentially unproven cache assumptions.
                                     runtime.PreprocessMap[v.Mutation.Result] =
-                                        runtime.PreprocessMap[state.TokenMutationStack.Last().IsA<ETokenMutation.Identity>().Result];
+                                        runtime.GetLinkedToken(state.TokenMutationStack.Last().IsA<ETokenMutation.Identity>().Result);
                                     break;
                             }
+                            frames.Add(new EDeTesFrame.TokenPrep
+                            {
+                                Origin = runtime.GetLinkedToken(v.Mutation.Result),
+                                PreState = state,
+                                NextStep = v
+                            });
                         }
                         break;
                     case EProcessorStep.PushOperation v:
@@ -153,6 +157,7 @@ namespace DeTes.Realization
                             var linkedToken = runtime.GetLinkedToken(v.OperationToken);
                             frames.Add(new EDeTesFrame.PushOperation
                             {
+                                Origin = linkedToken,
                                 PreState = state,
                                 NextStep = v,
                             });
@@ -171,6 +176,7 @@ namespace DeTes.Realization
                                 var nToken = GetLastOperation(state);
                                 frames.Add(new EDeTesFrame.Resolve
                                 {
+                                    Origin = linkedToken,
                                     PreState = state,
                                     NextStep = v,
                                     Assertions = GenerateOnResolveAssertionObject(runtime, linkedToken, resolution, nMemory, nToken)

@@ -56,7 +56,7 @@ public class Tester
                 .AssertResolution(C, u => u.Value == 401)
                 .tMetaBoxed()
                 .tExecute()
-        }
+        },
         new("env var")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
