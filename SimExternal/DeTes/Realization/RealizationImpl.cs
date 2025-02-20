@@ -119,6 +119,16 @@ namespace DeTes.Realization
                 {
                     case EProcessorStep.TokenMutate v:
                         {
+                            //DEBUG
+                            //if (v.Mutation is not ETokenMutation.Identity)
+                            //{
+                            //    Console.ForegroundColor = ConsoleColor.Yellow;
+                            //    Console.WriteLine(state.TokenMutationStack.Map(x => $"{x.GetType().Name} : {x.Result}").ToArray().LookNicePls());
+                            //    Console.WriteLine(v.Mutation.GetType().Name);
+                            //    Console.ForegroundColor = ConsoleColor.Gray;
+                            //    Console.WriteLine(v.Mutation.Result);
+                            //    Console.ResetColor();
+                            //}
                             frames.Add(new EDeTesFrame.TokenPrep
                             {
                                 PreState = state,
@@ -133,7 +143,7 @@ namespace DeTes.Realization
                                 default:
                                     // kinda inefficient but the alternative is using potentially unproven cache assumptions.
                                     runtime.PreprocessMap[v.Mutation.Result] =
-                                        state.TokenMutationStack.Last().IsA<ETokenMutation.Identity>().Result;
+                                        runtime.PreprocessMap[state.TokenMutationStack.Last().IsA<ETokenMutation.Identity>().Result];
                                     break;
                             }
                         }

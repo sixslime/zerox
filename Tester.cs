@@ -17,6 +17,8 @@ using DeTesAssertIntegrity;
 using GlanceResult = Perfection.IResult<Perfection.RecursiveEvalTree<DeTes.Analysis.IDeTesResult, bool>, DeTes.Analysis.EDeTesInvalidTest>;
 public class Tester
 {
+    static readonly bool DEBUG_SANITY_CHECKS_MODE = false;
+
     static readonly DeTesFZOSupplier RUN_IMPLEMENTATION = new()
     {
         Processor = new MinimaProcessorFZO(),
@@ -54,66 +56,7 @@ public class Tester
                 .AssertResolution(C, u => u.Value == 401)
                 .tMetaBoxed()
                 .tExecute()
-        },
-        new("rule")
-        {
-            InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
-                Core.tSubEnvironment<ro.Number>(new()
-                {
-                    Environment = Core.t_Env(
-                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
-                        {
-                            Matches = x => x.mIsType<t.Number.Add>(),
-                            Definition = (origin, a, b) =>
-                                origin.tRef().tRealize().tSubtract(1.tFixed())
-                        })),
-                    Value = 2.tFixed().tAdd(2.tFixed())
-                    .AssertToken(C, u => u is t.Number.Subtract)
-                })
-                .AssertResolution(C, u => u.Value == 3)
-        },
-        new("rule macro")
-        {
-            InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
-                Core.tSubEnvironment<r.Multi<ro.Number>>(new()
-                {
-                    Environment = Core.t_Env(
-                        Core.tAddRule<ro.Number, ro.Number, r.Multi<ro.Number>>(new()
-                        {
-                            Matches = x => x.mIsMacro("core", "duplicate"),
-                            Definition = (_, a, b) =>
-                                a.tRef().tRealize().tDuplicate(b.tRef().tRealize().tAdd(1.tFixed()))
-                        })),
-                    Value = 401.tFixed().tDuplicate(3.tFixed())
-                })
-                .AssertResolution(C, u => u.Count == 4)
-        },
-        new("rule stacking")
-        {
-            InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
-                Core.tSubEnvironment<ro.Number>(new()
-                {
-                    Environment = Core.t_Env(
-                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
-                        {
-                            Matches = x => x.mIsType<t.Number.Add>(),
-                            Definition = (_, a, b) =>
-                                a.tRef().tRealize().tSubtract(b.tRef().tRealize())
-                        }),
-                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
-                        {
-                            Matches = x => x.mIsType<t.Number.Subtract>(),
-                            Definition = (_, _, _) =>
-                                999.tFixed()
-                        })),
-                    Value = 400.tFixed().tAdd(1.tFixed())
-                        .AssertToken(C, u => u is t.Fixed<ro.Number> num && num.Resolution.Value == 999)
-                })
-                .AssertResolution(C, u => u.Value == 999)
-        },
+        }
         new("env var")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
@@ -217,9 +160,103 @@ public class Tester
                     .ReferenceAs(C, out var r2, "b"))
                 .AssertResolution(C, u => u.Value == r1.Resolution.Value * r2.Resolution.Value)
         },
+        new("rule")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                Core.tSubEnvironment<ro.Number>(new()
+                {
+                    Environment = Core.t_Env(
+                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
+                        {
+                            Matches = x => x.mIsType<t.Number.Add>(),
+                            Definition = (origin, a, b) =>
+                                origin.tRef().tRealize().tSubtract(1.tFixed())
+                        })),
+                    Value = 2.tFixed().tAdd(2.tFixed())
+                    .AssertToken(C, u => u is t.Number.Subtract)
+                })
+                .AssertResolution(C, u => u.Value == 3)
+        },
+        new("rule macro")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                Core.tSubEnvironment<r.Multi<ro.Number>>(new()
+                {
+                    Environment = Core.t_Env(
+                        Core.tAddRule<ro.Number, ro.Number, r.Multi<ro.Number>>(new()
+                        {
+                            Matches = x => x.mIsMacro("core", "duplicate"),
+                            Definition = (_, a, b) =>
+                                a.tRef().tRealize().tDuplicate(b.tRef().tRealize().tAdd(1.tFixed()))
+                        })),
+                    Value = 401.tFixed().tDuplicate(3.tFixed())
+                })
+                .AssertResolution(C, u => u.Count == 4)
+        },
+        new("rule stacking")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                Core.tSubEnvironment<ro.Number>(new()
+                {
+                    Environment = Core.t_Env(
+                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
+                        {
+                            Matches = x => x.mIsType<t.Number.Add>(),
+                            Definition = (_, a, b) =>
+                                a.tRef().tRealize().tSubtract(b.tRef().tRealize())
+                        }),
+                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
+                        {
+                            Matches = x => x.mIsType<t.Number.Subtract>(),
+                            Definition = (_, _, _) =>
+                                999.tFixed()
+                        })),
+                    Value = 400.tFixed().tAdd(1.tFixed())
+                        .AssertToken(C, u => u is t.Fixed<ro.Number> num && num.Resolution.Value == 999)
+                })
+                .AssertResolution(C, u => u.Value == 999)
+        },
+        new("inactive rule")
+        {
+            InitialMemory = MEMORY_IMPLEMENTATION,
+            Token = C =>
+                Core.tSubEnvironment<ro.Number>(new()
+                {
+                    Environment = Core.t_Env(
+                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
+                        {
+                            Matches = x => x.mIsType<t.Number.Add>(),
+                            Definition = (_, a, b) =>
+                                a.tRef().tRealize().tMultiply(b.tRef().tRealize())
+                        }),
+                        Core.tAddRule<ro.Number, ro.Number, ro.Number>(new()
+                        {
+                            Matches = x => x.mIsType<t.Number.Subtract>(),
+                            Definition = (_, _, _) =>
+                                999.tFixed()
+                        })),
+                    Value = 400.tFixed().tAdd(2.tFixed())
+                        .AssertToken(C, u => u is t.Number.Multiply)
+                })
+                .AssertResolution(C, u => u.Value == 800)
+        }
     };
+
     public async Task Run()
     {
+        if (DEBUG_SANITY_CHECKS_MODE)
+        {
+            await new Glancer
+            {
+                Name = "Sanity Tests Debug",
+                Supplier = RUN_IMPLEMENTATION,
+                Tests = SANITY_CHECKS[4..7]
+            }.Glance();
+            return;
+        }
         if (!(await SanityCheck()))
         {
             Console.WriteLine("Sanity check failed!");
@@ -242,7 +279,7 @@ public class Tester
             Supplier = RUN_IMPLEMENTATION,
             Tests = SANITY_CHECKS.Enumerate()
                 .Map(original => original.value.GenerateAssertIntegrityTests().Enumerate()
-                    .Map(check => new GlancableTest($"({original.index}:{check.index}) {original.value.Name}")
+                    .Map(check => new GlancableTest($"({original.index+1}:{check.index+1}) {original.value.Name}")
                     {
                         InitialMemory = check.value.InitialMemory,
                         Token = check.value.Token,
