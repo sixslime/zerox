@@ -9,12 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="FourZeroOne\{Testing}\**" />
-    <EmbeddedResource Remove="FourZeroOne\{Testing}\**" />
-    <None Remove="FourZeroOne\{Testing}\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="DaveGreen.ShapeEngine" Version="2.1.1" />
     <PackageReference Include="MorseCode.ITask" Version="2.0.3" />
   </ItemGroup>

@@ -11,7 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Perfection\Perfection.csproj" />
+    <ProjectReference Include="..\..\src\FourZeroOne\FourZeroOne.csproj" />
+    <ProjectReference Include="..\..\src\Perfection\Perfection.csproj" />
   </ItemGroup>
 
 </Project>

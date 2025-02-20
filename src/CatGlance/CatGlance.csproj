@@ -7,10 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MorseCode.ITask" Version="2.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\..\lib\SixLib\SixLib.csproj" />
+    <ProjectReference Include="..\DeTes\DeTes.csproj" />
     <ProjectReference Include="..\Perfection\Perfection.csproj" />
   </ItemGroup>
 
