@@ -4,9 +4,9 @@ using FourZeroOne.Resolution;
 using FourZeroOne.Resolution.Unsafe;
 using FourZeroOne.Rule.Unsafe;
 using FourZeroOne.Rule;
-using SixLib.GFunc;
 using ResOpt = SixShaded.NotRust.IOption<FourZeroOne.Resolution.IResolution>;
 using SixShaded.NotRust;
+using SixShaded.SixLib.GFunc;
 #nullable enable
 namespace SixShaded.MinimaFZO
 {

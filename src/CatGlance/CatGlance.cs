@@ -5,11 +5,11 @@ using DeTes.Analysis;
 using DeTes.Realization;
 using DeTes;
 using FourZeroOne.FZOSpec;
-using SixLib.ICEE;
-using SixLib.GFunc;
-using SixLib.ICEE.FZO;
 using System.Text;
 using SixShaded.NotRust;
+using SixShaded.SixLib.GFunc;
+using SixShaded.SixLib.ICEE;
+using SixShaded.SixLib.ICEE.FZO;
 
 // quite a mess, but being clean is not in CatGlance's objectives
 namespace SixShaded.CatGlance

@@ -1,9 +1,8 @@
 using System;
 
-
 // nothing in this namespace is validated; it assumes you use it perfectly.
 #nullable enable
-namespace SixShaded.NotRust
+namespace SixShaded.SixLib.GFunc
 {
     public static class Iter
     {
@@ -157,20 +156,6 @@ namespace SixShaded.NotRust
 
         public static IEnumerable<T> IEnumerable<T>(this IEnumerable<T> enumerable) => enumerable;
 
-        public static PSequence<T> ToPSequence<T>(this IEnumerable<T> enumerable) => new PSequence<T>().WithEntries(enumerable);
-        public static List<T> ToMutList<T>(this IEnumerable<T> enumerable) => new(enumerable);
-        public static PMap<K, T> ToPMap<K, T>(this IEnumerable<ITiple<K, T>> enumerable) where K : notnull => new PMap<K, T>().WithEntries(enumerable);
-        public static PMap<K, T> ToPMap<K, T>(this IEnumerable<(K, T)> enumerable) where K : notnull => new PMap<K, T>().WithEntries(enumerable.Map(x => x.Tiple()));
-        public static PSet<T> ToPSet<T>(this IEnumerable<T> enumerable) => new PSet<T>().WithEntries(enumerable);
-        public static PStack<T> ToPStack<T>(this IEnumerable<T> enumerable)
-        {
-            return new PStack<T>().WithEntries(enumerable);
-        }
-        public static PStack<T> NewFromTop<T>(this IPStack<T> stack)
-        {
-            return stack.TopValue.Check(out var v) ? new PStack<T>().WithEntries(v) : new();
-        }
-        public static CachingEnumerable<T> Caching<T>(this IEnumerable<T> enumerable) => new(enumerable);
         public static IEnumerable<T> Over<T>(params T[] arr) => arr;
 
         public static IEnumerable<int> ToIter(this Range range, bool inclusiveEnd = false)

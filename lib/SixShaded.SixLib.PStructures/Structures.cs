@@ -2,7 +2,7 @@ using System.Collections;
 
 
 #nullable enable
-namespace SixShaded.NotRust
+namespace SixShaded.SixLib.PStructures
 {
     // DEV: so what if we made the default IPStructures read-only (out T),
     // then made a "handle" to mutate it, with that handle being 'in T'.
@@ -93,6 +93,20 @@ namespace SixShaded.NotRust
                 ? v.AsSome()
                 : new None<V>();
         }
+        public static PSequence<T> ToPSequence<T>(this IEnumerable<T> enumerable) => new PSequence<T>().WithEntries(enumerable);
+        public static List<T> ToMutList<T>(this IEnumerable<T> enumerable) => new(enumerable);
+        public static PMap<K, T> ToPMap<K, T>(this IEnumerable<ITiple<K, T>> enumerable) where K : notnull => new PMap<K, T>().WithEntries(enumerable);
+        public static PMap<K, T> ToPMap<K, T>(this IEnumerable<(K, T)> enumerable) where K : notnull => new PMap<K, T>().WithEntries(enumerable.Map(x => x.Tiple()));
+        public static PSet<T> ToPSet<T>(this IEnumerable<T> enumerable) => new PSet<T>().WithEntries(enumerable);
+        public static PStack<T> ToPStack<T>(this IEnumerable<T> enumerable)
+        {
+            return new PStack<T>().WithEntries(enumerable);
+        }
+        public static PStack<T> NewFromTop<T>(this IPStack<T> stack)
+        {
+            return stack.TopValue.Check(out var v) ? new PStack<T>().WithEntries(v) : new();
+        }
+        public static CachingEnumerable<T> Caching<T>(this IEnumerable<T> enumerable) => new(enumerable);
     }
     public static class StructureICast
     {

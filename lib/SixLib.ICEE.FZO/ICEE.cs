@@ -1,7 +1,7 @@
 ﻿
 using System.Text;
 using SixShaded.NotRust;
-namespace SixLib.ICEE.FZO
+namespace SixShaded.SixLib.ICEE.FZO
 {
     public static class ICEEs
     {
@@ -32,7 +32,7 @@ namespace SixLib.ICEE.FZO
                 .AppendLine(state.Initialized.ToString())
                 .AppendLine("Operation Stack:")
                 .AppendJoin("\n", state.OperationStack.Map(
-                    x => 
+                    x =>
                     $"- {x.Operation} <- {string.Join(" | ", x.ArgResolutionStack)}"))
                 .AppendLine()
                 .AppendLine("Last Memory:")

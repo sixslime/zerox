@@ -1,5 +1,4 @@
-﻿
-namespace SixLib.ICEE
+﻿namespace SixShaded.SixLib.ICEE
 {
     public static class ICEEs
     {

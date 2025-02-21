@@ -1,4 +1,4 @@
-﻿namespace SixLib.GFunc
+﻿namespace SixShaded.SixLib.GFunc
 {
     public static class BaseConversionExt
     {

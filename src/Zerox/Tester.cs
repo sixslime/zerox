@@ -11,12 +11,12 @@ using ro = FourZeroOne.Core.Resolutions.Objects;
 using r = FourZeroOne.Core.Resolutions;
 using t = FourZeroOne.Core.Tokens;
 using Rule = FourZeroOne.Rule;
-using SixLib.ICEE;
 using SixLib.GFunc;
 using DeTesAssertIntegrity;
 using GlanceResult = IResult<RecursiveEvalTree<DeTes.Analysis.IDeTesResult, bool>, DeTes.Analysis.EDeTesInvalidTest>;
 using SixShaded.CatGlance;
 using SixShaded.NotRust;
+using SixShaded.SixLib.ICEE;
 
 public class Tester
 {

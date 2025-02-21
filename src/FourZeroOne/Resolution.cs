@@ -1,10 +1,10 @@
-using SixLib.GFunc;
 #nullable enable
 namespace FourZeroOne.Resolution
 {
     using FourZeroOne.FZOSpec;
     using Handles;
     using SixShaded.NotRust;
+    using SixShaded.SixLib.GFunc;
 
     /// <summary>
     /// all inherits must be by a record class.

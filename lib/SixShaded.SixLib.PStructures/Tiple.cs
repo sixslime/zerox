@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 
 #nullable disable
-namespace SixShaded.NotRust
+namespace SixShaded.SixLib.PStructures
 {
 
     public interface ITiple<out Ta, out Tb>

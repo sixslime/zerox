@@ -2,7 +2,7 @@ using MorseCode.ITask;
 using SixShaded.NotRust;
 
 #nullable enable
-namespace SixLib.GFunc
+namespace SixShaded.SixLib.GFunc
 {
     public static class Mut
     {
@@ -18,11 +18,11 @@ namespace SixLib.GFunc
             value = transformFunction(value);
         }
     }
-    
+
     public static class Casting
     {
         public static T IsA<T>(this object value) => (T)value;
-        public static IOption<T> MightBeA<T>(this object value) => (value is T o) ? o.AsSome() : new None<T>();
+        public static IOption<T> MightBeA<T>(this object value) => value is T o ? o.AsSome() : new None<T>();
     }
     public static class Misc
     {
@@ -52,7 +52,7 @@ namespace SixLib.GFunc
         /// <param name="v"></param>
         /// <returns></returns>
         public static bool Not(this bool v) => !v;
-        
+
     }
     public static class Integer
     {

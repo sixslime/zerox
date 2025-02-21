@@ -1,11 +1,11 @@
 using FourZeroOne.Resolution;
 using MorseCode.ITask;
-using SixLib.GFunc;
 #nullable enable
 namespace FourZeroOne.Token
 {
     using Handles;
     using SixShaded.NotRust;
+    using SixShaded.SixLib.GFunc;
     using any_token = IToken<IResolution>;
     using ResObj = Resolution.IResolution;
 

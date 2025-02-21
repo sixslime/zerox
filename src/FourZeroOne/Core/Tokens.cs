@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FourZeroOne;
 using MorseCode.ITask;
-using SixLib.GFunc;
 
 #nullable enable
 namespace FourZeroOne.Core.Tokens
@@ -18,6 +17,7 @@ namespace FourZeroOne.Core.Tokens
     using FourZeroOne.FZOSpec;
     using FourZeroOne.Resolution.Unsafe;
     using SixShaded.NotRust;
+    using SixShaded.SixLib.GFunc;
 
     namespace IO
     {
