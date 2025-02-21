@@ -3,19 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FourZeroOne", "src\FourZeroOne\FourZeroOne.csproj", "{4A11C298-C12D-44C7-B10C-EF4C4965F1AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.FourZeroOne", "src\FourZeroOne\SixShaded.FourZeroOne.csproj", "{4A11C298-C12D-44C7-B10C-EF4C4965F1AC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.NotRust", "src\Perfection\SixShaded.NotRust.csproj", "{2DFEC99E-D378-4DFD-A637-C7AAA3058CE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeTes", "src\DeTes\DeTes.csproj", "{6F3DF00B-58C9-4FBD-B56C-DB51D0659677}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.DeTes", "src\DeTes\SixShaded.DeTes.csproj", "{6F3DF00B-58C9-4FBD-B56C-DB51D0659677}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.CatGlance", "src\CatGlance\SixShaded.CatGlance.csproj", "{63498890-B975-413B-806C-19C954549FFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeTesAssertIntegrity", "src\DeTesAssertIntegrity\DeTesAssertIntegrity.csproj", "{2050F1B8-9A3F-414A-B3BC-71CE7EA8E487}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.DeTesAssertIntegrity", "src\DeTesAssertIntegrity\SixShaded.DeTesAssertIntegrity.csproj", "{2050F1B8-9A3F-414A-B3BC-71CE7EA8E487}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FourZeroOne", "FourZeroOne", "{E465DB55-FABB-4833-A0AF-51B4181EAEB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zerox", "src\Zerox\Zerox.csproj", "{D2FD8500-7819-4546-9CF2-C4AF66306EA4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.Zerox", "src\Zerox\SixShaded.Zerox.csproj", "{D2FD8500-7819-4546-9CF2-C4AF66306EA4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.SixLib.GFunc", "lib\SixLib.GFunc\SixShaded.SixLib.GFunc.csproj", "{71ECEF61-7E35-4260-B557-32A498AA6FB0}"
 EndProject
@@ -35,7 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "[external sim]", "[external
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "[plugins]", "[plugins]", "{7EF4BA3A-6F38-418A-A7AF-0BC612C8E5A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FourZeroOne.Plugins.Axiom", "src\FourZeroOne.Plugins.Axiom\FourZeroOne.Plugins.Axiom.csproj", "{451AADFA-AE29-4671-AF7D-46AACB782EEE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.FourZeroOne.Plugins.Axiom", "src\FourZeroOne.Plugins.Axiom\SixShaded.FourZeroOne.Plugins.Axiom.csproj", "{451AADFA-AE29-4671-AF7D-46AACB782EEE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.MinimaFZO", "src\MinimaFZO\SixShaded.MinimaFZO.csproj", "{501D61DC-F544-4B10-9264-39413E4596D2}"
 EndProject
