@@ -18,10 +18,10 @@
     <ProjectReference Include="..\CatGlance\CatGlance.csproj" />
     <ProjectReference Include="..\DeTesAssertIntegrity\DeTesAssertIntegrity.csproj" />
     <ProjectReference Include="..\DeTes\DeTes.csproj" />
+    <ProjectReference Include="..\FourZeroOne.Plugins.Axiom\FourZeroOne.Plugins.Axiom.csproj" />
     <ProjectReference Include="..\FourZeroOne\FourZeroOne.csproj" />
     <ProjectReference Include="..\Minima\MinimaFZO.csproj" />
     <ProjectReference Include="..\Perfection\Perfection.csproj" />
-    <ProjectReference Include="..\Wania\FourZeroOne.Plugins.Axiom.csproj" />
   </ItemGroup>
 
 </Project>
