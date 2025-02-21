@@ -1,14 +1,11 @@
-
-using System.Collections.Generic;
 using Perfection;
-using PROTO_ZeroxFour_1.Util;
+using SixLib.GFunc;
 #nullable enable
 namespace FourZeroOne.Resolution
 {
     using FourZeroOne.FZOSpec;
-    using FourZeroOne.Token;
     using Handles;
-    
+
     /// <summary>
     /// all inherits must be by a record class.
     /// </summary>

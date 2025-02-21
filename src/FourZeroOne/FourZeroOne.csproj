@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\SixLib.GFunc\SixLib.GFunc.csproj" />
     <ProjectReference Include="..\Perfection\Perfection.csproj" />
   </ItemGroup>
 

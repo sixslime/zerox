@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Perfection;
-
-namespace FourZeroOne.Core.Macros
+﻿namespace FourZeroOne.Core.Macros
 {
-    using Token;
-    using ResObj = Resolution.IResolution;
     using Macro;
-    using t = Core.Tokens;
-    using r = Core.Resolutions;
-    using Syntax;
     using Resolution;
-    using ro = Core.Resolutions.Objects;
     using Resolutions.Boxed;
+    using Syntax;
+    using Token;
+    using r = Core.Resolutions;
+    using ResObj = Resolution.IResolution;
+    using ro = Core.Resolutions.Objects;
+    using t = Core.Tokens;
     public static class Map<RIn, ROut>
             where RIn : class, ResObj
             where ROut : class, ResObj

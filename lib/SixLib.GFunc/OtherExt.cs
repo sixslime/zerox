@@ -52,16 +52,7 @@ namespace SixLib.GFunc
         /// <param name="v"></param>
         /// <returns></returns>
         public static bool Not(this bool v) => !v;
-        public static RecursiveEvalTree<O, T> RecursiveEvalTree<O, T>(this O root, Func<O, IResult<T, IEnumerable<O>>> resolveFunc, Func<IEnumerable<T>, T> combineFunc)
-        {
-            return new(root, resolveFunc, combineFunc);
-        }
-        public static IOption<V> At<K, V>(this IDictionary<K, V> dict, K key)
-        {
-            return (dict.TryGetValue(key, out var v))
-                ? v.AsSome()
-                : new None<V>();
-        }
+        
     }
     public static class Integer
     {

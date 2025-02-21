@@ -12,6 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\SixLib.GFunc\SixLib.GFunc.csproj" />
+    <ProjectReference Include="..\..\lib\SixLib.ICEE.FZO\SixLib.ICEE.FZO.csproj" />
+    <ProjectReference Include="..\..\lib\SixLib.ICEE\SixLib.ICEE.csproj" />
     <ProjectReference Include="..\CatGlance\CatGlance.csproj" />
     <ProjectReference Include="..\DeTesAssertIntegrity\DeTesAssertIntegrity.csproj" />
     <ProjectReference Include="..\DeTes\DeTes.csproj" />

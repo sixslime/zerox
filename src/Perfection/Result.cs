@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MorseCode.ITask;
-#nullable enable
+﻿#nullable enable
 namespace Perfection
 {
     /// <summary>
@@ -79,7 +73,7 @@ namespace Perfection
             try { return new Ok<T, Exception>(tryExpr()); }
             catch (Exception e) { return new Err<T, Exception>(e); }
         }
-        public static async Task<IResult<T, Exception>> CatchExceptionAsync<T>(this Func<ITask<T>> tryExpr)
+        public static async Task<IResult<T, Exception>> CatchExceptionAsync<T>(this Func<Task<T>> tryExpr)
         {
             try { return new Ok<T, Exception>(await tryExpr()); }
             catch (Exception e) { return new Err<T, Exception>(e); }

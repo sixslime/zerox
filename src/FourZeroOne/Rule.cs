@@ -1,4 +1,5 @@
 using Perfection;
+using SixLib.GFunc;
 #nullable enable
 namespace FourZeroOne.Rule
 {

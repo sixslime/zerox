@@ -6,7 +6,9 @@ using DeTes.Realization;
 using DeTes;
 using Perfection;
 using FourZeroOne.FZOSpec;
-using SixLib;
+using SixLib.ICEE;
+using SixLib.GFunc;
+using SixLib.ICEE.FZO;
 using System.Text;
 
 // quite a mess, but being clean is not in CatGlance's objectives
@@ -80,7 +82,7 @@ namespace CatGlance
                         Write("invalid domain: ");
                         if (v.Description is not null) Write($"\"{v.Description}\" ", CCol.DarkCyan);
                         WriteLn(FormatLinkedToken(v.NearToken), nearTokenColor);
-                        Write(v.InvalidSelection.LookNicePls(), CCol.DarkYellow);
+                        Write(v.InvalidSelection.ICEE(), CCol.DarkYellow);
                         if (v.InvalidSelection.Length != v.ExpectedSelectionSize)
                         {
                             Write(" expects ");
@@ -101,7 +103,7 @@ namespace CatGlance
                         }
                         C.WriteLine();
                         Write("of: ", CCol.DarkGray);
-                        Write(v.Domain.Map(x => x.LookNicePls()).ToArray().LookNicePls(), CCol.DarkGray);
+                        Write(v.Domain.Map(x => x.ICEE()).ToArray().ICEE(), CCol.DarkGray);
                     }
                     break;
                 case EDeTesInvalidTest.DomainUsedOutsideOfScope v:
@@ -179,7 +181,7 @@ namespace CatGlance
             DepthPad(depth);
             Write("└");
             if (tree.Object is IDeTesSelectionPath selectionPath)
-                Write($"{selectionPath.Selection.LookNicePls()} ");
+                Write($"{selectionPath.Selection.ICEE()} ");
 
             if (tree.Evaluation)
             {
@@ -203,7 +205,7 @@ namespace CatGlance
                 {
                     Write("INVALID STATE!", CCol.Magenta);
                     Write(" : ");
-                    Write(invalid.HaltingState.LookNicePls(), CCol.DarkRed);
+                    Write(invalid.HaltingState.ICEE(), CCol.DarkRed);
                     return;
                 }
             }

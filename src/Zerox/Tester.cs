@@ -12,7 +12,8 @@ using ro = FourZeroOne.Core.Resolutions.Objects;
 using r = FourZeroOne.Core.Resolutions;
 using t = FourZeroOne.Core.Tokens;
 using Rule = FourZeroOne.Rule;
-using LookNicePls;
+using SixLib.ICEE;
+using SixLib.GFunc;
 using DeTesAssertIntegrity;
 using GlanceResult = Perfection.IResult<Perfection.RecursiveEvalTree<DeTes.Analysis.IDeTesResult, bool>, DeTes.Analysis.EDeTesInvalidTest>;
 public class Tester
@@ -305,8 +306,8 @@ public class Tester
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine("==[ SANITY CHECK ]==");
-        Console.WriteLine("TESTS: " + ((pass.Length == 0) ? "GOOD" : "UNEXPECT " + pass.LookNicePls()));
-        Console.WriteLine("INTEGRITY: " + ((fail.Length == 0) ? "GOOD" : "UNEXPECT " + fail.LookNicePls()));
+        Console.WriteLine("TESTS: " + ((pass.Length == 0) ? "GOOD" : "UNEXPECT " + pass.ICEE()));
+        Console.WriteLine("INTEGRITY: " + ((fail.Length == 0) ? "GOOD" : "UNEXPECT " + fail.ICEE()));
         Console.WriteLine("====================");
         Console.ResetColor();
         return (pass.Length + fail.Length == 0);

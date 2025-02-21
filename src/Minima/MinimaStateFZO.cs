@@ -3,9 +3,9 @@ using Perfection;
 using FourZeroOne.FZOSpec;
 using FourZeroOne.Resolution;
 using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
-using LookNicePls;
 using System.Diagnostics;
 using FourZeroOne.Token;
+using SixLib.GFunc;
 #nullable enable
 namespace MinimaFZO
 {

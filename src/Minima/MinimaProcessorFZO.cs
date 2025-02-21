@@ -5,6 +5,7 @@ using FourZeroOne.Resolution;
 using FourZeroOne.Resolution.Unsafe;
 using FourZeroOne.Rule.Unsafe;
 using FourZeroOne.Rule;
+using SixLib.GFunc;
 using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
 #nullable enable
 namespace MinimaFZO

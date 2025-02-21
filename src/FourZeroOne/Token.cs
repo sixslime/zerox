@@ -1,19 +1,14 @@
-
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Perfection;
-using ControlledFlows;
-using MorseCode.ITask;
 using FourZeroOne.Resolution;
+using MorseCode.ITask;
+using Perfection;
+using SixLib.GFunc;
 #nullable enable
 namespace FourZeroOne.Token
 {
+    using Handles;
     using any_token = IToken<IResolution>;
     using ResObj = Resolution.IResolution;
-    using r = Core.Resolutions;
-    using PROTO_ZeroxFour_1.Util;
-    using Handles;
-    
+
     public interface IToken<out R> where R : class, ResObj
     {
         public any_token[] ArgTokens { get; }
