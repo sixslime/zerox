@@ -13,6 +13,8 @@ namespace FourZeroOne.Core.Syntax
     using FourZeroOne.Rule.Proxies;
     using FourZeroOne.Rule;
     using SixShaded.NotRust;
+    using SixShaded.FourZeroOne;
+    using SixShaded.FourZeroOne.Core;
 
     namespace Structure
     {
@@ -189,7 +191,7 @@ namespace FourZeroOne.Core.Syntax
         { return new(); }
         public static Macro<ICompositionOf<C>> tCompose<C>() where C : ICompositionType, new()
         {
-            return Macros.Compose<C>.Construct();
+            return Compose<C>.Construct();
         }
 
         public static t.AddRule tAddRule<RVal>(Structure.Rule.Block<RVal> block)
@@ -316,10 +318,10 @@ namespace FourZeroOne.Core.Syntax
         public static Macro<IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>> tMap<RIn, ROut>(this IToken<IMulti<RIn>> source, Func<DynamicAddress<RIn>, IToken<ROut>> mapFunction)
             where RIn : class, Res
             where ROut : class, Res
-        { return Macros.Map<RIn, ROut>.Construct(source, Core.tMetaFunction(mapFunction)); }
+        { return Map<RIn, ROut>.Construct(source, Core.tMetaFunction(mapFunction)); }
         public static Macro<R, ro.Number, r.Multi<R>> tDuplicate<R>(this IToken<R> value, IToken<ro.Number> count)
             where R : class, Res
-        { return Macros.Duplicate<R>.Construct(value, count); }
+        { return Duplicate<R>.Construct(value, count); }
 
         public static t.Number.Add tAdd(this IToken<ro.Number> a, IToken<ro.Number> b)
         { return new(a, b); }
@@ -341,16 +343,16 @@ namespace FourZeroOne.Core.Syntax
         public static Macro<ICompositionOf<C>, r.Boxed.MetaFunction<R, R>, ICompositionOf<C>> tUpdateComponent<C, R>(this IToken<ICompositionOf<C>> holder, IComponentIdentifier<C, R> componentIdentifier, IToken<r.Boxed.MetaFunction<R, R>> changeFunc)
             where C : ICompositionType
             where R : class, Res
-        { return Macros.UpdateComponent<C, R>.Construct(holder, changeFunc, componentIdentifier) ; }
+        { return UpdateComponent<C, R>.Construct(holder, changeFunc, componentIdentifier) ; }
         public static Macro<ICompositionOf<C>, r.Boxed.MetaFunction<R, R>, ICompositionOf<C>> tUpdateComponent<C, R>(this IToken<ICompositionOf<C>> holder, IComponentIdentifier<C, R> componentIdentifier, Func<DynamicAddress<R>, IToken<R>> changeFunc)
             where C : ICompositionType
             where R : class, Res
-        { return Macros.UpdateComponent<C, R>.Construct(holder, Core.tMetaFunction(changeFunc), componentIdentifier); }
+        { return UpdateComponent<C, R>.Construct(holder, Core.tMetaFunction(changeFunc), componentIdentifier); }
         public static t.Component.Without<H> tWithoutComponent<H>(this IToken<ICompositionOf<H>> holder, Resolution.Unsafe.IComponentIdentifier<H> componentIdentifier)
             where H : ICompositionType
         { return new(holder) { ComponentIdentifier = componentIdentifier }; }
         public static Macro<ICompositionOf<D>, R> tDecompose<D, R>(this IToken<ICompositionOf<D>> composition) where D : IDecomposableType<D, R>, new() where R : class, Res
-        { return Macros.Decompose<D, R>.Construct(composition); }
+        { return Decompose<D, R>.Construct(composition); }
 
         public static t.Component.With<r.MergeSpec<H>, C> t_WithMerged<H, C>(this IToken<ICompositionOf<r.MergeSpec<H>>> mergeObject, IComponentIdentifier<H, C> mergingIdentifier, IToken<C> component)
             where H : ICompositionType
@@ -369,17 +371,17 @@ namespace FourZeroOne.Core.Syntax
         { return new(address); }
         public static Macro<IMemoryObject<R>, r.Boxed.MetaFunction<R, R>, r.Instructions.Assign<R>> tDataUpdate<R>(this IToken<IMemoryObject<R>> address, IToken<r.Boxed.MetaFunction<R, R>> updateFunction)
             where R : class, Res
-        { return Macros.UpdateMemoryObject<R>.Construct(address, updateFunction); }
+        { return UpdateMemoryObject<R>.Construct(address, updateFunction); }
         public static Macro<IMemoryObject<R>, r.Boxed.MetaFunction<R, R>, r.Instructions.Assign<R>> tDataUpdate<R>(this IToken<IMemoryObject<R>> address, Func<DynamicAddress<R>, IToken<R>> updateFunction)
             where R : class, Res
-        { return Macros.UpdateMemoryObject<R>.Construct(address, Core.tMetaFunction(updateFunction)); }
+        { return UpdateMemoryObject<R>.Construct(address, Core.tMetaFunction(updateFunction)); }
 
         public static Macro<R, r.Boxed.MetaFunction<R>, R> tCatchNolla<R>(this IToken<R> value, IToken<r.Boxed.MetaFunction<R>> fallback)
             where R : class, Res
-        { return Macros.CatchNolla<R>.Construct(value, fallback); }
+        { return CatchNolla<R>.Construct(value, fallback); }
         public static Macro<R, r.Boxed.MetaFunction<R>, R> tCatchNolla<R>(this IToken<R> value, Func<IToken<R>> fallback)
             where R : class, Res
-        { return Macros.CatchNolla<R>.Construct(value, fallback().tMetaBoxed()); }
+        { return CatchNolla<R>.Construct(value, fallback().tMetaBoxed()); }
         public static t.DynamicReference<R> tRef<R>(this IMemoryAddress<R> ident) where R : class, Res
         { return new(ident); }
         public static t.Fixed<ro.Bool> tFixed(this bool value)

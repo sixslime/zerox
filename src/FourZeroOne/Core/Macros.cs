@@ -1,8 +1,10 @@
-﻿namespace FourZeroOne.Core.Macros
+﻿namespace SixShaded.FourZeroOne.Core
 {
+    using FourZeroOne;
     using Macro;
     using Resolution;
     using Resolutions.Boxed;
+    using SixShaded.FourZeroOne;
     using Syntax;
     using Token;
     using r = Core.Resolutions;
@@ -100,7 +102,7 @@
             CustomData = [component],
             Definition = Core.tMetaFunction<ICompositionOf<C>, MetaFunction<R, R>, ICompositionOf<C>>(
                 (compositionI, updateFunctionI) =>
-                    compositionI.tRef().tWithComponent(component, 
+                    compositionI.tRef().tWithComponent(component,
                         updateFunctionI.tRef()
                         .tExecuteWith(new() { A = compositionI.tRef().tGetComponent(component) })))
                 .Resolution

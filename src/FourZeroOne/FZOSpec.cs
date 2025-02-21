@@ -1,4 +1,5 @@
 using MorseCode.ITask;
+using SixShaded.FourZeroOne;
 using SixShaded.NotRust;
 #nullable enable
 namespace FourZeroOne.FZOSpec
@@ -7,7 +8,7 @@ namespace FourZeroOne.FZOSpec
     using Res = Resolution.IResolution;
     using Rule = Rule.Unsafe.IRule<Resolution.IResolution>;
     using ResOpt = IOption<Resolution.IResolution>;
-    using Token = Token.IToken<Resolution.IResolution>;
+    using Token = IToken<Resolution.IResolution>;
     using Addr = Resolution.IMemoryAddress<Resolution.IResolution>;
     using Resolution;
     using Resolution.Unsafe;

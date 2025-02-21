@@ -1,10 +1,10 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using SixShaded.DeTes.Analysis;
 using SixShaded.NotRust;
-namespace Zerox;
+namespace SixShaded.Zerox;
 using FourZeroOne.Core.Syntax;
-using DeTes;
 using MinimaFZO;
 using FourZeroOne.FZOSpec;
 using ro = FourZeroOne.Core.Resolutions.Objects;
@@ -13,10 +13,11 @@ using t = FourZeroOne.Core.Tokens;
 using Rule = FourZeroOne.Rule;
 using SixLib.GFunc;
 using DeTesAssertIntegrity;
-using GlanceResult = IResult<RecursiveEvalTree<DeTes.Analysis.IDeTesResult, bool>, DeTes.Analysis.EDeTesInvalidTest>;
+using GlanceResult = IResult<RecursiveEvalTree<IDeTesResult, bool>, EDeTesInvalidTest>;
 using SixShaded.CatGlance;
 using SixShaded.NotRust;
 using SixShaded.SixLib.ICEE;
+using SixShaded.DeTes;
 
 public class Tester
 {
@@ -275,7 +276,7 @@ public class Tester
             }.Glance();
             return;
         }
-        if (!(await SanityCheck()))
+        if (!await SanityCheck())
         {
             Console.WriteLine("Sanity check failed!");
             return;
@@ -296,7 +297,7 @@ public class Tester
             Supplier = RUN_IMPLEMENTATION,
             Tests = SANITY_CHECKS.Enumerate()
                 .Map(original => original.value.GenerateAssertIntegrityTests().Enumerate()
-                    .Map(check => new GlancableTest($"({original.index+1}:{check.index+1}) {original.value.Name}")
+                    .Map(check => new GlancableTest($"({original.index + 1}:{check.index + 1}) {original.value.Name}")
                     {
                         InitialMemory = check.value.InitialMemory,
                         Token = check.value.Token,
@@ -304,15 +305,15 @@ public class Tester
                 .Flatten()
                 .ToArray()
         }.Glance());
-        
+
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine("==[ SANITY CHECK ]==");
-        Console.WriteLine("TESTS: " + ((pass.Length == 0) ? "GOOD" : "UNEXPECT " + pass.ICEE()));
-        Console.WriteLine("INTEGRITY: " + ((fail.Length == 0) ? "GOOD" : "UNEXPECT " + fail.ICEE()));
+        Console.WriteLine("TESTS: " + (pass.Length == 0 ? "GOOD" : "UNEXPECT " + pass.ICEE()));
+        Console.WriteLine("INTEGRITY: " + (fail.Length == 0 ? "GOOD" : "UNEXPECT " + fail.ICEE()));
         Console.WriteLine("====================");
         Console.ResetColor();
-        return (pass.Length + fail.Length == 0);
+        return pass.Length + fail.Length == 0;
     }
 
     private static int[] GetNotPassed(IEnumerable<GlanceResult> glance) => GetWhereCondition(glance, x => !(x.CheckOk(out var tree) && tree.Evaluation));

@@ -1,12 +1,12 @@
 using MorseCode.ITask;
 using FourZeroOne.FZOSpec;
-using FourZeroOne.Token;
 using Res = FourZeroOne.Resolution.IResolution;
 using ResOpt = SixShaded.NotRust.IOption<FourZeroOne.Resolution.IResolution>;
-using DeTes.Declaration;
 using SixShaded.NotRust;
+using SixShaded.DeTes.Declaration;
+using SixShaded.FourZeroOne;
 #nullable enable
-namespace DeTesAssertIntegrity
+namespace SixShaded.DeTesAssertIntegrity
 {
     internal class DeTesAssertIntegrityContextProvider : IDeTesContext
     {

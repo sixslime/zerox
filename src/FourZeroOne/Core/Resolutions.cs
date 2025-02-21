@@ -4,6 +4,7 @@ namespace FourZeroOne.Core.Resolutions
     using Handles;
     using Resolution;
     using Resolution.Unsafe;
+    using SixShaded.FourZeroOne;
     using SixShaded.NotRust;
     using Token;
     using IMemoryAddress = Resolution.IMemoryAddress<Resolution.IResolution>;

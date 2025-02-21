@@ -3,6 +3,7 @@ namespace FourZeroOne.Resolution
 {
     using FourZeroOne.FZOSpec;
     using Handles;
+    using SixShaded.FourZeroOne;
     using SixShaded.NotRust;
     using SixShaded.SixLib.GFunc;
 
@@ -137,7 +138,7 @@ namespace FourZeroOne.Resolution
         public interface IBoxedMetaFunction<out R> : IResolution
             where R : class, IResolution
         {
-            public Token.IToken<R> Token { get; }
+            public IToken<R> Token { get; }
             public IMemoryAddress<IBoxedMetaFunction<R>> SelfIdentifier { get; }
             public IEnumerable<IMemoryAddress<IResolution>> ArgAddresses { get; }
         }

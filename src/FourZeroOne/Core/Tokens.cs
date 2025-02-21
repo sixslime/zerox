@@ -18,6 +18,7 @@ namespace FourZeroOne.Core.Tokens
     using FourZeroOne.Resolution.Unsafe;
     using SixShaded.NotRust;
     using SixShaded.SixLib.GFunc;
+    using SixShaded.FourZeroOne;
 
     namespace IO
     {

@@ -6,9 +6,10 @@ using System;
 using MorseCode.ITask;
 using FourZeroOne.FZOSpec;
 using SixShaded.NotRust;
+using SixShaded.FourZeroOne;
 
 #nullable enable
-namespace FourZeroOne.Handles
+namespace SixShaded.FourZeroOne
 {
     using Res = IResolution;
     using Addr = IMemoryAddress<IResolution>;
@@ -43,10 +44,10 @@ namespace FourZeroOne.Handles
         IEnumerable<ITiple<Addr, Res>> IMemory.Objects => _implementation.Objects;
         IEnumerable<Rule> IMemory.Rules => _implementation.Rules;
         IOption<R> IMemory.GetObject<R>(IMemoryAddress<R> address) => _implementation.GetObject(address);
-        IOption<Res> IMemory.GetObjectUnsafe(Addr address) => _implementation.GetObject((IMemoryAddress<Res>)address);
+        IOption<Res> IMemory.GetObjectUnsafe(Addr address) => _implementation.GetObject(address);
         IMemory IMemory.WithClearedAddresses(IEnumerable<Addr> removals) => _implementation.WithClearedAddresses(removals).ToHandle();
         IMemory IMemory.WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions) => _implementation.WithObjects(insertions).ToHandle();
-        IMemory IMemory.WithObjectsUnsafe(IEnumerable<ITiple<Addr, Res>> insertions) => _implementation.WithObjects(insertions.Map(x => ((IMemoryAddress<Res>)x.A, (Res)x.B).Tiple())).ToHandle();
+        IMemory IMemory.WithObjectsUnsafe(IEnumerable<ITiple<Addr, Res>> insertions) => _implementation.WithObjects(insertions.Map(x => ((Addr)x.A, (Res)x.B).Tiple())).ToHandle();
         IMemory IMemory.WithRules(IEnumerable<Rule> rules) => _implementation.WithRules(rules).ToHandle();
     }
     public class TokenContextHandle(FZOSpec.IProcessorFZO.ITokenContext implementation) : ITokenContext

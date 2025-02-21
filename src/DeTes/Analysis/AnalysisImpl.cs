@@ -1,9 +1,9 @@
 using FourZeroOne.FZOSpec;
 using FourZeroOne.Resolution;
-using FourZeroOne.Token;
+using SixShaded.FourZeroOne;
 using SixShaded.NotRust;
 #nullable enable
-namespace DeTes.Analysis
+namespace SixShaded.DeTes.Analysis
 {
     using CriticalPointType = IResult<IResult<EProcessorHalt, Exception>, IDeTesSelectionPath[]>;
     using Token = IToken<IResolution>;

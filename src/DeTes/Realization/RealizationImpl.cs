@@ -2,20 +2,24 @@ using FourZeroOne.FZOSpec;
 using MorseCode.ITask;
 using Res = FourZeroOne.Resolution.IResolution;
 using ResOpt = SixShaded.NotRust.IOption<FourZeroOne.Resolution.IResolution>;
-using FourZeroOne.Token;
 using SixShaded.NotRust;
+using SixShaded.DeTes.Analysis;
+using SixShaded.FourZeroOne;
+
 #nullable enable
-namespace DeTes.Realization
+namespace SixShaded.DeTes.Realization
 {
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using Analysis;
     using FourZeroOne.FZOSpec.Shorthands;
     using Declaration;
-    using CriticalPointType = IResult<IResult<EProcessorHalt, Exception>, Analysis.IDeTesSelectionPath[]>;
+    using CriticalPointType = IResult<IResult<EProcessorHalt, Exception>, IDeTesSelectionPath[]>;
     using IToken = IToken<Res>;
     using SixShaded.NotRust;
     using SixShaded.SixLib.GFunc;
+    using SixShaded.DeTes.Analysis;
+    using SixShaded.DeTes.Declaration;
 
     internal class DeTesRealizerImpl
     {
@@ -62,7 +66,7 @@ namespace DeTes.Realization
                                 SelectionToken = state.OperationStack.GetAt(0).Expect("How?").Operation
                             }
                         };
-                    var paths = new IDeTesSelectionPath[domain.Selections.Length]; 
+                    var paths = new IDeTesSelectionPath[domain.Selections.Length];
                     for (int i = 0; i < paths.Length; i++)
                     {
                         var thisSelection = domain.Selections[i];
@@ -111,7 +115,7 @@ namespace DeTes.Realization
                             Assertions = GenerateOnResolveAssertionObject(runtime, linkedToken, resolution, GetMemoryAfterResolution(state, resolution), GetLastOperation(state))
                         });
                     }
-                    
+
                     critPoint = critPoint.Ok(halt.AsOk(Hint<Exception>.HINT));
                     break;
                 }
@@ -131,7 +135,7 @@ namespace DeTes.Realization
                             //    Console.WriteLine(v.Mutation.Result);
                             //    Console.ResetColor();
                             //}
-                            
+
                             //tokenmap can get pretty large because its just 1 mutable object.
                             switch (v.Mutation)
                             {
@@ -350,12 +354,12 @@ namespace DeTes.Realization
         }
         private class RequiresDomainSplit : Exception { }
     }
-    
+
     internal class EqualityByReference : EqualityComparer<object>
     {
         public override bool Equals(object? x, object? y) => ReferenceEquals(x, y);
         public override int GetHashCode([DisallowNull] object obj) => obj.GetHashCode();
     }
-    
+
 
 }

@@ -1,4 +1,6 @@
 #nullable enable
+using SixShaded.FourZeroOne;
+
 namespace FourZeroOne.Rule
 {
     using Core.Resolutions.Boxed;
@@ -8,7 +10,7 @@ namespace FourZeroOne.Rule
     using Unsafe;
     using Define;
     using Proxies;
-    using Token = Token.IToken<Resolution.IResolution>;
+    using Token = IToken<Resolution.IResolution>;
     using Res = Resolution.IResolution;
     using System.Diagnostics.CodeAnalysis;
     using SixShaded.NotRust;
@@ -66,6 +68,8 @@ namespace FourZeroOne.Rule
     namespace Matchers
     {
         using Macro;
+        using SixShaded.FourZeroOne;
+
         public record AnyMatcher<TRestriction> : IRuleMatcher<TRestriction>
         where TRestriction : Token
         {
@@ -88,23 +92,23 @@ namespace FourZeroOne.Rule
         public record MacroMatcher<RVal> : IRuleMatcher<IMacroValue<RVal>>
             where RVal : class, Res
         {
-            public required Macro.MacroLabel Label { get; init; }
-            public bool MatchesToken(Token token) => token is Macro.Macro<RVal> macro && macro.Label.Equals(Label);
+            public required MacroLabel Label { get; init; }
+            public bool MatchesToken(Token token) => token is Macro<RVal> macro && macro.Label.Equals(Label);
         }
         public record MacroMatcher<RArg1, ROut> : IRuleMatcher<IMacroFunction<RArg1, ROut>>
             where RArg1 : class, Res
             where ROut : class, Res
         {
-            public required Macro.MacroLabel Label { get; init; }
-            public bool MatchesToken(Token token) => token is Macro.Macro<RArg1, ROut> macro && macro.Label.Equals(Label);
+            public required MacroLabel Label { get; init; }
+            public bool MatchesToken(Token token) => token is Macro<RArg1, ROut> macro && macro.Label.Equals(Label);
         }
         public record MacroMatcher<RArg1, RArg2, ROut> : IRuleMatcher<IMacroFunction<RArg1, RArg2, ROut>>
             where RArg1 : class, Res
             where RArg2 : class, Res
             where ROut : class, Res
         {
-            public required Macro.MacroLabel Label { get; init; }
-            public bool MatchesToken(Token token) => token is Macro.Macro<RArg1, RArg2, ROut> macro && macro.Label.Equals(Label);
+            public required MacroLabel Label { get; init; }
+            public bool MatchesToken(Token token) => token is Macro<RArg1, RArg2, ROut> macro && macro.Label.Equals(Label);
         }
         public record MacroMatcher<RArg1, RArg2, RArg3, ROut> : IRuleMatcher<IMacroFunction<RArg1, RArg2, RArg3, ROut>>
             where RArg1 : class, Res
@@ -112,8 +116,8 @@ namespace FourZeroOne.Rule
             where RArg3 : class, Res
             where ROut : class, Res
         {
-            public required Macro.MacroLabel Label { get; init; }
-            public bool MatchesToken(Token token) => token is Macro.Macro<RArg1, RArg2, RArg3, ROut> macro && macro.Label.Equals(Label);
+            public required MacroLabel Label { get; init; }
+            public bool MatchesToken(Token token) => token is Macro<RArg1, RArg2, RArg3, ROut> macro && macro.Label.Equals(Label);
         }
     }
     namespace Proxies

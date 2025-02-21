@@ -1,4 +1,4 @@
-﻿namespace Zerox
+﻿namespace SixShaded.Zerox
 {
     internal class Program
     {

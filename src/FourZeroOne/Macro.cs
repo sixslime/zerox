@@ -1,5 +1,5 @@
 #nullable enable
-namespace FourZeroOne.Macro
+namespace SixShaded.FourZeroOne
 {
     using Core.Resolutions.Boxed;
     using FourZeroOne.FZOSpec;

@@ -1,14 +1,16 @@
 using FourZeroOne.FZOSpec;
-using FourZeroOne.Token;
 using ResObj = FourZeroOne.Resolution.IResolution;
 using ResOpt = SixShaded.NotRust.IOption<FourZeroOne.Resolution.IResolution>;
 #nullable enable
-namespace DeTes
+namespace SixShaded.DeTes
 {
     using Declaration;
     using Analysis;
     using Realization;
     using SixShaded.NotRust;
+    using SixShaded.DeTes.Declaration;
+    using DeTes;
+    using SixShaded.FourZeroOne;
 
     public record DeTest : IDeTesTest
     {
@@ -73,5 +75,5 @@ namespace DeTes
             return subject;
         }
     }
-    
+
 }

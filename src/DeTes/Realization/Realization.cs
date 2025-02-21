@@ -1,14 +1,16 @@
 using FourZeroOne.FZOSpec;
 #nullable enable
-namespace DeTes.Realization
+namespace SixShaded.DeTes.Realization
 {
     using Analysis;
     using Declaration;
+    using SixShaded.DeTes.Analysis;
+    using SixShaded.DeTes.Declaration;
     using SixShaded.NotRust;
 
     public interface IDeTesFZOSupplier
     {
-        public IStateFZO UnitializedState { get; } 
+        public IStateFZO UnitializedState { get; }
         public IProcessorFZO Processor { get; }
     }
     public class DeTesRealizer

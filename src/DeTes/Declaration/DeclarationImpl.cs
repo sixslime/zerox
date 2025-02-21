@@ -1,13 +1,14 @@
 using MorseCode.ITask;
 using FourZeroOne.FZOSpec;
-using FourZeroOne.Token;
 using ResObj = FourZeroOne.Resolution.IResolution;
 using ResOpt = SixShaded.NotRust.IOption<FourZeroOne.Resolution.IResolution>;
+using SixShaded.FourZeroOne;
 #nullable enable
-namespace DeTes.Declaration
+namespace SixShaded.DeTes.Declaration
 {
     using Analysis;
     using Realization;
+    using SixShaded.DeTes.Analysis;
     using SixShaded.NotRust;
     using IToken = IToken<ResObj>;
     internal class ContextImpl : IDeTesContext, IContextAccessor
@@ -209,7 +210,7 @@ namespace DeTes.Declaration
         IToken ITokenLinked.LinkedToken => LinkedToken;
         Predicate<T> IAssertionAccessor<T>.Condition => Condition;
     }
-    
+
     internal static class Extensions
     {
         public static T DeTesUnwrap<T>(this IOption<T> option)

@@ -1,7 +1,7 @@
 using FourZeroOne.Resolution;
 using MorseCode.ITask;
 #nullable enable
-namespace FourZeroOne.Token
+namespace SixShaded.FourZeroOne
 {
     using Handles;
     using SixShaded.NotRust;
@@ -28,7 +28,7 @@ namespace FourZeroOne.Token
         public sealed override string ToString()
         {
             return CustomToString()
-                .OrElse(() => $"{this.GetType().Name}( {ArgTokens.AccumulateInto("", (msg, arg) => $"{msg}{arg} ")})");
+                .OrElse(() => $"{GetType().Name}( {ArgTokens.AccumulateInto("", (msg, arg) => $"{msg}{arg} ")})");
         }
     }
     public abstract record StandardToken<R> : TokenBehavior<R> where R : class, ResObj
@@ -64,7 +64,7 @@ namespace FourZeroOne.Token
     where RArgs : class, ResObj
     where ROut : class, ResObj
     { public IEnumerable<IToken<RArgs>> Args { get; } }
-    
+
     public interface IHasAttachedComponentIdentifier<in C, out R> : IToken<R>
         where C : ICompositionType
         where R : class, ResObj
@@ -158,7 +158,7 @@ namespace FourZeroOne.Token
 
         protected abstract ITask<IOption<ROut>> Evaluate(ITokenContext runtime, IOption<RArg1> in1, IOption<RArg2> in2, IOption<RArg3> in3);
         protected Function(IToken<RArg1> in1, IToken<RArg2> in2, IToken<RArg3> in3) : base(in1, in2, in3) { }
-        
+
     }
 
     /// <summary>
@@ -199,7 +199,7 @@ namespace FourZeroOne.Token
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
         protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
         {
-            return (args[0].Check(out var in1))
+            return args[0].Check(out var in1)
                 ? new Err<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(MakeData((RArg1)in1))
                 : new Ok<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(new None<ROut>().ToCompletedITask());
         }
@@ -216,7 +216,7 @@ namespace FourZeroOne.Token
         public IToken<RArg2> Arg2 => (IToken<RArg2>)ArgTokens[1];
         protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
         {
-            return (args[0].Check(out var in1) && args[1].Check(out var in2))
+            return args[0].Check(out var in1) && args[1].Check(out var in2)
                 ? new Err<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(MakeData((RArg1)in1, (RArg2)in2))
                 : new Ok<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(new None<ROut>().ToCompletedITask());
         }
@@ -235,7 +235,7 @@ namespace FourZeroOne.Token
         public IToken<RArg3> Arg3 => (IToken<RArg3>)ArgTokens[2];
         protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
         {
-            return (args[0].Check(out var in1) && args[1].Check(out var in2) && args[2].Check(out var in3))
+            return args[0].Check(out var in1) && args[1].Check(out var in2) && args[2].Check(out var in3)
                 ? new Err<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(MakeData((RArg1)in1, (RArg2)in2, (RArg3)in3))
                 : new Ok<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(new None<ROut>().ToCompletedITask());
         }
@@ -251,7 +251,7 @@ namespace FourZeroOne.Token
         protected PureFunction(IToken<RArg1> in1) : base(in1) { }
         protected sealed override ITask<IOption<ROut>> Evaluate(ITokenContext _, IOption<RArg1> in1)
         {
-            IOption<ROut> o = (in1.CheckNone(out var a)) ? new None<ROut>() :
+            var o = in1.CheckNone(out var a) ? new None<ROut>() :
                 EvaluatePure(a).AsSome();
             return o.ToCompletedITask();
         }
@@ -265,7 +265,7 @@ namespace FourZeroOne.Token
         protected PureFunction(IToken<RArg1> in1, IToken<RArg2> in2) : base(in1, in2) { }
         protected sealed override ITask<IOption<ROut>> Evaluate(ITokenContext _, IOption<RArg1> in1, IOption<RArg2> in2)
         {
-            IOption<ROut> o = (in1.CheckNone(out var a) || in2.CheckNone(out var b)) ? new None<ROut>() :
+            var o = in1.CheckNone(out var a) || in2.CheckNone(out var b) ? new None<ROut>() :
                 EvaluatePure(a, b).AsSome();
             return o.ToCompletedITask();
         }
@@ -281,7 +281,7 @@ namespace FourZeroOne.Token
         protected PureFunction(IToken<RArg1> in1, IToken<RArg2> in2, IToken<RArg3> in3) : base(in1, in2, in3) { }
         protected sealed override ITask<IOption<ROut>> Evaluate(ITokenContext _, IOption<RArg1> in1, IOption<RArg2> in2, IOption<RArg3> in3)
         {
-            IOption<ROut> o = (in1.CheckNone(out var a) || in2.CheckNone(out var b) || in3.CheckNone(out var c)) ? new None<ROut>() :
+            var o = in1.CheckNone(out var a) || in2.CheckNone(out var b) || in3.CheckNone(out var c) ? new None<ROut>() :
                 EvaluatePure(a, b, c).AsSome();
             return o.ToCompletedITask();
         }

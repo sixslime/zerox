@@ -1,10 +1,10 @@
 using FourZeroOne.FZOSpec;
-using FourZeroOne.Token;
 using FourZeroOne.Resolution;
 using NollableRes = SixShaded.NotRust.IOption<FourZeroOne.Resolution.IResolution>;
 using SixShaded.NotRust;
+using SixShaded.FourZeroOne;
 #nullable enable
-namespace DeTes.Analysis
+namespace SixShaded.DeTes.Analysis
 {
     using Token = IToken<IResolution>;
     public interface IDeTesResult
@@ -68,12 +68,12 @@ namespace DeTes.Analysis
     {
         public sealed record ReferenceUsedBeforeEvaluated : EDeTesInvalidTest
         {
-        public required Token NearToken { get; init; }
+            public required Token NearToken { get; init; }
             public required string? Description { get; init; }
         }
         public sealed record EmptyDomain : EDeTesInvalidTest
         {
-        public required Token NearToken { get; init; }
+            public required Token NearToken { get; init; }
             public required string? Description { get; init; }
         }
         public sealed record NoSelectionDomainDefined : EDeTesInvalidTest
@@ -82,7 +82,7 @@ namespace DeTes.Analysis
         }
         public sealed record DomainUsedOutsideOfScope : EDeTesInvalidTest
         {
-        public required Token NearToken { get; init; }
+            public required Token NearToken { get; init; }
             public required string? Description { get; init; }
             public required int[][] Domain { get; init; }
         }

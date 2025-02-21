@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using DeTes.Declaration;
-using DeTes.Analysis;
-using DeTes.Realization;
 using DeTes;
 using FourZeroOne.FZOSpec;
 using System.Text;
@@ -10,6 +7,9 @@ using SixShaded.NotRust;
 using SixShaded.SixLib.GFunc;
 using SixShaded.SixLib.ICEE;
 using SixShaded.SixLib.ICEE.FZO;
+using SixShaded.DeTes.Declaration;
+using SixShaded.DeTes.Analysis;
+using SixShaded.DeTes.Realization;
 
 // quite a mess, but being clean is not in CatGlance's objectives
 namespace SixShaded.CatGlance

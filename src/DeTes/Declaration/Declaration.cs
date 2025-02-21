@@ -1,10 +1,10 @@
 using FourZeroOne.FZOSpec;
-using FourZeroOne.Token;
 using Res = FourZeroOne.Resolution.IResolution;
 using ResOpt = SixShaded.NotRust.IOption<FourZeroOne.Resolution.IResolution>;
 using SixShaded.NotRust;
+using SixShaded.FourZeroOne;
 #nullable enable
-namespace DeTes.Declaration
+namespace SixShaded.DeTes.Declaration
 {
     using IToken = IToken<Res>;
     public delegate IToken TokenDeclaration(IDeTesContext C);
