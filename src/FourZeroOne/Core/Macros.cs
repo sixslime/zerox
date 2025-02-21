@@ -132,9 +132,9 @@
                 .Resolution
         };
     }
-    public static class Package
+    internal static class Package
     {
         public const string NAMESPACE = "CORE";
-        internal static MacroLabel Label(string identifier) => new() { Package = NAMESPACE, Identifier = identifier };
+        public static MacroLabel Label(string identifier) => new() { Package = NAMESPACE, Identifier = identifier };
     }
 }
