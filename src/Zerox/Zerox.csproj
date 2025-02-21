@@ -20,6 +20,7 @@
     <ProjectReference Include="..\DeTes\DeTes.csproj" />
     <ProjectReference Include="..\FourZeroOne.Plugins.Axiom\FourZeroOne.Plugins.Axiom.csproj" />
     <ProjectReference Include="..\FourZeroOne\FourZeroOne.csproj" />
+    <ProjectReference Include="..\MinimaFZO\MinimaFZO.csproj" />
     <ProjectReference Include="..\Minima\MinimaFZO.csproj" />
     <ProjectReference Include="..\Perfection\Perfection.csproj" />
   </ItemGroup>
