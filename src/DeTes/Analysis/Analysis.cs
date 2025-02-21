@@ -1,8 +1,8 @@
 using FourZeroOne.FZOSpec;
 using FourZeroOne.Token;
 using FourZeroOne.Resolution;
-using Perfection;
-using NollableRes = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
+using NollableRes = SixShaded.NotRust.IOption<FourZeroOne.Resolution.IResolution>;
+using SixShaded.NotRust;
 #nullable enable
 namespace DeTes.Analysis
 {

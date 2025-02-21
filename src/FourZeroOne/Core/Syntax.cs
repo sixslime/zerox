@@ -1,5 +1,3 @@
-
-using Perfection;
 using System.Collections.Generic;
 #nullable enable
 namespace FourZeroOne.Core.Syntax
@@ -14,6 +12,8 @@ namespace FourZeroOne.Core.Syntax
     using FourZeroOne.Rule.Matchers;
     using FourZeroOne.Rule.Proxies;
     using FourZeroOne.Rule;
+    using SixShaded.NotRust;
+
     namespace Structure
     {
         namespace Token

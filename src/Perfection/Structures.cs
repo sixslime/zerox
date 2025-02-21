@@ -1,7 +1,8 @@
 using System.Collections;
 
+
 #nullable enable
-namespace Perfection
+namespace SixShaded.NotRust
 {
     // DEV: so what if we made the default IPStructures read-only (out T),
     // then made a "handle" to mutate it, with that handle being 'in T'.
@@ -51,11 +52,11 @@ namespace Perfection
         public static Self WithEntries<Self, T>(this Self s, IEnumerable<T> values) where Self : IEntryAddable<T>
         { return (Self)s._WithEntries(values); }
         public static Self WithEntries<Self, T>(this Self s, params T[] values) where Self : IEntryAddable<T>
-            => WithEntries(s, values.IEnumerable());
+            => s.WithEntries(values.IEnumerable());
         public static Self WithoutEntries<Self, T>(this Self s, IEnumerable<T> values) where Self : IEntryRemovable<T>
         { return (Self)s._WithoutEntries(values); }
         public static Self WithoutEntries<Self, T>(this Self s, params T[] values) where Self : IEntryRemovable<T>
-            => WithoutEntries(s, values.IEnumerable());
+            => s.WithoutEntries(values.IEnumerable());
 
         //CHECK: type restrictions might be silly here
         public static Self MergedWith<Self, T>(this Self s, T other) where Self : IMergable<T>, T where T : IMergable<T>
@@ -67,7 +68,7 @@ namespace Perfection
         public static Self WithInsertionAt<Self, T>(this Self s, int index, IEnumerable<T> values) where Self : IPSequence<T>
         { return (Self)s._WithInsertionAt(index, values); }
         public static Self WithInsertionAt<Self, T>(this Self s, int index, params T[] values) where Self : IPSequence<T>
-            => WithInsertionAt(s, index, values.IEnumerable());
+            => s.WithInsertionAt(index, values.IEnumerable());
     }
     public static class StructureExtensions
     {
@@ -88,7 +89,7 @@ namespace Perfection
         }
         public static IOption<V> At<K, V>(this IDictionary<K, V> dict, K key)
         {
-            return (dict.TryGetValue(key, out var v))
+            return dict.TryGetValue(key, out var v)
                 ? v.AsSome()
                 : new None<V>();
         }
@@ -235,7 +236,7 @@ namespace Perfection
             var nlist = new List<T>(_list);
             nlist.InsertRange(index, items);
             return new PSequence<T>(nlist);
-            
+
         }
         public override string ToString()
         {
@@ -258,11 +259,11 @@ namespace Perfection
 
         private IOption<IPStack<T>> RecursiveAt(int index)
         {
-            return (index < 0)
+            return index < 0
                 ? this.AsNone()
-                : (index == 0)
+                : index == 0
                     ? this.AsSome()
-                    : _link.RemapAs(x => x.At(index - 1)).Press(); 
+                    : _link.RemapAs(x => x.At(index - 1)).Press();
         }
         public IOption<IPStack<T>> At(int index)
         {
@@ -273,13 +274,13 @@ namespace Perfection
                 o = stack.At(1);
                 index--;
             }
-            return (index >= 0) ? o : new None<PStack<T>>();
+            return index >= 0 ? o : new None<PStack<T>>();
         }
 
         IEntryAddable<T> IEntryAddable<T>._WithEntries(IEnumerable<T> entries)
         {
             var o = this;
-            foreach(var (i, v) in entries.Enumerate()) o = new(v, o, Count + i+1);
+            foreach (var (i, v) in entries.Enumerate()) o = new(v, o, Count + i + 1);
             return o;
         }
         public override string ToString()
@@ -369,7 +370,7 @@ namespace Perfection
             if (resolveFunc(root).Split(out Evaluation, out var branches))
             {
                 Branches = Branches.None();
-            } 
+            }
             else
             {
                 var branchArr =

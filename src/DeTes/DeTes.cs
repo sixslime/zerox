@@ -1,15 +1,14 @@
-
-using Perfection;
 using FourZeroOne.FZOSpec;
 using FourZeroOne.Token;
 using ResObj = FourZeroOne.Resolution.IResolution;
-using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
+using ResOpt = SixShaded.NotRust.IOption<FourZeroOne.Resolution.IResolution>;
 #nullable enable
 namespace DeTes
 {
     using Declaration;
     using Analysis;
     using Realization;
+    using SixShaded.NotRust;
 
     public record DeTest : IDeTesTest
     {

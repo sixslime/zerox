@@ -1,7 +1,7 @@
 using FourZeroOne.FZOSpec;
-using Perfection;
 using FourZeroOne.Resolution;
 using FourZeroOne.Token;
+using SixShaded.NotRust;
 #nullable enable
 namespace DeTes.Analysis
 {

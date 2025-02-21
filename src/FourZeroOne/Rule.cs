@@ -1,4 +1,3 @@
-using Perfection;
 using SixLib.GFunc;
 #nullable enable
 namespace FourZeroOne.Rule
@@ -13,6 +12,7 @@ namespace FourZeroOne.Rule
     using Token = Token.IToken<Resolution.IResolution>;
     using Res = Resolution.IResolution;
     using System.Diagnostics.CodeAnalysis;
+    using SixShaded.NotRust;
 
     namespace Define
     {

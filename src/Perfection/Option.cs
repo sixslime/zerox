@@ -1,5 +1,7 @@
 #nullable enable
-namespace Perfection
+using Perfection;
+
+namespace SixShaded.NotRust
 {
     public interface IOption<out T> { }
     public interface ISome<out T> : IOption<T>
@@ -33,7 +35,7 @@ namespace Perfection
             };
         }
         public static T Unwrap<T>(this IOption<T> option)
-            => Expect(option, "'None' value unwrapped, expected 'Some'");
+            => option.Expect("'None' value unwrapped, expected 'Some'");
         public static IOption<T> AsSome<T>(this T value)
         {
             return new Some<T>(value);
@@ -55,10 +57,10 @@ namespace Perfection
             val = default!;
             return false;
         }
-        public static bool CheckNone<T>(this IOption<T> option, out T val) => !Check(option, out val);
+        public static bool CheckNone<T>(this IOption<T> option, out T val) => !option.Check(out val);
         public static IOption<TOut> RemapAs<TIn, TOut>(this IOption<TIn> option, Func<TIn, TOut> func)
         {
-            return CheckNone(option, out var o) ? new None<TOut>() : func(o).AsSome();
+            return option.CheckNone(out var o) ? new None<TOut>() : func(o).AsSome();
         }
         public static IOption<T> AsNone<T>(this T? _)
         {
@@ -103,10 +105,10 @@ namespace Perfection
         }
         public static IOption<T> Press<T>(this IOption<IOption<T>> option)
         {
-            return option.Check(out var inner) ? (inner.Check(out var val) ? val.AsSome() : new None<T>()) : new None<T>();
+            return option.Check(out var inner) ? inner.Check(out var val) ? val.AsSome() : new None<T>() : new None<T>();
         }
-        public static IOption<T> None<T>(this IOption<T>? option) =>  option is null || option.IsSome() ? new None<T>() : option;
+        public static IOption<T> None<T>(this IOption<T>? option) => option is null || option.IsSome() ? new None<T>() : option;
         public static IOption<T> Some<T>(this IOption<T>? _, T value) => new Some<T>(value);
     }
-    
+
 }

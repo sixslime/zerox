@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Perfection;
 using FourZeroOne;
 using MorseCode.ITask;
 using SixLib.GFunc;
@@ -18,6 +17,7 @@ namespace FourZeroOne.Core.Tokens
     using Handles;
     using FourZeroOne.FZOSpec;
     using FourZeroOne.Resolution.Unsafe;
+    using SixShaded.NotRust;
 
     namespace IO
     {
@@ -126,7 +126,7 @@ namespace FourZeroOne.Core.Tokens
     }
     namespace Multi
     {
-        
+
         // FIXME: probably should just eval to Nolla if either arg is Nolla
         public sealed record Contains<R> : Function<IMulti<R>, R, ro.Bool> where R : class, ResObj
         {

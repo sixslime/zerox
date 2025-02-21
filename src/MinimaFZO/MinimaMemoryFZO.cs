@@ -1,12 +1,12 @@
 using MorseCode.ITask;
-using Perfection;
 using FourZeroOne.FZOSpec;
 using FourZeroOne.Resolution;
 using FourZeroOne.Resolution.Unsafe;
 using FourZeroOne.Rule;
-using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
+using ResOpt = SixShaded.NotRust.IOption<FourZeroOne.Resolution.IResolution>;
+using SixShaded.NotRust;
 #nullable enable
-namespace MinimaFZO
+namespace SixShaded.MinimaFZO
 {
     using Addr = IMemoryAddress<IResolution>;
     using Res = IResolution;

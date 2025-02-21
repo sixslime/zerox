@@ -1,8 +1,9 @@
 using System;
 
+
 // nothing in this namespace is validated; it assumes you use it perfectly.
 #nullable enable
-namespace Perfection
+namespace SixShaded.NotRust
 {
     public static class Iter
     {
@@ -41,7 +42,7 @@ namespace Perfection
         /// <returns></returns>
         public static IEnumerable<T> Sequence<T>(this T startingValue, Func<T, T> function)
         {
-            T o = startingValue;
+            var o = startingValue;
             while (true)
             {
                 yield return o;
@@ -51,14 +52,14 @@ namespace Perfection
 
         public static TResult AccumulateInto<TIn, TResult>(this IEnumerable<TIn> enumerable, TResult startingValue, Func<TResult, TIn, TResult> function)
         {
-            TResult o = startingValue;
+            var o = startingValue;
             foreach (var v in enumerable)
             {
                 o = function(o, v);
             }
             return o;
         }
-        public static IOption<T> Accumulate<T>(this IEnumerable<T> enumerable, Func<T, T, T> function) => Accumulate(enumerable, i => i, function);
+        public static IOption<T> Accumulate<T>(this IEnumerable<T> enumerable, Func<T, T, T> function) => enumerable.Accumulate(i => i, function);
         public static IOption<TResult> Accumulate<TIn, TResult>(this IEnumerable<TIn> enumerable, Func<TIn, TResult> placementFunction, Func<TResult, TIn, TResult> function)
         {
             var iter = enumerable.GetEnumerator();
@@ -167,7 +168,7 @@ namespace Perfection
         }
         public static PStack<T> NewFromTop<T>(this IPStack<T> stack)
         {
-            return (stack.TopValue.Check(out var v)) ? new PStack<T>().WithEntries(v) : new();
+            return stack.TopValue.Check(out var v) ? new PStack<T>().WithEntries(v) : new();
         }
         public static CachingEnumerable<T> Caching<T>(this IEnumerable<T> enumerable) => new(enumerable);
         public static IEnumerable<T> Over<T>(params T[] arr) => arr;
@@ -183,5 +184,5 @@ namespace Perfection
             if (inclusiveEnd) yield return end;
         }
     }
-    
+
 }

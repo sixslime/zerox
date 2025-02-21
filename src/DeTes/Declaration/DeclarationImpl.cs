@@ -1,14 +1,14 @@
 using MorseCode.ITask;
-using Perfection;
 using FourZeroOne.FZOSpec;
 using FourZeroOne.Token;
 using ResObj = FourZeroOne.Resolution.IResolution;
-using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
+using ResOpt = SixShaded.NotRust.IOption<FourZeroOne.Resolution.IResolution>;
 #nullable enable
 namespace DeTes.Declaration
 {
     using Analysis;
     using Realization;
+    using SixShaded.NotRust;
     using IToken = IToken<ResObj>;
     internal class ContextImpl : IDeTesContext, IContextAccessor
     {

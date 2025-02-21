@@ -1,10 +1,10 @@
 using FourZeroOne.FZOSpec;
 using MorseCode.ITask;
-using Perfection;
 using Res = FourZeroOne.Resolution.IResolution;
-using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
+using ResOpt = SixShaded.NotRust.IOption<FourZeroOne.Resolution.IResolution>;
 using FourZeroOne.Token;
 using SixLib.GFunc;
+using SixShaded.NotRust;
 #nullable enable
 namespace DeTes.Realization
 {
@@ -15,6 +15,7 @@ namespace DeTes.Realization
     using Declaration;
     using CriticalPointType = IResult<IResult<EProcessorHalt, Exception>, Analysis.IDeTesSelectionPath[]>;
     using IToken = IToken<Res>;
+    using SixShaded.NotRust;
 
     internal class DeTesRealizerImpl
     {

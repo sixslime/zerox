@@ -1,9 +1,9 @@
-using Perfection;
 #nullable enable
 namespace FourZeroOne.Macro
 {
     using Core.Resolutions.Boxed;
     using FourZeroOne.FZOSpec;
+    using SixShaded.NotRust;
     using Token;
     using Res = Resolution.IResolution;
 

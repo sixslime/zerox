@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 
 #nullable disable
-namespace Perfection
+namespace SixShaded.NotRust
 {
 
     public interface ITiple<out Ta, out Tb>

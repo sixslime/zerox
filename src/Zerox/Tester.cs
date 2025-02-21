@@ -1,13 +1,12 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using SixShaded.NotRust;
 namespace Zerox;
 using FourZeroOne.Core.Syntax;
 using DeTes;
 using MinimaFZO;
 using FourZeroOne.FZOSpec;
-using Perfection;
-using CatGlance;
 using ro = FourZeroOne.Core.Resolutions.Objects;
 using r = FourZeroOne.Core.Resolutions;
 using t = FourZeroOne.Core.Tokens;
@@ -15,7 +14,10 @@ using Rule = FourZeroOne.Rule;
 using SixLib.ICEE;
 using SixLib.GFunc;
 using DeTesAssertIntegrity;
-using GlanceResult = Perfection.IResult<Perfection.RecursiveEvalTree<DeTes.Analysis.IDeTesResult, bool>, DeTes.Analysis.EDeTesInvalidTest>;
+using GlanceResult = IResult<RecursiveEvalTree<DeTes.Analysis.IDeTesResult, bool>, DeTes.Analysis.EDeTesInvalidTest>;
+using SixShaded.CatGlance;
+using SixShaded.NotRust;
+
 public class Tester
 {
     static readonly bool DEBUG_SANITY_CHECKS_MODE = false;

@@ -1,10 +1,11 @@
 using FourZeroOne.FZOSpec;
-using Perfection;
 #nullable enable
 namespace DeTes.Realization
 {
     using Analysis;
     using Declaration;
+    using SixShaded.NotRust;
+
     public interface IDeTesFZOSupplier
     {
         public IStateFZO UnitializedState { get; } 

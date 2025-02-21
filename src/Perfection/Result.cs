@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace Perfection
+using Perfection;
+
+namespace SixShaded.NotRust
 {
     /// <summary>
     /// Representation of no value or data.
@@ -15,7 +17,7 @@ namespace Perfection
     {
         E Value { get; }
     }
-    
+
     public record Ok<T, E>(T value) : IOk<T, E>
     {
         public T Value { get; } = value;
@@ -40,7 +42,7 @@ namespace Perfection
     }
     public static class Result
     {
-        
+
         public static T ExpectOk<T, E>(this IResult<T, E> result, string message)
         {
             return result is IOk<T, E> ok ? ok.Value : throw new ExpectedValueException(message);
@@ -50,9 +52,9 @@ namespace Perfection
             return result is IErr<T, E> ok ? ok.Value : throw new ExpectedValueException(message);
         }
         public static T UnwrapOk<T, E>(this IResult<T, E> result)
-            => ExpectOk(result, "'Err' value unwrapped, expected 'Ok'.");
+            => result.ExpectOk("'Err' value unwrapped, expected 'Ok'.");
         public static E UnwrapErr<T, E>(this IResult<T, E> result)
-            => ExpectErr(result, "'Ok' value unwrapped, expected 'Err'.");
+            => result.ExpectErr("'Ok' value unwrapped, expected 'Err'.");
 
         public static bool Split<T, E>(this IResult<T, E> result, out T ok, out E err)
         {
@@ -63,9 +65,9 @@ namespace Perfection
             throw new Exception("Unsupported IResult type?");
         }
         public static bool CheckOk<T, E>(this IResult<T, E> result, out T ok)
-            => Split(result, out ok, out var _);
+            => result.Split(out ok, out var _);
         public static bool CheckErr<T, E>(this IResult<T, E> result, out E err)
-            => !Split(result, out var _, out err);
+            => !result.Split(out var _, out err);
         public static IResult<T, E> AsOk<T, E>(this T value, Hint<E> _) => new Ok<T, E>(value);
         public static IResult<T, E> AsErr<T, E>(this E value, Hint<T> _) => new Err<T, E>(value);
         public static IResult<T, Exception> CatchException<T>(this Func<T> tryExpr)

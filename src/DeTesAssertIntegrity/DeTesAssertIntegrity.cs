@@ -1,12 +1,12 @@
 using MorseCode.ITask;
-using Perfection;
 using FourZeroOne.FZOSpec;
 using FourZeroOne.Token;
 using Res = FourZeroOne.Resolution.IResolution;
-using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
+using ResOpt = SixShaded.NotRust.IOption<FourZeroOne.Resolution.IResolution>;
 using DeTes.Declaration;
 using DeTes.Analysis;
 using DeTes;
+using SixShaded.NotRust;
 #nullable enable
 // does not check full coverage inside domains, but partial coverage may be intended in domains, so its tough.
 namespace DeTesAssertIntegrity

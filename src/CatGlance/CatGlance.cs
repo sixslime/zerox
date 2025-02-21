@@ -4,15 +4,15 @@ using DeTes.Declaration;
 using DeTes.Analysis;
 using DeTes.Realization;
 using DeTes;
-using Perfection;
 using FourZeroOne.FZOSpec;
 using SixLib.ICEE;
 using SixLib.GFunc;
 using SixLib.ICEE.FZO;
 using System.Text;
+using SixShaded.NotRust;
 
 // quite a mess, but being clean is not in CatGlance's objectives
-namespace CatGlance
+namespace SixShaded.CatGlance
 {
     using CCol = ConsoleColor;
     using C = Console;
@@ -38,7 +38,7 @@ namespace CatGlance
         public required IDeTesFZOSupplier Supplier { get; init; }
 
         private IOption<IResult<RecursiveEvalTree<IDeTesResult, bool>, EDeTesInvalidTest>[]> _testEvals = new None<IResult<RecursiveEvalTree<IDeTesResult, bool>, EDeTesInvalidTest>[]>();
-        
+
         public async Task<IResult<RecursiveEvalTree<IDeTesResult, bool>, EDeTesInvalidTest>[]> Glance()
         {
             await EvalTests();
@@ -46,7 +46,7 @@ namespace CatGlance
             WriteLn($"==[ GLANCER '{Name}' ]==", CCol.Yellow);
             foreach (var (i, (test, result)) in Tests.ZipShort(results).Enumerate())
             {
-                Write($"({i+1}) ", CCol.Blue);
+                Write($"({i + 1}) ", CCol.Blue);
                 Write($"\"{test.Name}\" ", CCol.Blue);
                 C.WriteLine();
                 if (result.Split(out var rootTree, out var invalid))
@@ -71,12 +71,14 @@ namespace CatGlance
                         Write("empty domain: ");
                         if (v.Description is not null) Write($"\"{v.Description}\" ", CCol.DarkCyan);
                         Write(FormatLinkedToken(v.NearToken), nearTokenColor);
-                    }break;
+                    }
+                    break;
                 case EDeTesInvalidTest.NoSelectionDomainDefined v:
                     {
                         Write("no domain defined for: ");
                         Write(v.SelectionToken.ToString(), CCol.DarkYellow);
-                    }break;
+                    }
+                    break;
                 case EDeTesInvalidTest.InvalidDomainSelection v:
                     {
                         Write("invalid domain: ");
@@ -111,13 +113,15 @@ namespace CatGlance
                         Write("domain referenced outside of scope: ");
                         if (v.Description is not null) Write($"\"{v.Description}\" ", CCol.DarkCyan);
                         Write(FormatLinkedToken(v.NearToken), nearTokenColor);
-                    }break;
+                    }
+                    break;
                 case EDeTesInvalidTest.ReferenceUsedBeforeEvaluated v:
                     {
                         Write("referenced used before valid: ");
                         if (v.Description is not null) Write($"\"{v.Description}\" ", CCol.DarkCyan);
                         Write(FormatLinkedToken(v.NearToken), nearTokenColor);
-                    }break;
+                    }
+                    break;
             }
             C.WriteLine();
             WriteLn("------------------", CCol.Magenta);
@@ -236,7 +240,7 @@ namespace CatGlance
             var blankColor = CCol.DarkGray;
             var failedColor = CCol.DarkYellow;
             var timerColor = CCol.DarkGray;
-            foreach(var (total, failed) in Iter.Over<IEnumerable<IDeTesAssertionDataUntyped>>(tokenAsserts, resolutionAsserts, memoryAsserts).Map(x => (x.Count(), x.Where(x => !AssertPassed(x)).Count())))
+            foreach (var (total, failed) in Iter.Over<IEnumerable<IDeTesAssertionDataUntyped>>(tokenAsserts, resolutionAsserts, memoryAsserts).Map(x => (x.Count(), x.Where(x => !AssertPassed(x)).Count())))
             {
                 Write(" | ", blankColor);
                 if (total == 0)

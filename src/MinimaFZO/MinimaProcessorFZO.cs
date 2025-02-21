@@ -1,14 +1,14 @@
 using MorseCode.ITask;
-using Perfection;
 using FourZeroOne.FZOSpec;
 using FourZeroOne.Resolution;
 using FourZeroOne.Resolution.Unsafe;
 using FourZeroOne.Rule.Unsafe;
 using FourZeroOne.Rule;
 using SixLib.GFunc;
-using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
+using ResOpt = SixShaded.NotRust.IOption<FourZeroOne.Resolution.IResolution>;
+using SixShaded.NotRust;
 #nullable enable
-namespace MinimaFZO
+namespace SixShaded.MinimaFZO
 {
     using any_rule = IRule<IResolution>;
     public class MinimaProcessorFZO() : IProcessorFZO
@@ -35,7 +35,7 @@ namespace MinimaFZO
             if (state.TokenMutationStack.GetAt(0).Check(out var processingToken))
             {
                 var token = processingToken.Result;
-                
+
                 if (state.OperationStack.GetAt(0).Check(out var t) && t.MemoryStack.GetAt(0).Check(out var topMem))
                 {
                     // DEBUG
@@ -134,5 +134,5 @@ namespace MinimaFZO
             public required IInputFZO Input { get; init; }
         }
     }
-  
+
 }

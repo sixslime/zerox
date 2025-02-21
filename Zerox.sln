@@ -5,11 +5,11 @@ VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FourZeroOne", "src\FourZeroOne\FourZeroOne.csproj", "{4A11C298-C12D-44C7-B10C-EF4C4965F1AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perfection", "src\Perfection\Perfection.csproj", "{2DFEC99E-D378-4DFD-A637-C7AAA3058CE6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.NotRust", "src\Perfection\SixShaded.NotRust.csproj", "{2DFEC99E-D378-4DFD-A637-C7AAA3058CE6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeTes", "src\DeTes\DeTes.csproj", "{6F3DF00B-58C9-4FBD-B56C-DB51D0659677}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatGlance", "src\CatGlance\CatGlance.csproj", "{63498890-B975-413B-806C-19C954549FFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.CatGlance", "src\CatGlance\SixShaded.CatGlance.csproj", "{63498890-B975-413B-806C-19C954549FFA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeTesAssertIntegrity", "src\DeTesAssertIntegrity\DeTesAssertIntegrity.csproj", "{2050F1B8-9A3F-414A-B3BC-71CE7EA8E487}"
 EndProject
@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixLib.ICEE", "lib\SixLib.I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixLib.ICEE.FZO", "lib\SixLib.ICEE.FZO\SixLib.ICEE.FZO.csproj", "{F8107D0C-9A81-436E-BE0D-EDD19746E31C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixLib.ControlledFlows", "lib\SixLib.ControlledFlows\SixLib.ControlledFlows.csproj", "{698FE3FC-505A-4841-A78C-0686803422FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.SixLib.ControlledFlows", "lib\SixLib.ControlledFlows\SixShaded.SixLib.ControlledFlows.csproj", "{698FE3FC-505A-4841-A78C-0686803422FE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SixLib", "SixLib", "{D954A262-C604-4CF5-A3CF-725B55486517}"
 EndProject
@@ -37,7 +37,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "[plugins]", "[plugins]", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FourZeroOne.Plugins.Axiom", "src\FourZeroOne.Plugins.Axiom\FourZeroOne.Plugins.Axiom.csproj", "{451AADFA-AE29-4671-AF7D-46AACB782EEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimaFZO", "src\MinimaFZO\MinimaFZO.csproj", "{501D61DC-F544-4B10-9264-39413E4596D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.MinimaFZO", "src\MinimaFZO\SixShaded.MinimaFZO.csproj", "{501D61DC-F544-4B10-9264-39413E4596D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.SixLib.PStructures", "lib\SixShaded.SixLib.PStructures\SixShaded.SixLib.PStructures.csproj", "{83A21B22-E350-438C-A775-19FA83348604}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +95,10 @@ Global
 		{501D61DC-F544-4B10-9264-39413E4596D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{501D61DC-F544-4B10-9264-39413E4596D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{501D61DC-F544-4B10-9264-39413E4596D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83A21B22-E350-438C-A775-19FA83348604}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83A21B22-E350-438C-A775-19FA83348604}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83A21B22-E350-438C-A775-19FA83348604}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83A21B22-E350-438C-A775-19FA83348604}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,6 +117,7 @@ Global
 		{7EF4BA3A-6F38-418A-A7AF-0BC612C8E5A9} = {E465DB55-FABB-4833-A0AF-51B4181EAEB6}
 		{451AADFA-AE29-4671-AF7D-46AACB782EEE} = {7EF4BA3A-6F38-418A-A7AF-0BC612C8E5A9}
 		{501D61DC-F544-4B10-9264-39413E4596D2} = {6E053241-4627-4E92-9A95-A356AF73AB06}
+		{83A21B22-E350-438C-A775-19FA83348604} = {D954A262-C604-4CF5-A3CF-725B55486517}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C6A2B243-BFE2-4013-999A-0063037A133B}

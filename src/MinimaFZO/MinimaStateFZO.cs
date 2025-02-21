@@ -1,13 +1,13 @@
 using MorseCode.ITask;
-using Perfection;
 using FourZeroOne.FZOSpec;
 using FourZeroOne.Resolution;
-using ResOpt = Perfection.IOption<FourZeroOne.Resolution.IResolution>;
+using ResOpt = SixShaded.NotRust.IOption<FourZeroOne.Resolution.IResolution>;
 using System.Diagnostics;
 using FourZeroOne.Token;
 using SixLib.GFunc;
+using SixShaded.NotRust;
 #nullable enable
-namespace MinimaFZO
+namespace SixShaded.MinimaFZO
 {
     using any_token = IToken<IResolution>;
     public record MinimaStateFZO : IStateFZO
@@ -38,7 +38,7 @@ namespace MinimaFZO
                     MemCount = 1,
                     MemoryStack = new PStack<IMemoryFZO>().WithEntries(source.InitialMemory),
                     ArgResolutionStack = new()
-                    
+
                 })
             };
         }

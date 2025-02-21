@@ -1,5 +1,5 @@
 using MorseCode.ITask;
-using Perfection;
+using SixShaded.NotRust;
 #nullable enable
 namespace FourZeroOne.FZOSpec
 {
@@ -13,6 +13,8 @@ namespace FourZeroOne.FZOSpec
     using Resolution.Unsafe;
     using Rule;
     using System.Diagnostics.CodeAnalysis;
+    using SixShaded.NotRust;
+
     public interface IProcessorFZO
     {
         public ITask<IResult<EProcessorStep, EProcessorHalt>> GetNextStep(IStateFZO state, IInputFZO input);

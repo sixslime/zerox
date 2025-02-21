@@ -1,5 +1,5 @@
 using MorseCode.ITask;
-using Perfection;
+using SixShaded.NotRust;
 
 #nullable enable
 namespace SixLib.GFunc
