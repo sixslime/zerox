@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\FourZeroOne\FourZeroOne.csproj" />
-    <ProjectReference Include="..\..\src\Perfection\Perfection.csproj" />
+    <ProjectReference Include="..\..\src\Perfection\SixShaded.NotRust.csproj" />
   </ItemGroup>
 
 </Project>
