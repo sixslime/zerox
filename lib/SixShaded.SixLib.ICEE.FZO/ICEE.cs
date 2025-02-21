@@ -1,6 +1,6 @@
 ﻿
 using System.Text;
-using SixShaded.NotRust;
+using SixShaded.SixLib.GFunc;
 namespace SixShaded.SixLib.ICEE.FZO
 {
     public static class ICEEs

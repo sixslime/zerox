@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\SixLib.GFunc\SixShaded.SixLib.GFunc.csproj" />
-    <ProjectReference Include="..\Perfection\SixShaded.NotRust.csproj" />
+    <ProjectReference Include="..\..\lib\SixShaded.SixLib.GFunc\SixShaded.SixLib.GFunc.csproj" />
+    <ProjectReference Include="..\SixShaded.NotRust\SixShaded.NotRust.csproj" />
   </ItemGroup>
 
 </Project>

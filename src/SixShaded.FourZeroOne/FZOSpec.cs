@@ -1,8 +1,9 @@
 using MorseCode.ITask;
 using SixShaded.FourZeroOne;
 using SixShaded.NotRust;
+using SixShaded.SixLib.GFunc;
 #nullable enable
-namespace FourZeroOne.FZOSpec
+namespace SixShaded.FourZeroOne.FZOSpec
 {
     using Token;
     using Res = Resolution.IResolution;

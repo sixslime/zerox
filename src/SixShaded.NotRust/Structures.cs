@@ -1,8 +1,9 @@
+
+global using SixShaded.NotRust;
 using System.Collections;
 
-
 #nullable enable
-namespace SixShaded.SixLib.PStructures
+namespace SixShaded.NotRust
 {
     // DEV: so what if we made the default IPStructures read-only (out T),
     // then made a "handle" to mutate it, with that handle being 'in T'.
@@ -52,11 +53,11 @@ namespace SixShaded.SixLib.PStructures
         public static Self WithEntries<Self, T>(this Self s, IEnumerable<T> values) where Self : IEntryAddable<T>
         { return (Self)s._WithEntries(values); }
         public static Self WithEntries<Self, T>(this Self s, params T[] values) where Self : IEntryAddable<T>
-            => s.WithEntries(values.IEnumerable());
+            => s.WithEntries((IEnumerable<T>)values);
         public static Self WithoutEntries<Self, T>(this Self s, IEnumerable<T> values) where Self : IEntryRemovable<T>
         { return (Self)s._WithoutEntries(values); }
         public static Self WithoutEntries<Self, T>(this Self s, params T[] values) where Self : IEntryRemovable<T>
-            => s.WithoutEntries(values.IEnumerable());
+            => s.WithoutEntries((IEnumerable<T>)values);
 
         //CHECK: type restrictions might be silly here
         public static Self MergedWith<Self, T>(this Self s, T other) where Self : IMergable<T>, T where T : IMergable<T>
@@ -68,7 +69,7 @@ namespace SixShaded.SixLib.PStructures
         public static Self WithInsertionAt<Self, T>(this Self s, int index, IEnumerable<T> values) where Self : IPSequence<T>
         { return (Self)s._WithInsertionAt(index, values); }
         public static Self WithInsertionAt<Self, T>(this Self s, int index, params T[] values) where Self : IPSequence<T>
-            => s.WithInsertionAt(index, values.IEnumerable());
+            => s.WithInsertionAt(index, (IEnumerable<T>)values);
     }
     public static class StructureExtensions
     {

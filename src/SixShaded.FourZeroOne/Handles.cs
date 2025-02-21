@@ -9,7 +9,7 @@ using SixShaded.NotRust;
 using SixShaded.FourZeroOne;
 
 #nullable enable
-namespace SixShaded.FourZeroOne
+namespace SixShaded.FourZeroOne.
 {
     using Res = IResolution;
     using Addr = IMemoryAddress<IResolution>;

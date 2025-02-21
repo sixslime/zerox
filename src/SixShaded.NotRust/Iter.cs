@@ -1,8 +1,9 @@
+global using SixShaded.NotRust;
 using System;
 
 // nothing in this namespace is validated; it assumes you use it perfectly.
 #nullable enable
-namespace SixShaded.SixLib.GFunc
+namespace SixShaded.NotRust
 {
     public static class Iter
     {

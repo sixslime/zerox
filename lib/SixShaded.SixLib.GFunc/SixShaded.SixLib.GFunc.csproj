@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Perfection\SixShaded.NotRust.csproj" />
+    <ProjectReference Include="..\..\src\SixShaded.NotRust\SixShaded.NotRust.csproj" />
   </ItemGroup>
 
 </Project>
