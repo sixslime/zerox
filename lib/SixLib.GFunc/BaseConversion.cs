@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SixLib
+﻿namespace SixLib.GFunc
 {
-    public static class BaseConversion
+    public static class BaseConversionExt
     {
         public const string HEX = "0123456789abcdef";
         public const string DECIMAL = "0123456789";

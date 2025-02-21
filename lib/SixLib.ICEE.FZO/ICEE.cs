@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
 using System.Text;
-using System.Threading.Tasks;
 using Perfection;
-namespace SixLib
+namespace SixLib.ICEE.FZO
 {
-    public static class LookNicePlsExt
+    public static class ICEEs
     {
-        public static string LookNicePls<T>(this IEnumerable<T> array)
-        {
-            return $"[{string.Join(",", array)}]";
-        }
-        public static string LookNicePls(this FourZeroOne.FZOSpec.IMemoryFZO memory)
+        public static string ICEE(this FourZeroOne.FZOSpec.IMemoryFZO memory)
         {
             return new StringBuilder()
                 .AppendLine($"[FZO Memory] ({memory.GetType().Name})")
@@ -30,7 +23,7 @@ namespace SixLib
                 .AppendLine("-----")
                 .ToString();
         }
-        public static string LookNicePls(this FourZeroOne.FZOSpec.IStateFZO state)
+        public static string ICEE(this FourZeroOne.FZOSpec.IStateFZO state)
         {
             return new StringBuilder()
                 .AppendLine($"[FZO State] ({state.GetType().Name})")

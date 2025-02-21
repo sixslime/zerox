@@ -6,9 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DeTes\DeTes.csproj" />
-    <ProjectReference Include="..\Perfection\Perfection.csproj" />
-  </ItemGroup>
-
 </Project>

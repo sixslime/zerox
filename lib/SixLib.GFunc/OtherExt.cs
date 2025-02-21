@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
 using MorseCode.ITask;
+using Perfection;
 
 #nullable enable
-namespace Perfection
+namespace SixLib.GFunc
 {
     public static class Mut
     {

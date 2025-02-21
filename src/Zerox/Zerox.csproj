@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\SixLib\SixLib.csproj" />
     <ProjectReference Include="..\CatGlance\CatGlance.csproj" />
     <ProjectReference Include="..\DeTesAssertIntegrity\DeTesAssertIntegrity.csproj" />
     <ProjectReference Include="..\DeTes\DeTes.csproj" />

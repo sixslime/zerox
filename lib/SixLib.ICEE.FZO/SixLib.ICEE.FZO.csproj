@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DeTes\DeTes.csproj" />
-    <ProjectReference Include="..\Perfection\Perfection.csproj" />
+    <ProjectReference Include="..\..\src\FourZeroOne\FourZeroOne.csproj" />
+    <ProjectReference Include="..\..\src\Perfection\Perfection.csproj" />
   </ItemGroup>
 
 </Project>
