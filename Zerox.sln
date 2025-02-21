@@ -17,11 +17,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FourZeroOne", "FourZeroOne"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zerox", "src\Zerox\Zerox.csproj", "{D2FD8500-7819-4546-9CF2-C4AF66306EA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixLib.GFunc", "lib\SixLib.GFunc\SixLib.GFunc.csproj", "{71ECEF61-7E35-4260-B557-32A498AA6FB0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.SixLib.GFunc", "lib\SixLib.GFunc\SixShaded.SixLib.GFunc.csproj", "{71ECEF61-7E35-4260-B557-32A498AA6FB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixLib.ICEE", "lib\SixLib.ICEE\SixLib.ICEE.csproj", "{9F7A1E8C-FFC7-4B0E-B807-3A317FDEF286}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.SixLib.ICEE", "lib\SixLib.ICEE\SixShaded.SixLib.ICEE.csproj", "{9F7A1E8C-FFC7-4B0E-B807-3A317FDEF286}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixLib.ICEE.FZO", "lib\SixLib.ICEE.FZO\SixLib.ICEE.FZO.csproj", "{F8107D0C-9A81-436E-BE0D-EDD19746E31C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.SixLib.ICEE.FZO", "lib\SixLib.ICEE.FZO\SixShaded.SixLib.ICEE.FZO.csproj", "{F8107D0C-9A81-436E-BE0D-EDD19746E31C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.SixLib.ControlledFlows", "lib\SixLib.ControlledFlows\SixShaded.SixLib.ControlledFlows.csproj", "{698FE3FC-505A-4841-A78C-0686803422FE}"
 EndProject

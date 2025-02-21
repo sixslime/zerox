@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\SixLib.GFunc\SixLib.GFunc.csproj" />
-    <ProjectReference Include="..\..\lib\SixLib.ICEE.FZO\SixLib.ICEE.FZO.csproj" />
-    <ProjectReference Include="..\..\lib\SixLib.ICEE\SixLib.ICEE.csproj" />
+    <ProjectReference Include="..\..\lib\SixLib.GFunc\SixShaded.SixLib.GFunc.csproj" />
+    <ProjectReference Include="..\..\lib\SixLib.ICEE.FZO\SixShaded.SixLib.ICEE.FZO.csproj" />
+    <ProjectReference Include="..\..\lib\SixLib.ICEE\SixShaded.SixLib.ICEE.csproj" />
     <ProjectReference Include="..\DeTes\DeTes.csproj" />
     <ProjectReference Include="..\Perfection\SixShaded.NotRust.csproj" />
   </ItemGroup>
