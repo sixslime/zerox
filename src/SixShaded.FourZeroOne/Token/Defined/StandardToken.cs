@@ -8,7 +8,7 @@ namespace SixShaded.FourZeroOne.Token.Defined
         {
             return new Ok<ITask<IOption<R>>, FZOSpec.EStateImplemented>(StandardResolve(runtime, args));
         }
-        public StandardToken(params any_token[] args) : base(args) { }
-        public StandardToken(IEnumerable<any_token> args) : base(args) { }
+        public StandardToken(params Tok[] args) : base(args) { }
+        public StandardToken(IEnumerable<Tok> args) : base(args) { }
     }
 }

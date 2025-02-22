@@ -2,8 +2,8 @@
 namespace SixShaded.FourZeroOne.Rule
 {
     public interface IRuleMatcher<out TRestriction>
-        where TRestriction : Token
+        where TRestriction : Tok
     {
-        public bool MatchesToken(Token token);
+        public bool MatchesToken(Tok token);
     }
 }

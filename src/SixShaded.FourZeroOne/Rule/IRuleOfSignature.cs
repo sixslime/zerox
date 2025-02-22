@@ -1,6 +1,9 @@
 ﻿#nullable enable
 namespace SixShaded.FourZeroOne.Rule
 {
+    using Core.Resolutions.Boxed;
+    using Rule.Defined.Proxies;
+    using Unsafe;
     public interface IRuleOfValue<RVal> : IRule<RVal>
         where RVal : class, Res
     {

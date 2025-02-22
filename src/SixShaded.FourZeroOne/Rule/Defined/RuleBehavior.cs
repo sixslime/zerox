@@ -1,12 +1,13 @@
 ﻿#nullable enable
 namespace SixShaded.FourZeroOne.Rule.Defined
 {
+    using Unsafe;
     public abstract record RuleBehavior<R> : IRule<R>
         where R : class, Res
     {
         public RuleID ID { get; } = RuleIDGenerator.Next();
         protected abstract IRuleMatcher<IToken<R>> InternalMatcher { get; }
-        protected abstract IBoxedMetaFunction<R> InternalDefinition { get; }
+        protected abstract Resolution.Unsafe.IBoxedMetaFunction<R> InternalDefinition { get; }
 
         /// <summary>
         /// Kinda stupid that this has to exist, but the alternative is dynamic instantiation via reflection in TryApply(). <br></br>
@@ -19,22 +20,22 @@ namespace SixShaded.FourZeroOne.Rule.Defined
         /// <typeparam name="RArg"></typeparam>
         /// <param name="token"></param>
         /// <returns></returns>
-        protected ArgProxy<RArg> CreateArgProxy<RArg>(Token token)
+        protected Proxies.ArgProxy<RArg> CreateArgProxy<RArg>(Tok token)
             where RArg : class, Res
         {
             return new() { FromRule = ID, Token = token.IsA<IToken<RArg>>() };
         }
         IRuleMatcher<IToken<R>> IRule<R>.MatcherUnsafe => InternalMatcher;
-        IBoxedMetaFunction<R> IRule<R>.DefinitionUnsafe => InternalDefinition;
+        Resolution.Unsafe.IBoxedMetaFunction<R> IRule<R>.DefinitionUnsafe => InternalDefinition;
 
-        public IOption<IRuledToken<R>> TryApply(Token token)
+        public IOption<IRuledToken<R>> TryApply(Tok token)
         {
             return (token is IToken<R> typed && InternalMatcher.MatchesToken(token))
                 ? new RuledToken<R>
                 {
                     AppliedRule = this,
                     Proxies =
-                        new OriginalProxy<R>() { Token = typed, FromRule = ID }.IsA<IProxy<Res>>().Yield()
+                        new Proxies.OriginalProxy<R>() { Token = typed, FromRule = ID }.IsA<IProxy<Res>>().Yield()
                         .Concat(ConstructArgProxies(typed))
                         .ToArray()
                 }.AsSome()

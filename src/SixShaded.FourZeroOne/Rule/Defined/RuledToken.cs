@@ -1,17 +1,17 @@
 ﻿#nullable enable
 namespace SixShaded.FourZeroOne.Rule.Defined
 {
-    public record RuledToken<R> : RuntimeHandledValue<R>, IRuledToken<R>
+    public record RuledToken<R> : Token.Defined.RuntimeHandledValue<R>, Unsafe.IRuledToken<R>
         where R : class, Res
     {
-        public required IRule<R> AppliedRule { get; init; }
+        public required Unsafe.IRule<R> AppliedRule { get; init; }
 
         // [0] is always self/original proxy, rest are arg proxies in-order.
         public required IProxy<Res>[] Proxies { get; init; }
-        protected override EStateImplemented MakeData()
+        protected override FZOSpec.EStateImplemented MakeData()
         {
             var definition = AppliedRule.DefinitionUnsafe;
-            return new EStateImplemented.MetaExecute()
+            return new FZOSpec.EStateImplemented.MetaExecute()
             {
                 Token = definition.Token,
                 ObjectWrites =

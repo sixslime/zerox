@@ -7,3 +7,5 @@ global using SixShaded.FourZeroOne.Rule;
 global using SixShaded.FourZeroOne.Macro;
 global using SixShaded.FourZeroOne.Handles;
 global using Res = SixShaded.FourZeroOne.Resolution.IResolution;
+global using Tok = SixShaded.FourZeroOne.Token.IToken<SixShaded.FourZeroOne.Resolution.IResolution>;
+global using MorseCode.ITask;
