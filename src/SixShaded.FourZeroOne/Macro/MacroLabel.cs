@@ -1,11 +1,6 @@
 #nullable enable
 namespace SixShaded.FourZeroOne.Macro
 {
-    using Core.Resolutions.Boxed;
-    using FourZeroOne.FZOSpec;
-    using SixShaded.NotRust;
-    using Token;
-    using Res = Resolution.Res;
     public sealed record MacroLabel
     {
         private string _package;

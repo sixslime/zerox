@@ -11,21 +11,11 @@ using SixShaded.FourZeroOne.Resolution;
 #nullable enable
 namespace SixShaded.FourZeroOne.Handles
 {
-    using Res = Res;
-    using Addr = IMemoryAddress<Res>;
-    using Rule = IRule<Res>;
     public interface ITokenContext
     {
         public FZOSpec.IProcessorFZO.ITokenContext InternalValue { get; }
         public IMemory CurrentMemory { get; }
         public IInput Input { get; }
     }
-    public class TokenContextHandle(FZOSpec.IProcessorFZO.ITokenContext implementation) : ITokenContext
-    {
-        private readonly FZOSpec.IProcessorFZO.ITokenContext _implementation = implementation;
-        IMemory ITokenContext.CurrentMemory => _implementation.CurrentMemory.ToHandle();
-        IInput ITokenContext.Input => _implementation.Input.ToHandle();
-
-        IProcessorFZO.ITokenContext ITokenContext.InternalValue => _implementation;
-    }
+    
 }
