@@ -5,16 +5,9 @@ namespace SixShaded.FourZeroOne.Core.Syntax
     using r = Resolutions;
     using t = Tokens;
     using ro = Resolutions.Objects;
-    using Token;
-    using Resolution;
-    using Macro;
-    using Res = Resolution.Res;
-    using FourZeroOne.Rule.Matchers;
-    using FourZeroOne.Rule.Proxies;
-    using FourZeroOne.Rule;
-    using SixShaded.NotRust;
-    using SixShaded.FourZeroOne;
-    using SixShaded.FourZeroOne.Core;
+    using Resolution.Defined;
+    using Rule.Defined.Proxies;
+    using Rule.Defined.Matchers;
     namespace Structure
     {
         namespace Token
