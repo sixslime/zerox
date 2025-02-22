@@ -1,9 +1,7 @@
 ﻿#nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Core.Resolutions
 {
-    public sealed record Multi<R> : Construct, IMulti<R> where R : class, Res
+    public sealed record Multi<R> : Resolution.Defined.Construct, IMulti<R> where R : class, Res
     {
         public IEnumerable<R> Elements => Values.Elements;
         public int Count => Values.Count;

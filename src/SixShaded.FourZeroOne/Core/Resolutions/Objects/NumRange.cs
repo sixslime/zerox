@@ -1,9 +1,7 @@
 ﻿#nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Core.Resolutions.Objects
 {
-    public sealed record NumRange : NoOp, IMulti<Number>
+    public sealed record NumRange : Resolution.Defined.NoOp, IMulti<Number>
     {
         public required Number Start { get; init; }
         public required Number End { get; init; }

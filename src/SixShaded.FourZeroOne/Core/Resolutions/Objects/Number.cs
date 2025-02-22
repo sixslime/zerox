@@ -1,9 +1,7 @@
 ﻿#nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Core.Resolutions.Objects
 {
-    public sealed record Number : NoOp
+    public sealed record Number : Resolution.Defined.NoOp
     {
         public required int Value { get; init; }
         public static implicit operator Number(int value) => new() { Value = value };

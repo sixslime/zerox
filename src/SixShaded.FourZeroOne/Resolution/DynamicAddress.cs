@@ -1,5 +1,5 @@
 ﻿#nullable enable
-namespace SixShaded.FourZeroOne.Resolution.Defined
+namespace SixShaded.FourZeroOne.Resolution
 {
     public sealed record DynamicAddress<R> : IMemoryAddress<R> where R : class, Res
     {

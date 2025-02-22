@@ -1,9 +1,8 @@
 ﻿#nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Core.Resolutions.Boxed
 {
-    public sealed record MetaFunction<R> : NoOp where R : class, Res
+    using Resolution.Unsafe;
+    public sealed record MetaFunction<R> : Resolution.Defined.NoOp where R : class, Res
     {
         public required DynamicAddress<MetaFunction<R>> SelfIdentifier { get; init; }
         public required IToken<R> Token { get; init; }
@@ -19,7 +18,7 @@ namespace SixShaded.FourZeroOne.Core.Resolutions.Boxed
             };
         }
     }
-    public sealed record MetaFunction<RArg1, ROut> : NoOp, IBoxedMetaFunction<ROut>
+    public sealed record MetaFunction<RArg1, ROut> : Resolution.Defined.NoOp, IBoxedMetaFunction<ROut>
         where RArg1 : class, Res
         where ROut : class, Res
     {
@@ -40,7 +39,7 @@ namespace SixShaded.FourZeroOne.Core.Resolutions.Boxed
             };
         }
     }
-    public sealed record MetaFunction<RArg1, RArg2, ROut> : NoOp, IBoxedMetaFunction<ROut>
+    public sealed record MetaFunction<RArg1, RArg2, ROut> : Resolution.Defined.NoOp, IBoxedMetaFunction<ROut>
         where RArg1 : class, Res
         where RArg2 : class, Res
         where ROut : class, Res
