@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens.Data
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens.Data
 {
     public sealed record Insert<R> : PureFunction<IMemoryObject<R>, R, r.Instructions.Assign<R>>
         where R : class, ResObj

@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens.Range
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens.Range
 {
     public sealed record Create : PureFunction<ro.Number, ro.Number, ro.NumRange>
     {

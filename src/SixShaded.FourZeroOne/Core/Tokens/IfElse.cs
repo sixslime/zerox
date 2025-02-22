@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens
 {
     public record IfElse<R> : Function<ro.Bool, r.Boxed.MetaFunction<R>, r.Boxed.MetaFunction<R>, r.Boxed.MetaFunction<R>> where R : class, ResObj
     {

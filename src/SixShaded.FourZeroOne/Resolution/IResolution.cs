@@ -1,5 +1,7 @@
 #nullable enable
-namespace FourZeroOne.Resolution
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Resolution
 {
     using FourZeroOne.FZOSpec;
     using Handles;
@@ -16,5 +18,5 @@ namespace FourZeroOne.Resolution
     {
         public IEnumerable<IInstruction> Instructions { get; }
     }
-    
+
 }

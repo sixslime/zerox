@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens.Data
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens.Data
 {
     public sealed record Get<R> : Function<IMemoryObject<R>, R>
         where R : class, ResObj

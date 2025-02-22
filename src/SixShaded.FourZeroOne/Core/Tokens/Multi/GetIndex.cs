@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens.Multi
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens.Multi
 {
     public sealed record GetIndex<R> : Function<IMulti<R>, ro.Number, R> where R : class, ResObj
     {

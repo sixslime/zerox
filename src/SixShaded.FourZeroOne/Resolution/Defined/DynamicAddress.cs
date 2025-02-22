@@ -1,9 +1,12 @@
 ﻿#nullable enable
-namespace FourZeroOne.Resolution
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Resolution.Defined
 {
     using FourZeroOne.FZOSpec;
     using Handles;
     using SixShaded.FourZeroOne;
+    using SixShaded.FourZeroOne.Resolution;
     using SixShaded.NotRust;
     using SixShaded.SixLib.GFunc;
 

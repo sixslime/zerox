@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens.IO.Select
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens.IO.Select
 {
     public sealed record One<R> : Function<IMulti<R>, R> where R : class, ResObj
     {

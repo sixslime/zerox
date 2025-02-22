@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens.Number
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens.Number
 {
     public sealed record Multiply : PureFunction<ro.Number, ro.Number, ro.Number>
     {

@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens
 {
     public sealed record Exists : Function<ResObj, ro.Bool>
     {

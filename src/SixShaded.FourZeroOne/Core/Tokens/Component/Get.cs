@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens.Component
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens.Component
 {
     public sealed record Get<C, R> : StandardToken<R>, IHasAttachedComponentIdentifier<C, R> where R : class, ResObj where C : ICompositionType
     {

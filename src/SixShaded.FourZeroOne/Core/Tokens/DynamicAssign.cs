@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens
 {
     public sealed record DynamicAssign<R> : StandardToken<r.Instructions.Assign<R>> where R : class, ResObj
     {

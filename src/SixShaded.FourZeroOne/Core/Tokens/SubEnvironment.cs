@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens
 {
     public record SubEnvironment<ROut> : PureFunction<ResObj, ROut, ROut>
         where ROut : class, ResObj

@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens.Multi
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens.Multi
 {
     public sealed record Contains<R> : Function<IMulti<R>, R, ro.Bool> where R : class, ResObj
     {

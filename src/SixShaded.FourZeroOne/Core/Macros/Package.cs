@@ -1,4 +1,4 @@
-﻿namespace SixShaded.FourZeroOne.Core
+﻿namespace SixShaded.FourZeroOne.Core.Macros
 {
     internal static class Package
     {

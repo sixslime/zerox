@@ -1,5 +1,5 @@
 ﻿#nullable enable
-namespace FourZeroOne.Resolution.Unsafe
+namespace SixShaded.FourZeroOne.Resolution.Unsafe
 {
     using FourZeroOne.FZOSpec;
     using Handles;

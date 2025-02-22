@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Resolutions
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Resolutions
 {
     public sealed record Multi<R> : Construct, IMulti<R> where R : class, ResObj
     {

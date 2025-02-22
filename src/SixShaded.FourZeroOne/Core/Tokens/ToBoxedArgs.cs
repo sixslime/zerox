@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens
 {
     public record ToBoxedArgs<R1> : Function<R1, r.Boxed.MetaArgs<R1>>
         where R1 : class, ResObj

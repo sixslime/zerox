@@ -1,5 +1,7 @@
 #nullable enable
-namespace FourZeroOne.Resolution
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Resolution
 {
     using FourZeroOne.FZOSpec;
     using Handles;
@@ -10,7 +12,7 @@ namespace FourZeroOne.Resolution
     public interface IInstruction : IResolution
     {
         public IMemory TransformMemory(IMemory context);
-        public FZOSpec.IMemoryFZO TransformMemoryUnsafe(FZOSpec.IMemoryFZO memory);
+        public IMemoryFZO TransformMemoryUnsafe(IMemoryFZO memory);
     }
-    
+
 }

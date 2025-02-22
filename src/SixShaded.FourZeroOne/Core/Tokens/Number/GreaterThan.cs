@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens.Number.Compare
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens.Number
 {
     public sealed record GreaterThan : PureFunction<ro.Number, ro.Number, ro.Bool>
     {

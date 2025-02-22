@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens.IO.Select
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens.IO.Select
 {
     public sealed record Multiple<R> : Function<IMulti<R>, ro.Number, r.Multi<R>> where R : class, ResObj
     {
@@ -7,7 +9,7 @@ namespace FourZeroOne.Core.Tokens.IO.Select
 
         protected override async ITask<IOption<r.Multi<R>>> Evaluate(ITokenContext runtime, IOption<IMulti<R>> fromOpt, IOption<ro.Number> countOpt)
         {
-            return (fromOpt.Check(out var from) && countOpt.Check(out var count))
+            return fromOpt.Check(out var from) && countOpt.Check(out var count)
                 ? new r.Multi<R>()
                 {
                     Values =

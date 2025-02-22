@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens.Multi
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens.Multi
 {
     public sealed record Count : Function<IMulti<ResObj>, ro.Number>
     {

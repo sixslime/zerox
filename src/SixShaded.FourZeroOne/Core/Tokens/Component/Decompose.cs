@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Tokens.Component
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Tokens.Component
 {
     public sealed record Decompose<D, R> : RuntimeHandledFunction<ICompositionOf<D>, R> where D : IDecomposableType<D, R>, new() where R : class, ResObj
     {

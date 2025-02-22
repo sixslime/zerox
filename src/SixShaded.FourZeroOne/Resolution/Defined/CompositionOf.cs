@@ -1,9 +1,12 @@
 #nullable enable
-namespace FourZeroOne.Resolution
+namespace SixShaded.FourZeroOne.Resolution.Defined
 {
     using FourZeroOne.FZOSpec;
+    using FourZeroOne.Resolution;
     using Handles;
     using SixShaded.FourZeroOne;
+    using SixShaded.FourZeroOne.Resolution;
+    using SixShaded.FourZeroOne.Resolution.Unsafe;
     using SixShaded.NotRust;
     using SixShaded.SixLib.GFunc;
 
@@ -11,8 +14,8 @@ namespace FourZeroOne.Resolution
     // this is mega stupid.
     public record CompositionOf<C> : NoOp, ICompositionOf<C> where C : ICompositionType, new()
     {
-        private PMap<Unsafe.IComponentIdentifier<C>, IResolution> _componentMap { get; init; }
-        public IEnumerable<ITiple<Unsafe.IComponentIdentifier, IResolution>> ComponentsUnsafe => _componentMap.Elements;
+        private PMap<IComponentIdentifier<C>, IResolution> _componentMap { get; init; }
+        public IEnumerable<ITiple<IComponentIdentifier, IResolution>> ComponentsUnsafe => _componentMap.Elements;
         public CompositionOf()
         {
             _componentMap = new();
@@ -20,13 +23,13 @@ namespace FourZeroOne.Resolution
         // UNBELIEVABLY stupid
         public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : IResolution
         {
-            return this with { _componentMap = _componentMap.WithEntries((identifier.IsA<Unsafe.IComponentIdentifier<C>>(), data.IsA<IResolution>()).Tiple()) };
+            return this with { _componentMap = _componentMap.WithEntries((identifier.IsA<IComponentIdentifier<C>>(), data.IsA<IResolution>()).Tiple()) };
         }
-        public ICompositionOf<C> WithComponentsUnsafe(IEnumerable<ITiple<Unsafe.IComponentIdentifier<C>, IResolution>> components)
+        public ICompositionOf<C> WithComponentsUnsafe(IEnumerable<ITiple<IComponentIdentifier<C>, IResolution>> components)
         {
             return this with { _componentMap = _componentMap.WithEntries(components) };
         }
-        public ICompositionOf<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses)
+        public ICompositionOf<C> WithoutComponents(IEnumerable<IComponentIdentifier<C>> addresses)
         {
             return this with { _componentMap = _componentMap.WithoutEntries(addresses) };
         }
@@ -41,7 +44,7 @@ namespace FourZeroOne.Resolution
         }
         public virtual bool Equals(CompositionOf<C>? other)
         {
-            return (other is not null) && ComponentsUnsafe.SequenceEqual(other.ComponentsUnsafe);
+            return other is not null && ComponentsUnsafe.SequenceEqual(other.ComponentsUnsafe);
         }
         public override int GetHashCode()
         {

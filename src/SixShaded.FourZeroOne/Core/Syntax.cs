@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 #nullable enable
-namespace FourZeroOne.Core.Syntax
+namespace SixShaded.FourZeroOne.Core.Syntax
 {
     using r = Resolutions;
     using t = Tokens;
@@ -15,7 +15,6 @@ namespace FourZeroOne.Core.Syntax
     using SixShaded.NotRust;
     using SixShaded.FourZeroOne;
     using SixShaded.FourZeroOne.Core;
-
     namespace Structure
     {
         namespace Token
@@ -109,7 +108,6 @@ namespace FourZeroOne.Core.Syntax
             }
         }
     }
-
     public static class Core
     {
         public static t.SubEnvironment<R> tSubEnvironment<R>(Structure.Token.SubEnvironment<R> block) where R : class, Res

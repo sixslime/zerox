@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace SixShaded.FourZeroOne.Rule.Unsafe
+using SixShaded;
+
+namespace SixShaded.FourZeroOne.Rule.Defined.Unsafe
 {
     public interface IRule<out R>
         where R : class, Res
