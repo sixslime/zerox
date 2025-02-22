@@ -1,9 +1,7 @@
 ﻿#nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Core.Tokens
 {
-    public sealed record Fixed<R> : PureValue<R> where R : class, Res
+    public sealed record Fixed<R> : Token.Defined.PureValue<R> where R : class, Res
     {
         public readonly R Resolution;
         public Fixed(R resolution)

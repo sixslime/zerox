@@ -1,13 +1,11 @@
 ﻿#nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Core.Tokens.Multi
 {
-    public sealed record Union<R> : PureCombiner<IMulti<R>, r.Multi<R>> where R : class, Res
+    public sealed record Union<R> : Token.Defined.PureCombiner<IMulti<R>, Resolutions.Multi<R>> where R : class, Res
     {
         public Union(IEnumerable<IToken<IMulti<R>>> elements) : base(elements) { }
         public Union(params IToken<IMulti<R>>[] elements) : base(elements) { }
-        protected override r.Multi<R> EvaluatePure(IEnumerable<IMulti<R>> inputs)
+        protected override Resolutions.Multi<R> EvaluatePure(IEnumerable<IMulti<R>> inputs)
         {
             return new() { Values = inputs.Map(x => x.Elements).Flatten().ToPSequence() };
         }

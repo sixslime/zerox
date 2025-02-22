@@ -17,7 +17,7 @@ namespace SixShaded.FourZeroOne.Core.Macros
                 Label = Package.Label("map"),
                 Definition = Core.tMetaFunction<IMulti<RIn>, MetaFunction<RIn, ROut>, r.Multi<ROut>>(
                     (multiI, mapFunctionI) =>
-                        Core.tMetaRecursiveFunction<ro.Number, r.Multi<ROut>>(
+                        Core.tMetaRecursiveFunction<Number, r.Multi<ROut>>(
                         (selfFunc, i) =>
                             i.tRef().tIsGreaterThan(multiI.tRef().tCount())
                             .t_IfTrue<r.Multi<ROut>>(new()

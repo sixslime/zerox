@@ -1,9 +1,7 @@
 ﻿#nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Core.Tokens
 {
-    public record MetaExecuted<R> : PureFunction<R, R>
+    public record MetaExecuted<R> : Token.Defined.PureFunction<R, R>
         where R : class, Res
     {
         public MetaExecuted(IToken<R> function) : base(function) { }

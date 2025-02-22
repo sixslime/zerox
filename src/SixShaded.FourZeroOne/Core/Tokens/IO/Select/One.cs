@@ -1,9 +1,7 @@
 ﻿#nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Core.Tokens.IO.Select
 {
-    public sealed record One<R> : Function<IMulti<R>, R> where R : class, Res
+    public sealed record One<R> : Token.Defined.Function<IMulti<R>, R> where R : class, Res
     {
         public One(IToken<IMulti<R>> from) : base(from) { }
 

@@ -1,12 +1,11 @@
 ﻿#nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Core.Tokens.Number
 {
-    public sealed record GreaterThan : PureFunction<ro.Number, ro.Number, ro.Bool>
+    using Resolutions;
+    public sealed record GreaterThan : Token.Defined.PureFunction<Number, Number, Bool>
     {
-        public GreaterThan(IToken<ro.Number> a, IToken<ro.Number> b) : base(a, b) { }
-        protected override ro.Bool EvaluatePure(ro.Number in1, ro.Number in2)
+        public GreaterThan(IToken<Number> a, IToken<Number> b) : base(a, b) { }
+        protected override Bool EvaluatePure(Number in1, Number in2)
         {
             return new() { IsTrue = in1.Value > in2.Value };
         }

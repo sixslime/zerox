@@ -1,12 +1,10 @@
 ﻿#nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Core.Tokens.Component
 {
-    public sealed record Without<C> : StandardToken<ICompositionOf<C>>, IHasAttachedComponentIdentifier<C, ICompositionOf<C>> where C : ICompositionType
+    public sealed record Without<C> : Token.Defined.StandardToken<ICompositionOf<C>>, IHasAttachedComponentIdentifier<C, ICompositionOf<C>> where C : ICompositionType
     {
-        public required IComponentIdentifier<C> ComponentIdentifier { get; init; }
-        IComponentIdentifier<C> IHasAttachedComponentIdentifier<C, ICompositionOf<C>>.AttachedComponentIdentifier => ComponentIdentifier;
+        public required Resolution.Unsafe.IComponentIdentifier<C> ComponentIdentifier { get; init; }
+        Resolution.Unsafe.IComponentIdentifier<C> IHasAttachedComponentIdentifier<C, ICompositionOf<C>>.AttachedComponentIdentifier => ComponentIdentifier;
         public Without(IToken<ICompositionOf<C>> holder) : base(holder) { }
         protected override ITask<IOption<ICompositionOf<C>>> StandardResolve(ITokenContext _, IOption<Res>[] args)
         {

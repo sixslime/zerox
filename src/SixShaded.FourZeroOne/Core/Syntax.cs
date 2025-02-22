@@ -4,7 +4,7 @@ namespace SixShaded.FourZeroOne.Core.Syntax
 {
     using r = Resolutions;
     using t = Tokens;
-    using ro = Resolutions.Objects;
+    using ro = Resolutions;
     using Resolution.Defined;
     using Rule.Defined.Proxies;
     using Rule.Defined.Matchers;
@@ -245,7 +245,7 @@ namespace SixShaded.FourZeroOne.Core.Syntax
     {
         public static t.IO.Select.One<R> tIOSelectOne<R>(this IToken<IMulti<R>> source) where R : class, Res
         { return new(source); }
-        public static t.IO.Select.Multiple<R> tIOSelectMany<R>(this IToken<IMulti<R>> source, IToken<ro.Number> count) where R : class, Res
+        public static t.IO.Select.Multiple<R> tIOSelectMany<R>(this IToken<IMulti<R>> source, IToken<Number> count) where R : class, Res
         { return new(source, count); }
 
         public static t.Execute<R> tExecute<R>(this IToken<r.Boxed.MetaFunction<R>> source) where R : class, Res
@@ -280,9 +280,9 @@ namespace SixShaded.FourZeroOne.Core.Syntax
             return new(ident, token);
         }
 
-        public static t.IfElse<R> tIfTrueDirect<R>(this IToken<ro.Bool> condition, Structure.Token.IfElse<r.Boxed.MetaFunction<R>> block) where R : class, Res
+        public static t.IfElse<R> tIfTrueDirect<R>(this IToken<Bool> condition, Structure.Token.IfElse<r.Boxed.MetaFunction<R>> block) where R : class, Res
         { return new(condition, block.Then, block.Else); }
-        public static t.Execute<R> t_IfTrue<R>(this IToken<ro.Bool> condition, Structure.Token.IfElse<R> block) where R : class, Res
+        public static t.Execute<R> t_IfTrue<R>(this IToken<Bool> condition, Structure.Token.IfElse<R> block) where R : class, Res
         {
             return condition.tIfTrueDirect<R>(new()
             {
@@ -304,23 +304,23 @@ namespace SixShaded.FourZeroOne.Core.Syntax
         { return new(t); }
         public static t.Multi.Contains<R> tContains<R>(this IToken<IMulti<R>> from, IToken<R> element) where R : class, Res
         { return new(from, element); }
-        public static t.Multi.GetIndex<R> tAtIndex<R>(this IToken<IMulti<R>> token, IToken<ro.Number> index) where R : class, Res
+        public static t.Multi.GetIndex<R> tAtIndex<R>(this IToken<IMulti<R>> token, IToken<Number> index) where R : class, Res
         { return new(token, index); }
         public static Macro<IMulti<RIn>, r.Boxed.MetaFunction<RIn, ROut>, r.Multi<ROut>> tMap<RIn, ROut>(this IToken<IMulti<RIn>> source, Func<DynamicAddress<RIn>, IToken<ROut>> mapFunction)
             where RIn : class, Res
             where ROut : class, Res
         { return Map<RIn, ROut>.Construct(source, Core.tMetaFunction(mapFunction)); }
-        public static Macro<R, ro.Number, r.Multi<R>> tDuplicate<R>(this IToken<R> value, IToken<ro.Number> count)
+        public static Macro<R, Number, r.Multi<R>> tDuplicate<R>(this IToken<R> value, IToken<Number> count)
             where R : class, Res
         { return Duplicate<R>.Construct(value, count); }
 
-        public static t.Number.Add tAdd(this IToken<ro.Number> a, IToken<ro.Number> b)
+        public static t.Number.Add tAdd(this IToken<Number> a, IToken<Number> b)
         { return new(a, b); }
-        public static t.Number.Subtract tSubtract(this IToken<ro.Number> a, IToken<ro.Number> b)
+        public static t.Number.Subtract tSubtract(this IToken<Number> a, IToken<Number> b)
         { return new(a, b); }
-        public static t.Number.Multiply tMultiply(this IToken<ro.Number> a, IToken<ro.Number> b)
+        public static t.Number.Multiply tMultiply(this IToken<Number> a, IToken<Number> b)
         { return new(a, b); }
-        public static t.Number.Compare.GreaterThan tIsGreaterThan(this IToken<ro.Number> a, IToken<ro.Number> b)
+        public static t.Number.Compare.GreaterThan tIsGreaterThan(this IToken<Number> a, IToken<Number> b)
         { return new(a, b); }
 
         public static t.Component.Get<H, C> tGetComponent<H, C>(this IToken<ICompositionOf<H>> holder, IComponentIdentifier<H, C> componentIdentifier)
@@ -375,11 +375,11 @@ namespace SixShaded.FourZeroOne.Core.Syntax
         { return CatchNolla<R>.Construct(value, fallback().tMetaBoxed()); }
         public static t.DynamicReference<R> tRef<R>(this IMemoryAddress<R> ident) where R : class, Res
         { return new(ident); }
-        public static t.Fixed<ro.Bool> tFixed(this bool value)
+        public static t.Fixed<Bool> tFixed(this bool value)
         { return new(value); }
-        public static t.Fixed<ro.Number> tFixed(this int value)
+        public static t.Fixed<Number> tFixed(this int value)
         { return new(value); }
-        public static t.Fixed<ro.NumRange> tFixed(this Range value)
+        public static t.Fixed<NumRange> tFixed(this Range value)
         { return new(value); }
         public static t.Fixed<R> tFixed<R>(this R value) where R : class, Res
         { return new(value); }

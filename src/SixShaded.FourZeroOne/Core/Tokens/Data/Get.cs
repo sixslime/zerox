@@ -1,9 +1,7 @@
 ﻿#nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Core.Tokens.Data
 {
-    public sealed record Get<R> : Function<IMemoryObject<R>, R>
+    public sealed record Get<R> : Token.Defined.Function<IMemoryObject<R>, R>
         where R : class, Res
     {
         public Get(IToken<IMemoryObject<R>> address) : base(address) { }

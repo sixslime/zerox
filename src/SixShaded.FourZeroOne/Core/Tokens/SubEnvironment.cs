@@ -1,9 +1,7 @@
 ﻿#nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Core.Tokens
 {
-    public record SubEnvironment<ROut> : PureFunction<Res, ROut, ROut>
+    public record SubEnvironment<ROut> : Token.Defined.PureFunction<Res, ROut, ROut>
         where ROut : class, Res
     {
         public SubEnvironment(IToken<Res> envModifiers, IToken<ROut> evalToken) : base(envModifiers, evalToken) { }

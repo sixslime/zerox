@@ -1,5 +1,5 @@
 ﻿#nullable enable
-namespace SixShaded.FourZeroOne.Core.Resolutions.Objects
+namespace SixShaded.FourZeroOne.Core.Resolutions
 {
     public sealed record Bool : Resolution.Defined.NoOp
     {

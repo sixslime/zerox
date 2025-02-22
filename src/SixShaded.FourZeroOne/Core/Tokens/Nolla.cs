@@ -1,9 +1,7 @@
 ﻿#nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Core.Tokens
 {
-    public sealed record Nolla<R> : Value<R> where R : class, Res
+    public sealed record Nolla<R> : Token.Defined.Value<R> where R : class, Res
     {
         public Nolla() { }
         protected override ITask<IOption<R>> Evaluate(ITokenContext _) { return new None<R>().ToCompletedITask(); }
