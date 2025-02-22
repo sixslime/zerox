@@ -3,7 +3,7 @@ using FourZeroOne;
 
 namespace SixShaded.FourZeroOne.Core.Tokens
 {
-    public sealed record DynamicReference<R> : Value<R> where R : class, ResObj
+    public sealed record DynamicReference<R> : Value<R> where R : class, Res
     {
         public DynamicReference(IMemoryAddress<R> referenceAddress)
         {

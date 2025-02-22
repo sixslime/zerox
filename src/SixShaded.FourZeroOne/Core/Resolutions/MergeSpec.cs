@@ -5,13 +5,13 @@ namespace SixShaded.FourZeroOne.Core.Resolutions
 {
     public record MergeSpec<C> : ICompositionType where C : ICompositionType
     {
-        public static MergeComponentIdentifier<C, R> MERGE<R>(IComponentIdentifier<C, R> component) where R : class, ResObj => new(component);
+        public static MergeComponentIdentifier<C, R> MERGE<R>(IComponentIdentifier<C, R> component) where R : class, Res => new(component);
 
         public interface IMergeIdentifier
         {
             public IComponentIdentifier<C> ForComponentUnsafe { get; }
         }
-        public record MergeComponentIdentifier<R> : IMergeIdentifier, IComponentIdentifier<MergeSpec<C>, R> where R : class, ResObj
+        public record MergeComponentIdentifier<R> : IMergeIdentifier, IComponentIdentifier<MergeSpec<C>, R> where R : class, Res
         {
             public IComponentIdentifier<C, R> ForComponent { get; private init; }
             public IComponentIdentifier<C> ForComponentUnsafe => ForComponent;

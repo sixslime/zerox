@@ -3,7 +3,7 @@ using FourZeroOne;
 
 namespace SixShaded.FourZeroOne.Core.Tokens.IO.Select
 {
-    public sealed record One<R> : Function<IMulti<R>, R> where R : class, ResObj
+    public sealed record One<R> : Function<IMulti<R>, R> where R : class, Res
     {
         public One(IToken<IMulti<R>> from) : base(from) { }
 

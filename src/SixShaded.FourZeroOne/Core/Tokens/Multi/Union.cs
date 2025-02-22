@@ -3,7 +3,7 @@ using FourZeroOne;
 
 namespace SixShaded.FourZeroOne.Core.Tokens.Multi
 {
-    public sealed record Union<R> : PureCombiner<IMulti<R>, r.Multi<R>> where R : class, ResObj
+    public sealed record Union<R> : PureCombiner<IMulti<R>, r.Multi<R>> where R : class, Res
     {
         public Union(IEnumerable<IToken<IMulti<R>>> elements) : base(elements) { }
         public Union(params IToken<IMulti<R>>[] elements) : base(elements) { }

@@ -9,7 +9,7 @@ namespace SixShaded.FourZeroOne.Core.Macros
     // now that macros are data driven, 'decompose' can be functionally replaced with handler macros
     public static class Decompose<D, R>
         where D : IDecomposableType<D, R>, new()
-        where R : class, ResObj
+        where R : class, Res
     {
         public static Macro<ICompositionOf<D>, R> Construct(IToken<ICompositionOf<D>> composition) => new(composition)
         {
@@ -18,7 +18,7 @@ namespace SixShaded.FourZeroOne.Core.Macros
         };
     }
     public static class UpdateMemoryObject<R>
-        where R : class, ResObj
+        where R : class, Res
     {
         public static Macro<IMemoryObject<R>, MetaFunction<R, R>, r.Instructions.Assign<R>> Construct(IToken<IMemoryObject<R>> address, IToken<MetaFunction<R, R>> updateFunction) => new(address, updateFunction)
         {

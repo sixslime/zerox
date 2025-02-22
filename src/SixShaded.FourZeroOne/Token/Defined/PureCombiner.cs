@@ -2,8 +2,8 @@
 namespace SixShaded.FourZeroOne.Token.Defined
 {
     public abstract record PureCombiner<RArg, ROut> : Combiner<RArg, ROut>
-        where RArg : class, ResObj
-        where ROut : class, ResObj
+        where RArg : class, Res
+        where ROut : class, Res
     {
         protected abstract ROut EvaluatePure(IEnumerable<RArg> inputs);
         protected PureCombiner(IEnumerable<IToken<RArg>> tokens) : base(tokens) { }

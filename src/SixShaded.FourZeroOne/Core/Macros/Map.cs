@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace SixShaded.FourZeroOne.Core.Macros
 {
     public static class Map<RIn, ROut>
-            where RIn : class, ResObj
-            where ROut : class, ResObj
+            where RIn : class, Res
+            where ROut : class, Res
     {
         public static Macro<IMulti<RIn>, MetaFunction<RIn, ROut>, r.Multi<ROut>> Construct(IToken<IMulti<RIn>> multi, IToken<MetaFunction<RIn, ROut>> mapFunction)
         {

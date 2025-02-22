@@ -2,11 +2,11 @@
 namespace SixShaded.FourZeroOne.Token.Defined
 {
     public abstract record Combiner<RArg, ROut> : StandardToken<ROut>, IHasCombinerArgs<RArg, ROut>
-        where RArg : class, ResObj
-        where ROut : class, ResObj
+        where RArg : class, Res
+        where ROut : class, Res
     {
         public IEnumerable<IToken<RArg>> Args => ArgTokens.Map(x => (IToken<RArg>)x);
-        protected sealed override ITask<IOption<ROut>> StandardResolve(ITokenContext runtime, IOption<ResObj>[] tokens)
+        protected sealed override ITask<IOption<ROut>> StandardResolve(ITokenContext runtime, IOption<Res>[] tokens)
         {
             return Evaluate(runtime, tokens.Map(x => x.RemapAs(x => (RArg)x)));
         }

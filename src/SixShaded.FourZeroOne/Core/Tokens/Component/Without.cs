@@ -8,7 +8,7 @@ namespace SixShaded.FourZeroOne.Core.Tokens.Component
         public required IComponentIdentifier<C> ComponentIdentifier { get; init; }
         IComponentIdentifier<C> IHasAttachedComponentIdentifier<C, ICompositionOf<C>>.AttachedComponentIdentifier => ComponentIdentifier;
         public Without(IToken<ICompositionOf<C>> holder) : base(holder) { }
-        protected override ITask<IOption<ICompositionOf<C>>> StandardResolve(ITokenContext _, IOption<ResObj>[] args)
+        protected override ITask<IOption<ICompositionOf<C>>> StandardResolve(ITokenContext _, IOption<Res>[] args)
         {
             return args[0].RemapAs(x => ((ICompositionOf<C>)x).WithoutComponents([ComponentIdentifier])).ToCompletedITask();
         }

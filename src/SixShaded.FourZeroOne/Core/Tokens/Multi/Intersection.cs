@@ -3,7 +3,7 @@ using FourZeroOne;
 
 namespace SixShaded.FourZeroOne.Core.Tokens.Multi
 {
-    public sealed record Intersection<R> : Combiner<IMulti<R>, r.Multi<R>> where R : class, ResObj
+    public sealed record Intersection<R> : Combiner<IMulti<R>, r.Multi<R>> where R : class, Res
     {
         public Intersection(IEnumerable<IToken<IMulti<R>>> sets) : base(sets) { }
         public Intersection(params IToken<IMulti<R>>[] sets) : base(sets) { }

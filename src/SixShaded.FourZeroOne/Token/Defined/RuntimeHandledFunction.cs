@@ -3,11 +3,11 @@ namespace SixShaded.FourZeroOne.Token.Defined
 {
     public abstract record RuntimeHandledFunction<RArg1, ROut> : TokenBehavior<ROut>,
         IHasArgs<RArg1, ROut>
-        where RArg1 : class, ResObj
-        where ROut : class, ResObj
+        where RArg1 : class, Res
+        where ROut : class, Res
     {
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
-        protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
+        protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<Res>[] args)
         {
             return args[0].Check(out var in1)
                 ? new Err<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(MakeData((RArg1)in1))
@@ -18,13 +18,13 @@ namespace SixShaded.FourZeroOne.Token.Defined
     }
     public abstract record RuntimeHandledFunction<RArg1, RArg2, ROut> : TokenBehavior<ROut>,
         IHasArgs<RArg1, RArg2, ROut>
-        where RArg1 : class, ResObj
-        where RArg2 : class, ResObj
-        where ROut : class, ResObj
+        where RArg1 : class, Res
+        where RArg2 : class, Res
+        where ROut : class, Res
     {
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
         public IToken<RArg2> Arg2 => (IToken<RArg2>)ArgTokens[1];
-        protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
+        protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<Res>[] args)
         {
             return args[0].Check(out var in1) && args[1].Check(out var in2)
                 ? new Err<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(MakeData((RArg1)in1, (RArg2)in2))
@@ -35,15 +35,15 @@ namespace SixShaded.FourZeroOne.Token.Defined
     }
     public abstract record RuntimeHandledFunction<RArg1, RArg2, RArg3, ROut> : TokenBehavior<ROut>,
         IHasArgs<RArg1, RArg2, ROut>
-        where RArg1 : class, ResObj
-        where RArg2 : class, ResObj
-        where RArg3 : class, ResObj
-        where ROut : class, ResObj
+        where RArg1 : class, Res
+        where RArg2 : class, Res
+        where RArg3 : class, Res
+        where ROut : class, Res
     {
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
         public IToken<RArg2> Arg2 => (IToken<RArg2>)ArgTokens[1];
         public IToken<RArg3> Arg3 => (IToken<RArg3>)ArgTokens[2];
-        protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<ResObj>[] args)
+        protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<Res>[] args)
         {
             return args[0].Check(out var in1) && args[1].Check(out var in2) && args[2].Check(out var in3)
                 ? new Err<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(MakeData((RArg1)in1, (RArg2)in2, (RArg3)in3))

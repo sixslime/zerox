@@ -5,8 +5,8 @@ namespace SixShaded.FourZeroOne.Core.Tokens
 {
     public sealed record AddRule : PureValue<r.Instructions.RuleAdd>
     {
-        public readonly Rule.Unsafe.IRule<ResObj> Rule;
-        public AddRule(Rule.Unsafe.IRule<ResObj> rule)
+        public readonly Rule.Unsafe.IRule<Res> Rule;
+        public AddRule(Rule.Unsafe.IRule<Res> rule)
         {
             Rule = rule;
         }

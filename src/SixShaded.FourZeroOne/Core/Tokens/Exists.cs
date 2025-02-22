@@ -3,10 +3,10 @@ using FourZeroOne;
 
 namespace SixShaded.FourZeroOne.Core.Tokens
 {
-    public sealed record Exists : Function<ResObj, ro.Bool>
+    public sealed record Exists : Function<Res, ro.Bool>
     {
-        public Exists(IToken<ResObj> obj) : base(obj) { }
-        protected override ITask<IOption<ro.Bool>> Evaluate(ITokenContext _, IOption<ResObj> obj)
+        public Exists(IToken<Res> obj) : base(obj) { }
+        protected override ITask<IOption<ro.Bool>> Evaluate(ITokenContext _, IOption<Res> obj)
         {
             return new ro.Bool() { IsTrue = obj.IsSome() }.AsSome().ToCompletedITask();
         }

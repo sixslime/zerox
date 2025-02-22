@@ -2,8 +2,8 @@
 namespace SixShaded.FourZeroOne.Token.Defined
 {
     public abstract record PureFunction<RArg1, ROut> : Function<RArg1, ROut>
-        where RArg1 : class, ResObj
-        where ROut : class, ResObj
+        where RArg1 : class, Res
+        where ROut : class, Res
     {
         protected abstract ROut EvaluatePure(RArg1 in1);
         protected PureFunction(IToken<RArg1> in1) : base(in1) { }
@@ -15,9 +15,9 @@ namespace SixShaded.FourZeroOne.Token.Defined
         }
     }
     public abstract record PureFunction<RArg1, RArg2, ROut> : Function<RArg1, RArg2, ROut>
-        where RArg1 : class, ResObj
-        where RArg2 : class, ResObj
-        where ROut : class, ResObj
+        where RArg1 : class, Res
+        where RArg2 : class, Res
+        where ROut : class, Res
     {
         protected abstract ROut EvaluatePure(RArg1 in1, RArg2 in2);
         protected PureFunction(IToken<RArg1> in1, IToken<RArg2> in2) : base(in1, in2) { }
@@ -29,10 +29,10 @@ namespace SixShaded.FourZeroOne.Token.Defined
         }
     }
     public abstract record PureFunction<RArg1, RArg2, RArg3, ROut> : Function<RArg1, RArg2, RArg3, ROut>
-        where RArg1 : class, ResObj
-        where RArg2 : class, ResObj
-        where RArg3 : class, ResObj
-        where ROut : class, ResObj
+        where RArg1 : class, Res
+        where RArg2 : class, Res
+        where RArg3 : class, Res
+        where ROut : class, Res
     {
         protected abstract ROut EvaluatePure(RArg1 in1, RArg2 in2, RArg3 in3);
         protected PureFunction(IToken<RArg1> in1, IToken<RArg2> in2, IToken<RArg3> in3) : base(in1, in2, in3) { }

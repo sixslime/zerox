@@ -2,9 +2,9 @@
 namespace SixShaded.FourZeroOne.Token.Defined
 {
     public abstract record Value<R> : StandardToken<R>, IHasNoArgs<R>
-        where R : class, ResObj
+        where R : class, Res
     {
-        protected sealed override ITask<IOption<R>> StandardResolve(ITokenContext runtime, IOption<ResObj>[] _)
+        protected sealed override ITask<IOption<R>> StandardResolve(ITokenContext runtime, IOption<Res>[] _)
         {
             return Evaluate(runtime);
         }

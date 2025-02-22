@@ -3,11 +3,11 @@ namespace SixShaded.FourZeroOne.Token.Defined
 {
     public abstract record Function<RArg1, ROut> : StandardToken<ROut>,
         IHasArgs<RArg1, ROut>
-        where RArg1 : class, ResObj
-        where ROut : class, ResObj
+        where RArg1 : class, Res
+        where ROut : class, Res
     {
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
-        protected sealed override ITask<IOption<ROut>> StandardResolve(ITokenContext runtime, IOption<ResObj>[] args)
+        protected sealed override ITask<IOption<ROut>> StandardResolve(ITokenContext runtime, IOption<Res>[] args)
         {
             return Evaluate(runtime, args[0].RemapAs(x => (RArg1)x));
         }
@@ -17,13 +17,13 @@ namespace SixShaded.FourZeroOne.Token.Defined
     }
     public abstract record Function<RArg1, RArg2, ROut> : StandardToken<ROut>,
         IHasArgs<RArg1, RArg2, ROut>
-        where RArg1 : class, ResObj
-        where RArg2 : class, ResObj
-        where ROut : class, ResObj
+        where RArg1 : class, Res
+        where RArg2 : class, Res
+        where ROut : class, Res
     {
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
         public IToken<RArg2> Arg2 => (IToken<RArg2>)ArgTokens[1];
-        protected sealed override ITask<IOption<ROut>> StandardResolve(ITokenContext runtime, IOption<ResObj>[] args)
+        protected sealed override ITask<IOption<ROut>> StandardResolve(ITokenContext runtime, IOption<Res>[] args)
         {
             return Evaluate(runtime, args[0].RemapAs(x => (RArg1)x), args[1].RemapAs(x => (RArg2)x));
         }
@@ -33,15 +33,15 @@ namespace SixShaded.FourZeroOne.Token.Defined
     }
     public abstract record Function<RArg1, RArg2, RArg3, ROut> : StandardToken<ROut>,
         IHasArgs<RArg1, RArg2, RArg3, ROut>
-        where RArg1 : class, ResObj
-        where RArg2 : class, ResObj
-        where RArg3 : class, ResObj
-        where ROut : class, ResObj
+        where RArg1 : class, Res
+        where RArg2 : class, Res
+        where RArg3 : class, Res
+        where ROut : class, Res
     {
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
         public IToken<RArg2> Arg2 => (IToken<RArg2>)ArgTokens[1];
         public IToken<RArg3> Arg3 => (IToken<RArg3>)ArgTokens[2];
-        protected sealed override ITask<IOption<ROut>> StandardResolve(ITokenContext runtime, IOption<ResObj>[] args)
+        protected sealed override ITask<IOption<ROut>> StandardResolve(ITokenContext runtime, IOption<Res>[] args)
         {
             return Evaluate(runtime, args[0].RemapAs(x => (RArg1)x), args[1].RemapAs(x => (RArg2)x), args[2].RemapAs(x => (RArg3)x));
         }

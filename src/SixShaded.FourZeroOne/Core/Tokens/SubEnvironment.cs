@@ -3,11 +3,11 @@ using FourZeroOne;
 
 namespace SixShaded.FourZeroOne.Core.Tokens
 {
-    public record SubEnvironment<ROut> : PureFunction<ResObj, ROut, ROut>
-        where ROut : class, ResObj
+    public record SubEnvironment<ROut> : PureFunction<Res, ROut, ROut>
+        where ROut : class, Res
     {
-        public SubEnvironment(IToken<ResObj> envModifiers, IToken<ROut> evalToken) : base(envModifiers, evalToken) { }
-        protected override ROut EvaluatePure(ResObj _, ROut in2)
+        public SubEnvironment(IToken<Res> envModifiers, IToken<ROut> evalToken) : base(envModifiers, evalToken) { }
+        protected override ROut EvaluatePure(Res _, ROut in2)
         {
             return in2;
         }
