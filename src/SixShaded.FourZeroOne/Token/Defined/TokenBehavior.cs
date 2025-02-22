@@ -1,7 +1,7 @@
 ﻿#nullable enable
 namespace SixShaded.FourZeroOne.Token.Defined
 {
-    public abstract record TokenBehavior<R> : IToken<R> where R : Res
+    public abstract record TokenBehavior<R> : IToken<R> where R : class, Res
     {
         public Tok[] ArgTokens { get; }
         public TokenBehavior(params Tok[] args)

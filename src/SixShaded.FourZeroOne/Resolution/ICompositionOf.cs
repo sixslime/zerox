@@ -5,9 +5,9 @@ namespace SixShaded.FourZeroOne.Resolution
     public interface ICompositionOf<out C> : Res where C : ICompositionType
     {
         public IEnumerable<ITiple<Unsafe.IComponentIdentifier, Res>> ComponentsUnsafe { get; }
-        public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : Res;
+        public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : class, Res;
         public ICompositionOf<C> WithComponentsUnsafe(IEnumerable<ITiple<Unsafe.IComponentIdentifier<C>, Res>> components);
         public ICompositionOf<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses);
-        public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : Res;
+        public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : class, Res;
     }
 }

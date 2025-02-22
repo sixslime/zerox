@@ -23,7 +23,7 @@ namespace SixShaded.FourZeroOne.FZOSpec
         public IEnumerable<ITiple<Addr, Res>> Objects { get; }
         public IEnumerable<Rule> Rules { get; }
         public IEnumerable<ITiple<RuleID, int>> RuleMutes { get; }
-        public IOption<R> GetObject<R>(IMemoryAddress<R> address) where R : Res;
+        public IOption<R> GetObject<R>(IMemoryAddress<R> address) where R : class, Res;
         public int GetRuleMuteCount(RuleID ruleId);
         // Rules is an ordered sequence allowing duplicates.
         // 'WithRules' appends.
@@ -32,7 +32,7 @@ namespace SixShaded.FourZeroOne.FZOSpec
         public IMemoryFZO WithRules(IEnumerable<Rule> rules);
         public IMemoryFZO WithRuleMutes(IEnumerable<RuleID> mutes);
         public IMemoryFZO WithoutRuleMutes(IEnumerable<RuleID> mutes);
-        public IMemoryFZO WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions) where R : Res;
+        public IMemoryFZO WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions) where R : class, Res;
         public IMemoryFZO WithClearedAddresses(IEnumerable<Addr> removals);
     }
    

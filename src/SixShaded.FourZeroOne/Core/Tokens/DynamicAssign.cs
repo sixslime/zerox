@@ -3,7 +3,7 @@ using FourZeroOne;
 
 namespace SixShaded.FourZeroOne.Core.Tokens
 {
-    public sealed record DynamicAssign<R> : StandardToken<r.Instructions.Assign<R>> where R : Res
+    public sealed record DynamicAssign<R> : StandardToken<r.Instructions.Assign<R>> where R : class, Res
     {
         public readonly IMemoryAddress<R> AssigningAddress;
         public DynamicAssign(IMemoryAddress<R> address, IToken<R> obj) : base(obj)

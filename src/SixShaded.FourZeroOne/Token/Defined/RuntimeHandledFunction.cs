@@ -3,8 +3,8 @@ namespace SixShaded.FourZeroOne.Token.Defined
 {
     public abstract record RuntimeHandledFunction<RArg1, ROut> : TokenBehavior<ROut>,
         IHasArgs<RArg1, ROut>
-        where RArg1 : Res
-        where ROut : Res
+        where RArg1 : class, Res
+        where ROut : class, Res
     {
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
         protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(ITokenContext _, IOption<Res>[] args)
@@ -18,9 +18,9 @@ namespace SixShaded.FourZeroOne.Token.Defined
     }
     public abstract record RuntimeHandledFunction<RArg1, RArg2, ROut> : TokenBehavior<ROut>,
         IHasArgs<RArg1, RArg2, ROut>
-        where RArg1 : Res
-        where RArg2 : Res
-        where ROut : Res
+        where RArg1 : class, Res
+        where RArg2 : class, Res
+        where ROut : class, Res
     {
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
         public IToken<RArg2> Arg2 => (IToken<RArg2>)ArgTokens[1];
@@ -35,10 +35,10 @@ namespace SixShaded.FourZeroOne.Token.Defined
     }
     public abstract record RuntimeHandledFunction<RArg1, RArg2, RArg3, ROut> : TokenBehavior<ROut>,
         IHasArgs<RArg1, RArg2, ROut>
-        where RArg1 : Res
-        where RArg2 : Res
-        where RArg3 : Res
-        where ROut : Res
+        where RArg1 : class, Res
+        where RArg2 : class, Res
+        where RArg3 : class, Res
+        where ROut : class, Res
     {
         public IToken<RArg1> Arg1 => (IToken<RArg1>)ArgTokens[0];
         public IToken<RArg2> Arg2 => (IToken<RArg2>)ArgTokens[1];

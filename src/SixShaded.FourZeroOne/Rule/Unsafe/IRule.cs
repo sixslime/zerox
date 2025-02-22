@@ -4,7 +4,7 @@ using SixShaded;
 namespace SixShaded.FourZeroOne.Rule.Unsafe
 {
     public interface IRule<out R>
-        where R : Res
+        where R : class, Res
     {
         public RuleID ID { get; }
         public IRuleMatcher<IToken<R>> MatcherUnsafe { get; }

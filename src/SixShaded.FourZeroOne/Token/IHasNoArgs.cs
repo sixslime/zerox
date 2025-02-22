@@ -2,6 +2,6 @@
 namespace SixShaded.FourZeroOne.Token
 {
     public interface IHasNoArgs<out RVal> : IToken<RVal>
-        where RVal : Res
+        where RVal : class, Res
     { }
 }

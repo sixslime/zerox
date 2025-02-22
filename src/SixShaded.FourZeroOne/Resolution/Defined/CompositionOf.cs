@@ -13,7 +13,7 @@ namespace SixShaded.FourZeroOne.Resolution.Defined
             _componentMap = new();
         }
         // UNBELIEVABLY stupid
-        public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : Res
+        public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : class, Res
         {
             return this with { _componentMap = _componentMap.WithEntries((identifier.IsA<Unsafe.IComponentIdentifier<C>>(), data.IsA<Res>()).Tiple()) };
         }
@@ -26,7 +26,7 @@ namespace SixShaded.FourZeroOne.Resolution.Defined
             return this with { _componentMap = _componentMap.WithoutEntries(addresses) };
         }
 
-        public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : Res
+        public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : class, Res
         {
             return _componentMap.At(address).RemapAs(x => (R)x);
         }

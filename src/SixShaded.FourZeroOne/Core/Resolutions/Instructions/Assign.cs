@@ -3,7 +3,7 @@ using FourZeroOne;
 
 namespace SixShaded.FourZeroOne.Core.Resolutions.Instructions
 {
-    public sealed record Assign<D> : Instruction where D : Res
+    public sealed record Assign<D> : Instruction where D : class, Res
     {
         public required IMemoryAddress<D> Address { get; init; }
         public required D Subject { get; init; }

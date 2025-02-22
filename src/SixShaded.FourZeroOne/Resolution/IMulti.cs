@@ -1,6 +1,6 @@
 #nullable enable
 namespace SixShaded.FourZeroOne.Resolution
 {
-    public interface IMulti<out R> : IHasElements<R>, IIndexReadable<int, IOption<R>>, Res where R : Res { }
+    public interface IMulti<out R> : IHasElements<R>, IIndexReadable<int, IOption<R>>, Res where R : class, Res { }
 
 }

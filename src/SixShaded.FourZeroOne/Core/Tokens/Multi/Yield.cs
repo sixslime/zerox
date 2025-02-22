@@ -3,7 +3,7 @@ using FourZeroOne;
 
 namespace SixShaded.FourZeroOne.Core.Tokens.Multi
 {
-    public sealed record Yield<R> : PureFunction<R, r.Multi<R>> where R : Res
+    public sealed record Yield<R> : PureFunction<R, r.Multi<R>> where R : class, Res
     {
         public Yield(IToken<R> value) : base(value) { }
         protected override r.Multi<R> EvaluatePure(R in1)

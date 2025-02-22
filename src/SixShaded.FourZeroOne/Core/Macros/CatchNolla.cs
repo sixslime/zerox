@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SixShaded.FourZeroOne.Core.Macros
 {
     public static class CatchNolla<R>
-        where R : Res
+        where R : class, Res
     {
         public static Macro<R, MetaFunction<R>, R> Construct(IToken<R> value, IToken<MetaFunction<R>> fallback) => new(value, fallback)
         {
