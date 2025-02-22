@@ -1,5 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Rule;
 
+using Core.Resolutions;
 using Defined.Proxies;
 using Unsafe;
 public interface IRuleOfValue<RVal> : IRule<RVal>
