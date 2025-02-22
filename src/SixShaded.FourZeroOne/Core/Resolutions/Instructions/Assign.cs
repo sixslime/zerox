@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Resolutions.Instructions
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Resolutions.Instructions
 {
     public sealed record Assign<D> : Instruction where D : class, ResObj
     {

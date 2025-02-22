@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Resolutions.Objects
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Resolutions.Objects
 {
     public sealed record Number : NoOp
     {

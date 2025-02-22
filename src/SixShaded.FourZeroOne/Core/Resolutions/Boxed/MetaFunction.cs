@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Resolutions.Boxed
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Resolutions.Boxed
 {
     public sealed record MetaFunction<R> : NoOp where R : class, ResObj
     {

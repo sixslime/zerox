@@ -1,5 +1,7 @@
 ﻿#nullable enable
-namespace FourZeroOne.Core.Resolutions
+using FourZeroOne;
+
+namespace SixShaded.FourZeroOne.Core.Resolutions
 {
     public record MergeSpec<C> : ICompositionType where C : ICompositionType
     {
