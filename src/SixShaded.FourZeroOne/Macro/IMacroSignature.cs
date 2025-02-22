@@ -7,21 +7,21 @@ namespace SixShaded.FourZeroOne.Macro
     using Token;
     using Res = Resolution.IResolution;
     public interface IMacroValue<RVal> : IMacro<RVal>, IHasNoArgs<RVal>
-        where RVal : class, Res
+        where RVal : Res
     { }
     public interface IMacroFunction<RArg1, ROut> : IMacro<ROut>, IHasArgs<RArg1, ROut>
-        where RArg1 : class, Res
-        where ROut : class, Res
+        where RArg1 : Res
+        where ROut : Res
     { }
     public interface IMacroFunction<RArg1, RArg2, ROut> : IMacro<ROut>, IHasArgs<RArg1, RArg2, ROut>
-        where RArg1 : class, Res
-        where RArg2 : class, Res
-        where ROut : class, Res
+        where RArg1 : Res
+        where RArg2 : Res
+        where ROut : Res
     { }
     public interface IMacroFunction<RArg1, RArg2, RArg3, ROut> : IMacro<ROut>, IHasArgs<RArg1, RArg2, RArg3, ROut>
-        where RArg1 : class, Res
-        where RArg2 : class, Res
-        where RArg3 : class, Res
-        where ROut : class, Res
+        where RArg1 : Res
+        where RArg2 : Res
+        where RArg3 : Res
+        where ROut : Res
     { }
 }

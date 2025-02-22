@@ -2,7 +2,7 @@
 namespace SixShaded.FourZeroOne.Token.Defined
 {
     public abstract record PureValue<R> : Value<R>
-        where R : class, Res
+        where R : Res
     {
         protected PureValue() : base() { }
         protected sealed override ITask<IOption<R>> Evaluate(ITokenContext _)

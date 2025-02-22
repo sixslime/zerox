@@ -7,7 +7,7 @@ namespace SixShaded.FourZeroOne.Macro
     using Token;
     using Res = Resolution.IResolution;
 
-    public interface IMacro<R> : IToken<R> where R : class, Res
+    public interface IMacro<R> : IToken<R> where R : Res
     {
         public MacroLabel Label { get; }
         public object[] CustomData { get; }

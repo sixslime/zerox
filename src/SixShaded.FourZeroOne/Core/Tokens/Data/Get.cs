@@ -4,7 +4,7 @@ using FourZeroOne;
 namespace SixShaded.FourZeroOne.Core.Tokens.Data
 {
     public sealed record Get<R> : Function<IMemoryObject<R>, R>
-        where R : class, Res
+        where R : Res
     {
         public Get(IToken<IMemoryObject<R>> address) : base(address) { }
         protected override ITask<IOption<R>> Evaluate(ITokenContext runtime, IOption<IMemoryObject<R>> in1)

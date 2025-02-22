@@ -3,7 +3,7 @@ using FourZeroOne;
 
 namespace SixShaded.FourZeroOne.Core.Tokens.Component
 {
-    public sealed record Get<C, R> : StandardToken<R>, IHasAttachedComponentIdentifier<C, R> where R : class, Res where C : ICompositionType
+    public sealed record Get<C, R> : StandardToken<R>, IHasAttachedComponentIdentifier<C, R> where R : Res where C : ICompositionType
     {
         public required IComponentIdentifier<C, R> ComponentIdentifier { get; init; }
         IComponentIdentifier<C> IHasAttachedComponentIdentifier<C, R>.AttachedComponentIdentifier => ComponentIdentifier;

@@ -3,7 +3,7 @@ using FourZeroOne;
 
 namespace SixShaded.FourZeroOne.Core.Resolutions.Boxed
 {
-    public sealed record MetaFunction<R> : NoOp where R : class, Res
+    public sealed record MetaFunction<R> : NoOp where R : Res
     {
         public required DynamicAddress<MetaFunction<R>> SelfIdentifier { get; init; }
         public required IToken<R> Token { get; init; }
@@ -20,8 +20,8 @@ namespace SixShaded.FourZeroOne.Core.Resolutions.Boxed
         }
     }
     public sealed record MetaFunction<RArg1, ROut> : NoOp, IBoxedMetaFunction<ROut>
-        where RArg1 : class, Res
-        where ROut : class, Res
+        where RArg1 : Res
+        where ROut : Res
     {
         public required DynamicAddress<MetaFunction<RArg1, ROut>> SelfIdentifier { get; init; }
         public required DynamicAddress<RArg1> IdentifierA { get; init; }
@@ -41,9 +41,9 @@ namespace SixShaded.FourZeroOne.Core.Resolutions.Boxed
         }
     }
     public sealed record MetaFunction<RArg1, RArg2, ROut> : NoOp, IBoxedMetaFunction<ROut>
-        where RArg1 : class, Res
-        where RArg2 : class, Res
-        where ROut : class, Res
+        where RArg1 : Res
+        where RArg2 : Res
+        where ROut : Res
     {
         public required DynamicAddress<MetaFunction<RArg1, RArg2, ROut>> SelfIdentifier { get; init; }
         public required DynamicAddress<RArg1> IdentifierA { get; init; }
@@ -65,10 +65,10 @@ namespace SixShaded.FourZeroOne.Core.Resolutions.Boxed
         }
     }
     public sealed record MetaFunction<RArg1, RArg2, RArg3, ROut> : NoOp, IBoxedMetaFunction<ROut>
-        where RArg1 : class, Res
-        where RArg2 : class, Res
-        where RArg3 : class, Res
-        where ROut : class, Res
+        where RArg1 : Res
+        where RArg2 : Res
+        where RArg3 : Res
+        where ROut : Res
     {
         public required DynamicAddress<MetaFunction<RArg1, RArg2, RArg3, ROut>> SelfIdentifier { get; init; }
         public required DynamicAddress<RArg1> IdentifierA { get; init; }
@@ -97,11 +97,11 @@ namespace SixShaded.FourZeroOne.Core.Resolutions.Boxed
     /// Not for normal use.
     /// </summary>
     public sealed record OverflowingMetaFunction<RArg1, RArg2, RArg3, RArg4, ROut> : NoOp, IBoxedMetaFunction<ROut>
-        where RArg1 : class, Res
-        where RArg2 : class, Res
-        where RArg3 : class, Res
-        where RArg4 : class, Res
-        where ROut : class, Res
+        where RArg1 : Res
+        where RArg2 : Res
+        where RArg3 : Res
+        where RArg4 : Res
+        where ROut : Res
     {
         public required DynamicAddress<OverflowingMetaFunction<RArg1, RArg2, RArg3, RArg4, ROut>> SelfIdentifier { get; init; }
         public required DynamicAddress<RArg1> IdentifierA { get; init; }

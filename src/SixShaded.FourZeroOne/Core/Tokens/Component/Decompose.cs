@@ -3,7 +3,7 @@ using FourZeroOne;
 
 namespace SixShaded.FourZeroOne.Core.Tokens.Component
 {
-    public sealed record Decompose<D, R> : RuntimeHandledFunction<ICompositionOf<D>, R> where D : IDecomposableType<D, R>, new() where R : class, Res
+    public sealed record Decompose<D, R> : RuntimeHandledFunction<ICompositionOf<D>, R> where D : IDecomposableType<D, R>, new() where R : Res
     {
         public Decompose(IToken<ICompositionOf<D>> composition) : base(composition) { }
 

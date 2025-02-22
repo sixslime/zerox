@@ -3,7 +3,7 @@ using FourZeroOne;
 
 namespace SixShaded.FourZeroOne.Core.Tokens.Multi
 {
-    public sealed record Exclusion<R> : Function<IMulti<R>, IMulti<R>, r.Multi<R>> where R : class, Res
+    public sealed record Exclusion<R> : Function<IMulti<R>, IMulti<R>, r.Multi<R>> where R : Res
     {
         public Exclusion(IToken<IMulti<R>> from, IToken<IMulti<R>> exclude) : base(from, exclude) { }
         protected override ITask<IOption<r.Multi<R>>> Evaluate(ITokenContext _, IOption<IMulti<R>> in1, IOption<IMulti<R>> in2)

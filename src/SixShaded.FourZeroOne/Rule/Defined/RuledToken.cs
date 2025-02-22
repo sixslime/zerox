@@ -2,7 +2,7 @@
 namespace SixShaded.FourZeroOne.Rule.Defined
 {
     public record RuledToken<R> : Token.Defined.RuntimeHandledValue<R>, Unsafe.IRuledToken<R>
-        where R : class, Res
+        where R : Res
     {
         public required Unsafe.IRule<R> AppliedRule { get; init; }
 

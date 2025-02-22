@@ -8,7 +8,7 @@ namespace SixShaded.FourZeroOne.Macro
     using Res = Resolution.IResolution;
 
     public record Macro<RVal> : RuntimeHandledValue<RVal>, IMacro<RVal>, IMacroValue<RVal>
-        where RVal : class, Res
+        where RVal : Res
     {
         public Macro() : base() { }
         public object[] CustomData { get; init; } = [];
@@ -22,8 +22,8 @@ namespace SixShaded.FourZeroOne.Macro
             => $"{Label.Package}.{Label.Identifier}()".AsSome();
     }
     public record Macro<RArg1, ROut> : RuntimeHandledFunction<RArg1, ROut>, IMacroFunction<RArg1, ROut>
-        where RArg1 : class, Res
-        where ROut : class, Res
+        where RArg1 : Res
+        where ROut : Res
     {
         public Macro(IToken<RArg1> in1) : base(in1) { }
         public required MacroLabel Label { get; init; }
@@ -37,9 +37,9 @@ namespace SixShaded.FourZeroOne.Macro
             => $"{Label.Package}.{Label.Identifier}({Arg1})".AsSome();
     }
     public record Macro<RArg1, RArg2, ROut> : RuntimeHandledFunction<RArg1, RArg2, ROut>, IMacroFunction<RArg1, RArg2, ROut>
-        where RArg1 : class, Res
-        where RArg2 : class, Res
-        where ROut : class, Res
+        where RArg1 : Res
+        where RArg2 : Res
+        where ROut : Res
     {
         public Macro(IToken<RArg1> in1, IToken<RArg2> in2) : base(in1, in2) { }
         public required MacroLabel Label { get; init; }
@@ -53,10 +53,10 @@ namespace SixShaded.FourZeroOne.Macro
             => $"{Label.Package}.{Label.Identifier}({Arg1}, {Arg2})".AsSome();
     }
     public record Macro<RArg1, RArg2, RArg3, ROut> : RuntimeHandledFunction<RArg1, RArg2, RArg3, ROut>, IMacroFunction<RArg1, RArg2, RArg3, ROut>
-        where RArg1 : class, Res
-        where RArg2 : class, Res
-        where RArg3 : class, Res
-        where ROut : class, Res
+        where RArg1 : Res
+        where RArg2 : Res
+        where RArg3 : Res
+        where ROut : Res
     {
         public Macro(IToken<RArg1> in1, IToken<RArg2> in2, IToken<RArg3> in3) : base(in1, in2, in3) { }
         public required MacroLabel Label { get; init; }

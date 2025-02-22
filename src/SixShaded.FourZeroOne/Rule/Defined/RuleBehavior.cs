@@ -3,7 +3,7 @@ namespace SixShaded.FourZeroOne.Rule.Defined
 {
     using Unsafe;
     public abstract record RuleBehavior<R> : IRule<R>
-        where R : class, Res
+        where R : Res
     {
         public RuleID ID { get; } = RuleIDGenerator.Next();
         protected abstract IRuleMatcher<IToken<R>> InternalMatcher { get; }
@@ -21,7 +21,7 @@ namespace SixShaded.FourZeroOne.Rule.Defined
         /// <param name="token"></param>
         /// <returns></returns>
         protected Proxies.ArgProxy<RArg> CreateArgProxy<RArg>(Tok token)
-            where RArg : class, Res
+            where RArg : Res
         {
             return new() { FromRule = ID, Token = token.IsA<IToken<RArg>>() };
         }

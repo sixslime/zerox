@@ -2,7 +2,7 @@
 namespace SixShaded.FourZeroOne.Rule.Unsafe
 {
     public interface IRuledToken<out R> : IToken<R>
-        where R : class, Res
+        where R : Res
     {
         public IRule<R> AppliedRule { get; }
     }

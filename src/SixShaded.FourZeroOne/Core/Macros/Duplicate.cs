@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SixShaded.FourZeroOne.Core.Macros
 {
     public static class Duplicate<R>
-        where R : class, Res
+        where R : Res
     {
         public static Macro<R, ro.Number, r.Multi<R>> Construct(IToken<R> value, IToken<ro.Number> count) => new(value, count)
         {
