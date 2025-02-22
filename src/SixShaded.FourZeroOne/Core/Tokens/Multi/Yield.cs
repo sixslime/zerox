@@ -1,0 +1,13 @@
+﻿#nullable enable
+namespace FourZeroOne.Core.Tokens.Multi
+{
+    public sealed record Yield<R> : PureFunction<R, r.Multi<R>> where R : class, ResObj
+    {
+        public Yield(IToken<R> value) : base(value) { }
+        protected override r.Multi<R> EvaluatePure(R in1)
+        {
+            return new() { Values = in1.Yield().ToPSequence() };
+        }
+        protected override IOption<string> CustomToString() => $"^{Arg1}".AsSome();
+    }
+}
