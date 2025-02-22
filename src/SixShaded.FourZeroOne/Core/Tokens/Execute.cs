@@ -1,7 +1,7 @@
 ﻿#nullable enable
 namespace SixShaded.FourZeroOne.Core.Tokens
 {
-    using Resolutions.Boxed;
+    
     public record Execute<ROut> : Token.Defined.RuntimeHandledFunction<MetaFunction<ROut>, ROut>
         where ROut : class, Res
     {

@@ -1,5 +1,5 @@
 ﻿#nullable enable
-namespace SixShaded.FourZeroOne.Core.Resolutions.Boxed
+namespace SixShaded.FourZeroOne.Core.Resolutions
 {
     using Resolution.Unsafe;
     public sealed record MetaFunction<R> : Resolution.Defined.NoOp where R : class, Res

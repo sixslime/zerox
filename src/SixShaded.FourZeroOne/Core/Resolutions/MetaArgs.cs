@@ -1,7 +1,7 @@
 ﻿#nullable enable
 using FourZeroOne;
 
-namespace SixShaded.FourZeroOne.Core.Resolutions.Boxed
+namespace SixShaded.FourZeroOne.Core.Resolutions
 {
     public sealed record MetaArgs<R1> : Resolution.Defined.NoOp
         where R1 : class, Res

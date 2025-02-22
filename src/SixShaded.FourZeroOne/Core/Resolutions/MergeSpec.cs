@@ -1,6 +1,7 @@
 ﻿#nullable enable
 namespace SixShaded.FourZeroOne.Core.Resolutions
 {
+    // not even a resolution, consider moving.
     public record MergeSpec<C> : ICompositionType where C : ICompositionType
     {
         public static MergeComponentIdentifier<R> MERGE<R>(IComponentIdentifier<C, R> component) where R : class, Res => new(component);
