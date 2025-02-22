@@ -1,9 +1,7 @@
-﻿#nullable enable
-namespace SixShaded.FourZeroOne.Rule
+﻿namespace SixShaded.FourZeroOne.Rule;
+
+public interface IRuleMatcher<out TRestriction>
+    where TRestriction : Tok
 {
-    public interface IRuleMatcher<out TRestriction>
-        where TRestriction : Tok
-    {
-        public bool MatchesToken(Tok token);
-    }
+    public bool MatchesToken(Tok token);
 }

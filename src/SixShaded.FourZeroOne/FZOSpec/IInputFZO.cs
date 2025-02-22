@@ -1,9 +1,7 @@
 
-#nullable enable
-namespace SixShaded.FourZeroOne.FZOSpec
+namespace SixShaded.FourZeroOne.FZOSpec;
+
+public interface IInputFZO
 {
-    public interface IInputFZO
-    {
-        public ITask<int[]> GetSelection(IHasElements<Res> pool, int count);
-    }
+    public ITask<int[]> GetSelection(IHasElements<Res> pool, int count);
 }

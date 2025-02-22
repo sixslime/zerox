@@ -1,8 +1,6 @@
-﻿#nullable enable
-namespace SixShaded.FourZeroOne.Rule.Defined.Proxies
+﻿namespace SixShaded.FourZeroOne.Rule.Defined.Proxies;
+
+public record OriginalProxy<R> : ProxyBehavior<R> where R : class, Res
 {
-    public record OriginalProxy<R> : ProxyBehavior<R> where R : class, Res
-    {
-        public override bool ReallowsRule => false;
-    }
+    public override bool ReallowsRule => false;
 }

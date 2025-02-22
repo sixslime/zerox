@@ -1,14 +1,8 @@
-﻿#nullable enable
-namespace SixShaded.FourZeroOne.Token.Defined
+﻿namespace SixShaded.FourZeroOne.Token.Defined;
+
+public abstract record PureValue<R> : Value<R>
+    where R : class, Res
 {
-    public abstract record PureValue<R> : Value<R>
-        where R : class, Res
-    {
-        protected PureValue() : base() { }
-        protected sealed override ITask<IOption<R>> Evaluate(ITokenContext _)
-        {
-            return EvaluatePure().AsSome().ToCompletedITask();
-        }
-        protected abstract R EvaluatePure();
-    }
+    protected sealed override ITask<IOption<R>> Evaluate(ITokenContext _) => EvaluatePure().AsSome().ToCompletedITask();
+    protected abstract R EvaluatePure();
 }

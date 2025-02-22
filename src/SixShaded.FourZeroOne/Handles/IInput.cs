@@ -1,10 +1,8 @@
 
-#nullable enable
-namespace SixShaded.FourZeroOne.Handles
+namespace SixShaded.FourZeroOne.Handles;
+
+public interface IInput
 {
-    public interface IInput
-    {
-        public FZOSpec.IInputFZO InternalValue { get; }
-        public ITask<int[]> ReadSelection(IHasElements<Res> pool, int count);
-    }
+    public FZOSpec.IInputFZO InternalValue { get; }
+    public ITask<int[]> ReadSelection(IHasElements<Res> pool, int count);
 }

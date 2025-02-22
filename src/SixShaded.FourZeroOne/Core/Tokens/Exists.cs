@@ -1,12 +1,7 @@
-﻿#nullable enable
-namespace SixShaded.FourZeroOne.Core.Tokens
+﻿namespace SixShaded.FourZeroOne.Core.Tokens;
+
+public sealed record Exists : Token.Defined.Function<Res, Resolutions.Bool>
 {
-    public sealed record Exists : Token.Defined.Function<Res, Resolutions.Bool>
-    {
-        public Exists(Tok obj) : base(obj) { }
-        protected override ITask<IOption<Resolutions.Bool>> Evaluate(ITokenContext _, IOption<Res> obj)
-        {
-            return new Resolutions.Bool() { IsTrue = obj.IsSome() }.AsSome().ToCompletedITask();
-        }
-    }
+    public Exists(Tok obj) : base(obj) { }
+    protected override ITask<IOption<Resolutions.Bool>> Evaluate(ITokenContext _, IOption<Res> obj) => new Resolutions.Bool { IsTrue = obj.IsSome() }.AsSome().ToCompletedITask();
 }

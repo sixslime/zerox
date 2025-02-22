@@ -1,9 +1,6 @@
-#nullable enable
-namespace SixShaded.FourZeroOne.Resolution
-{
-    public interface IResolution
-    {
-        public IEnumerable<IInstruction> Instructions { get; }
-    }
+namespace SixShaded.FourZeroOne.Resolution;
 
+public interface IResolution
+{
+    public IEnumerable<IInstruction> Instructions { get; }
 }

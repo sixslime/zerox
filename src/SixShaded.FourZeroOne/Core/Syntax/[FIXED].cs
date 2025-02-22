@@ -1,25 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
-namespace SixShaded.FourZeroOne.Core.Syntax
+using Resolutions;
+public static partial class TokenSyntax
 {
-    using Resolutions;
-    public static partial class TokenSyntax
-    {
-        
-        public static Tokens.Fixed<Bool> tFixed(this bool value)
-        { return new(value); }
-        public static Tokens.Fixed<Number> tFixed(this int value)
-        { return new(value); }
-        public static Tokens.Fixed<NumRange> tFixed(this Range value)
-        { return new(value); }
-        public static Tokens.Fixed<R> tFixed<R>(this R value) where R : class, Res
-        { return new(value); }
-        public static Tokens.Fixed<Multi<R>> tFixed<R>(this IEnumerable<R> values) where R : class, Res
-        { return new(new() { Values = values.ToPSequence() }); }
+    public static Tokens.Fixed<Bool> tFixed(this bool value) => new(value);
 
-    }
+    public static Tokens.Fixed<Number> tFixed(this int value) => new(value);
+
+    public static Tokens.Fixed<NumRange> tFixed(this Range value) => new(value);
+
+    public static Tokens.Fixed<R> tFixed<R>(this R value) where R : class, Res => new(value);
+
+    public static Tokens.Fixed<Multi<R>> tFixed<R>(this IEnumerable<R> values) where R : class, Res => new(new() { Values = values.ToPSequence() });
 }

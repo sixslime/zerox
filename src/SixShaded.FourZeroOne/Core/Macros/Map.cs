@@ -1,41 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace SixShaded.FourZeroOne.Core.Macros;
 
-namespace SixShaded.FourZeroOne.Core.Macros
+using Resolutions;
+using Syntax;
+public static class Map<RIn, ROut>
+    where RIn : class, Res
+    where ROut : class, Res
 {
-    using Resolutions;
-    using Syntax;
-    public static class Map<RIn, ROut>
-            where RIn : class, Res
-            where ROut : class, Res
-    {
-        public static Macro<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> Construct(IToken<IMulti<RIn>> multi, IToken<MetaFunction<RIn, ROut>> mapFunction)
+    public static Macro<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> Construct(IToken<IMulti<RIn>> multi, IToken<MetaFunction<RIn, ROut>> mapFunction) =>
+        new(multi, mapFunction)
         {
-            return new(multi, mapFunction)
-            {
-                Label = Package.Label("map"),
-                Definition = Core.tMetaFunction<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>>(
+            Label = Package.Label("map"),
+            Definition = Core.tMetaFunction<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>>(
                     (multiI, mapFunctionI) =>
                         Core.tMetaRecursiveFunction<Number, Multi<ROut>>(
-                        (selfFunc, i) =>
-                            i.tRef().tIsGreaterThan(multiI.tRef().tCount())
-                            .t_IfTrue<Multi<ROut>>(new()
-                            {
-                                Then = Core.tNollaFor<Multi<ROut>>(),
-                                Else = Core.tUnionOf<ROut>(
-                                [
-                                    mapFunctionI.tRef().tExecuteWith(
-                                            new() { A = multiI.tRef().tAtIndex(i.tRef()) }).tYield(),
-                                        selfFunc.tRef().tExecuteWith(
-                                            new() { A = i.tRef().tAdd(1.tFixed()) })
-                                ])
-                            }))
-                        .tExecuteWith(new() { A = 1.tFixed() }))
-                    .Resolution
-            };
-        }
-    }
+                                (selfFunc, i) =>
+                                    i.tRef().tIsGreaterThan(multiI.tRef().tCount())
+                                        .t_IfTrue<Multi<ROut>>(new()
+                                        {
+                                            Then = Core.tNollaFor<Multi<ROut>>(),
+                                            Else = Core.tUnionOf(
+                                            [
+                                                mapFunctionI.tRef().tExecuteWith(
+                                                    new() { A = multiI.tRef().tAtIndex(i.tRef()) }).tYield(),
+                                                selfFunc.tRef().tExecuteWith(
+                                                    new() { A = i.tRef().tAdd(1.tFixed()) }),
+                                            ]),
+                                        }))
+                            .tExecuteWith(new() { A = 1.tFixed() }))
+                .Resolution,
+        };
 }
