@@ -10,9 +10,4 @@
     <PackageReference Include="MorseCode.ITask" Version="2.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Perfection\SixShaded.NotRust.csproj" />
-    <ProjectReference Include="..\..\src\SixShaded.NotRust\SixShaded.NotRust.csproj" />
-  </ItemGroup>
-
 </Project>

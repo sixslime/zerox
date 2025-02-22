@@ -1,7 +1,8 @@
 ﻿#nullable enable
 namespace SixShaded.FourZeroOne.Core.Tokens
 {
-    
+    using Resolutions;
+
     public record ToBoxedArgs<R1> : Token.Defined.Function<R1, MetaArgs<R1>>
         where R1 : class, Res
     {
