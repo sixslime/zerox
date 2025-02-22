@@ -3,6 +3,7 @@ namespace SixShaded.FourZeroOne.Resolution.Defined
 {
     // the 'new()' constraint is mega stupid.
     // this is mega stupid.
+    // update from HQ, its a regular amount of stupid.
     public record CompositionOf<C> : NoOp, ICompositionOf<C> where C : ICompositionType, new()
     {
         private PMap<Unsafe.IComponentIdentifier<C>, Res> _componentMap { get; init; }
