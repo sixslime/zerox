@@ -18,7 +18,7 @@ namespace SixShaded.FourZeroOne.Core.Syntax
         { return new(value); }
         public static Tokens.Fixed<R> tFixed<R>(this R value) where R : class, Res
         { return new(value); }
-        public static Tokens.Fixed<r.Multi<R>> tFixed<R>(this IEnumerable<R> values) where R : class, Res
+        public static Tokens.Fixed<Multi<R>> tFixed<R>(this IEnumerable<R> values) where R : class, Res
         { return new(new() { Values = values.ToPSequence() }); }
 
     }

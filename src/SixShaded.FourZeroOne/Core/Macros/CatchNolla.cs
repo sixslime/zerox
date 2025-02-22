@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace SixShaded.FourZeroOne.Core.Macros
 {
+    using Resolutions;
+    using Syntax;
     public static class CatchNolla<R>
         where R : class, Res
     {

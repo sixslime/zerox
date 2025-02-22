@@ -6,23 +6,25 @@ using System.Threading.Tasks;
 
 namespace SixShaded.FourZeroOne.Core.Macros
 {
+    using Resolutions;
+    using Syntax;
     public static class Map<RIn, ROut>
             where RIn : class, Res
             where ROut : class, Res
     {
-        public static Macro<IMulti<RIn>, MetaFunction<RIn, ROut>, r.Multi<ROut>> Construct(IToken<IMulti<RIn>> multi, IToken<MetaFunction<RIn, ROut>> mapFunction)
+        public static Macro<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> Construct(IToken<IMulti<RIn>> multi, IToken<MetaFunction<RIn, ROut>> mapFunction)
         {
             return new(multi, mapFunction)
             {
                 Label = Package.Label("map"),
-                Definition = Core.tMetaFunction<IMulti<RIn>, MetaFunction<RIn, ROut>, r.Multi<ROut>>(
+                Definition = Core.tMetaFunction<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>>(
                     (multiI, mapFunctionI) =>
-                        Core.tMetaRecursiveFunction<Number, r.Multi<ROut>>(
+                        Core.tMetaRecursiveFunction<Number, Multi<ROut>>(
                         (selfFunc, i) =>
                             i.tRef().tIsGreaterThan(multiI.tRef().tCount())
-                            .t_IfTrue<r.Multi<ROut>>(new()
+                            .t_IfTrue<Multi<ROut>>(new()
                             {
-                                Then = Core.tNollaFor<r.Multi<ROut>>(),
+                                Then = Core.tNollaFor<Multi<ROut>>(),
                                 Else = Core.tUnionOf<ROut>(
                                 [
                                     mapFunctionI.tRef().tExecuteWith(

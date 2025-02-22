@@ -1,6 +1,8 @@
 ﻿
 namespace SixShaded.FourZeroOne.Core.Macros
 {
+    using Resolutions;
+    using Syntax;
     public static class UpdateComponent<C, R>
         where C : ICompositionType
         where R : class, Res
@@ -17,3 +19,4 @@ namespace SixShaded.FourZeroOne.Core.Macros
                 .Resolution
         };
     }
+}
