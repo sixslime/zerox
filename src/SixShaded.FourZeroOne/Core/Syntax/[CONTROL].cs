@@ -11,7 +11,7 @@ namespace SixShaded.FourZeroOne.Core.Syntax
     {
         public static Tokens.SubEnvironment<R> tSubEnvironment<R>(Structure.Token.SubEnvironment<R> block) where R : class, Res
         { return new(block.Environment, block.Value); }
-        public static Tokens.Multi.Union<Res> t_Env(params IToken<Res>[] environment)
+        public static Tokens.Multi.Union<Res> t_Env(params Tok[] environment)
         { return new(environment.Map(x => x.tYield())); }
     }
     public static partial class TokenSyntax
