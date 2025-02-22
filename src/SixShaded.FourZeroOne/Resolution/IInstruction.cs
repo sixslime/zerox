@@ -1,18 +1,9 @@
 #nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Resolution
 {
-    using FourZeroOne.FZOSpec;
-    using Handles;
-    using SixShaded.FourZeroOne;
-    using SixShaded.NotRust;
-    using SixShaded.SixLib.GFunc;
-
-    public interface IInstruction : IResolution
+    public interface IInstruction : Res
     {
         public IMemory TransformMemory(IMemory context);
-        public IMemoryFZO TransformMemoryUnsafe(IMemoryFZO memory);
+        public FZOSpec.IMemoryFZO TransformMemoryUnsafe(FZOSpec.IMemoryFZO memory);
     }
-
 }

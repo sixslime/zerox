@@ -1,6 +1,4 @@
 ﻿#nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Resolution.Defined
 {
     using FourZeroOne.FZOSpec;
@@ -10,7 +8,7 @@ namespace SixShaded.FourZeroOne.Resolution.Defined
     using SixShaded.NotRust;
     using SixShaded.SixLib.GFunc;
 
-    public sealed record DynamicAddress<R> : IMemoryAddress<R> where R : class, IResolution
+    public sealed record DynamicAddress<R> : IMemoryAddress<R> where R : class, Res
     {
         public int DynamicId { get; }
 

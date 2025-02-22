@@ -11,9 +11,9 @@ using SixShaded.FourZeroOne.Resolution;
 #nullable enable
 namespace SixShaded.FourZeroOne.Handles
 {
-    using Res = IResolution;
-    using Addr = IMemoryAddress<IResolution>;
-    using Rule = IRule<IResolution>;
+    using Res = Res;
+    using Addr = IMemoryAddress<Res>;
+    using Rule = IRule<Res>;
     internal static class HandlesSyntax
     {
         public static ITokenContext ToHandle(this FZOSpec.IProcessorFZO.ITokenContext implementation) => new TokenContextHandle(implementation);

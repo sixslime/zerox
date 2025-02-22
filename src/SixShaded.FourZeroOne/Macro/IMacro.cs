@@ -5,7 +5,7 @@ namespace SixShaded.FourZeroOne.Macro
     using FourZeroOne.FZOSpec;
     using SixShaded.NotRust;
     using Token;
-    using Res = Resolution.IResolution;
+    using Res = Resolution.Res;
 
     public interface IMacro<R> : IToken<R> where R : Res
     {

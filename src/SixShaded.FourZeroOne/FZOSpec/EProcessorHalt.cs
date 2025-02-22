@@ -7,11 +7,11 @@ using SixShaded.SixLib.GFunc;
 namespace SixShaded.FourZeroOne.FZOSpec
 {
     using Token;
-    using Res = Resolution.IResolution;
-    using Rule = IRule<Resolution.IResolution>;
-    using ResOpt = IOption<Resolution.IResolution>;
-    using Token = IToken<Resolution.IResolution>;
-    using Addr = Resolution.IMemoryAddress<Resolution.IResolution>;
+    using Res = Resolution.Res;
+    using Rule = IRule<Resolution.Res>;
+    using ResOpt = IOption<Resolution.Res>;
+    using Token = IToken<Resolution.Res>;
+    using Addr = Resolution.IMemoryAddress<Resolution.Res>;
     using Resolution;
     using Resolution.Unsafe;
     using Rule;

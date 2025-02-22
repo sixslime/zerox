@@ -1,6 +1,4 @@
 #nullable enable
-using FourZeroOne;
-
 namespace SixShaded.FourZeroOne.Resolution
 {
     using FourZeroOne.FZOSpec;

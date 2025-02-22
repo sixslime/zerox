@@ -1,40 +1,31 @@
 #nullable enable
 namespace SixShaded.FourZeroOne.Resolution.Defined
 {
-    using FourZeroOne.FZOSpec;
-    using FourZeroOne.Resolution;
-    using Handles;
-    using SixShaded.FourZeroOne;
-    using SixShaded.FourZeroOne.Resolution;
-    using SixShaded.FourZeroOne.Resolution.Unsafe;
-    using SixShaded.NotRust;
-    using SixShaded.SixLib.GFunc;
-
     // the 'new()' constraint is mega stupid.
     // this is mega stupid.
     public record CompositionOf<C> : NoOp, ICompositionOf<C> where C : ICompositionType, new()
     {
-        private PMap<IComponentIdentifier<C>, IResolution> _componentMap { get; init; }
-        public IEnumerable<ITiple<IComponentIdentifier, IResolution>> ComponentsUnsafe => _componentMap.Elements;
+        private PMap<Unsafe.IComponentIdentifier<C>, Res> _componentMap { get; init; }
+        public IEnumerable<ITiple<Unsafe.IComponentIdentifier, Res>> ComponentsUnsafe => _componentMap.Elements;
         public CompositionOf()
         {
             _componentMap = new();
         }
         // UNBELIEVABLY stupid
-        public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : IResolution
+        public ICompositionOf<C> WithComponent<R>(IComponentIdentifier<C, R> identifier, R data) where R : Res
         {
-            return this with { _componentMap = _componentMap.WithEntries((identifier.IsA<IComponentIdentifier<C>>(), data.IsA<IResolution>()).Tiple()) };
+            return this with { _componentMap = _componentMap.WithEntries((identifier.IsA<Unsafe.IComponentIdentifier<C>>(), data.IsA<Res>()).Tiple()) };
         }
-        public ICompositionOf<C> WithComponentsUnsafe(IEnumerable<ITiple<IComponentIdentifier<C>, IResolution>> components)
+        public ICompositionOf<C> WithComponentsUnsafe(IEnumerable<ITiple<Unsafe.IComponentIdentifier<C>, Res>> components)
         {
             return this with { _componentMap = _componentMap.WithEntries(components) };
         }
-        public ICompositionOf<C> WithoutComponents(IEnumerable<IComponentIdentifier<C>> addresses)
+        public ICompositionOf<C> WithoutComponents(IEnumerable<Unsafe.IComponentIdentifier<C>> addresses)
         {
             return this with { _componentMap = _componentMap.WithoutEntries(addresses) };
         }
 
-        public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : IResolution
+        public IOption<R> GetComponent<R>(IComponentIdentifier<C, R> address) where R : Res
         {
             return _componentMap.At(address).RemapAs(x => (R)x);
         }

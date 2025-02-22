@@ -8,7 +8,7 @@ namespace SixShaded.FourZeroOne.Core.Syntax
     using Token;
     using Resolution;
     using Macro;
-    using Res = Resolution.IResolution;
+    using Res = Resolution.Res;
     using FourZeroOne.Rule.Matchers;
     using FourZeroOne.Rule.Proxies;
     using FourZeroOne.Rule;
