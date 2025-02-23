@@ -7,5 +7,5 @@ internal interface IContextAccessor
     IReferenceAccessor[] References { get; }
     IAssertionAccessor<ResOpt>[] ResolutionAssertions { get; }
     IAssertionAccessor<IMemoryFZO>[] MemoryAssertions { get; }
-    IAssertionAccessor<IToken>[] TokenAssertions { get; }
+    IAssertionAccessor<Tok>[] TokenAssertions { get; }
 }

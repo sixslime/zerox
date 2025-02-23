@@ -3,5 +3,5 @@ namespace SixShaded.FourZeroOne.FZOSpec;
 
 public interface IInputFZO
 {
-    public ITask<int[]> GetSelection(IHasElements<Res> pool, int count);
+    public Task<int[]> GetSelection(IHasElements<Res> pool, int count);
 }

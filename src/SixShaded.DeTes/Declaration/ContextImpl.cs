@@ -10,14 +10,14 @@ internal class ContextImpl : IDeTesContext, IContextAccessor
     {
         public List<IAssertionAccessor<ResOpt>> Resolution = [];
         public List<IAssertionAccessor<IMemoryFZO>> Memory = [];
-        public List<IAssertionAccessor<IToken>> Tok = [];
+        public List<IAssertionAccessor<Tok>> Token = [];
     }
 
     IDomainAccessor[] IContextAccessor.Domains => _domains.ToArray();
     IReferenceAccessor[] IContextAccessor.References => _references.ToArray();
     IAssertionAccessor<ResOpt>[] IContextAccessor.ResolutionAssertions => _assertions.Resolution.ToArray();
     IAssertionAccessor<IMemoryFZO>[] IContextAccessor.MemoryAssertions => _assertions.Memory.ToArray();
-    IAssertionAccessor<IToken>[] IContextAccessor.TokenAssertions => _assertions.Token.ToArray();
+    IAssertionAccessor<Tok>[] IContextAccessor.TokenAssertions => _assertions.Token.ToArray();
     IDeTesContext IContextAccessor.PublicContext => this;
 
     public void AddAssertionResolution<R>(IToken<R> subject, Predicate<R> assertion, string? description)
@@ -47,7 +47,7 @@ internal class ContextImpl : IDeTesContext, IContextAccessor
     public void AddAssertionToken<R>(IToken<R> subject, Predicate<IToken<R>> assertion, string? description)
         where R : class, Res
     {
-        _assertions.Token.Add(new AssertionImpl<IToken>
+        _assertions.Token.Add(new AssertionImpl<Tok>
         {
             Description = description,
             LinkedToken = subject,

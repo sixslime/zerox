@@ -1,5 +1,8 @@
 ﻿namespace SixShaded.DeTes.Realization;
 
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+
 internal class DeTesRealizerImpl
 {
     public async Task<IResult<IDeTesResult, EDeTesInvalidTest>> Realize(IDeTesTest test, IDeTesFZOSupplier supplier)
@@ -178,7 +181,7 @@ internal class DeTesRealizerImpl
         };
     }
 
-    private static IToken GetLastOperation(IStateFZO state) => state.OperationStack.First().Operation;
+    private static Tok GetLastOperation(IStateFZO state) => state.OperationStack.First().Operation;
 
     private static IMemoryFZO GetMemoryAfterResolution(IStateFZO state, ResOpt resolution)
     {
@@ -188,7 +191,7 @@ internal class DeTesRealizerImpl
             .WithResolution(resolution);
     }
 
-    private static OnResolveAssertionsImpl GenerateOnResolveAssertionObject(RuntimeResources runtime, IToken linkedToken, ResOpt resolution, IMemoryFZO nMemory, IToken token)
+    private static OnResolveAssertionsImpl GenerateOnResolveAssertionObject(RuntimeResources runtime, Tok linkedToken, ResOpt resolution, IMemoryFZO nMemory, Tok token)
     {
         return new()
         {
@@ -215,7 +218,7 @@ internal class DeTesRealizerImpl
         };
     }
 
-    private static AssertionDataImpl<A> EvaluateAssertion<A>(IAssertionAccessor<A> assertion, IToken linkedToken, A value)
+    private static AssertionDataImpl<A> EvaluateAssertion<A>(IAssertionAccessor<A> assertion, Tok linkedToken, A value)
     {
         IResult<bool, Exception>? result = null;
         try { result = result.Ok(assertion.Condition(value)); }
@@ -238,17 +241,17 @@ internal class DeTesRealizerImpl
     private class RuntimeResources(IContextAccessor context)
     {
         public Queue<IDomainAccessor> DomainQueue = new();
-        public Dictionary<IToken, IToken> PreprocessMap = new(new EqualityByReference());
-        public Dictionary<IToken, IToken> MetaExecuteMap = new(new EqualityByReference());
-        public Dictionary<IToken, List<IReferenceAccessor>> References = MakeTokenLinkDictionary(context.References);
-        public Dictionary<IToken, List<IDomainAccessor>> Domains = MakeTokenLinkDictionary(context.Domains);
-        public Dictionary<IToken, List<IAssertionAccessor<IToken>>> TokenAssertions = MakeTokenLinkDictionary(context.TokenAssertions);
-        public Dictionary<IToken, List<IAssertionAccessor<ResOpt>>> ResolutionAssertions = MakeTokenLinkDictionary(context.ResolutionAssertions);
-        public Dictionary<IToken, List<IAssertionAccessor<IMemoryFZO>>> MemoryAssertions = MakeTokenLinkDictionary(context.MemoryAssertions);
+        public Dictionary<Tok, Tok> PreprocessMap = new(new EqualityByReference());
+        public Dictionary<Tok, Tok> MetaExecuteMap = new(new EqualityByReference());
+        public Dictionary<Tok, List<IReferenceAccessor>> References = MakeTokenLinkDictionary(context.References);
+        public Dictionary<Tok, List<IDomainAccessor>> Domains = MakeTokenLinkDictionary(context.Domains);
+        public Dictionary<Tok, List<IAssertionAccessor<Tok>>> TokenAssertions = MakeTokenLinkDictionary(context.TokenAssertions);
+        public Dictionary<Tok, List<IAssertionAccessor<ResOpt>>> ResolutionAssertions = MakeTokenLinkDictionary(context.ResolutionAssertions);
+        public Dictionary<Tok, List<IAssertionAccessor<IMemoryFZO>>> MemoryAssertions = MakeTokenLinkDictionary(context.MemoryAssertions);
 
-        private static Dictionary<IToken, List<A>> MakeTokenLinkDictionary<A>(IEnumerable<A> accessors) where A : ITokenLinked
+        private static Dictionary<Tok, List<A>> MakeTokenLinkDictionary<A>(IEnumerable<A> accessors) where A : ITokenLinked
         {
-            var o = new Dictionary<IToken, List<A>>(new EqualityByReference());
+            var o = new Dictionary<Tok, List<A>>(new EqualityByReference());
             foreach (var a in accessors)
             {
                 if (o.TryGetValue(a.LinkedToken, out var list)) list.Add(a);
@@ -257,12 +260,12 @@ internal class DeTesRealizerImpl
             return o;
         }
 
-        public IToken GetLinkedTokenOld(IToken token)
+        public Tok GetLinkedTokenOld(Tok token)
         {
-            return PreprocessMap[token].ExprAs(preV => MetaExecuteMap.TryGetValue(preV, out var metaV) ? metaV : preV);
+            return PreprocessMap[token].ExprAs(preV => MetaExecuteMap.GetValueOrDefault(preV, preV));
         }
 
-        public IToken GetLinkedToken(IToken token)
+        public Tok GetLinkedToken(Tok token)
         {
             return PreprocessMap[token];
         }
@@ -271,7 +274,7 @@ internal class DeTesRealizerImpl
     {
         private Data? _data = data;
 
-        ITask<int[]> IInputFZO.GetSelection(IHasElements<Res> pool, int count)
+        Task<int[]> IInputFZO.GetSelection(IHasElements<Res> pool, int count)
         {
             if (_data is null) throw new RequiresDomainSplit();
             var data = _data;
@@ -290,14 +293,14 @@ internal class DeTesRealizerImpl
                     Domain = data.Domain.Selections
                 }
             };
-            return data.Selection.ToCompletedITask();
+            return data.Selection.ToCompletedTask();
         }
 
         public class Data
         {
             public required int[] Selection { get; init; }
             public required IDomainAccessor Domain { get; init; }
-            public required IToken SelectionToken { get; init; }
+            public required Tok SelectionToken { get; init; }
         }
     }
     private class RequiresDomainSplit : Exception { }
