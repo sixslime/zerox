@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SixShaded.DeTes\SixShaded.DeTes.csproj" />
+  </ItemGroup>
+
 </Project>

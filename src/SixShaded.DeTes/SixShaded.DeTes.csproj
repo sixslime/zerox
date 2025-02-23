@@ -6,4 +6,18 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Realization\.global_usings.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include=".global_usings.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\SixShaded.SixLib.GFunc\SixShaded.SixLib.GFunc.csproj" />
+    <ProjectReference Include="..\SixShaded.FourZeroOne\SixShaded.FourZeroOne.csproj" />
+    <ProjectReference Include="..\SixShaded.NotRust\SixShaded.NotRust.csproj" />
+  </ItemGroup>
+
 </Project>
