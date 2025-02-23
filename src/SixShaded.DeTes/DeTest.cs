@@ -8,6 +8,6 @@ using System.Threading.Tasks;
 public record DeTest : IDeTesTest
 {
     public required IMemoryFZO InitialMemory { get; init; }
-    public required TokenDeclaration Tok { get; init; }
+    public required TokenDeclaration Token { get; init; }
 }
 

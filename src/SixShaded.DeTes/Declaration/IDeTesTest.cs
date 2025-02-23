@@ -3,5 +3,5 @@
 public interface IDeTesTest
 {
     public IMemoryFZO InitialMemory { get; }
-    public TokenDeclaration Tok { get; }
+    public TokenDeclaration Token { get; }
 }
