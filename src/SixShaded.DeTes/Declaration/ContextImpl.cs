@@ -2,16 +2,9 @@
 
 internal class ContextImpl : IDeTesContext, IContextAccessor
 {
-    private List<IDomainAccessor> _domains = [];
-    private List<IReferenceAccessor> _references = [];
-    private AssertSet _assertions = new();
-
-    private class AssertSet
-    {
-        public List<IAssertionAccessor<ResOpt>> Resolution = [];
-        public List<IAssertionAccessor<IMemoryFZO>> Memory = [];
-        public List<IAssertionAccessor<Tok>> Token = [];
-    }
+    private readonly AssertSet _assertions = new();
+    private readonly List<IDomainAccessor> _domains = [];
+    private readonly List<IReferenceAccessor> _references = [];
 
     IDomainAccessor[] IContextAccessor.Domains => _domains.ToArray();
     IReferenceAccessor[] IContextAccessor.References => _references.ToArray();
@@ -21,8 +14,7 @@ internal class ContextImpl : IDeTesContext, IContextAccessor
     IDeTesContext IContextAccessor.PublicContext => this;
 
     public void AddAssertionResolution<R>(IToken<R> subject, Predicate<R> assertion, string? description)
-        where R : class, Res
-    {
+        where R : class, Res =>
         _assertions.Resolution.Add(new AssertionImpl<ResOpt>
         {
             Description = description,
@@ -31,39 +23,32 @@ internal class ContextImpl : IDeTesContext, IContextAccessor
                 ? res is R r ? assertion(r) : throw new UnexpectedResolutionTypeException(res.GetType(), typeof(R))
                 : throw new UnexpectedNollaException(),
         });
-    }
 
     public void AddAssertionResolutionUnstable<R>(IToken<R> subject, Predicate<IOption<R>> assertion, string? description)
-        where R : class, Res
-    {
+        where R : class, Res =>
         _assertions.Resolution.Add(new AssertionImpl<ResOpt>
         {
             Description = description,
             LinkedToken = subject,
-            Condition = x => x is IOption<R> r ? assertion(r) : throw new UnexpectedResolutionTypeException(x.GetType(), typeof(IOption<R>))
+            Condition = x => x is IOption<R> r ? assertion(r) : throw new UnexpectedResolutionTypeException(x.GetType(), typeof(IOption<R>)),
         });
-    }
 
     public void AddAssertionToken<R>(IToken<R> subject, Predicate<IToken<R>> assertion, string? description)
-        where R : class, Res
-    {
+        where R : class, Res =>
         _assertions.Token.Add(new AssertionImpl<Tok>
         {
             Description = description,
             LinkedToken = subject,
-            Condition = x => assertion((IToken<R>)x)
+            Condition = x => assertion((IToken<R>)x),
         });
-    }
 
-    public void AddAssertionMemory(Tok subject, Predicate<IMemoryFZO> assertion, string? description)
-    {
+    public void AddAssertionMemory(Tok subject, Predicate<IMemoryFZO> assertion, string? description) =>
         _assertions.Memory.Add(new AssertionImpl<IMemoryFZO>
         {
             Description = description,
             LinkedToken = subject,
-            Condition = assertion
+            Condition = assertion,
         });
-    }
 
     public void MakeReference<R>(IToken<R> subject, out IDeTesReference<R> reference, string? description)
         where R : class, Res
@@ -89,5 +74,12 @@ internal class ContextImpl : IDeTesContext, IContextAccessor
     {
         impl = new() { LinkedToken = subject, Selections = selections.Map(x => x.ToArray()).ToArray(), Description = description };
         _domains.Add(impl);
+    }
+
+    private class AssertSet
+    {
+        public readonly List<IAssertionAccessor<IMemoryFZO>> Memory = [];
+        public readonly List<IAssertionAccessor<ResOpt>> Resolution = [];
+        public readonly List<IAssertionAccessor<Tok>> Token = [];
     }
 }

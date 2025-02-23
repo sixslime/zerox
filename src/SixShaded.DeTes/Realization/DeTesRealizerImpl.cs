@@ -8,10 +8,10 @@ internal class DeTesRealizerImpl
     public async Task<IResult<IDeTesResult, EDeTesInvalidTest>> Realize(IDeTesTest test, IDeTesFZOSupplier supplier)
     {
         IContextAccessor context = new ContextImpl();
-        var evalState = supplier.UnitializedState.Initialize(new FZOSource()
+        var evalState = supplier.UnitializedState.Initialize(new()
         {
             InitialMemory = test.InitialMemory,
-            Program = test.Token(context.PublicContext)
+            Program = test.Token(context.PublicContext),
         });
         var processor = supplier.Processor;
         try
@@ -37,17 +37,20 @@ internal class DeTesRealizerImpl
             catch (RequiresDomainSplit)
             {
                 if (!runtime.DomainQueue.TryDequeue(out var domain))
+                {
                     throw new DeTesInvalidTestException
                     {
                         Value = new EDeTesInvalidTest.NoSelectionDomainDefined
                         {
-                            SelectionToken = state.OperationStack.GetAt(0).Expect("How?").Operation
-                        }
+                            SelectionToken = state.OperationStack.GetAt(0).Expect("How?").Operation,
+                        },
                     };
+                }
+
                 var paths = new IDeTesSelectionPath[domain.Selections.Length];
                 for (int i = 0; i < paths.Length; i++)
                 {
-                    var thisSelection = domain.Selections[i];
+                    int[] thisSelection = domain.Selections[i];
                     domain.MetaIndex = i;
                     var selToken = state.OperationStack.First().Operation;
                     paths[i] = new SelectionPathImpl
@@ -57,7 +60,7 @@ internal class DeTesRealizerImpl
                         {
                             Domain = domain,
                             Selection = thisSelection,
-                            SelectionToken = selToken
+                            SelectionToken = selToken,
                         })),
                         DomainData = new()
                         {
@@ -72,8 +75,11 @@ internal class DeTesRealizerImpl
             catch (DeTesInvalidTestException) { throw; }
             catch (Exception e) { critPoint = critPoint.Ok(e.AsErr(Hint<EProcessorHalt>.HINT)); }
 
-            if (processorStep is null) if (critPoint is null) throw new UnreachableException();
+            if (processorStep is null)
+            {
+                if (critPoint is null) throw new UnreachableException();
                 else break;
+            }
 
             if (!processorStep.Split(out var step, out var halt))
             {
@@ -86,7 +92,7 @@ internal class DeTesRealizerImpl
                         Origin = linkedToken,
                         PreState = state,
                         CompletionHalt = complete,
-                        Assertions = GenerateOnResolveAssertionObject(runtime, linkedToken, resolution, GetMemoryAfterResolution(state, resolution), GetLastOperation(state))
+                        Assertions = GenerateOnResolveAssertionObject(runtime, linkedToken, resolution, GetMemoryAfterResolution(state, resolution), GetLastOperation(state)),
                     });
                 }
 
@@ -112,7 +118,7 @@ internal class DeTesRealizerImpl
                         {
                             Origin = runtime.GetLinkedToken(v.Mutation.Result),
                             PreState = state,
-                            NextStep = v
+                            NextStep = v,
                         });
                     }
                     break;
@@ -143,15 +149,17 @@ internal class DeTesRealizerImpl
                                 Origin = linkedToken,
                                 PreState = state,
                                 NextStep = v,
-                                Assertions = GenerateOnResolveAssertionObject(runtime, linkedToken, resolution, nMemory, nToken)
+                                Assertions = GenerateOnResolveAssertionObject(runtime, linkedToken, resolution, nMemory, nToken),
                             });
                             if (runtime.References.TryGetValue(linkedToken, out var references))
+                            {
                                 foreach (var reference in references)
                                 {
                                     reference.SetResolution(resolution);
                                     reference.SetMemory(nMemory);
                                     reference.SetToken(nToken);
                                 }
+                            }
                         }
                         else
                         {
@@ -177,46 +185,42 @@ internal class DeTesRealizerImpl
         {
             TimeTaken = timer.Elapsed,
             CriticalPoint = critPoint,
-            EvaluationFrames = frames.ToArray()
+            EvaluationFrames = frames.ToArray(),
         };
     }
 
     private static Tok GetLastOperation(IStateFZO state) => state.OperationStack.First().Operation;
 
-    private static IMemoryFZO GetMemoryAfterResolution(IStateFZO state, ResOpt resolution)
-    {
-        return (state.OperationStack.GetAt(1).Check(out var node)
+    private static IMemoryFZO GetMemoryAfterResolution(IStateFZO state, ResOpt resolution) =>
+        (state.OperationStack.GetAt(1).Check(out var node)
             ? node.MemoryStack.First()
             : state.Initialized.Unwrap().InitialMemory)
-            .WithResolution(resolution);
-    }
+        .WithResolution(resolution);
 
-    private static OnResolveAssertionsImpl GenerateOnResolveAssertionObject(RuntimeResources runtime, Tok linkedToken, ResOpt resolution, IMemoryFZO nMemory, Tok token)
-    {
-        return new()
+    private static OnResolveAssertionsImpl GenerateOnResolveAssertionObject(RuntimeResources runtime, Tok linkedToken, ResOpt resolution, IMemoryFZO nMemory, Tok token) =>
+        new()
         {
             Resolution =
                 runtime.ResolutionAssertions
-                .TryGetValue(linkedToken, out var resolutionAssertions)
-                .ToOption(resolutionAssertions).Or([])!
-                .Map(assertion => EvaluateAssertion(assertion, linkedToken, resolution))
-                .ToArray(),
+                    .TryGetValue(linkedToken, out var resolutionAssertions)
+                    .ToOption(resolutionAssertions).Or([])!
+                    .Map(assertion => EvaluateAssertion(assertion, linkedToken, resolution))
+                    .ToArray(),
             Memory =
                 runtime.MemoryAssertions
-                .TryGetValue(linkedToken, out var memoryAssertions)
-                .ToOption(memoryAssertions).Or([])!
-                .Map(assertion =>
-                    EvaluateAssertion(assertion, linkedToken, nMemory))
-                .ToArray(),
+                    .TryGetValue(linkedToken, out var memoryAssertions)
+                    .ToOption(memoryAssertions).Or([])!
+                    .Map(assertion =>
+                        EvaluateAssertion(assertion, linkedToken, nMemory))
+                    .ToArray(),
             Token =
                 runtime.TokenAssertions
-                .TryGetValue(linkedToken, out var tokenAssertions)
-                .ToOption(tokenAssertions).Or([])!
-                .Map(assertion =>
-                    EvaluateAssertion(assertion, linkedToken, token))
-                .ToArray(),
+                    .TryGetValue(linkedToken, out var tokenAssertions)
+                    .ToOption(tokenAssertions).Or([])!
+                    .Map(assertion =>
+                        EvaluateAssertion(assertion, linkedToken, token))
+                    .ToArray(),
         };
-    }
 
     private static AssertionDataImpl<A> EvaluateAssertion<A>(IAssertionAccessor<A> assertion, Tok linkedToken, A value)
     {
@@ -229,25 +233,22 @@ internal class DeTesRealizerImpl
             OnToken = linkedToken,
             Condition = assertion.Condition,
             Description = assertion.Description,
-            Result = result
+            Result = result,
         };
     }
 
-    private static Err<IDeTesResult, EDeTesInvalidTest> Invalid(EDeTesInvalidTest val)
-    {
-        return new Err<IDeTesResult, EDeTesInvalidTest>(val);
-    }
+    private static Err<IDeTesResult, EDeTesInvalidTest> Invalid(EDeTesInvalidTest val) => new(val);
 
     private class RuntimeResources(IContextAccessor context)
     {
-        public Queue<IDomainAccessor> DomainQueue = new();
-        public Dictionary<Tok, Tok> PreprocessMap = new(new EqualityByReference());
-        public Dictionary<Tok, Tok> MetaExecuteMap = new(new EqualityByReference());
-        public Dictionary<Tok, List<IReferenceAccessor>> References = MakeTokenLinkDictionary(context.References);
-        public Dictionary<Tok, List<IDomainAccessor>> Domains = MakeTokenLinkDictionary(context.Domains);
-        public Dictionary<Tok, List<IAssertionAccessor<Tok>>> TokenAssertions = MakeTokenLinkDictionary(context.TokenAssertions);
-        public Dictionary<Tok, List<IAssertionAccessor<ResOpt>>> ResolutionAssertions = MakeTokenLinkDictionary(context.ResolutionAssertions);
-        public Dictionary<Tok, List<IAssertionAccessor<IMemoryFZO>>> MemoryAssertions = MakeTokenLinkDictionary(context.MemoryAssertions);
+        public readonly Queue<IDomainAccessor> DomainQueue = new();
+        public readonly Dictionary<Tok, List<IDomainAccessor>> Domains = MakeTokenLinkDictionary(context.Domains);
+        public readonly Dictionary<Tok, List<IAssertionAccessor<IMemoryFZO>>> MemoryAssertions = MakeTokenLinkDictionary(context.MemoryAssertions);
+        public readonly Dictionary<Tok, Tok> MetaExecuteMap = new(new EqualityByReference());
+        public readonly Dictionary<Tok, Tok> PreprocessMap = new(new EqualityByReference());
+        public readonly Dictionary<Tok, List<IReferenceAccessor>> References = MakeTokenLinkDictionary(context.References);
+        public readonly Dictionary<Tok, List<IAssertionAccessor<ResOpt>>> ResolutionAssertions = MakeTokenLinkDictionary(context.ResolutionAssertions);
+        public readonly Dictionary<Tok, List<IAssertionAccessor<Tok>>> TokenAssertions = MakeTokenLinkDictionary(context.TokenAssertions);
 
         private static Dictionary<Tok, List<A>> MakeTokenLinkDictionary<A>(IEnumerable<A> accessors) where A : ITokenLinked
         {
@@ -260,16 +261,11 @@ internal class DeTesRealizerImpl
             return o;
         }
 
-        public Tok GetLinkedTokenOld(Tok token)
-        {
-            return PreprocessMap[token].ExprAs(preV => MetaExecuteMap.GetValueOrDefault(preV, preV));
-        }
+        public Tok GetLinkedTokenOld(Tok token) => PreprocessMap[token].ExprAs(preV => MetaExecuteMap.GetValueOrDefault(preV, preV));
 
-        public Tok GetLinkedToken(Tok token)
-        {
-            return PreprocessMap[token];
-        }
+        public Tok GetLinkedToken(Tok token) => PreprocessMap[token];
     }
+
     private class Input(Input.Data? data) : IInputFZO
     {
         private Data? _data = data;
@@ -280,19 +276,23 @@ internal class DeTesRealizerImpl
             var data = _data;
             _data = null;
 
-            if (data.Selection.Length != count || data.Selection.Any(i => i >= pool.Count)) throw new DeTesInvalidTestException
+            if (data.Selection.Length != count || data.Selection.Any(i => i >= pool.Count))
             {
-                Value = new EDeTesInvalidTest.InvalidDomainSelection
+                throw new DeTesInvalidTestException
                 {
-                    InvalidSelection = data.Selection,
-                    ExpectedSelectionSize = count,
-                    ExpectedMaxIndex = pool.Count - 1,
-                    SelectionToken = data.SelectionToken,
-                    NearToken = data.Domain.LinkedToken,
-                    Description = data.Domain.Description,
-                    Domain = data.Domain.Selections
-                }
-            };
+                    Value = new EDeTesInvalidTest.InvalidDomainSelection
+                    {
+                        InvalidSelection = data.Selection,
+                        ExpectedSelectionSize = count,
+                        ExpectedMaxIndex = pool.Count - 1,
+                        SelectionToken = data.SelectionToken,
+                        NearToken = data.Domain.LinkedToken,
+                        Description = data.Domain.Description,
+                        Domain = data.Domain.Selections,
+                    },
+                };
+            }
+
             return data.Selection.ToCompletedTask();
         }
 
@@ -303,7 +303,9 @@ internal class DeTesRealizerImpl
             public required Tok SelectionToken { get; init; }
         }
     }
+
     private class RequiresDomainSplit : Exception { }
+
     private class EqualityByReference : EqualityComparer<object>
     {
         public override bool Equals(object? x, object? y) => ReferenceEquals(x, y);
