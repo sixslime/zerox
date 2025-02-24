@@ -140,25 +140,25 @@ public record Glancer
         {
             results[i] = (await new DeTesRealizer().Realize(tests[i], Supplier))
                 .RemapOk(x =>
-                    x.RecursiveEvalTree(deTesResult => 
-                        deTesResult.CriticalPoint.RemapOk(stop =>
-                            stop.CheckOk(out var halt) &&
-                            halt is EProcessorHalt.Completed &&
-                            deTesResult.EvaluationFrames.All(frame => frame switch
-                            {
-                                EDeTesFrame.Resolve v
-                                    => v.Assertions.Token.All(AssertPassed) &&
-                                       v.Assertions.Resolution.All(AssertPassed) &&
-                                       v.Assertions.Memory.All(AssertPassed),
-                                EDeTesFrame.Complete v
-                                    => //DEBUG
-                                    //new Func<bool>(() => { Console.WriteLine(v.CompletionHalt.Resolution); return true; })() &&
-                                    v.Assertions.Token.All(AssertPassed) &&
-                                    v.Assertions.Resolution.All(AssertPassed) &&
-                                    v.Assertions.Memory.All(AssertPassed),
-                                _ => true,
-                            })),
-                        others => others.All(x => x)));
+                    x.RecursiveEvalTree(deTesResult =>
+                            deTesResult.CriticalPoint.RemapOk(stop =>
+                                stop.CheckOk(out var halt) &&
+                                halt is EProcessorHalt.Completed &&
+                                deTesResult.EvaluationFrames.All(frame => frame switch
+                                {
+                                    EDeTesFrame.Resolve v
+                                        => v.Assertions.Token.All(AssertPassed) &&
+                                           v.Assertions.Resolution.All(AssertPassed) &&
+                                           v.Assertions.Memory.All(AssertPassed),
+                                    EDeTesFrame.Complete v
+                                        => //DEBUG
+                                        //new Func<bool>(() => { Console.WriteLine(v.CompletionHalt.Resolution); return true; })() &&
+                                        v.Assertions.Token.All(AssertPassed) &&
+                                        v.Assertions.Resolution.All(AssertPassed) &&
+                                        v.Assertions.Memory.All(AssertPassed),
+                                    _ => true,
+                                })),
+                        others => others.All(y => y)));
         }
 
         _testEvals = results.AsSome();
