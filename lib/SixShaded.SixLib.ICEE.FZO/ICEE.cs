@@ -1,11 +1,10 @@
 ﻿
-using System.Text;
-using SixShaded.SixLib.GFunc;
 namespace SixShaded.SixLib.ICEE.FZO
 {
+    using System.Text;
     public static class ICEEs
     {
-        public static string ICEE(this FourZeroOne.FZOSpec.IMemoryFZO memory)
+        public static string ICEE(this IMemoryFZO memory)
         {
             return new StringBuilder()
                 .AppendLine($"[FZO Memory] ({memory.GetType().Name})")
@@ -23,7 +22,7 @@ namespace SixShaded.SixLib.ICEE.FZO
                 .AppendLine("-----")
                 .ToString();
         }
-        public static string ICEE(this FourZeroOne.FZOSpec.IStateFZO state)
+        public static string ICEE(this IStateFZO state)
         {
             return new StringBuilder()
                 .AppendLine($"[FZO State] ({state.GetType().Name})")

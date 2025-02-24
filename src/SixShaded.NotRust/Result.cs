@@ -7,7 +7,6 @@ namespace SixShaded.NotRust
     /// </summary>
     public class NoVal { }
     public interface IResult<out T, out E> { }
-    public interface ICanErr<out E> : IResult<NoVal, E> { }
     public interface IOk<out T, out E> : IResult<T, E>
     {
         T Value { get; }

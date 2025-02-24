@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\SixShaded.FourZeroOne\SixShaded.FourZeroOne.csproj" />
+    <ProjectReference Include="..\..\src\SixShaded.NotRust\SixShaded.NotRust.csproj" />
+    <ProjectReference Include="..\SixShaded.SixLib.GFunc\SixShaded.SixLib.GFunc.csproj" />
+  </ItemGroup>
+
 </Project>
