@@ -1,93 +1,95 @@
-﻿using System;
-using Perfection;
-#nullable enable
-namespace FourZeroOne.Plugins.Axiom.Resolutions
+﻿namespace SixShaded.FourZeroOne.Plugins.Axiom
 {
-    using r = Core.Resolutions;
-    using ResObj = Resolution.IResolution;
-    using ro = Core.Resolutions.Objects;
-    using ax = GameObjects;
-    using Resolution;
-    using FourZeroOne.Core.Macros;
+    using Core.Resolutions;
     using Core.Syntax;
+    using Resolution;
+    using Resolution.Defined;
 
     // GOAL: create an attack ability
     // 'current turn' static player pointer?
     namespace State
     {
-        public record ActingPlayer : IMemoryAddress<ax.Player.Address>
+        public record ActingPlayer : IMemoryAddress<GameObjects.Player.Address>
         {
+            public static readonly ActingPlayer PTR = new();
             private ActingPlayer() { }
-            public readonly static ActingPlayer PTR = new();
             public override string ToString() => "ACTING_PLAYER";
         }
-        public record TurnCount : IMemoryAddress<ro.Number>
+
+        public record TurnCount : IMemoryAddress<Number>
         {
+            public static readonly TurnCount PTR = new();
             private TurnCount() { }
-            public readonly static TurnCount PTR = new();
             public override string ToString() => "TURN_COUNT";
         }
     }
+
     namespace GameObjects
     {
         namespace Unit
         {
             public record Data : ICompositionType
             {
-                public readonly static StaticComponentIdentifier<Data, ro.Number> HP = new("axiom", "hp");
-                public readonly static StaticComponentIdentifier<Data, Hex.Position> POSITION = new("axiom", "position");
-                public readonly static StaticComponentIdentifier<Data, Player.Address> OWNER = new("axiom", "owner");
-                public readonly static StaticComponentIdentifier<Data, r.Multi<NEffect>> EFFECTS = new("axiom", "effects");
+                public static readonly StaticComponentIdentifier<Data, Number> HP = new("axiom", "hp");
+
+                public static readonly StaticComponentIdentifier<Data, Hex.Position>
+                    POSITION = new("axiom", "position");
+
+                public static readonly StaticComponentIdentifier<Data, Player.Address> OWNER = new("axiom", "owner");
+
+                public static readonly StaticComponentIdentifier<Data, Multi<NEffect>>
+                    EFFECTS = new("axiom", "effects");
             }
+
             public record Address : NoOp, IMemoryObject<CompositionOf<Data>>
             {
                 public required int ID { get; init; }
-                public Address() { }
-                public override string ToString()
-                {
-                    return $"@unit{ID}";
-                }
+
+                public override string ToString() => $"@unit{ID}";
             }
         }
+
         namespace Hex
         {
             public sealed record Data : ICompositionType
             {
-                public readonly static StaticComponentIdentifier<Data, ro.Bool> CONTROL_POINT = new("axiom", "control_point");
-                public readonly static StaticComponentIdentifier<Data, ro.Bool> OPEN = new("axiom", "open");
-                public readonly static StaticComponentIdentifier<Data, ro.Bool> WALL = new("axiom", "wall");
-                public readonly static StaticComponentIdentifier<Data, Player.Address> PLAYER_BASE = new("axiom", "player_base");
+                public static readonly StaticComponentIdentifier<Data, Bool> CONTROL_POINT =
+                    new("axiom", "control_point");
+
+                public static readonly StaticComponentIdentifier<Data, Bool> OPEN = new("axiom", "open");
+                public static readonly StaticComponentIdentifier<Data, Bool> WALL = new("axiom", "wall");
+
+                public static readonly StaticComponentIdentifier<Data, Player.Address> PLAYER_BASE =
+                    new("axiom", "player_base");
             }
+
             public sealed record Position : NoOp, IMemoryObject<CompositionOf<Data>>
             {
                 public required int R { get; init; }
                 public required int U { get; init; }
                 public required int D { get; init; }
-                public Position() { }
-                public Position Transform(Func<int, int, int> transformFunction, Position other)
+
+                public Position Transform(Func<int, int, int> transformFunction, Position other) => new()
                 {
-                    return new() { R = transformFunction(R, other.R), U = transformFunction(U, other.U), D = transformFunction(D, other.D) };
-                }
-                public override string ToString()
-                {
-                    return $"@hex{R}.{U}.{D}";
-                }
+                    R = transformFunction(R, other.R),
+                    U = transformFunction(U, other.U),
+                    D = transformFunction(D, other.D),
+                };
+
+                public override string ToString() => $"@hex{R}.{U}.{D}";
             }
         }
+
         namespace Player
         {
             public sealed record Data : ICompositionType
-            {
-                
-            }
+            { }
+
             public sealed record Address : NoOp, IMemoryAddress<CompositionOf<Data>>
             {
                 public required int ID { get; init; }
-                public Address() { }
-                public override string ToString()
-                {
-                    return $"@player{ID}";
-                }
+
+                public override string ToString() => $"@player{ID}";
             }
         }
 
@@ -101,22 +103,20 @@ namespace FourZeroOne.Plugins.Axiom.Resolutions
             public static readonly NEffect STUN = new(4);
 
             public readonly byte EffectID;
-            public override IEnumerable<IInstruction> Instructions => [];
+
             protected NEffect(byte effectId)
             {
                 EffectID = effectId;
             }
-            public virtual bool Equals(NEffect? other)
-            {
-                return other is NEffect effect && effect.EffectID == EffectID;
-            }
-            public override int GetHashCode()
-            {
-                return EffectID;
-            }
-        }
 
+            public override IEnumerable<IInstruction> Instructions => [];
+
+            public virtual bool Equals(NEffect? other) => other is not null && other.EffectID == EffectID;
+
+            public override int GetHashCode() => EffectID;
+        }
     }
+
     namespace Structures
     {
         // this could be a composition.
@@ -131,24 +131,30 @@ namespace FourZeroOne.Plugins.Axiom.Resolutions
         }
         */
     }
+
     namespace Action
     {
-        public interface IAction<Self> : IDecomposableType<Self, ResObj> where Self : IAction<Self>, new() { }
+        public interface IAction<Self> : IDecomposableType<Self, Res> where Self : IAction<Self>, new()
+        { }
+
         public record Change<C> : IAction<Change<C>> where C : ICompositionType
         {
-            public r.Boxed.MetaFunction<ICompositionOf<Change<C>>, ResObj> DecompositionFunction => 
-                Core.tMetaFunction<ICompositionOf<Change<C>>, ResObj>(
-                thisObj => 
-                    thisObj.tRef()
-                    .tGetComponent(ADDRESS)
-                    .tDataUpdate(
-                    subject =>
-                        subject.tRef()
-                        .tMerge(thisObj.tRef().tGetComponent(CHANGE))))
-                .Resolution;
-            public readonly static StaticComponentIdentifier<Change<C>, IMemoryObject<ICompositionOf<C>>> ADDRESS = new("axiom", "address");
-            public readonly static StaticComponentIdentifier<Change<C>, ICompositionOf<r.MergeSpec<C>>> CHANGE = new("axiom", "change");
-        }
+            public static readonly StaticComponentIdentifier<Change<C>, IMemoryObject<ICompositionOf<C>>> ADDRESS =
+                new("axiom", "address");
 
+            public static readonly StaticComponentIdentifier<Change<C>, ICompositionOf<MergeSpec<C>>> CHANGE =
+                new("axiom", "change");
+
+            public MetaFunction<ICompositionOf<Change<C>>, Res> DecompositionFunction =>
+                Core.tMetaFunction<ICompositionOf<Change<C>>, Res>(
+                        thisObj =>
+                            thisObj.tRef()
+                                .tGetComponent(ADDRESS)
+                                .tDataUpdate(
+                                    subject =>
+                                        subject.tRef()
+                                            .tMerge(thisObj.tRef().tGetComponent(CHANGE))))
+                    .Resolution;
+        }
     }
 }

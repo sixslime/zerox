@@ -7,7 +7,7 @@ internal class ReferenceImpl<R> : IReferenceAccessor, IDeTesReference<R> where R
     private IOption<IToken<R>> _tokenOverride = new None<IToken<R>>();
     public required IToken<R> LinkedToken { get; init; }
 
-    IToken<R> IDeTesReference<R>.Tok => _tokenOverride.Check(out var v) ? v : LinkedToken;
+    IToken<R> IDeTesReference<R>.Token => _tokenOverride.Check(out var v) ? v : LinkedToken;
 
     R IDeTesReference<R>.Resolution =>
         _resolution.Check(out var v) ? v.DeTesUnwrap() : throw MakeUnevaluatedException();

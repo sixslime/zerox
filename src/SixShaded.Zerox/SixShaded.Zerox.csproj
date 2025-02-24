@@ -11,4 +11,17 @@
     <PackageReference Include="MorseCode.ITask" Version="2.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\SixShaded.SixLib.GFunc\SixShaded.SixLib.GFunc.csproj" />
+    <ProjectReference Include="..\..\lib\SixShaded.SixLib.ICEE.FZO\SixShaded.SixLib.ICEE.FZO.csproj" />
+    <ProjectReference Include="..\..\lib\SixShaded.SixLib.ICEE\SixShaded.SixLib.ICEE.csproj" />
+    <ProjectReference Include="..\SixShaded.CatGlance\SixShaded.CatGlance.csproj" />
+    <ProjectReference Include="..\SixShaded.DeTesAssertIntegrity\SixShaded.DeTesAssertIntegrity.csproj" />
+    <ProjectReference Include="..\SixShaded.DeTes\SixShaded.DeTes.csproj" />
+    <ProjectReference Include="..\SixShaded.FourZeroOne.Plugins.Axiom\SixShaded.FourZeroOne.Plugins.Axiom.csproj" />
+    <ProjectReference Include="..\SixShaded.FourZeroOne\SixShaded.FourZeroOne.csproj" />
+    <ProjectReference Include="..\SixShaded.MinimaFZO\SixShaded.MinimaFZO.csproj" />
+    <ProjectReference Include="..\SixShaded.NotRust\SixShaded.NotRust.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,1 @@
+﻿global using Res = SixShaded.FourZeroOne.Resolution.IResolution;

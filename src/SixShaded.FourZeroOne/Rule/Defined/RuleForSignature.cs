@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Rule.Defined;
 
 using Proxies;
+using Core.Resolutions;
 public record RuleForValue<RVal> : RuleBehavior<RVal>, IRuleOfValue<RVal>
     where RVal : class, Res
 {
