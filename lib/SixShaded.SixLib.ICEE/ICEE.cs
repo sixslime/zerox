@@ -1,10 +1,6 @@
-﻿namespace SixShaded.SixLib.ICEE
+﻿namespace SixShaded.SixLib.ICEE;
+
+public static class ICEEs
 {
-    public static class ICEEs
-    {
-        public static string ICEE<T>(this IEnumerable<T> array)
-        {
-            return $"[{string.Join(",", array)}]";
-        }
-    }
+    public static string ICEE<T>(this IEnumerable<T> array) => $"[{string.Join(",", array)}]";
 }
