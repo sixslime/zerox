@@ -1,4 +1,4 @@
-﻿namespace SixShaded.FourZeroOne.Core.Tokens.Data;
+﻿namespace SixShaded.FourZeroOne.Core.Tokens.Memory.Object;
 
 public sealed record Get<R> : Token.Defined.Function<IMemoryObject<R>, R>
     where R : class, Res

@@ -134,6 +134,8 @@
 
     namespace Action
     {
+        using FourZeroOne.Core.Resolutions.Compositions;
+
         public interface IAction<Self> : IDecomposableType<Self, Res> where Self : IAction<Self>, new()
         { }
 
@@ -150,7 +152,7 @@
                         thisObj =>
                             thisObj.tRef()
                                 .tGetComponent(ADDRESS)
-                                .tDataUpdate(
+                                .tMemoryUpdate(
                                     subject =>
                                         subject.tRef()
                                             .tMerge(thisObj.tRef().tGetComponent(CHANGE))))

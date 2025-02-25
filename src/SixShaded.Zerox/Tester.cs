@@ -63,7 +63,9 @@ public class Tester
             Token = C =>
                 Core.tSubEnvironment<r.Number>(new()
                     {
-                        Environment = 10.tFixed().tAsVariable(out var xVar),
+                        Environment = [
+                            10.tFixed().tAsVariable(out var xVar)
+                            ],
                         Value =
                             xVar.tRef().tAdd(1.tFixed())
                                 .AssertMemory(C, u => u.Objects.Count() == 1)
@@ -97,9 +99,9 @@ public class Tester
             InitialMemory = MEMORY_IMPLEMENTATION,
             Token = C =>
                 (1..10).tFixed()
-                .tIOSelectMany(4.tFixed())
+                .tIOSelectMultiple(4.tFixed())
                 .DefineSelectionDomain(C, (..5).ToIter().Map(x => (x..(x + 4)).ToIter()), out var domain)
-                .tAtIndex(2.tFixed())
+                .tGetIndex(2.tFixed())
                 .AssertResolution(C, u => u.Value == domain.SelectedIndicies()[1] + 1),
         },
         new("2D domain")
@@ -166,13 +168,14 @@ public class Tester
             Token = C =>
                 Core.tSubEnvironment<r.Number>(new()
                     {
-                        Environment = Core.t_Env(
+                        Environment = [
                             Core.tAddRule<r.Number, r.Number, r.Number>(new()
                             {
                                 Matches = x => x.mIsType<t.Number.Add>(),
                                 Definition = (origin, a, b) =>
                                     origin.tRef().tRealize().tSubtract(1.tFixed()),
-                            })),
+                            })
+                            ],
                         Value = 2.tFixed().tAdd(2.tFixed())
                             .AssertToken(C, u => u is t.Number.Subtract),
                     })
@@ -184,7 +187,7 @@ public class Tester
             Token = C =>
                 Core.tSubEnvironment<r.Multi<r.Number>>(new()
                     {
-                        Environment = Core.t_Env(
+                        Environment = Core.tEnv(
                             Core.tAddRule<r.Number, r.Number, r.Multi<r.Number>>(new()
                             {
                                 Matches = x => x.mIsMacro("core", "duplicate"),
@@ -201,7 +204,7 @@ public class Tester
             Token = C =>
                 Core.tSubEnvironment<r.Number>(new()
                     {
-                        Environment = Core.t_Env(
+                        Environment = Core.tEnv(
                             Core.tAddRule<r.Number, r.Number, r.Number>(new()
                             {
                                 Matches = x => x.mIsType<t.Number.Add>(),
@@ -225,7 +228,7 @@ public class Tester
             Token = C =>
                 Core.tSubEnvironment<r.Number>(new()
                     {
-                        Environment = Core.t_Env(
+                        Environment = Core.tEnv(
                             Core.tAddRule<r.Number, r.Number, r.Number>(new()
                             {
                                 Matches = x => x.mIsType<t.Number.Add>(),

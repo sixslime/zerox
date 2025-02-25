@@ -25,7 +25,7 @@ public static partial class TokenSyntax
 
     public static Tokens.Multi.Contains<R> tContains<R>(this IToken<IMulti<R>> from, IToken<R> element) where R : class, Res => new(from, element);
 
-    public static Tokens.Multi.GetIndex<R> tAtIndex<R>(this IToken<IMulti<R>> token, IToken<Number> index) where R : class, Res => new(token, index);
+    public static Tokens.Multi.GetIndex<R> tGetIndex<R>(this IToken<IMulti<R>> token, IToken<Number> index) where R : class, Res => new(token, index);
 
     public static Macro<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> tMap<RIn, ROut>(this IToken<IMulti<RIn>> source, Func<DynamicAddress<RIn>, IToken<ROut>> mapFunction)
         where RIn : class, Res

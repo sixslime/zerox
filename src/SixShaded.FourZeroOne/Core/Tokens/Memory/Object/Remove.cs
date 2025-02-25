@@ -1,4 +1,4 @@
-﻿namespace SixShaded.FourZeroOne.Core.Tokens.Data;
+﻿namespace SixShaded.FourZeroOne.Core.Tokens.Memory.Object;
 
 public sealed record Remove : Token.Defined.PureFunction<IMemoryObject<Res>, Resolutions.Instructions.Redact>
 {

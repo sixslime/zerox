@@ -1,4 +1,4 @@
-﻿namespace SixShaded.FourZeroOne.Core.Tokens.Data;
+﻿namespace SixShaded.FourZeroOne.Core.Tokens.Memory.Object;
 
 public sealed record Insert<R> : Token.Defined.PureFunction<IMemoryObject<R>, R, Resolutions.Instructions.Assign<R>>
     where R : class, Res

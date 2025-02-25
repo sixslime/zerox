@@ -1,4 +1,4 @@
-﻿namespace SixShaded.FourZeroOne.Core.Resolutions;
+﻿namespace SixShaded.FourZeroOne.Core.Resolutions.Compositions;
 
 // not even a resolution, consider moving.
 public record MergeSpec<C> : ICompositionType where C : ICompositionType

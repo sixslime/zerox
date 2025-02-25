@@ -1,4 +1,4 @@
-﻿namespace SixShaded.FourZeroOne.Core.Tokens;
+﻿namespace SixShaded.FourZeroOne.Core.Tokens.Memory;
 
 public sealed record DynamicReference<R> : Token.Defined.Value<R> where R : class, Res
 {

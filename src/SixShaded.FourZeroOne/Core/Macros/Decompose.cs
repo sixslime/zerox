@@ -22,9 +22,9 @@ public static class UpdateMemoryObject<R>
         Label = Package.Label("UpdateMemoryObject"),
         Definition = Core.tMetaFunction<IMemoryObject<R>, MetaFunction<R, R>, Resolutions.Instructions.Assign<R>>(
                 (addressI, updateFunctionI) =>
-                    addressI.tRef().tDataWrite(
+                    addressI.tRef().tMemoryWrite(
                         updateFunctionI.tRef()
-                            .tExecuteWith(new() { A = addressI.tRef().tDataGet() })))
+                            .tExecuteWith(new() { A = addressI.tRef().tMemoryGet() })))
             .Resolution,
     };
 }

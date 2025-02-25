@@ -1,6 +1,8 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
 using Resolutions;
+using Resolutions.Compositions;
+
 public static partial class Core
 {
     public static Macro<ICompositionOf<C>> tCompose<C>() where C : ICompositionType, new() => Macros.Compose<C>.Construct();

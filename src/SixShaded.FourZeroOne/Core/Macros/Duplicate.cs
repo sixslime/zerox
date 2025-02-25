@@ -14,7 +14,7 @@ public static class Duplicate<R>
                     Core.tMetaRecursiveFunction<Number, Multi<R>>(
                             (selfFunc, i) =>
                                 i.tRef().tIsGreaterThan(countI.tRef())
-                                    .t_IfTrue<Multi<R>>(new()
+                                    .tIfTrue<Multi<R>>(new()
                                     {
                                         Then = Core.tNollaFor<Multi<R>>(),
                                         Else = Core.tUnionOf(

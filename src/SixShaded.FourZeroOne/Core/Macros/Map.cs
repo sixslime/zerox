@@ -15,13 +15,13 @@ public static class Map<RIn, ROut>
                         Core.tMetaRecursiveFunction<Number, Multi<ROut>>(
                                 (selfFunc, i) =>
                                     i.tRef().tIsGreaterThan(multiI.tRef().tCount())
-                                        .t_IfTrue<Multi<ROut>>(new()
+                                        .tIfTrue<Multi<ROut>>(new()
                                         {
                                             Then = Core.tNollaFor<Multi<ROut>>(),
                                             Else = Core.tUnionOf(
                                             [
                                                 mapFunctionI.tRef().tExecuteWith(
-                                                    new() { A = multiI.tRef().tAtIndex(i.tRef()) }).tYield(),
+                                                    new() { A = multiI.tRef().tGetIndex(i.tRef()) }).tYield(),
                                                 selfFunc.tRef().tExecuteWith(
                                                     new() { A = i.tRef().tAdd(1.tFixed()) }),
                                             ]),
