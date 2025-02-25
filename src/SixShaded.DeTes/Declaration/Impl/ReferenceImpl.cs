@@ -1,5 +1,4 @@
-﻿namespace SixShaded.DeTes.Declaration;
-
+﻿namespace SixShaded.DeTes.Declaration.Impl;
 internal class ReferenceImpl<R> : IReferenceAccessor, IDeTesReference<R> where R : class, Res
 {
     private IOption<IMemoryFZO> _memory = new None<IMemoryFZO>();

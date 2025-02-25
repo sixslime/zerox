@@ -1,5 +1,4 @@
-﻿namespace SixShaded.DeTes.Analysis;
-
+﻿namespace SixShaded.DeTes.Analysis.Impl;
 internal class SelectionPathImpl : IDeTesSelectionPath
 {
     public required Tok RootSelectionToken { get; init; }

@@ -1,5 +1,4 @@
-﻿namespace SixShaded.DeTes.Declaration;
-
+﻿namespace SixShaded.DeTes.Declaration.Impl;
 internal class AssertionImpl<T> : IAssertionAccessor<T>
 {
     public required Tok LinkedToken { get; init; }

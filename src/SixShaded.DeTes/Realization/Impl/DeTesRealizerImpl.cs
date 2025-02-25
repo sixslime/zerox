@@ -1,7 +1,9 @@
-﻿namespace SixShaded.DeTes.Realization;
+﻿namespace SixShaded.DeTes.Realization.Impl;
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using SixShaded.DeTes.Analysis.Impl;
+using SixShaded.DeTes.Declaration.Impl;
 
 internal class DeTesRealizerImpl
 {

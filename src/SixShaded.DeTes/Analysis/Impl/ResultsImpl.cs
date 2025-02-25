@@ -1,4 +1,4 @@
-﻿namespace SixShaded.DeTes.Analysis;
+﻿namespace SixShaded.DeTes.Analysis.Impl;
 
 internal class ResultImpl : IDeTesResult
 {

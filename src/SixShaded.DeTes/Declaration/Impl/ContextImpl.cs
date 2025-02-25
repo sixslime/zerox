@@ -1,5 +1,4 @@
-﻿namespace SixShaded.DeTes.Declaration;
-
+﻿namespace SixShaded.DeTes.Declaration.Impl;
 internal class ContextImpl : IDeTesContext, IContextAccessor
 {
     private readonly AssertSet _assertions = new();

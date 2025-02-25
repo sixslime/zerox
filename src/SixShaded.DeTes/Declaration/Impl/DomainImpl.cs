@@ -1,5 +1,4 @@
-﻿namespace SixShaded.DeTes.Declaration;
-
+﻿namespace SixShaded.DeTes.Declaration.Impl;
 internal class DomainImpl : IDeTesMultiDomain, IDeTesSingleDomain, IDomainAccessor
 {
     private int _index = -1;

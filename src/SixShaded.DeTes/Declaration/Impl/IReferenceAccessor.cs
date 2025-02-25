@@ -1,5 +1,4 @@
-﻿namespace SixShaded.DeTes.Declaration;
-
+﻿namespace SixShaded.DeTes.Declaration.Impl;
 internal interface IReferenceAccessor : ITokenLinked, IHasDescription
 {
     void SetResolution(ResOpt resolution);
