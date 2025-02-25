@@ -187,13 +187,15 @@ public class Tester
             Token = C =>
                 Core.tSubEnvironment<r.Multi<r.Number>>(new()
                     {
-                        Environment = Core.tEnv(
+                        Environment =
+                        [
                             Core.tAddRule<r.Number, r.Number, r.Multi<r.Number>>(new()
                             {
                                 Matches = x => x.mIsMacro("core", "duplicate"),
                                 Definition = (_, a, b) =>
                                     a.tRef().tRealize().tDuplicate(b.tRef().tRealize().tAdd(1.tFixed())),
-                            })),
+                            })
+                        ],
                         Value = 401.tFixed().tDuplicate(3.tFixed()),
                     })
                     .AssertResolution(C, u => u.Count == 4),
@@ -204,19 +206,21 @@ public class Tester
             Token = C =>
                 Core.tSubEnvironment<r.Number>(new()
                     {
-                        Environment = Core.tEnv(
-                            Core.tAddRule<r.Number, r.Number, r.Number>(new()
-                            {
-                                Matches = x => x.mIsType<t.Number.Add>(),
-                                Definition = (_, a, b) =>
-                                    a.tRef().tRealize().tSubtract(b.tRef().tRealize()),
-                            }),
-                            Core.tAddRule<r.Number, r.Number, r.Number>(new()
-                            {
-                                Matches = x => x.mIsType<t.Number.Subtract>(),
-                                Definition = (_, _, _) =>
-                                    999.tFixed(),
-                            })),
+                        Environment =
+                            [
+                                Core.tAddRule<r.Number, r.Number, r.Number>(new()
+                                {
+                                    Matches = x => x.mIsType<t.Number.Add>(),
+                                    Definition = (_, a, b) =>
+                                        a.tRef().tRealize().tSubtract(b.tRef().tRealize()),
+                                }),
+                                Core.tAddRule<r.Number, r.Number, r.Number>(new()
+                                {
+                                    Matches = x => x.mIsType<t.Number.Subtract>(),
+                                    Definition = (_, _, _) =>
+                                        999.tFixed(),
+                                }),
+                            ],
                         Value = 400.tFixed().tAdd(1.tFixed())
                             .AssertToken(C, u => u is t.Fixed<r.Number> num && num.Resolution.Value == 999),
                     })
@@ -228,19 +232,21 @@ public class Tester
             Token = C =>
                 Core.tSubEnvironment<r.Number>(new()
                     {
-                        Environment = Core.tEnv(
-                            Core.tAddRule<r.Number, r.Number, r.Number>(new()
-                            {
-                                Matches = x => x.mIsType<t.Number.Add>(),
-                                Definition = (_, a, b) =>
-                                    a.tRef().tRealize().tMultiply(b.tRef().tRealize()),
-                            }),
-                            Core.tAddRule<r.Number, r.Number, r.Number>(new()
-                            {
-                                Matches = x => x.mIsType<t.Number.Subtract>(),
-                                Definition = (_, _, _) =>
-                                    999.tFixed(),
-                            })),
+                        Environment =
+                            [
+                                Core.tAddRule<r.Number, r.Number, r.Number>(new()
+                                {
+                                    Matches = x => x.mIsType<t.Number.Add>(),
+                                    Definition = (_, a, b) =>
+                                        a.tRef().tRealize().tMultiply(b.tRef().tRealize()),
+                                }),
+                                Core.tAddRule<r.Number, r.Number, r.Number>(new()
+                                {
+                                    Matches = x => x.mIsType<t.Number.Subtract>(),
+                                    Definition = (_, _, _) =>
+                                        999.tFixed(),
+                                })
+                            ],
                         Value = 400.tFixed().tAdd(2.tFixed())
                             .AssertToken(C, u => u is t.Number.Multiply),
                     })
@@ -338,27 +344,6 @@ public class Tester
     private interface ILabel
     { }
 
-    /* CatGlance spec
-     *
-     * var glance = new CatGlance();
-     * var test = new DeTest
-     * {
-     *  ...
-     * }.Glance("mytest")
-     *
-     *  var test = new GlancableTest
-     *  {
-     *      string Name = "mytest"
-     *      ...
-     *  }
-     *
-     * Resolution methods should automatically assume and unwrap Some(), failing if None().
-     * these methods have 'Unstable' counterparts that do not do this, ex: 'AssertResolutionUnstable()'
-     *
-     * selection domains apply to exactly 1 selection, the next IO selection.
-     * additional selection domains are queued past the first
-     * err on selection without u domain.
-     */
 }
 
 /* NOTES
@@ -368,4 +353,14 @@ public class Tester
  * me when variable captures exist for u reason!
  * I don't even know if capturing is feasable conceptually.
  * The "solution" is just to be careful with boxed functions :P
+ *
+ * The great renaming:
+ * Token(s) -> Korssa(s)
+ * Macro(s) -> Korvessa(s)
+ * Resolution(s) -> Roggi(s)
+ * Composition(s) -> Roveggi(s)
+ * CompositionTypes(s) -> Uggevor(s)
+ * DecomposableType(s) -> Uggevasor(s)
+ * Rule(s) -> Mellsano(s)
+ * Matcher(s) -> Ullasem(s)
  */
