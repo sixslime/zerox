@@ -25,6 +25,13 @@ public class GlancableTest : ICatGlanceable
     public required DeTesDeclaration Declaration { get; init; }
 }
 
+public static class Extensions
+{
+    public static GlancableTest ToGlancable(this IDeTesTest deTesTest, string name)
+    {
+        return new(name) { Declaration = deTesTest.Declaration, InitialMemory = deTesTest.InitialMemory };
+    }
+}
 public record Glancer
 {
     private IOption<IResult<RecursiveEvalTree<IDeTesResult, bool>, EDeTesInvalidTest>[]> _testEvals =
