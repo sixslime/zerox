@@ -4,14 +4,14 @@ using Core.Resolutions;
 using Defined.Proxies;
 using Unsafe;
 
-public interface IRuleOfValue<RVal> : IRule<RVal>
+public interface IRuleOfSignature<RVal> : IRule<RVal>
     where RVal : class, Res
 {
     public MetaFunction<OriginalProxy<RVal>, RVal> Definition { get; }
     public IRuleMatcher<IHasNoArgs<RVal>> Matcher { get; }
 }
 
-public interface IRuleOfFunction<RArg1, ROut> : IRule<ROut>
+public interface IRuleOfSignature<RArg1, ROut> : IRule<ROut>
     where RArg1 : class, Res
     where ROut : class, Res
 {
@@ -19,7 +19,7 @@ public interface IRuleOfFunction<RArg1, ROut> : IRule<ROut>
     public IRuleMatcher<IHasArgs<RArg1, ROut>> Matcher { get; }
 }
 
-public interface IRuleOfFunction<RArg1, RArg2, ROut> : IRule<ROut>
+public interface IRuleOfSignature<RArg1, RArg2, ROut> : IRule<ROut>
     where RArg1 : class, Res
     where RArg2 : class, Res
     where ROut : class, Res
@@ -28,7 +28,7 @@ public interface IRuleOfFunction<RArg1, RArg2, ROut> : IRule<ROut>
     public IRuleMatcher<IHasArgs<RArg1, RArg2, ROut>> Matcher { get; }
 }
 
-public interface IRuleOfFunction<RArg1, RArg2, RArg3, ROut> : IRule<ROut>
+public interface IRuleOfSignature<RArg1, RArg2, RArg3, ROut> : IRule<ROut>
     where RArg1 : class, Res
     where RArg2 : class, Res
     where RArg3 : class, Res

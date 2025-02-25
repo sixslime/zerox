@@ -3,7 +3,7 @@
 using Proxies;
 using Core.Resolutions;
 
-public record RuleForValue<RVal> : RuleBehavior<RVal>, IRuleOfValue<RVal>
+public record RuleForSignature<RVal> : RuleBehavior<RVal>, IRuleOfSignature<RVal>
     where RVal : class, Res
 {
     protected override Resolution.Unsafe.IBoxedMetaFunction<RVal> InternalDefinition => Definition;
@@ -13,7 +13,7 @@ public record RuleForValue<RVal> : RuleBehavior<RVal>, IRuleOfValue<RVal>
     protected override IEnumerable<IProxy<Res>> ConstructArgProxies(IToken<RVal> token) => [];
 }
 
-public record RuleForFunction<RArg1, ROut> : RuleBehavior<ROut>, IRuleOfFunction<RArg1, ROut>
+public record RuleForSignature<RArg1, ROut> : RuleBehavior<ROut>, IRuleOfSignature<RArg1, ROut>
     where RArg1 : class, Res
     where ROut : class, Res
 {
@@ -26,7 +26,7 @@ public record RuleForFunction<RArg1, ROut> : RuleBehavior<ROut>, IRuleOfFunction
         => [CreateArgProxy<RArg1>(token.ArgTokens[0])];
 }
 
-public record RuleForFunction<RArg1, RArg2, ROut> : RuleBehavior<ROut>, IRuleOfFunction<RArg1, RArg2, ROut>
+public record RuleForSignature<RArg1, RArg2, ROut> : RuleBehavior<ROut>, IRuleOfSignature<RArg1, RArg2, ROut>
     where RArg1 : class, Res
     where RArg2 : class, Res
     where ROut : class, Res
@@ -40,7 +40,7 @@ public record RuleForFunction<RArg1, RArg2, ROut> : RuleBehavior<ROut>, IRuleOfF
         => [CreateArgProxy<RArg1>(token.ArgTokens[0]), CreateArgProxy<RArg2>(token.ArgTokens[1])];
 }
 
-public record RuleForFunction<RArg1, RArg2, RArg3, ROut> : RuleBehavior<ROut>, IRuleOfFunction<RArg1, RArg2, RArg3, ROut>
+public record RuleForSignature<RArg1, RArg2, RArg3, ROut> : RuleBehavior<ROut>, IRuleOfSignature<RArg1, RArg2, RArg3, ROut>
     where RArg1 : class, Res
     where RArg2 : class, Res
     where RArg3 : class, Res

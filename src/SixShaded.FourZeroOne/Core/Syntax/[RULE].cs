@@ -12,7 +12,7 @@ public static partial class Core
         var vs = new DynamicAddress<MetaFunction<OriginalProxy<RVal>, RVal>>();
         var vo = new DynamicAddress<OriginalProxy<RVal>>();
 
-        return new(new Rule.Defined.RuleForValue<RVal> { Definition = new() { SelfIdentifier = vs, IdentifierA = vo, Token = block.Definition(vo) }, Matcher = block.Matches(new()) });
+        return new(new Rule.Defined.RuleForSignature<RVal> { Definition = new() { SelfIdentifier = vs, IdentifierA = vo, Token = block.Definition(vo) }, Matcher = block.Matches(new()) });
     }
 
     public static Tokens.AddRule tAddRule<RArg1, ROut>(Structure.Rule.Block<RArg1, ROut> block)
@@ -22,7 +22,7 @@ public static partial class Core
         var vs = new DynamicAddress<MetaFunction<OriginalProxy<ROut>, ArgProxy<RArg1>, ROut>>();
         var (vo, v1) = (new DynamicAddress<OriginalProxy<ROut>>(), new DynamicAddress<ArgProxy<RArg1>>());
 
-        return new(new Rule.Defined.RuleForFunction<RArg1, ROut> { Definition = new() { SelfIdentifier = vs, IdentifierA = vo, IdentifierB = v1, Token = block.Definition(vo, v1) }, Matcher = block.Matches(new()) });
+        return new(new Rule.Defined.RuleForSignature<RArg1, ROut> { Definition = new() { SelfIdentifier = vs, IdentifierA = vo, IdentifierB = v1, Token = block.Definition(vo, v1) }, Matcher = block.Matches(new()) });
     }
 
     public static Tokens.AddRule tAddRule<RArg1, RArg2, ROut>(Structure.Rule.Block<RArg1, RArg2, ROut> block)
@@ -33,7 +33,7 @@ public static partial class Core
         var vs = new DynamicAddress<MetaFunction<OriginalProxy<ROut>, ArgProxy<RArg1>, ArgProxy<RArg2>, ROut>>();
         var (vo, v1, v2) = (new DynamicAddress<OriginalProxy<ROut>>(), new DynamicAddress<ArgProxy<RArg1>>(), new DynamicAddress<ArgProxy<RArg2>>());
 
-        return new(new Rule.Defined.RuleForFunction<RArg1, RArg2, ROut>
+        return new(new Rule.Defined.RuleForSignature<RArg1, RArg2, ROut>
         {
             Definition = new()
             {
@@ -56,7 +56,7 @@ public static partial class Core
         var vs = new DynamicAddress<OverflowingMetaFunction<OriginalProxy<ROut>, ArgProxy<RArg1>, ArgProxy<RArg2>, ArgProxy<RArg3>, ROut>>();
         var (vo, v1, v2, v3) = (new DynamicAddress<OriginalProxy<ROut>>(), new DynamicAddress<ArgProxy<RArg1>>(), new DynamicAddress<ArgProxy<RArg2>>(), new DynamicAddress<ArgProxy<RArg3>>());
 
-        return new(new Rule.Defined.RuleForFunction<RArg1, RArg2, RArg3, ROut>
+        return new(new Rule.Defined.RuleForSignature<RArg1, RArg2, RArg3, ROut>
         {
             Definition = new()
             {
