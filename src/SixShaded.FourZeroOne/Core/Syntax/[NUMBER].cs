@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
 using Resolutions;
+
 public static partial class TokenSyntax
 {
     public static Tokens.Number.Add tAdd(this IToken<Number> a, IToken<Number> b) => new(a, b);

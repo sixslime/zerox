@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
 using Resolutions;
+
 public static partial class Core
 {
     public static Tokens.Multi.Union<R> tMultiOf<R>(List<IToken<R>> tokens) where R : class, Res => new(tokens.Map(x => x.tYield()));
@@ -9,6 +10,7 @@ public static partial class Core
 
     public static Tokens.Multi.Intersection<R> tIntersectionOf<R>(List<IToken<IMulti<R>>> sets) where R : class, Res => new(sets);
 }
+
 public static partial class TokenSyntax
 {
     public static Tokens.Multi.Exclusion<R> tWithout<R>(this IToken<IMulti<R>> source, IToken<IMulti<R>> exclude) where R : class, Res => new(source, exclude);

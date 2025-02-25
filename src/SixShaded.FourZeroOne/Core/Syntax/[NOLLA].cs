@@ -6,6 +6,7 @@ public static partial class Core
 {
     public static Tokens.Nolla<R> tNollaFor<R>() where R : class, Res => new();
 }
+
 public static partial class TokenSyntax
 {
     public static Macro<R, MetaFunction<R>, R> tCatchNolla<R>(this IToken<R> value, IToken<MetaFunction<R>> fallback)

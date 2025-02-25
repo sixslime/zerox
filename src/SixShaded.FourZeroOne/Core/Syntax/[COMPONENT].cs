@@ -7,6 +7,7 @@ public static partial class Core
 {
     public static Macro<ICompositionOf<C>> tCompose<C>() where C : ICompositionType, new() => Macros.Compose<C>.Construct();
 }
+
 public static partial class TokenSyntax
 {
     public static Tokens.Component.Get<C, R> tGetComponent<C, R>(this IToken<ICompositionOf<C>> holder, IComponentIdentifier<C, R> componentIdentifier)

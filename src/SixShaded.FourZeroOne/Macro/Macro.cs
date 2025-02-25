@@ -11,6 +11,7 @@ public record Macro<RVal> : Token.Defined.RuntimeHandledValue<RVal>, IMacro<RVal
     protected override IOption<string> CustomToString()
         => $"{Label.Package}.{Label.Identifier}()".AsSome();
 }
+
 public record Macro<RArg1, ROut> : Token.Defined.RuntimeHandledFunction<RArg1, ROut>, IMacroSignature<RArg1, ROut>
     where RArg1 : class, Res
     where ROut : class, Res
@@ -24,6 +25,7 @@ public record Macro<RArg1, ROut> : Token.Defined.RuntimeHandledFunction<RArg1, R
     protected override IOption<string> CustomToString()
         => $"{Label.Package}.{Label.Identifier}({Arg1})".AsSome();
 }
+
 public record Macro<RArg1, RArg2, ROut> : Token.Defined.RuntimeHandledFunction<RArg1, RArg2, ROut>, IMacroSignature<RArg1, RArg2, ROut>
     where RArg1 : class, Res
     where RArg2 : class, Res
@@ -38,6 +40,7 @@ public record Macro<RArg1, RArg2, ROut> : Token.Defined.RuntimeHandledFunction<R
     protected override IOption<string> CustomToString()
         => $"{Label.Package}.{Label.Identifier}({Arg1}, {Arg2})".AsSome();
 }
+
 public record Macro<RArg1, RArg2, RArg3, ROut> : Token.Defined.RuntimeHandledFunction<RArg1, RArg2, RArg3, ROut>, IMacroSignature<RArg1, RArg2, RArg3, ROut>
     where RArg1 : class, Res
     where RArg2 : class, Res

@@ -1,5 +1,4 @@
-﻿
-namespace SixShaded.FourZeroOne.Resolution;
+﻿namespace SixShaded.FourZeroOne.Resolution;
 
 // pretty silly bro im not going even to even lie even.
 public interface ICompositionOf<out C> : Res where C : ICompositionType

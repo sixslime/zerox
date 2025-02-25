@@ -1,7 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
 using Resolutions;
-using SixShaded.FourZeroOne.Core.Tokens.Memory;
+using Tokens.Memory;
 using SixShaded.FourZeroOne.Core.Tokens.Memory.Object;
 
 public static partial class TokenSyntax

@@ -1,5 +1,4 @@
-﻿
-namespace SixShaded.FourZeroOne.Handles.Defined;
+﻿namespace SixShaded.FourZeroOne.Handles.Defined;
 
 public class InputHandle(FZOSpec.IInputFZO implementation) : IInput
 {

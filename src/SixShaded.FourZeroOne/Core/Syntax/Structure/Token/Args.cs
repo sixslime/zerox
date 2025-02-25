@@ -5,6 +5,7 @@ public sealed record Args<RArg1>
 {
     public required IToken<RArg1> A { get; init; }
 }
+
 public sealed record Args<RArg1, RArg2>
     where RArg1 : class, Res
     where RArg2 : class, Res
@@ -12,6 +13,7 @@ public sealed record Args<RArg1, RArg2>
     public required IToken<RArg1> A { get; init; }
     public required IToken<RArg2> B { get; init; }
 }
+
 public sealed record Args<RArg1, RArg2, RArg3>
     where RArg1 : class, Res
     where RArg2 : class, Res

@@ -1,4 +1,3 @@
-
 namespace SixShaded.FourZeroOne.FZOSpec;
 
 public record FZOSource

@@ -8,12 +8,9 @@ public static class Decompose<D, R>
     where D : IDecomposableType<D, R>, new()
     where R : class, Res
 {
-    public static Macro<ICompositionOf<D>, R> Construct(IToken<ICompositionOf<D>> composition) => new(composition)
-    {
-        Label = Package.Label("Decompose"),
-        Definition = new D().DecompositionFunction,
-    };
+    public static Macro<ICompositionOf<D>, R> Construct(IToken<ICompositionOf<D>> composition) => new(composition) { Label = Package.Label("Decompose"), Definition = new D().DecompositionFunction };
 }
+
 public static class UpdateMemoryObject<R>
     where R : class, Res
 {

@@ -7,10 +7,10 @@ public sealed record Intersection<R> : Token.Defined.Combiner<IMulti<R>, Resolut
 
     protected override ITask<IOption<Resolutions.Multi<R>>> Evaluate(ITokenContext _, IEnumerable<IOption<IMulti<R>>> inputs) =>
         new Resolutions.Multi<R>
-        {
-            Values = inputs
+            {
+                Values = inputs
                     .Map(x => x.RemapAs(y => y.Elements).Or([])).Accumulate((a, b) => a.Intersect(b)).Or([]).ToPSequence(),
-        }
+            }
             .AsSome().ToCompletedITask();
 
     protected override IOption<string> CustomToString()

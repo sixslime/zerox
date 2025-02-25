@@ -9,6 +9,7 @@ public record ToBoxedArgs<R1> : Token.Defined.Function<R1, MetaArgs<R1>>
     protected override ITask<IOption<MetaArgs<R1>>> Evaluate(ITokenContext _, IOption<R1> in1) => new MetaArgs<R1> { Arg1 = in1 }.AsSome().ToCompletedITask();
     protected override IOption<string> CustomToString() => $"<${Arg1}>".AsSome();
 }
+
 public record ToBoxedArgs<R1, R2> : Token.Defined.Function<R1, R2, MetaArgs<R1, R2>>
     where R1 : class, Res
     where R2 : class, Res
@@ -17,6 +18,7 @@ public record ToBoxedArgs<R1, R2> : Token.Defined.Function<R1, R2, MetaArgs<R1, 
     protected override ITask<IOption<MetaArgs<R1, R2>>> Evaluate(ITokenContext _, IOption<R1> in1, IOption<R2> in2) => new MetaArgs<R1, R2> { Arg1 = in1, Arg2 = in2 }.AsSome().ToCompletedITask();
     protected override IOption<string> CustomToString() => $"<${Arg1} ${Arg2}>".AsSome();
 }
+
 public record ToBoxedArgs<R1, R2, R3> : Token.Defined.Function<R1, R2, R3, MetaArgs<R1, R2, R3>>
     where R1 : class, Res
     where R2 : class, Res

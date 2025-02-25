@@ -2,6 +2,7 @@
 
 using Proxies;
 using Core.Resolutions;
+
 public record RuleForValue<RVal> : RuleBehavior<RVal>, IRuleOfValue<RVal>
     where RVal : class, Res
 {
@@ -11,6 +12,7 @@ public record RuleForValue<RVal> : RuleBehavior<RVal>, IRuleOfValue<RVal>
     public required IRuleMatcher<IHasNoArgs<RVal>> Matcher { get; init; }
     protected override IEnumerable<IProxy<Res>> ConstructArgProxies(IToken<RVal> token) => [];
 }
+
 public record RuleForFunction<RArg1, ROut> : RuleBehavior<ROut>, IRuleOfFunction<RArg1, ROut>
     where RArg1 : class, Res
     where ROut : class, Res
@@ -23,6 +25,7 @@ public record RuleForFunction<RArg1, ROut> : RuleBehavior<ROut>, IRuleOfFunction
     protected override IEnumerable<IProxy<Res>> ConstructArgProxies(IToken<ROut> token)
         => [CreateArgProxy<RArg1>(token.ArgTokens[0])];
 }
+
 public record RuleForFunction<RArg1, RArg2, ROut> : RuleBehavior<ROut>, IRuleOfFunction<RArg1, RArg2, ROut>
     where RArg1 : class, Res
     where RArg2 : class, Res
@@ -36,6 +39,7 @@ public record RuleForFunction<RArg1, RArg2, ROut> : RuleBehavior<ROut>, IRuleOfF
     protected override IEnumerable<IProxy<Res>> ConstructArgProxies(IToken<ROut> token)
         => [CreateArgProxy<RArg1>(token.ArgTokens[0]), CreateArgProxy<RArg2>(token.ArgTokens[1])];
 }
+
 public record RuleForFunction<RArg1, RArg2, RArg3, ROut> : RuleBehavior<ROut>, IRuleOfFunction<RArg1, RArg2, RArg3, ROut>
     where RArg1 : class, Res
     where RArg2 : class, Res

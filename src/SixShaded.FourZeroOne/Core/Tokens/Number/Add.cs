@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Tokens.Number;
 
 using Resolutions;
+
 public sealed record Add : Token.Defined.PureFunction<Number, Number, Number>
 {
     public Add(IToken<Number> operand1, IToken<Number> operand2) : base(operand1, operand2) { }

@@ -1,7 +1,7 @@
-﻿
-namespace SixShaded.FourZeroOne.Core.Syntax;
+﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
 using Resolutions;
+
 public static partial class Core
 {
     public static Tokens.Fixed<MetaFunction<ROut>> tMetaFunction<ROut>(Func<IToken<ROut>> tokenFunction) where ROut : class, Res
@@ -37,7 +37,14 @@ public static partial class Core
     {
         var vs = new DynamicAddress<MetaFunction<RArg1, RArg2, RArg3, ROut>>();
         var (v1, v2, v3) = (new DynamicAddress<RArg1>(), new DynamicAddress<RArg2>(), new DynamicAddress<RArg3>());
-        return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, IdentifierC = v3, Token = tokenFunction(v1, v2, v3) });
+        return new(new()
+        {
+            SelfIdentifier = vs,
+            IdentifierA = v1,
+            IdentifierB = v2,
+            IdentifierC = v3,
+            Token = tokenFunction(v1, v2, v3),
+        });
     }
 
     public static Tokens.Fixed<MetaFunction<ROut>> tMetaRecursiveFunction<ROut>(Func<DynamicAddress<MetaFunction<ROut>>, IToken<ROut>> tokenFunction) where ROut : class, Res
@@ -73,9 +80,17 @@ public static partial class Core
     {
         var vs = new DynamicAddress<MetaFunction<RArg1, RArg2, RArg3, ROut>>();
         var (v1, v2, v3) = (new DynamicAddress<RArg1>(), new DynamicAddress<RArg2>(), new DynamicAddress<RArg3>());
-        return new(new() { SelfIdentifier = vs, IdentifierA = v1, IdentifierB = v2, IdentifierC = v3, Token = tokenFunction(vs, v1, v2, v3) });
+        return new(new()
+        {
+            SelfIdentifier = vs,
+            IdentifierA = v1,
+            IdentifierB = v2,
+            IdentifierC = v3,
+            Token = tokenFunction(vs, v1, v2, v3),
+        });
     }
 }
+
 public static partial class TokenSyntax
 {
     public static Tokens.Execute<R> tExecute<R>(this IToken<MetaFunction<R>> source) where R : class, Res => new(source);

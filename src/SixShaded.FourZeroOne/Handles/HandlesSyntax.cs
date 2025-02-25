@@ -1,4 +1,3 @@
-
 namespace SixShaded.FourZeroOne.Handles;
 
 internal static class HandlesSyntax

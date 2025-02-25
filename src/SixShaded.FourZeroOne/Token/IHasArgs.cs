@@ -6,6 +6,7 @@ public interface IHasArgs<out RArg1, out ROut> : IToken<ROut>
 {
     public IToken<RArg1> Arg1 { get; }
 }
+
 public interface IHasArgs<out RArg1, out RArg2, out ROut> : IHasArgs<RArg1, ROut>
     where RArg1 : class, Res
     where RArg2 : class, Res
@@ -13,6 +14,7 @@ public interface IHasArgs<out RArg1, out RArg2, out ROut> : IHasArgs<RArg1, ROut
 {
     public IToken<RArg2> Arg2 { get; }
 }
+
 public interface IHasArgs<out RArg1, out RArg2, out RArg3, out ROut> : IHasArgs<RArg1, RArg2, ROut>
     where RArg1 : class, Res
     where RArg2 : class, Res

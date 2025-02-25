@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Tokens;
 
 using Resolutions;
+
 public record Execute<ROut> : Token.Defined.RuntimeHandledFunction<MetaFunction<ROut>, ROut>
     where ROut : class, Res
 {
@@ -9,6 +10,7 @@ public record Execute<ROut> : Token.Defined.RuntimeHandledFunction<MetaFunction<
     protected override FZOSpec.EStateImplemented MakeData(MetaFunction<ROut> func) => func.GenerateMetaExecute();
     protected override IOption<string> CustomToString() => $"!{Arg1}:<>;".AsSome();
 }
+
 public record Execute<RArg1, ROut> : Token.Defined.RuntimeHandledFunction<MetaFunction<RArg1, ROut>, MetaArgs<RArg1>, ROut>
     where RArg1 : class, Res
     where ROut : class, Res
@@ -18,6 +20,7 @@ public record Execute<RArg1, ROut> : Token.Defined.RuntimeHandledFunction<MetaFu
     protected override FZOSpec.EStateImplemented MakeData(MetaFunction<RArg1, ROut> func, MetaArgs<RArg1> args) => func.GenerateMetaExecute(args.Arg1);
     protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2};".AsSome();
 }
+
 public record Execute<RArg1, RArg2, ROut> : Token.Defined.RuntimeHandledFunction<MetaFunction<RArg1, RArg2, ROut>, MetaArgs<RArg1, RArg2>, ROut>
     where RArg1 : class, Res
     where RArg2 : class, Res
@@ -28,6 +31,7 @@ public record Execute<RArg1, RArg2, ROut> : Token.Defined.RuntimeHandledFunction
     protected override FZOSpec.EStateImplemented MakeData(MetaFunction<RArg1, RArg2, ROut> func, MetaArgs<RArg1, RArg2> args) => func.GenerateMetaExecute(args.Arg1, args.Arg2);
     protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2};".AsSome();
 }
+
 public record Execute<RArg1, RArg2, RArg3, ROut> : Token.Defined.RuntimeHandledFunction<MetaFunction<RArg1, RArg2, RArg3, ROut>, MetaArgs<RArg1, RArg2, RArg3>, ROut>
     where RArg1 : class, Res
     where RArg2 : class, Res

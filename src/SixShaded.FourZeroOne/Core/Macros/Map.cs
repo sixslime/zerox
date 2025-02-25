@@ -2,6 +2,7 @@
 
 using Resolutions;
 using Syntax;
+
 public static class Map<RIn, ROut>
     where RIn : class, Res
     where ROut : class, Res

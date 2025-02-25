@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Rule.Defined;
 
 using Unsafe;
+
 public abstract record RuleBehavior<R> : IRule<R>
     where R : class, Res
 {
@@ -24,13 +25,14 @@ public abstract record RuleBehavior<R> : IRule<R>
             : new None<IRuledToken<R>>();
 
     /// <summary>
-    /// Kinda stupid that this has to exist, but the alternative is dynamic instantiation via reflection in TryApply(). <br></br>
-    /// <i>Or I guess fully type-unsafe proxies but who wants that.</i>
+    ///     Kinda stupid that this has to exist, but the alternative is dynamic instantiation via reflection in TryApply().
+    ///     <br></br>
+    ///     <i>Or I guess fully type-unsafe proxies but who wants that.</i>
     /// </summary>
     protected abstract IEnumerable<IProxy<Res>> ConstructArgProxies(IToken<R> token);
 
     /// <summary>
-    /// <paramref name="token"/> is casted to token of <typeparamref name="RArg"/>.
+    ///     <paramref name="token" /> is casted to token of <typeparamref name="RArg" />.
     /// </summary>
     /// <typeparam name="RArg"></typeparam>
     /// <param name="token"></param>

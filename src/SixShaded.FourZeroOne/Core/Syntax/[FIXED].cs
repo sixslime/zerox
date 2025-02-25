@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
 using Resolutions;
+
 public static partial class TokenSyntax
 {
     public static Tokens.Fixed<Bool> tFixed(this bool value) => new(value);

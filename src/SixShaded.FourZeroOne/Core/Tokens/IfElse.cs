@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Tokens;
 
 using Resolutions;
+
 public record IfElse<R> : Token.Defined.Function<Bool, MetaFunction<R>, MetaFunction<R>, MetaFunction<R>> where R : class, Res
 {
     public IfElse(IToken<Bool> condition, IToken<MetaFunction<R>> positive, IToken<MetaFunction<R>> negative) : base(condition, positive, negative) { }

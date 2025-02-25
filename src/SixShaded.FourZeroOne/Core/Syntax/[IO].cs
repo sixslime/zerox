@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
 using Resolutions;
+
 public static partial class TokenSyntax
 {
     public static Tokens.IO.Select.One<R> tIOSelectOne<R>(this IToken<IMulti<R>> source) where R : class, Res => new(source);

@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Tokens.Multi;
 
 using Resolutions;
+
 public sealed record GetIndex<R> : Token.Defined.Function<IMulti<R>, Number, R> where R : class, Res
 {
     public GetIndex(IToken<IMulti<R>> from, IToken<Number> index) : base(from, index) { }

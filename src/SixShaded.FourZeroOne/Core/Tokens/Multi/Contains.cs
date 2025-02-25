@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Tokens.Multi;
 
 using Resolutions;
+
 public sealed record Contains<R> : Token.Defined.Function<IMulti<R>, R, Bool> where R : class, Res
 {
     public Contains(IToken<IMulti<R>> multi, IToken<R> element) : base(multi, element) { }

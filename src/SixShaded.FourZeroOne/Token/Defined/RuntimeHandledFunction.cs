@@ -15,6 +15,7 @@ public abstract record RuntimeHandledFunction<RArg1, ROut> : TokenBehavior<ROut>
 
     protected abstract FZOSpec.EStateImplemented MakeData(RArg1 in1);
 }
+
 public abstract record RuntimeHandledFunction<RArg1, RArg2, ROut> : TokenBehavior<ROut>,
     IHasArgs<RArg1, RArg2, ROut>
     where RArg1 : class, Res
@@ -32,6 +33,7 @@ public abstract record RuntimeHandledFunction<RArg1, RArg2, ROut> : TokenBehavio
 
     protected abstract FZOSpec.EStateImplemented MakeData(RArg1 in1, RArg2 in2);
 }
+
 public abstract record RuntimeHandledFunction<RArg1, RArg2, RArg3, ROut> : TokenBehavior<ROut>,
     IHasArgs<RArg1, RArg2, ROut>
     where RArg1 : class, Res

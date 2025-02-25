@@ -1,4 +1,3 @@
-
 namespace SixShaded.FourZeroOne.Handles;
 
 public interface IInput

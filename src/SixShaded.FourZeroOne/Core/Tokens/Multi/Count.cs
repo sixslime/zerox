@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Tokens.Multi;
 
 using Resolutions;
+
 public sealed record Count : Token.Defined.Function<IMulti<Res>, Number>
 {
     public Count(IToken<IMulti<Res>> of) : base(of) { }

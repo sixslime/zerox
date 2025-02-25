@@ -3,6 +3,7 @@
 using Resolutions;
 using Rule.Defined.Proxies;
 using Rule.Defined.Matchers;
+
 public static partial class Core
 {
     public static Tokens.AddRule tAddRule<RVal>(Structure.Rule.Block<RVal> block)
@@ -11,11 +12,7 @@ public static partial class Core
         var vs = new DynamicAddress<MetaFunction<OriginalProxy<RVal>, RVal>>();
         var vo = new DynamicAddress<OriginalProxy<RVal>>();
 
-        return new(new Rule.Defined.RuleForValue<RVal>
-        {
-            Definition = new() { SelfIdentifier = vs, IdentifierA = vo, Token = block.Definition(vo) },
-            Matcher = block.Matches(new()),
-        });
+        return new(new Rule.Defined.RuleForValue<RVal> { Definition = new() { SelfIdentifier = vs, IdentifierA = vo, Token = block.Definition(vo) }, Matcher = block.Matches(new()) });
     }
 
     public static Tokens.AddRule tAddRule<RArg1, ROut>(Structure.Rule.Block<RArg1, ROut> block)
@@ -25,11 +22,7 @@ public static partial class Core
         var vs = new DynamicAddress<MetaFunction<OriginalProxy<ROut>, ArgProxy<RArg1>, ROut>>();
         var (vo, v1) = (new DynamicAddress<OriginalProxy<ROut>>(), new DynamicAddress<ArgProxy<RArg1>>());
 
-        return new(new Rule.Defined.RuleForFunction<RArg1, ROut>
-        {
-            Definition = new() { SelfIdentifier = vs, IdentifierA = vo, IdentifierB = v1, Token = block.Definition(vo, v1) },
-            Matcher = block.Matches(new()),
-        });
+        return new(new Rule.Defined.RuleForFunction<RArg1, ROut> { Definition = new() { SelfIdentifier = vs, IdentifierA = vo, IdentifierB = v1, Token = block.Definition(vo, v1) }, Matcher = block.Matches(new()) });
     }
 
     public static Tokens.AddRule tAddRule<RArg1, RArg2, ROut>(Structure.Rule.Block<RArg1, RArg2, ROut> block)
@@ -42,7 +35,14 @@ public static partial class Core
 
         return new(new Rule.Defined.RuleForFunction<RArg1, RArg2, ROut>
         {
-            Definition = new() { SelfIdentifier = vs, IdentifierA = vo, IdentifierB = v1, IdentifierC = v2, Token = block.Definition(vo, v1, v2) },
+            Definition = new()
+            {
+                SelfIdentifier = vs,
+                IdentifierA = vo,
+                IdentifierB = v1,
+                IdentifierC = v2,
+                Token = block.Definition(vo, v1, v2),
+            },
             Matcher = block.Matches(new()),
         });
     }
@@ -58,17 +58,27 @@ public static partial class Core
 
         return new(new Rule.Defined.RuleForFunction<RArg1, RArg2, RArg3, ROut>
         {
-            Definition = new() { SelfIdentifier = vs, IdentifierA = vo, IdentifierB = v1, IdentifierC = v2, IdentifierD = v3, Token = block.Definition(vo, v1, v2, v3) },
+            Definition = new()
+            {
+                SelfIdentifier = vs,
+                IdentifierA = vo,
+                IdentifierB = v1,
+                IdentifierC = v2,
+                IdentifierD = v3,
+                Token = block.Definition(vo, v1, v2, v3),
+            },
             Matcher = block.Matches(new()),
         });
     }
 }
+
 public static partial class TokenSyntax
 {
     public static Rule.Defined.RealizeProxy<R> tRealize<R>(this IToken<IProxy<R>> proxy)
         where R : class, Res =>
         new(proxy);
 }
+
 public static class RuleMatcherSyntax
 {
     public static TypeMatcher<TMatch> mIsType<TMatch>(this Structure.Rule.IMatcherBuilder _)

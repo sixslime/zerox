@@ -2,6 +2,7 @@
 
 using Resolutions;
 using Syntax;
+
 public static class CatchNolla<R>
     where R : class, Res
 {
@@ -10,11 +11,7 @@ public static class CatchNolla<R>
         Label = Package.Label("CatchNolla"),
         Definition = Core.tMetaFunction<R, MetaFunction<R>, R>(
                 (valueI, fallbackI) =>
-                    valueI.tRef().tExists().tIfTrueDirect<R>(new()
-                    {
-                        Then = valueI.tRef().tMetaBoxed(),
-                        Else = fallbackI.tRef(),
-                    })
+                    valueI.tRef().tExists().tIfTrueDirect<R>(new() { Then = valueI.tRef().tMetaBoxed(), Else = fallbackI.tRef() })
                         .tExecute())
             .Resolution,
     };

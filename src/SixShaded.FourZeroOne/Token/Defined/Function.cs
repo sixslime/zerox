@@ -11,6 +11,7 @@ public abstract record Function<RArg1, ROut> : StandardToken<ROut>,
 
     protected abstract ITask<IOption<ROut>> Evaluate(ITokenContext runtime, IOption<RArg1> in1);
 }
+
 public abstract record Function<RArg1, RArg2, ROut> : StandardToken<ROut>,
     IHasArgs<RArg1, RArg2, ROut>
     where RArg1 : class, Res
@@ -24,6 +25,7 @@ public abstract record Function<RArg1, RArg2, ROut> : StandardToken<ROut>,
 
     protected abstract ITask<IOption<ROut>> Evaluate(ITokenContext runtime, IOption<RArg1> in1, IOption<RArg2> in2);
 }
+
 public abstract record Function<RArg1, RArg2, RArg3, ROut> : StandardToken<ROut>,
     IHasArgs<RArg1, RArg2, RArg3, ROut>
     where RArg1 : class, Res

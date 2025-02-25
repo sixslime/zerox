@@ -1,4 +1,3 @@
-
 namespace SixShaded.FourZeroOne.FZOSpec;
 
 public abstract record EProcessorStep

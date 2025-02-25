@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Resolutions;
 
 using Resolution.Unsafe;
+
 public sealed record MetaFunction<R> : Resolution.Defined.NoOp where R : class, Res
 {
     public required DynamicAddress<MetaFunction<R>> SelfIdentifier { get; init; }
@@ -16,6 +17,7 @@ public sealed record MetaFunction<R> : Resolution.Defined.NoOp where R : class, 
                 .Tipled(),
         };
 }
+
 public sealed record MetaFunction<RArg1, ROut> : Resolution.Defined.NoOp, IBoxedMetaFunction<ROut>
     where RArg1 : class, Res
     where ROut : class, Res
@@ -36,6 +38,7 @@ public sealed record MetaFunction<RArg1, ROut> : Resolution.Defined.NoOp, IBoxed
                 .Tipled(),
         };
 }
+
 public sealed record MetaFunction<RArg1, RArg2, ROut> : Resolution.Defined.NoOp, IBoxedMetaFunction<ROut>
     where RArg1 : class, Res
     where RArg2 : class, Res
@@ -59,6 +62,7 @@ public sealed record MetaFunction<RArg1, RArg2, ROut> : Resolution.Defined.NoOp,
                 .Tipled(),
         };
 }
+
 public sealed record MetaFunction<RArg1, RArg2, RArg3, ROut> : Resolution.Defined.NoOp, IBoxedMetaFunction<ROut>
     where RArg1 : class, Res
     where RArg2 : class, Res
@@ -86,9 +90,10 @@ public sealed record MetaFunction<RArg1, RArg2, RArg3, ROut> : Resolution.Define
                 .Tipled(),
         };
 }
+
 /// <summary>
-/// <b>Strictly for internal workings (e.g. Rule definitions).</b><br></br> 
-/// Not for normal use.
+///     <b>Strictly for internal workings (e.g. Rule definitions).</b><br></br>
+///     Not for normal use.
 /// </summary>
 public sealed record OverflowingMetaFunction<RArg1, RArg2, RArg3, RArg4, ROut> : Resolution.Defined.NoOp, IBoxedMetaFunction<ROut>
     where RArg1 : class, Res

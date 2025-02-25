@@ -1,5 +1,4 @@
-﻿
-namespace SixShaded.FourZeroOne.Handles.Defined;
+﻿namespace SixShaded.FourZeroOne.Handles.Defined;
 
 public class TokenContextHandle(FZOSpec.IProcessorFZO.ITokenContext implementation) : ITokenContext
 {
