@@ -205,21 +205,21 @@ internal class DeTesRealizerImpl
                     .TryGetValue(linkedToken, out var resolutionAssertions)
                     .ToOption(resolutionAssertions).Or([])!
                     .Map(assertion => EvaluateAssertion(assertion, linkedToken, resolution))
-                    .ToArray(),
+                    .ToArray<IDeTesAssertionData<ResOpt>>(),
             Memory =
                 runtime.MemoryAssertions
                     .TryGetValue(linkedToken, out var memoryAssertions)
                     .ToOption(memoryAssertions).Or([])!
                     .Map(assertion =>
                         EvaluateAssertion(assertion, linkedToken, nMemory))
-                    .ToArray(),
+                    .ToArray<IDeTesAssertionData<IMemoryFZO>>(),
             Token =
                 runtime.TokenAssertions
                     .TryGetValue(linkedToken, out var tokenAssertions)
                     .ToOption(tokenAssertions).Or([])!
                     .Map(assertion =>
                         EvaluateAssertion(assertion, linkedToken, token))
-                    .ToArray(),
+                    .ToArray<IDeTesAssertionData<Tok>>(),
         };
 
     private static AssertionDataImpl<A> EvaluateAssertion<A>(IAssertionAccessor<A> assertion, Tok linkedToken, A value)
