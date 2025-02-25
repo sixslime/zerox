@@ -4,7 +4,7 @@ namespace SixShaded.MinimaFZO;
 using MorseCode.ITask;
 public record MinimaStateFZO : IStateFZO
 {
-    private IOption<FZOSource> _initialized;
+    private IOption<IStateFZO.IOrigin> _initialized;
     private PStack<OperationNode> _opStack;
     private PStack<EKorssaMutation> _prepStack;
 
@@ -12,14 +12,14 @@ public record MinimaStateFZO : IStateFZO
     {
         _opStack = new();
         _prepStack = new();
-        _initialized = new None<FZOSource>();
+        _initialized = new None<IStateFZO.IOrigin>();
     }
 
     IEnumerable<IStateFZO.IOperationNode> IStateFZO.OperationStack => _opStack.Elements.Take(_opStack.Count - 1);
     IEnumerable<EKorssaMutation> IStateFZO.KorssaMutationStack => _prepStack.Elements;
-    IOption<FZOSource> IStateFZO.Initialized => _initialized;
+    IOption<IStateFZO.IOrigin> IStateFZO.Initialized => _initialized;
 
-    IStateFZO IStateFZO.Initialize(FZOSource source)
+    IStateFZO IStateFZO.Initialize(IStateFZO.IOrigin source)
     {
         if (_initialized.IsSome())
             throw new InvalidOperationException("Attempted initialization of an already initialized IStateFZO");

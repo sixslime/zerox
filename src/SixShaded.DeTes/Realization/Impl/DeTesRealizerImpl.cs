@@ -10,7 +10,7 @@ internal class DeTesRealizerImpl
     public async Task<IResult<IDeTesResult, EDeTesInvalidTest>> Realize(IDeTesTest test, IDeTesFZOSupplier supplier)
     {
         IContextAccessor context = new ContextImpl();
-        var evalState = supplier.UnitializedState.Initialize(new()
+        var evalState = supplier.UnitializedState.Initialize(new StateOrigin
         {
             InitialMemory = test.InitialMemory,
             Program = test.Declaration(context.PublicContext),
@@ -241,6 +241,11 @@ internal class DeTesRealizerImpl
 
     private static Err<IDeTesResult, EDeTesInvalidTest> Invalid(EDeTesInvalidTest val) => new(val);
 
+    private class StateOrigin : IStateFZO.IOrigin
+    {
+        public required Kor Program { get; init; }
+        public required IMemoryFZO InitialMemory { get; init; }
+    }
     private class RuntimeResources(IContextAccessor context)
     {
         public readonly Queue<IDomainAccessor> DomainQueue = new();
