@@ -1,21 +1,22 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
-using Resolutions;
+using Roggis;
+using Korvessa.Defined;
 
 public static partial class Core
 {
-    public static Tokens.Nolla<R> tNollaFor<R>() where R : class, Res => new();
+    public static Korssas.Nolla<R> tNollaFor<R>() where R : class, Rog => new();
 }
 
-public static partial class TokenSyntax
+public static partial class KorssaSyntax
 {
-    public static Macro<R, MetaFunction<R>, R> tCatchNolla<R>(this IToken<R> value, IToken<MetaFunction<R>> fallback)
-        where R : class, Res =>
-        Macros.CatchNolla<R>.Construct(value, fallback);
+    public static Korvessa<R, MetaFunction<R>, R> tCatchNolla<R>(this IKorssa<R> value, IKorssa<MetaFunction<R>> fallback)
+        where R : class, Rog =>
+        Korvessas.CatchNolla<R>.Construct(value, fallback);
 
-    public static Macro<R, MetaFunction<R>, R> tCatchNolla<R>(this IToken<R> value, Func<IToken<R>> fallback)
-        where R : class, Res =>
-        Macros.CatchNolla<R>.Construct(value, fallback().tMetaBoxed());
+    public static Korvessa<R, MetaFunction<R>, R> tCatchNolla<R>(this IKorssa<R> value, Func<IKorssa<R>> fallback)
+        where R : class, Rog =>
+        Korvessas.CatchNolla<R>.Construct(value, fallback().tMetaBoxed());
 
-    public static Tokens.Exists tExists(this IToken<Res> token) => new(token);
+    public static Korssas.Exists tExists(this IKorssa<Rog> korssa) => new(korssa);
 }

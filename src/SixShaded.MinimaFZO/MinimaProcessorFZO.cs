@@ -1,7 +1,7 @@
 
 namespace SixShaded.MinimaFZO;
 
-using FourZeroOne.Rule;
+using FourZeroOne.Mellsano;
 public class MinimaProcessorFZO : IProcessorFZO
 {
     public Task<IResult<EProcessorStep, EProcessorHalt>> GetNextStep(IStateFZO state, IInputFZO input) => StaticImplementation(state, input);
@@ -23,10 +23,10 @@ public class MinimaProcessorFZO : IProcessorFZO
                 return invalidStateResult;
         }
 
-        // continue token prep if prep stack has at least 1 element:
-        if (state.TokenMutationStack.GetAt(0).Check(out var processingToken))
+        // continue korssa prep if prep stack has at least 1 element:
+        if (state.KorssaMutationStack.GetAt(0).Check(out var processingKorssa))
         {
-            var token = processingToken.Result;
+            var korssa = processingKorssa.Result;
 
             if (state.OperationStack.GetAt(0).Check(out var t) && t.MemoryStack.GetAt(0).Check(out var topMem))
             {
@@ -34,30 +34,30 @@ public class MinimaProcessorFZO : IProcessorFZO
                 //Console.ForegroundColor = ConsoleColor.Yellow;
                 //Console.WriteLine(topMem.LookNicePls());
                 //Console.ResetColor();
-                Dictionary<RuleID, int> seenRules = new();
-                foreach (var rule in topMem.Rules)
+                Dictionary<MellsanoID, int> seenMellsanos = new();
+                foreach (var mellsano in topMem.Mellsanos)
                 {
-                    // - skip muted rules:
-                    int timesSeen = seenRules.At(rule.ID).Or(0);
-                    if (topMem.GetRuleMuteCount(rule.ID) > timesSeen)
+                    // - skip muted mellsanos:
+                    int timesSeen = seenMellsanos.At(mellsano.ID).Or(0);
+                    if (topMem.GetMellsanoMuteCount(mellsano.ID) > timesSeen)
                     {
-                        seenRules[rule.ID] = timesSeen + 1;
+                        seenMellsanos[mellsano.ID] = timesSeen + 1;
                         continue;
                     }
 
-                    // send 'RuleApplication' if the processing token is rulable by an unapplied rule:
-                    if (rule.TryApply(token).Check(out var ruledToken))
+                    // send 'MellsanoApplication' if the processing korssa is rulable by an unapplied mellsano:
+                    if (mellsano.TryApply(korssa).Check(out var mellsanodKorssa))
                     {
                         // DEBUG
                         //Console.ForegroundColor = ConsoleColor.Blue;
-                        //Console.WriteLine("RULE: " + token + " => " + ruledToken);
+                        //Console.WriteLine("MELLSANO: " + korssa + " => " + mellsanodKorssa);
                         //Console.ResetColor();
-                        return new EProcessorStep.TokenMutate
+                        return new EProcessorStep.KorssaMutate
                         {
-                            Mutation = new ETokenMutation.RuleApply
+                            Mutation = new EKorssaMutation.MellsanoApply
                             {
-                                Rule = rule,
-                                Result = ruledToken,
+                                Mellsano = mellsano,
+                                Result = mellsanodKorssa,
                             },
                         }.AsOk(stdHint);
                     }
@@ -65,18 +65,18 @@ public class MinimaProcessorFZO : IProcessorFZO
             }
             // DEBUG
             //Console.ForegroundColor = ConsoleColor.Green;
-            //Console.WriteLine(token);
+            //Console.WriteLine(korssa);
             //Console.ResetColor();
             // send 'PushOperation' if no more preprocessing is needed:
-            return new EProcessorStep.PushOperation { OperationToken = token }.AsOk(stdHint);
+            return new EProcessorStep.PushOperation { OperationKorssa = korssa }.AsOk(stdHint);
         }
 
         // send initial 'Identity' if no operations are on the stack:
         if (state.OperationStack.GetAt(0).CheckNone(out var topNode))
         {
-            return new EProcessorStep.TokenMutate
+            return new EProcessorStep.KorssaMutate
             {
-                Mutation = new ETokenMutation.Identity
+                Mutation = new EKorssaMutation.Identity
                 {
                     Result = init.Program,
                 },
@@ -84,45 +84,45 @@ public class MinimaProcessorFZO : IProcessorFZO
         }
 
         // - caching
-        TokenContext tokenContext = new()
+        KorssaContext korssaContext = new()
         {
             CurrentMemory = topNode.MemoryStack.GetAt(0).Unwrap(),
             Input = input,
         };
-        var argsArray = topNode.ArgResolutionStack.ToMutList().Mut(x => x.Reverse()).ToArray();
-        // assert there are not more resolutions than the operation takes:
-        if (argsArray.Length > topNode.Operation.ArgTokens.Length) return invalidStateResult;
+        var argsArray = topNode.ArgRoggiStack.ToMutList().Mut(x => x.Reverse()).ToArray();
+        // assert there are not more roggis than the operation takes:
+        if (argsArray.Length > topNode.Operation.ArgKorssas.Length) return invalidStateResult;
 
         // send 'Resolve' if all operation's args are resolved:
-        if (argsArray.Length == topNode.Operation.ArgTokens.Length)
+        if (argsArray.Length == topNode.Operation.ArgKorssas.Length)
         {
             var resolvedOperation =
-                topNode.Operation.ResolveWith(tokenContext, argsArray)
-                    .Split(out var resolutionTask, out var runtimeHandled)
-                    ? (await resolutionTask).AsOk(Hint<EStateImplemented>.HINT)
-                    : runtimeHandled.AsErr(Hint<ResOpt>.HINT);
+                topNode.Operation.ResolveWith(korssaContext, argsArray)
+                    .Split(out var roggiTask, out var runtimeHandled)
+                    ? (await roggiTask).AsOk(Hint<EStateImplemented>.HINT)
+                    : runtimeHandled.AsErr(Hint<RogOpt>.HINT);
             // DEBUG
             //Console.ForegroundColor = ConsoleColor.Red;
             //if (resolvedOperation.CheckOk(out var r)) Console.WriteLine(r);
             Console.ResetColor();
             return
-                (resolvedOperation.CheckOk(out var finalResolution) && !state.OperationStack.GetAt(1).IsSome())
+                (resolvedOperation.CheckOk(out var finalRoggi) && !state.OperationStack.GetAt(1).IsSome())
                 .Not().ToResult(
-                    new EProcessorStep.Resolve { Resolution = resolvedOperation },
-                    new EProcessorHalt.Completed { HaltingState = state, Resolution = finalResolution });
+                    new EProcessorStep.Resolve { Roggi = resolvedOperation },
+                    new EProcessorHalt.Completed { HaltingState = state, Roggi = finalRoggi });
         }
 
         // send 'Identity' if next operation arg is ready to be processed
-        return new EProcessorStep.TokenMutate
+        return new EProcessorStep.KorssaMutate
         {
-            Mutation = new ETokenMutation.Identity
+            Mutation = new EKorssaMutation.Identity
             {
-                Result = topNode.Operation.ArgTokens[argsArray.Length],
+                Result = topNode.Operation.ArgKorssas[argsArray.Length],
             },
         }.AsOk(stdHint);
     }
 
-    private class TokenContext : IProcessorFZO.ITokenContext
+    private class KorssaContext : IProcessorFZO.IKorssaContext
     {
         public required IMemoryFZO CurrentMemory { get; init; }
         public required IInputFZO Input { get; init; }

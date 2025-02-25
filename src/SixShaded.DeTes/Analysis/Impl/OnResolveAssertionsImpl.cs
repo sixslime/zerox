@@ -2,7 +2,7 @@
 
 internal class OnResolveAssertionsImpl : IDeTesOnResolveAssertions
 {
-    public required IDeTesAssertionData<Tok>[] Token { get; init; }
-    public required IDeTesAssertionData<ResOpt>[] Resolution { get; init; }
+    public required IDeTesAssertionData<Kor>[] Korssa { get; init; }
+    public required IDeTesAssertionData<RogOpt>[] Roggi { get; init; }
     public required IDeTesAssertionData<IMemoryFZO>[] Memory { get; init; }
 }

@@ -1,40 +1,41 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
-using Resolutions;
+using Roggis;
+using Korvessa.Defined;
 
 public static partial class Core
 {
-    public static Tokens.Multi.Union<R> tMultiOf<R>(List<IToken<R>> tokens) where R : class, Res => new(tokens.Map(x => x.tYield()));
+    public static Korssas.Multi.Union<R> tMultiOf<R>(List<IKorssa<R>> korssas) where R : class, Rog => new(korssas.Map(x => x.tYield()));
 
-    public static Tokens.Multi.Union<R> tUnionOf<R>(List<IToken<IMulti<R>>> sets) where R : class, Res => new(sets);
+    public static Korssas.Multi.Union<R> tUnionOf<R>(List<IKorssa<IMulti<R>>> sets) where R : class, Rog => new(sets);
 
-    public static Tokens.Multi.Intersection<R> tIntersectionOf<R>(List<IToken<IMulti<R>>> sets) where R : class, Res => new(sets);
+    public static Korssas.Multi.Intersection<R> tIntersectionOf<R>(List<IKorssa<IMulti<R>>> sets) where R : class, Rog => new(sets);
 }
 
-public static partial class TokenSyntax
+public static partial class KorssaSyntax
 {
-    public static Tokens.Multi.Exclusion<R> tWithout<R>(this IToken<IMulti<R>> source, IToken<IMulti<R>> exclude) where R : class, Res => new(source, exclude);
+    public static Korssas.Multi.Exclusion<R> tWithout<R>(this IKorssa<IMulti<R>> source, IKorssa<IMulti<R>> exclude) where R : class, Rog => new(source, exclude);
 
-    public static Tokens.Multi.Count tCount(this IToken<IMulti<Res>> source) => new(source);
+    public static Korssas.Multi.Count tCount(this IKorssa<IMulti<Rog>> source) => new(source);
 
-    public static Tokens.Multi.Yield<R> tYield<R>(this IToken<R> token) where R : class, Res => new(token);
+    public static Korssas.Multi.Yield<R> tYield<R>(this IKorssa<R> korssa) where R : class, Rog => new(korssa);
 
-    public static Tokens.Multi.Union<R> tToMulti<R>(this IEnumerable<IToken<R>> tokens) where R : class, Res => new(tokens.Map(x => x.tYield()));
+    public static Korssas.Multi.Union<R> tToMulti<R>(this IEnumerable<IKorssa<R>> korssas) where R : class, Rog => new(korssas.Map(x => x.tYield()));
 
-    public static Tokens.Multi.Union<R> tUnion<R>(this IToken<IMulti<R>> left, IToken<IMulti<R>> right) where R : class, Res => new(left, right);
+    public static Korssas.Multi.Union<R> tUnion<R>(this IKorssa<IMulti<R>> left, IKorssa<IMulti<R>> right) where R : class, Rog => new(left, right);
 
-    public static Tokens.Multi.Union<R> tFlatten<R>(this IEnumerable<IToken<IMulti<R>>> tokens) where R : class, Res => new(tokens);
+    public static Korssas.Multi.Union<R> tFlatten<R>(this IEnumerable<IKorssa<IMulti<R>>> korssas) where R : class, Rog => new(korssas);
 
-    public static Tokens.Multi.Contains<R> tContains<R>(this IToken<IMulti<R>> from, IToken<R> element) where R : class, Res => new(from, element);
+    public static Korssas.Multi.Contains<R> tContains<R>(this IKorssa<IMulti<R>> from, IKorssa<R> element) where R : class, Rog => new(from, element);
 
-    public static Tokens.Multi.GetIndex<R> tGetIndex<R>(this IToken<IMulti<R>> token, IToken<Number> index) where R : class, Res => new(token, index);
+    public static Korssas.Multi.GetIndex<R> tGetIndex<R>(this IKorssa<IMulti<R>> korssa, IKorssa<Number> index) where R : class, Rog => new(korssa, index);
 
-    public static Macro<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> tMap<RIn, ROut>(this IToken<IMulti<RIn>> source, Func<DynamicAddress<RIn>, IToken<ROut>> mapFunction)
-        where RIn : class, Res
-        where ROut : class, Res =>
-        Macros.Map<RIn, ROut>.Construct(source, Core.tMetaFunction(mapFunction));
+    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> tMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, Func<DynamicAddress<RIn>, IKorssa<ROut>> mapFunction)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        Korvessas.Map<RIn, ROut>.Construct(source, Core.tMetaFunction(mapFunction));
 
-    public static Macro<R, Number, Multi<R>> tDuplicate<R>(this IToken<R> value, IToken<Number> count)
-        where R : class, Res =>
-        Macros.Duplicate<R>.Construct(value, count);
+    public static Korvessa<R, Number, Multi<R>> tDuplicate<R>(this IKorssa<R> value, IKorssa<Number> count)
+        where R : class, Rog =>
+        Korvessas.Duplicate<R>.Construct(value, count);
 }

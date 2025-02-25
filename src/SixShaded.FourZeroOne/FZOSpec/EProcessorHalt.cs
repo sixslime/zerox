@@ -9,6 +9,6 @@ public abstract record EProcessorHalt
 
     public sealed record Completed : EProcessorHalt
     {
-        public required ResOpt Resolution { get; init; }
+        public required RogOpt Roggi { get; init; }
     }
 }

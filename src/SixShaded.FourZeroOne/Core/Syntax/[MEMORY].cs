@@ -1,34 +1,35 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
-using Resolutions;
-using Tokens.Memory;
-using SixShaded.FourZeroOne.Core.Tokens.Memory.Object;
+using Roggis;
+using Korssas.Memory;
+using SixShaded.FourZeroOne.Core.Korssas.Memory.Object;
+using Korvessa.Defined;
 
-public static partial class TokenSyntax
+public static partial class KorssaSyntax
 {
-    public static DynamicAssign<R> tAsVariable<R>(this IToken<R> token, out DynamicAddress<R> ident) where R : class, Res
+    public static DynamicAssign<R> tAsVariable<R>(this IKorssa<R> korssa, out DynamicAddress<R> ident) where R : class, Rog
     {
         ident = new();
-        return new(ident, token);
+        return new(ident, korssa);
     }
 
-    public static DynamicReference<R> tRef<R>(this IMemoryAddress<R> ident) where R : class, Res => new(ident);
+    public static DynamicReference<R> tRef<R>(this IMemoryAddress<R> ident) where R : class, Rog => new(ident);
 
-    public static Insert<R> tMemoryWrite<R>(this IToken<IMemoryObject<R>> address, IToken<R> data)
-        where R : class, Res =>
+    public static Insert<R> tMemoryWrite<R>(this IKorssa<IMemoryObject<R>> address, IKorssa<R> data)
+        where R : class, Rog =>
         new(address, data);
 
-    public static Get<R> tMemoryGet<R>(this IToken<IMemoryObject<R>> address)
-        where R : class, Res =>
+    public static Get<R> tMemoryGet<R>(this IKorssa<IMemoryObject<R>> address)
+        where R : class, Rog =>
         new(address);
 
-    public static Remove tMemoryRemove(this IToken<IMemoryObject<Res>> address) => new(address);
+    public static Remove tMemoryRemove(this IKorssa<IMemoryObject<Rog>> address) => new(address);
 
-    public static Macro<IMemoryObject<R>, MetaFunction<R, R>, Resolutions.Instructions.Assign<R>> tMemoryUpdate<R>(this IToken<IMemoryObject<R>> address, IToken<MetaFunction<R, R>> updateFunction)
-        where R : class, Res =>
-        Macros.UpdateMemoryObject<R>.Construct(address, updateFunction);
+    public static Korvessa<IMemoryObject<R>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> tMemoryUpdate<R>(this IKorssa<IMemoryObject<R>> address, IKorssa<MetaFunction<R, R>> updateFunction)
+        where R : class, Rog =>
+        Korvessas.UpdateMemoryObject<R>.Construct(address, updateFunction);
 
-    public static Macro<IMemoryObject<R>, MetaFunction<R, R>, Resolutions.Instructions.Assign<R>> tMemoryUpdate<R>(this IToken<IMemoryObject<R>> address, Func<DynamicAddress<R>, IToken<R>> updateFunction)
-        where R : class, Res =>
-        Macros.UpdateMemoryObject<R>.Construct(address, Core.tMetaFunction(updateFunction));
+    public static Korvessa<IMemoryObject<R>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> tMemoryUpdate<R>(this IKorssa<IMemoryObject<R>> address, Func<DynamicAddress<R>, IKorssa<R>> updateFunction)
+        where R : class, Rog =>
+        Korvessas.UpdateMemoryObject<R>.Construct(address, Core.tMetaFunction(updateFunction));
 }

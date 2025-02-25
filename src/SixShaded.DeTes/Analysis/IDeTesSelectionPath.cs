@@ -2,7 +2,7 @@
 
 public interface IDeTesSelectionPath : IDeTesResult
 {
-    public Tok RootSelectionToken { get; }
+    public Kor RootSelectionKorssa { get; }
     public IDeTesDomainData Domain { get; }
     public int[] Selection { get; }
 }

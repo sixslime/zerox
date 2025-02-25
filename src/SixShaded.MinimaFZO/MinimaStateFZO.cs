@@ -6,7 +6,7 @@ public record MinimaStateFZO : IStateFZO
 {
     private IOption<FZOSource> _initialized;
     private PStack<OperationNode> _opStack;
-    private PStack<ETokenMutation> _prepStack;
+    private PStack<EKorssaMutation> _prepStack;
 
     public MinimaStateFZO()
     {
@@ -16,7 +16,7 @@ public record MinimaStateFZO : IStateFZO
     }
 
     IEnumerable<IStateFZO.IOperationNode> IStateFZO.OperationStack => _opStack.Elements.Take(_opStack.Count - 1);
-    IEnumerable<ETokenMutation> IStateFZO.TokenMutationStack => _prepStack.Elements;
+    IEnumerable<EKorssaMutation> IStateFZO.KorssaMutationStack => _prepStack.Elements;
     IOption<FZOSource> IStateFZO.Initialized => _initialized;
 
     IStateFZO IStateFZO.Initialize(FZOSource source)
@@ -31,7 +31,7 @@ public record MinimaStateFZO : IStateFZO
                 Operation = new DummyOperation(),
                 MemCount = 1,
                 MemoryStack = new PStack<IMemoryFZO>().WithEntries(source.InitialMemory),
-                ArgResolutionStack = new(),
+                ArgRoggiStack = new(),
 
             }),
         };
@@ -43,7 +43,7 @@ public record MinimaStateFZO : IStateFZO
             throw new InvalidOperationException("Attempted operation on an uninitialized IStateFZO");
         return step switch
         {
-            EProcessorStep.TokenMutate v => this with
+            EProcessorStep.KorssaMutate v => this with
             {
                 _prepStack = _prepStack.WithEntries(v.Mutation),
             },
@@ -51,24 +51,24 @@ public record MinimaStateFZO : IStateFZO
             {
                 _opStack = _opStack.WithEntries(new OperationNode
                 {
-                    Operation = v.OperationToken,
+                    Operation = v.OperationKorssa,
                     MemoryStack = _opStack.TopValue.Unwrap().MemoryStack,
                     MemCount = 1,
-                    ArgResolutionStack = new(),
+                    ArgRoggiStack = new(),
                 }),
                 _prepStack = new(),
             },
-            EProcessorStep.Resolve v => v.Resolution.Split(out var resolution, out var stateImplemented)
+            EProcessorStep.Resolve v => v.Roggi.Split(out var roggi, out var stateImplemented)
                 ? this with
                 {
                     _opStack = _opStack.At(1).Expect("No parent operation node?")
                         .MapTopValue(
                             opNode => opNode with
                             {
-                                ArgResolutionStack = opNode.ArgResolutionStack.WithEntries(resolution),
-                                MemCount = opNode.MemCount.ExprAs(x => resolution.IsSome() ? x + 1 : x),
+                                ArgRoggiStack = opNode.ArgRoggiStack.WithEntries(roggi),
+                                MemCount = opNode.MemCount.ExprAs(x => roggi.IsSome() ? x + 1 : x),
                                 MemoryStack =
-                                resolution.Check(out var r)
+                                roggi.Check(out var r)
                                     ? opNode.MemoryStack.WithEntries(
                                         r.Instructions.AccumulateInto(
                                             opNode.MemoryStack.TopValue.Expect("no memory in operation node?"),
@@ -91,10 +91,10 @@ public record MinimaStateFZO : IStateFZO
                                                     writes =>
                                                         mem.WithObjects(writes.FilterMap(x => x.B.RemapAs(r => (x.A, r).Tiple())))
                                                             .WithClearedAddresses(writes.FilterMap(x => x.B.IsSome().Not().ToOption(x.A))))
-                                                .WithRuleMutes(metaExecute.RuleMutes)
-                                                .WithoutRuleMutes(metaExecute.RuleAllows))),
+                                                .WithMellsanoMutes(metaExecute.MellsanoMutes)
+                                                .WithoutMellsanoMutes(metaExecute.MellsanoAllows))),
                             }).IsA<PStack<OperationNode>>(),
-                        _prepStack = _prepStack.WithEntries(new ETokenMutation.Identity { Result = metaExecute.Token }),
+                        _prepStack = _prepStack.WithEntries(new EKorssaMutation.Identity { Result = metaExecute.Korssa }),
                     },
                     _ => throw new NotSupportedException(),
                 },
@@ -105,17 +105,17 @@ public record MinimaStateFZO : IStateFZO
     private record OperationNode : IStateFZO.IOperationNode
     {
         public required int MemCount { get; init; }
-        public required PStack<ResOpt> ArgResolutionStack { get; init; }
+        public required PStack<RogOpt> ArgRoggiStack { get; init; }
         public required PStack<IMemoryFZO> MemoryStack { get; init; }
-        public required Tok Operation { get; init; }
-        IEnumerable<ResOpt> IStateFZO.IOperationNode.ArgResolutionStack => ArgResolutionStack.Elements;
+        public required Kor Operation { get; init; }
+        IEnumerable<RogOpt> IStateFZO.IOperationNode.ArgRoggiStack => ArgRoggiStack.Elements;
         IEnumerable<IMemoryFZO> IStateFZO.IOperationNode.MemoryStack => MemoryStack.Elements.Take(MemCount);
     }
 
-    private class DummyOperation : Tok
+    private class DummyOperation : Kor
     {
-        public Tok[] ArgTokens => throw new System.Diagnostics.UnreachableException();
+        public Kor[] ArgKorssas => throw new System.Diagnostics.UnreachableException();
 
-        public IResult<ITask<ResOpt>, EStateImplemented> ResolveWith(IProcessorFZO.ITokenContext runtime, ResOpt[] args) => throw new System.Diagnostics.UnreachableException();
+        public IResult<ITask<RogOpt>, EStateImplemented> ResolveWith(IProcessorFZO.IKorssaContext runtime, RogOpt[] args) => throw new System.Diagnostics.UnreachableException();
     }
 }

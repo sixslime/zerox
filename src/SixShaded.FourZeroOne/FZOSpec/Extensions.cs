@@ -2,7 +2,7 @@
 
 public static class Extensions
 {
-    public static IMemoryFZO WithResolution(this IMemoryFZO memory, Res resolution) => resolution.Instructions.AccumulateInto(memory, (mem, instruction) => instruction.TransformMemoryUnsafe(mem));
+    public static IMemoryFZO WithRoggi(this IMemoryFZO memory, Rog roggi) => roggi.Instructions.AccumulateInto(memory, (mem, instruction) => instruction.TransformMemoryUnsafe(mem));
 
-    public static IMemoryFZO WithResolution(this IMemoryFZO memory, ResOpt resolution) => resolution.Check(out var r) ? memory.WithResolution(r) : memory;
+    public static IMemoryFZO WithRoggi(this IMemoryFZO memory, RogOpt roggi) => roggi.Check(out var r) ? memory.WithRoggi(r) : memory;
 }

@@ -3,8 +3,8 @@
 using FourZeroOne.Core.Syntax;
 using MinimaFZO;
 using FourZeroOne.FZOSpec;
-using r = FourZeroOne.Core.Resolutions;
-using t = FourZeroOne.Core.Tokens;
+using r = FourZeroOne.Core.Roggis;
+using k = FourZeroOne.Core.Korssas;
 using DeTesAssertIntegrity;
 using GlanceResult = IResult<RecursiveEvalTree<DeTes.Analysis.IDeTesResult, bool>, DeTes.Analysis.EDeTesInvalidTest>;
 using CatGlance;
@@ -26,41 +26,41 @@ public class Tester
 
     internal static readonly GlancableTest[] SANITY_CHECKS = new GlancableTest[]
     {
-        new("t")
+        new("k")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 400.tFixed().tAdd(1.tFixed())
-                    .AssertToken(C,
-                        u => u is t.Number.Add add && add.Arg1 is t.Fixed<r.Number> a && a.Resolution.Value == 400),
+                    .AssertKorssa(C,
+                        u => u is k.Number.Add add && add.Arg1 is k.Fixed<r.Number> a && a.Roggi.Value == 400),
         },
         new("r")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 400.tFixed().tAdd(1.tFixed())
-                    .AssertResolution(C, u => u.Value == 401),
+                    .AssertRoggi(C, u => u.Value == 401),
         },
         new("m")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 400.tFixed().tAdd(1.tFixed())
                     .AssertMemory(C, u => !u.Objects.Any()),
         },
         new("meta execute internal assert")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 400.tFixed().tAdd(1.tFixed())
-                    .AssertResolution(C, u => u.Value == 401)
+                    .AssertRoggi(C, u => u.Value == 401)
                     .tMetaBoxed()
                     .tExecute(),
         },
         new("env var")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 Core.tSubEnvironment<r.Number>(new()
                     {
                         Environment = [
@@ -71,201 +71,201 @@ public class Tester
                                 .AssertMemory(C, u => u.Objects.Count() == 1)
                                 .AssertMemory(C, u => u.GetObject(xVar).Unwrap().Value is 10),
                     })
-                    .AssertResolution(C, u => u.Value is 11),
+                    .AssertRoggi(C, u => u.Value is 11),
         },
         new("meta execute")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 Core.tMetaFunction<r.Number, r.Number>(
                         x =>
                             x.tRef().tAdd(10.tFixed()))
                     .tExecuteWith(new() { A = 5.tFixed() })
-                    .AssertToken(C, u => u is t.MetaExecuted<r.Number> exe && exe.Arg1 is t.Number.Add)
-                    .AssertResolution(C, u => u.Value == 15),
+                    .AssertKorssa(C, u => u is k.MetaExecuted<r.Number> exe && exe.Arg1 is k.Number.Add)
+                    .AssertRoggi(C, u => u.Value == 15),
         },
         new("size 1 domain")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 (1..10).tFixed()
                 .tIOSelectOne()
                 .DefineSelectionDomain(C, (..5).ToIter(), out var domain)
                 .tMultiply(2.tFixed())
-                .AssertResolution(C, u => u.Value == (domain.SelectedIndex() + 1) * 2),
+                .AssertRoggi(C, u => u.Value == (domain.SelectedIndex() + 1) * 2),
         },
         new("size 4 domain")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 (1..10).tFixed()
                 .tIOSelectMultiple(4.tFixed())
                 .DefineSelectionDomain(C, (..5).ToIter().Map(x => (x..(x + 4)).ToIter()), out var domain)
                 .tGetIndex(2.tFixed())
-                .AssertResolution(C, u => u.Value == domain.SelectedIndicies()[1] + 1),
+                .AssertRoggi(C, u => u.Value == domain.SelectedIndicies()[1] + 1),
         },
         new("2D domain")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 (1..10).tFixed()
                 .tIOSelectOne()
-                .DefineSelectionDomain(C, (..5).ToIter(), out var d1)
+                .DefineSelectionDomain(C, (..5).ToIter(), out var d1, "outer")
                 .tMultiply(
                     (1..10).tFixed()
                     .tIOSelectOne()
-                    .DefineSelectionDomain(C, (..5).ToIter(), out var d2))
-                .AssertResolution(C, u => u.Value == (d1.SelectedIndex() + 1) * (d2.SelectedIndex() + 1)),
+                    .DefineSelectionDomain(C, (..5).ToIter(), out var d2, "inner"))
+                .AssertRoggi(C, u => u.Value == (d1.SelectedIndex() + 1) * (d2.SelectedIndex() + 1)),
         },
-        new("reference resolution")
+        new("reference roggi")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 400.tFixed()
                     .ReferenceAs(C, out var reference)
                     .tAdd(1.tFixed())
-                    .AssertResolution(C, u => u.Value == reference.Resolution.Value + 1),
+                    .AssertRoggi(C, u => u.Value == reference.Roggi.Value + 1),
         },
-        new("reference token")
+        new("reference korssa")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 400.tFixed()
                     .ReferenceAs(C, out var reference)
-                    .tAdd(1.tFixed().AssertToken(C, u => u.GetType() == reference.Token.GetType()))
-                    .AssertToken(C, u => u is t.Number.Add add && add.Arg1 == reference.Token),
+                    .tAdd(1.tFixed().AssertKorssa(C, u => u.GetType() == reference.Korssa.GetType()))
+                    .AssertKorssa(C, u => u is k.Number.Add add && add.Arg1 == reference.Korssa),
         },
         new("reference in selection")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 (..9).tFixed()
                 .tIOSelectOne()
                 .DefineSelectionDomain(C, (..3).ToIter(), out var d1)
                 .tMultiply(10.tFixed())
                 .ReferenceAs(C, out var reference)
                 .tSubtract(4.tFixed())
-                .AssertResolution(C, u => u.Value == reference.Resolution.Value - 4),
+                .AssertRoggi(C, u => u.Value == reference.Roggi.Value - 4),
         },
         new("2D domain reference")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 (1..10).tFixed()
                 .tIOSelectOne()
-                .DefineSelectionDomain(C, (..5).ToIter(), out var d1)
+                .DefineSelectionDomain(C, (..5).ToIter(), out var d1, "outer")
                 .ReferenceAs(C, out var r1, "a")
                 .tMultiply(
                     (1..8).tFixed()
                     .tIOSelectOne()
-                    .DefineSelectionDomain(C, (..5).ToIter(), out var d2)
+                    .DefineSelectionDomain(C, (..5).ToIter(), out var d2, "inner")
                     .ReferenceAs(C, out var r2, "b"))
-                .AssertResolution(C, u => u.Value == r1.Resolution.Value * r2.Resolution.Value),
+                .AssertRoggi(C, u => u.Value == r1.Roggi.Value * r2.Roggi.Value),
         },
-        new("rule")
+        new("mellsano")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 Core.tSubEnvironment<r.Number>(new()
                     {
                         Environment = [
-                            Core.tAddRule<r.Number, r.Number, r.Number>(new()
+                            Core.tAddMellsano<r.Number, r.Number, r.Number>(new()
                             {
-                                Matches = x => x.mIsType<t.Number.Add>(),
+                                Matches = x => x.mIsType<k.Number.Add>(),
                                 Definition = (origin, a, b) =>
                                     origin.tRef().tRealize().tSubtract(1.tFixed()),
                             })
                             ],
                         Value = 2.tFixed().tAdd(2.tFixed())
-                            .AssertToken(C, u => u is t.Number.Subtract),
+                            .AssertKorssa(C, u => u is k.Number.Subtract),
                     })
-                    .AssertResolution(C, u => u.Value == 3),
+                    .AssertRoggi(C, u => u.Value == 3),
         },
-        new("rule macro")
+        new("korvessa mellsano")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 Core.tSubEnvironment<r.Multi<r.Number>>(new()
                     {
                         Environment =
                         [
-                            Core.tAddRule<r.Number, r.Number, r.Multi<r.Number>>(new()
+                            Core.tAddMellsano<r.Number, r.Number, r.Multi<r.Number>>(new()
                             {
-                                Matches = x => x.mIsMacro("core", "duplicate"),
+                                Matches = x => x.mIsKorvessa(Core.Axodu, "duplicate"),
                                 Definition = (_, a, b) =>
                                     a.tRef().tRealize().tDuplicate(b.tRef().tRealize().tAdd(1.tFixed())),
                             })
                         ],
                         Value = 401.tFixed().tDuplicate(3.tFixed()),
                     })
-                    .AssertResolution(C, u => u.Count == 4),
+                    .AssertRoggi(C, u => u.Count == 4),
         },
-        new("rule stacking")
+        new("mellsano stacking")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 Core.tSubEnvironment<r.Number>(new()
                     {
                         Environment =
                             [
-                                Core.tAddRule<r.Number, r.Number, r.Number>(new()
+                                Core.tAddMellsano<r.Number, r.Number, r.Number>(new()
                                 {
-                                    Matches = x => x.mIsType<t.Number.Add>(),
+                                    Matches = x => x.mIsType<k.Number.Add>(),
                                     Definition = (_, a, b) =>
                                         a.tRef().tRealize().tSubtract(b.tRef().tRealize()),
                                 }),
-                                Core.tAddRule<r.Number, r.Number, r.Number>(new()
+                                Core.tAddMellsano<r.Number, r.Number, r.Number>(new()
                                 {
-                                    Matches = x => x.mIsType<t.Number.Subtract>(),
+                                    Matches = x => x.mIsType<k.Number.Subtract>(),
                                     Definition = (_, _, _) =>
                                         999.tFixed(),
                                 }),
                             ],
                         Value = 400.tFixed().tAdd(1.tFixed())
-                            .AssertToken(C, u => u is t.Fixed<r.Number> num && num.Resolution.Value == 999),
+                            .AssertKorssa(C, u => u is k.Fixed<r.Number> num && num.Roggi.Value == 999),
                     })
-                    .AssertResolution(C, u => u.Value == 999),
+                    .AssertRoggi(C, u => u.Value == 999),
         },
-        new("inactive rule")
+        new("inactive mellsano")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 Core.tSubEnvironment<r.Number>(new()
                     {
                         Environment =
                             [
-                                Core.tAddRule<r.Number, r.Number, r.Number>(new()
+                                Core.tAddMellsano<r.Number, r.Number, r.Number>(new()
                                 {
-                                    Matches = x => x.mIsType<t.Number.Add>(),
+                                    Matches = x => x.mIsType<k.Number.Add>(),
                                     Definition = (_, a, b) =>
                                         a.tRef().tRealize().tMultiply(b.tRef().tRealize()),
                                 }),
-                                Core.tAddRule<r.Number, r.Number, r.Number>(new()
+                                Core.tAddMellsano<r.Number, r.Number, r.Number>(new()
                                 {
-                                    Matches = x => x.mIsType<t.Number.Subtract>(),
+                                    Matches = x => x.mIsType<k.Number.Subtract>(),
                                     Definition = (_, _, _) =>
                                         999.tFixed(),
                                 })
                             ],
                         Value = 400.tFixed().tAdd(2.tFixed())
-                            .AssertToken(C, u => u is t.Number.Multiply),
+                            .AssertKorssa(C, u => u is k.Number.Multiply),
                     })
-                    .AssertResolution(C, u => u.Value == 800),
+                    .AssertRoggi(C, u => u.Value == 800),
         },
         new("double metaboxed")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
-            Token = C =>
+            Declaration = C =>
                 400.tFixed().tAdd(1.tFixed())
-                    .AssertResolution(C, u => u.Value is 401)
+                    .AssertRoggi(C, u => u.Value is 401)
                     .tMetaBoxed()
-                    .AssertToken(C, u => u is t.Fixed<r.MetaFunction<r.Number>>)
+                    .AssertKorssa(C, u => u is k.Fixed<r.MetaFunction<r.Number>>)
                     .tMetaBoxed()
-                    .AssertToken(C, u => u is t.Fixed<r.MetaFunction<r.MetaFunction<r.Number>>>)
+                    .AssertKorssa(C, u => u is k.Fixed<r.MetaFunction<r.MetaFunction<r.Number>>>)
                     .tExecute()
-                    .AssertToken(C, u => u is t.MetaExecuted<r.MetaFunction<r.Number>>)
+                    .AssertKorssa(C, u => u is k.MetaExecuted<r.MetaFunction<r.Number>>)
                     .tExecute()
-                    .AssertResolution(C, u => u.Value is 401),
+                    .AssertRoggi(C, u => u.Value is 401),
         },
     };
 
@@ -306,7 +306,7 @@ public class Tester
                     .Map(check => new GlancableTest($"({original.index + 1}:{check.index + 1}) {original.value.Name}")
                     {
                         InitialMemory = check.value.InitialMemory,
-                        Token = check.value.Token,
+                        Declaration = check.value.Declaration,
                     }))
                 .Flatten()
                 .ToArray(),
@@ -336,13 +336,9 @@ public class Tester
     // reliance on metafunctions is bringing attention to the lack of variable capturing.
 
     // *ACTUALLY* INSANE IDEA
-    // 'Type<R>' is a resolution type.
+    // 'Type<R>' is a roggi.
     // Generic macros are pointers to constant functions that take types, returning the actual function: (TypeA, TypeB) => (a, b)<TypeA, TypeB> => ...
-    // The evil 'Cast<R>' token makes this possible.
-
-    // labels are specifications that match tokens:
-    private interface ILabel
-    { }
+    // The evil 'Cast<R>' korssa makes this possible.
 
 }
 
@@ -353,14 +349,32 @@ public class Tester
  * me when variable captures exist for u reason!
  * I don't even know if capturing is feasable conceptually.
  * The "solution" is just to be careful with boxed functions :P
+
+ */
+
+/* LANG
+ * Token -> Korssa
+ * Macro -> Korvessa
+ * Resolution -> Roggi
+ * Composition -> Roveggi
+ * CompositionType -> Roveggitu
+ * ComponentIdentifier -> Rovu
+ * Rule -> Mellsano
+ * Matcher -> Ullasem
+ * Package/Plugin -> Axoi
  *
- * The great renaming:
- * Token(s) -> Korssa(s)
- * Macro(s) -> Korvessa(s)
- * Resolution(s) -> Roggi(s)
- * Composition(s) -> Roveggi(s)
- * CompositionTypes(s) -> Uggevor(s)
- * DecomposableType(s) -> Uggevasor(s)
- * Rule(s) -> Mellsano(s)
- * Matcher(s) -> Ullasem(s)
+ * 'v' ~ part
+ * 'u' ~ identify
+ * 've' ~ sum of parts
+ * 'du' ~ data identifier
+ * 'tu' ~ type identifier
+ * 'sem' ~ comparison / match
+ * 'no' ~ mutate
+ * 'sa' ~ expression / literal relation to korssa
+ * 'ro' ~ final / literal relation to roggi
+ * '.n' ~ concept of
+ *
+ * perhaps rename
+ * Korvessa -> Korssave
+ * Roveggi -> Roggive
  */

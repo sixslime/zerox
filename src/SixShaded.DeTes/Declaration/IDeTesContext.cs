@@ -2,20 +2,20 @@
 
 public interface IDeTesContext
 {
-    public void AddAssertionResolution<R>(IToken<R> subject, Predicate<R> assertion, string? description)
-        where R : class, Res;
+    public void AddAssertionRoggi<R>(IKorssa<R> subject, Predicate<R> assertion, string? description)
+        where R : class, Rog;
 
-    public void AddAssertionResolutionUnstable<R>(IToken<R> subject, Predicate<IOption<R>> assertion, string? description)
-        where R : class, Res;
+    public void AddAssertionRoggiUnstable<R>(IKorssa<R> subject, Predicate<IOption<R>> assertion, string? description)
+        where R : class, Rog;
 
-    public void AddAssertionToken<R>(IToken<R> subject, Predicate<IToken<R>> assertion, string? description)
-        where R : class, Res;
+    public void AddAssertionKorssa<R>(IKorssa<R> subject, Predicate<IKorssa<R>> assertion, string? description)
+        where R : class, Rog;
 
-    public void AddAssertionMemory(Tok subject, Predicate<IMemoryFZO> assertion, string? description);
+    public void AddAssertionMemory(Kor subject, Predicate<IMemoryFZO> assertion, string? description);
 
-    public void MakeReference<R>(IToken<R> subject, out IDeTesReference<R> reference, string? description)
-        where R : class, Res;
+    public void MakeReference<R>(IKorssa<R> subject, out IDeTesReference<R> reference, string? description)
+        where R : class, Rog;
 
-    public void MakeSingleSelectionDomain(Tok subject, int[] selections, out IDeTesSingleDomain domainHandle, string? description);
-    public void MakeMultiSelectionDomain(Tok subject, int[][] selections, out IDeTesMultiDomain domainHandle, string? description);
+    public void MakeSingleSelectionDomain(Kor subject, int[] selections, out IDeTesSingleDomain domainHandle, string? description);
+    public void MakeMultiSelectionDomain(Kor subject, int[][] selections, out IDeTesMultiDomain domainHandle, string? description);
 }

@@ -1,1 +1,1 @@
-﻿global using Res = SixShaded.FourZeroOne.Resolution.IResolution;
+﻿global using Res = SixShaded.FourZeroOne.Roggi.IRoggi;

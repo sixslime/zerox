@@ -1,4 +1,5 @@
 ﻿namespace SixShaded.DeTes.Declaration.Impl;
+
 internal class ContextImpl : IDeTesContext, IContextAccessor
 {
     private readonly AssertSet _assertions = new();
@@ -7,78 +8,78 @@ internal class ContextImpl : IDeTesContext, IContextAccessor
 
     IDomainAccessor[] IContextAccessor.Domains => _domains.ToArray();
     IReferenceAccessor[] IContextAccessor.References => _references.ToArray();
-    IAssertionAccessor<ResOpt>[] IContextAccessor.ResolutionAssertions => _assertions.Resolution.ToArray();
+    IAssertionAccessor<RogOpt>[] IContextAccessor.RoggiAssertions => _assertions.Roggi.ToArray();
     IAssertionAccessor<IMemoryFZO>[] IContextAccessor.MemoryAssertions => _assertions.Memory.ToArray();
-    IAssertionAccessor<Tok>[] IContextAccessor.TokenAssertions => _assertions.Token.ToArray();
+    IAssertionAccessor<Kor>[] IContextAccessor.KorssaAssertions => _assertions.Korssa.ToArray();
     IDeTesContext IContextAccessor.PublicContext => this;
 
-    public void AddAssertionResolution<R>(IToken<R> subject, Predicate<R> assertion, string? description)
-        where R : class, Res =>
-        _assertions.Resolution.Add(new AssertionImpl<ResOpt>
+    public void AddAssertionRoggi<R>(IKorssa<R> subject, Predicate<R> assertion, string? description)
+        where R : class, Rog =>
+        _assertions.Roggi.Add(new AssertionImpl<RogOpt>
         {
             Description = description,
-            LinkedToken = subject,
+            LinkedKorssa = subject,
             Condition = x => x.Check(out var res)
-                ? res is R r ? assertion(r) : throw new UnexpectedResolutionTypeException(res.GetType(), typeof(R))
+                ? res is R r ? assertion(r) : throw new UnexpectedRoggiTypeException(res.GetType(), typeof(R))
                 : throw new UnexpectedNollaException(),
         });
 
-    public void AddAssertionResolutionUnstable<R>(IToken<R> subject, Predicate<IOption<R>> assertion, string? description)
-        where R : class, Res =>
-        _assertions.Resolution.Add(new AssertionImpl<ResOpt>
+    public void AddAssertionRoggiUnstable<R>(IKorssa<R> subject, Predicate<IOption<R>> assertion, string? description)
+        where R : class, Rog =>
+        _assertions.Roggi.Add(new AssertionImpl<RogOpt>
         {
             Description = description,
-            LinkedToken = subject,
-            Condition = x => x is IOption<R> r ? assertion(r) : throw new UnexpectedResolutionTypeException(x.GetType(), typeof(IOption<R>)),
+            LinkedKorssa = subject,
+            Condition = x => x is IOption<R> r ? assertion(r) : throw new UnexpectedRoggiTypeException(x.GetType(), typeof(IOption<R>)),
         });
 
-    public void AddAssertionToken<R>(IToken<R> subject, Predicate<IToken<R>> assertion, string? description)
-        where R : class, Res =>
-        _assertions.Token.Add(new AssertionImpl<Tok>
+    public void AddAssertionKorssa<R>(IKorssa<R> subject, Predicate<IKorssa<R>> assertion, string? description)
+        where R : class, Rog =>
+        _assertions.Korssa.Add(new AssertionImpl<Kor>
         {
             Description = description,
-            LinkedToken = subject,
-            Condition = x => assertion((IToken<R>)x),
+            LinkedKorssa = subject,
+            Condition = x => assertion((IKorssa<R>)x),
         });
 
-    public void AddAssertionMemory(Tok subject, Predicate<IMemoryFZO> assertion, string? description) =>
+    public void AddAssertionMemory(Kor subject, Predicate<IMemoryFZO> assertion, string? description) =>
         _assertions.Memory.Add(new AssertionImpl<IMemoryFZO>
         {
             Description = description,
-            LinkedToken = subject,
+            LinkedKorssa = subject,
             Condition = assertion,
         });
 
-    public void MakeReference<R>(IToken<R> subject, out IDeTesReference<R> reference, string? description)
-        where R : class, Res
+    public void MakeReference<R>(IKorssa<R> subject, out IDeTesReference<R> reference, string? description)
+        where R : class, Rog
     {
-        var o = new ReferenceImpl<R> { Description = description, LinkedToken = subject };
+        var o = new ReferenceImpl<R> { Description = description, LinkedKorssa = subject };
         reference = o;
         _references.Add(o);
     }
 
-    public void MakeSingleSelectionDomain(Tok subject, int[] selections, out IDeTesSingleDomain domainHandle, string? description)
+    public void MakeSingleSelectionDomain(Kor subject, int[] selections, out IDeTesSingleDomain domainHandle, string? description)
     {
         MakeSelectionDomain(subject, selections.Map(x => x.Yield().ToArray()).ToArray(), out var impl, description);
         domainHandle = impl;
     }
 
-    public void MakeMultiSelectionDomain(Tok subject, int[][] selections, out IDeTesMultiDomain domainHandle, string? description)
+    public void MakeMultiSelectionDomain(Kor subject, int[][] selections, out IDeTesMultiDomain domainHandle, string? description)
     {
         MakeSelectionDomain(subject, selections, out var impl, description);
         domainHandle = impl;
     }
 
-    private void MakeSelectionDomain(Tok subject, int[][] selections, out DomainImpl impl, string? description)
+    private void MakeSelectionDomain(Kor subject, int[][] selections, out DomainImpl impl, string? description)
     {
-        impl = new() { LinkedToken = subject, Selections = selections.Map(x => x.ToArray()).ToArray(), Description = description };
+        impl = new() { LinkedKorssa = subject, Selections = selections.Map(x => x.ToArray()).ToArray(), Description = description };
         _domains.Add(impl);
     }
 
     private class AssertSet
     {
         public readonly List<IAssertionAccessor<IMemoryFZO>> Memory = [];
-        public readonly List<IAssertionAccessor<ResOpt>> Resolution = [];
-        public readonly List<IAssertionAccessor<Tok>> Token = [];
+        public readonly List<IAssertionAccessor<RogOpt>> Roggi = [];
+        public readonly List<IAssertionAccessor<Kor>> Korssa = [];
     }
 }

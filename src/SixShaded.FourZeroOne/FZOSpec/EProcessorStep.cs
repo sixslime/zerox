@@ -2,18 +2,18 @@ namespace SixShaded.FourZeroOne.FZOSpec;
 
 public abstract record EProcessorStep
 {
-    public sealed record TokenMutate : EProcessorStep
+    public sealed record KorssaMutate : EProcessorStep
     {
-        public required ETokenMutation Mutation { get; init; }
+        public required EKorssaMutation Mutation { get; init; }
     }
 
     public sealed record Resolve : EProcessorStep
     {
-        public required IResult<ResOpt, EStateImplemented> Resolution { get; init; }
+        public required IResult<RogOpt, EStateImplemented> Roggi { get; init; }
     }
 
     public sealed record PushOperation : EProcessorStep
     {
-        public required Tok OperationToken { get; init; }
+        public required Kor OperationKorssa { get; init; }
     }
 }

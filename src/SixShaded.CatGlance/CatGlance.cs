@@ -21,7 +21,7 @@ public class GlancableTest : ICatGlanceable
     public GlancableTest(string name) { Name = name; }
     public string Name { get; }
     public required IMemoryFZO InitialMemory { get; init; }
-    public required TokenDeclaration Token { get; init; }
+    public required DeTesDeclaration Declaration { get; init; }
 }
 
 public record Glancer
@@ -59,27 +59,27 @@ public record Glancer
     private static void PrintInvalidTest(EDeTesInvalidTest test)
     {
         WriteLn("-- INVALID TEST --", CCol.Magenta);
-        const ConsoleColor nearTokenColor = CCol.DarkGray;
+        const ConsoleColor nearKorssaColor = CCol.DarkGray;
         switch (test)
         {
         case EDeTesInvalidTest.EmptyDomain v:
             {
                 Write("empty domain: ");
                 if (v.Description is not null) Write($"\"{v.Description}\" ", CCol.DarkCyan);
-                Write(FormatLinkedToken(v.NearToken), nearTokenColor);
+                Write(FormatLinkedKorssa(v.NearKorssa), nearKorssaColor);
             }
         break;
         case EDeTesInvalidTest.NoSelectionDomainDefined v:
             {
                 Write("no domain defined for: ");
-                Write(v.SelectionToken.ToString(), CCol.DarkYellow);
+                Write(v.SelectionKorssa.ToString(), CCol.DarkYellow);
             }
         break;
         case EDeTesInvalidTest.InvalidDomainSelection v:
             {
                 Write("invalid domain: ");
                 if (v.Description is not null) Write($"\"{v.Description}\" ", CCol.DarkCyan);
-                WriteLn(FormatLinkedToken(v.NearToken), nearTokenColor);
+                WriteLn(FormatLinkedKorssa(v.NearKorssa), nearKorssaColor);
                 Write(v.InvalidSelection.ICEE(), CCol.DarkYellow);
                 if (v.InvalidSelection.Length != v.ExpectedSelectionSize)
                 {
@@ -111,14 +111,14 @@ public record Glancer
             {
                 Write("domain referenced outside of scope: ");
                 if (v.Description is not null) Write($"\"{v.Description}\" ", CCol.DarkCyan);
-                Write(FormatLinkedToken(v.NearToken), nearTokenColor);
+                Write(FormatLinkedKorssa(v.NearKorssa), nearKorssaColor);
             }
         break;
         case EDeTesInvalidTest.ReferenceUsedBeforeEvaluated v:
             {
                 Write("referenced used before valid: ");
                 if (v.Description is not null) Write($"\"{v.Description}\" ", CCol.DarkCyan);
-                Write(FormatLinkedToken(v.NearToken), nearTokenColor);
+                Write(FormatLinkedKorssa(v.NearKorssa), nearKorssaColor);
             }
         break;
         }
@@ -127,7 +127,7 @@ public record Glancer
         WriteLn("------------------", CCol.Magenta);
     }
 
-    private static string FormatLinkedToken(Tok token) => $"{{{token}}}";
+    private static string FormatLinkedKorssa(Kor korssa) => $"{{{korssa}}}";
 
     private async Task EvalTests()
     {
@@ -147,14 +147,14 @@ public record Glancer
                                 deTesResult.EvaluationFrames.All(frame => frame switch
                                 {
                                     EDeTesFrame.Resolve v
-                                        => v.Assertions.Token.All(AssertPassed) &&
-                                           v.Assertions.Resolution.All(AssertPassed) &&
+                                        => v.Assertions.Korssa.All(AssertPassed) &&
+                                           v.Assertions.Roggi.All(AssertPassed) &&
                                            v.Assertions.Memory.All(AssertPassed),
                                     EDeTesFrame.Complete v
                                         => //DEBUG
-                                        //new Func<bool>(() => { Console.WriteLine(v.CompletionHalt.Resolution); return true; })() &&
-                                        v.Assertions.Token.All(AssertPassed) &&
-                                        v.Assertions.Resolution.All(AssertPassed) &&
+                                        //new Func<bool>(() => { Console.WriteLine(v.CompletionHalt.Roggi); return true; })() &&
+                                        v.Assertions.Korssa.All(AssertPassed) &&
+                                        v.Assertions.Roggi.All(AssertPassed) &&
                                         v.Assertions.Memory.All(AssertPassed),
                                     _ => true,
                                 })),
@@ -166,21 +166,21 @@ public record Glancer
 
     private static void PrintEvalSummary(RecursiveEvalTree<IDeTesResult, bool> tree, int depth)
     {
-        List<IDeTesAssertionData<Tok>> tokenAsserts = new();
-        List<IDeTesAssertionData<ResOpt>> resolutionAsserts = new();
+        List<IDeTesAssertionData<Kor>> korssaAsserts = new();
+        List<IDeTesAssertionData<RogOpt>> roggiAsserts = new();
         List<IDeTesAssertionData<IMemoryFZO>> memoryAsserts = new();
         foreach (var frame in tree.Object.EvaluationFrames)
         {
             switch (frame)
             {
             case EDeTesFrame.Resolve v:
-                tokenAsserts.AddRange(v.Assertions.Token);
-                resolutionAsserts.AddRange(v.Assertions.Resolution);
+                korssaAsserts.AddRange(v.Assertions.Korssa);
+                roggiAsserts.AddRange(v.Assertions.Roggi);
                 memoryAsserts.AddRange(v.Assertions.Memory);
             break;
             case EDeTesFrame.Complete v:
-                tokenAsserts.AddRange(v.Assertions.Token);
-                resolutionAsserts.AddRange(v.Assertions.Resolution);
+                korssaAsserts.AddRange(v.Assertions.Korssa);
+                roggiAsserts.AddRange(v.Assertions.Roggi);
                 memoryAsserts.AddRange(v.Assertions.Memory);
             break;
             }
@@ -195,7 +195,7 @@ public record Glancer
         {
             Write("PASS", CCol.Green);
             if (tree.Object.CriticalPoint.CheckErr(out var p)) Write($"[{p.Length}]");
-            PrintPostHeader(tokenAsserts, resolutionAsserts, memoryAsserts, tree.Object.TimeTaken);
+            PrintPostHeader(korssaAsserts, roggiAsserts, memoryAsserts, tree.Object.TimeTaken);
             C.WriteLine();
             return;
         }
@@ -220,14 +220,14 @@ public record Glancer
             }
         }
 
-        if (Iter.Over<IEnumerable<IDeTesAssertionDataUntyped>>(tokenAsserts, resolutionAsserts, memoryAsserts).Flatten()
+        if (Iter.Over<IEnumerable<IDeTesAssertionDataUntyped>>(korssaAsserts, roggiAsserts, memoryAsserts).Flatten()
             .Any(x => !AssertPassed(x)))
         {
             Write("FAIL", CCol.Red);
-            PrintPostHeader(tokenAsserts, resolutionAsserts, memoryAsserts, tree.Object.TimeTaken);
+            PrintPostHeader(korssaAsserts, roggiAsserts, memoryAsserts, tree.Object.TimeTaken);
             C.WriteLine();
-            PrintFailedAssertionSummary(tokenAsserts, "t: ", depth);
-            PrintFailedAssertionSummary(resolutionAsserts, "r: ", depth);
+            PrintFailedAssertionSummary(korssaAsserts, "k: ", depth);
+            PrintFailedAssertionSummary(roggiAsserts, "r: ", depth);
             PrintFailedAssertionSummary(memoryAsserts, "m: ", depth);
             return;
         }
@@ -236,7 +236,7 @@ public record Glancer
         var nextInfo = subTrees[0].Object.IsA<IDeTesSelectionPath>();
         Write("IN ", CCol.DarkBlue);
         Write($"{FormatDescription(nextInfo.Domain.Description)}", CCol.DarkCyan);
-        Write($": {nextInfo.RootSelectionToken}", CCol.DarkGray);
+        Write($": {nextInfo.RootSelectionKorssa}", CCol.DarkGray);
         C.WriteLine();
         foreach (var subTree in subTrees)
         {
@@ -246,15 +246,15 @@ public record Glancer
 
     private static string FormatDescription(string? desc) => desc.NullToNone().RemapAs(desc => $"\"{desc}\" ").Or("");
 
-    private static void PrintPostHeader(IEnumerable<IDeTesAssertionData<Tok>> tokenAsserts,
-        IEnumerable<IDeTesAssertionData<ResOpt>> resolutionAsserts,
+    private static void PrintPostHeader(IEnumerable<IDeTesAssertionData<Kor>> korssaAsserts,
+        IEnumerable<IDeTesAssertionData<RogOpt>> roggiAsserts,
         IEnumerable<IDeTesAssertionData<IMemoryFZO>> memoryAsserts, TimeSpan time)
     {
         const ConsoleColor blankColor = CCol.DarkGray;
         const ConsoleColor failedColor = CCol.DarkYellow;
         const ConsoleColor timerColor = CCol.DarkGray;
         foreach ((int total, int failed) in Iter
-                     .Over<IEnumerable<IDeTesAssertionDataUntyped>>(tokenAsserts, resolutionAsserts, memoryAsserts)
+                     .Over<IEnumerable<IDeTesAssertionDataUntyped>>(korssaAsserts, roggiAsserts, memoryAsserts)
                      .Map(x => (x.Count(), x.Count(y => !AssertPassed(y)))))
         {
             Write(" | ", blankColor);
@@ -286,7 +286,7 @@ public record Glancer
             DepthPad(depth + 1);
             Write(starter, CCol.DarkYellow);
             Write($"{FormatDescription(failed.Description)}", CCol.DarkYellow);
-            Write($"{FormatLinkedToken(failed.OnToken)}", CCol.DarkGray);
+            Write($"{FormatLinkedKorssa(failed.OnKorssa)}", CCol.DarkGray);
             if (failed.Result.CheckErr(out var exception))
             {
                 Write($" threw: '{exception.Message}'", CCol.DarkMagenta);

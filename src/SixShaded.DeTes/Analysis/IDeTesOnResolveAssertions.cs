@@ -2,7 +2,7 @@
 
 public interface IDeTesOnResolveAssertions
 {
-    public IDeTesAssertionData<Tok>[] Token { get; }
+    public IDeTesAssertionData<Kor>[] Korssa { get; }
     public IDeTesAssertionData<IMemoryFZO>[] Memory { get; }
-    public IDeTesAssertionData<ResOpt>[] Resolution { get; }
+    public IDeTesAssertionData<RogOpt>[] Roggi { get; }
 }

@@ -1,31 +1,31 @@
 
 namespace SixShaded.MinimaFZO;
 
-using FourZeroOne.Rule;
-using FourZeroOne.Resolution;
+using FourZeroOne.Mellsano;
+using FourZeroOne.Roggi;
 public record MinimaMemoryFZO : IMemoryFZO
 {
-    private PMap<Addr, Res> _objects;
-    private PMap<RuleID, int> _ruleMutes;
-    private PSequence<Rul> _rules;
+    private PMap<Addr, Rog> _objects;
+    private PMap<MellsanoID, int> _mellsanoMutes;
+    private PSequence<Mel> _mellsanos;
 
     public MinimaMemoryFZO()
     {
         _objects = new();
-        _rules = new();
-        _ruleMutes = new();
+        _mellsanos = new();
+        _mellsanoMutes = new();
     }
 
-    IEnumerable<ITiple<Addr, Res>> IMemoryFZO.Objects => _objects.Elements;
-    IEnumerable<Rul> IMemoryFZO.Rules => _rules.Elements;
-    IEnumerable<ITiple<RuleID, int>> IMemoryFZO.RuleMutes => _ruleMutes.Elements;
+    IEnumerable<ITiple<Addr, Rog>> IMemoryFZO.Objects => _objects.Elements;
+    IEnumerable<Mel> IMemoryFZO.Mellsanos => _mellsanos.Elements;
+    IEnumerable<ITiple<MellsanoID, int>> IMemoryFZO.MellsanoMutes => _mellsanoMutes.Elements;
 
     IOption<R> IMemoryFZO.GetObject<R>(IMemoryAddress<R> address) => _objects.At(address).RemapAs(x => (R)x);
-    int IMemoryFZO.GetRuleMuteCount(RuleID ruleId) => _ruleMutes.At(ruleId).Or(0);
+    int IMemoryFZO.GetMellsanoMuteCount(MellsanoID mellsanoId) => _mellsanoMutes.At(mellsanoId).Or(0);
 
-    IMemoryFZO IMemoryFZO.WithRules(IEnumerable<Rul> rules) => this with
+    IMemoryFZO IMemoryFZO.WithMellsanos(IEnumerable<Mel> mellsanos) => this with
     {
-        _rules = _rules.WithEntries(rules),
+        _mellsanos = _mellsanos.WithEntries(mellsanos),
     };
 
     IMemoryFZO IMemoryFZO.WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions) => this with
@@ -38,19 +38,19 @@ public record MinimaMemoryFZO : IMemoryFZO
         _objects = _objects.WithoutEntries(removals),
     };
 
-    IMemoryFZO IMemoryFZO.WithRuleMutes(IEnumerable<RuleID> mutes) => this with
+    IMemoryFZO IMemoryFZO.WithMellsanoMutes(IEnumerable<MellsanoID> mutes) => this with
     {
-        _ruleMutes = _ruleMutes.WithEntries(
+        _mellsanoMutes = _mellsanoMutes.WithEntries(
             mutes.Map(mute =>
-                    (mute, _ruleMutes.At(mute).Or(0) + 1))
+                    (mute, _mellsanoMutes.At(mute).Or(0) + 1))
                 .Tipled()),
     };
 
-    IMemoryFZO IMemoryFZO.WithoutRuleMutes(IEnumerable<RuleID> mutes) => this with
+    IMemoryFZO IMemoryFZO.WithoutMellsanoMutes(IEnumerable<MellsanoID> mutes) => this with
     {
-        _ruleMutes = mutes.AccumulateInto(_ruleMutes,
+        _mellsanoMutes = mutes.AccumulateInto(_mellsanoMutes,
             (set, x) =>
                 set.WithEntries((x, set.At(x).Or(0) - 1).Tiple())
-                    .WithoutEntries<PMap<RuleID, int>, RuleID>(set.At(x).Or(0) > 0 ? [] : [x])),
+                    .WithoutEntries<PMap<MellsanoID, int>, MellsanoID>(set.At(x).Or(0) > 0 ? [] : [x])),
     };
 }

@@ -13,10 +13,10 @@ public static class ICEEs
             .AppendLine()
             .AppendLine()
             .AppendLine("Rules:")
-            .AppendJoin("\n", memory.Rules.Map(x => "- " + x))
+            .AppendJoin("\n", memory.Mellsanos.Map(x => "- " + x))
             .AppendLine()
             .AppendLine("RuleMutes:")
-            .AppendJoin("\n", memory.RuleMutes.Map(x => "- " + x))
+            .AppendJoin("\n", memory.MellsanoMutes.Map(x => "- " + x))
             .AppendLine()
             .AppendLine("-----")
             .ToString();
@@ -30,12 +30,12 @@ public static class ICEEs
             .AppendLine("Operation Stack:")
             .AppendJoin("\n", state.OperationStack.Map(
                 x =>
-                    $"- {x.Operation} <- {string.Join(" | ", x.ArgResolutionStack)}"))
+                    $"- {x.Operation} <- {string.Join(" | ", x.ArgRoggiStack)}"))
             .AppendLine()
             .AppendLine("Last Memory:")
             .AppendLine(state.OperationStack.GetAt(0).RemapAs(x => x.MemoryStack.GetAt(0)).Press()
                 .RemapAs(x => x.ToString()).Or("N/A"))
-            .AppendJoin("\n", state.TokenMutationStack.Map(x => "- " + x))
+            .AppendJoin("\n", state.KorssaMutationStack.Map(x => "- " + x))
             .AppendLine()
             .AppendLine("-----")
             .ToString();

@@ -1,14 +1,14 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
-using Resolutions;
+using Roggis;
 
-public static partial class TokenSyntax
+public static partial class KorssaSyntax
 {
-    public static Tokens.Number.Add tAdd(this IToken<Number> a, IToken<Number> b) => new(a, b);
+    public static Korssas.Number.Add tAdd(this IKorssa<Number> a, IKorssa<Number> b) => new(a, b);
 
-    public static Tokens.Number.Subtract tSubtract(this IToken<Number> a, IToken<Number> b) => new(a, b);
+    public static Korssas.Number.Subtract tSubtract(this IKorssa<Number> a, IKorssa<Number> b) => new(a, b);
 
-    public static Tokens.Number.Multiply tMultiply(this IToken<Number> a, IToken<Number> b) => new(a, b);
+    public static Korssas.Number.Multiply tMultiply(this IKorssa<Number> a, IKorssa<Number> b) => new(a, b);
 
-    public static Tokens.Number.GreaterThan tIsGreaterThan(this IToken<Number> a, IToken<Number> b) => new(a, b);
+    public static Korssas.Number.GreaterThan tIsGreaterThan(this IKorssa<Number> a, IKorssa<Number> b) => new(a, b);
 }

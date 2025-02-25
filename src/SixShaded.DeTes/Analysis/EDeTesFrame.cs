@@ -3,11 +3,11 @@
 public abstract record EDeTesFrame
 {
     public required IStateFZO PreState { get; init; }
-    public required Tok Origin { get; init; }
+    public required Kor Origin { get; init; }
 
-    public sealed record TokenPrep : EDeTesFrame
+    public sealed record KorssaPrep : EDeTesFrame
     {
-        public required EProcessorStep.TokenMutate NextStep { get; init; }
+        public required EProcessorStep.KorssaMutate NextStep { get; init; }
     }
 
     public sealed record PushOperation : EDeTesFrame

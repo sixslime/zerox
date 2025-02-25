@@ -2,7 +2,7 @@
 
 public interface IDeTesAssertionDataUntyped
 {
-    public Tok OnToken { get; }
+    public Kor OnKorssa { get; }
     public IResult<bool, Exception> Result { get; }
     public string? Description { get; }
 }

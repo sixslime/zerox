@@ -1,10 +1,10 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
-using Resolutions;
+using Roggis;
 
-public static partial class TokenSyntax
+public static partial class KorssaSyntax
 {
-    public static Tokens.IO.Select.One<R> tIOSelectOne<R>(this IToken<IMulti<R>> source) where R : class, Res => new(source);
+    public static Korssas.IO.Select.One<R> tIOSelectOne<R>(this IKorssa<IMulti<R>> source) where R : class, Rog => new(source);
 
-    public static Tokens.IO.Select.Multiple<R> tIOSelectMultiple<R>(this IToken<IMulti<R>> source, IToken<Number> count) where R : class, Res => new(source, count);
+    public static Korssas.IO.Select.Multiple<R> tIOSelectMultiple<R>(this IKorssa<IMulti<R>> source, IKorssa<Number> count) where R : class, Rog => new(source, count);
 }

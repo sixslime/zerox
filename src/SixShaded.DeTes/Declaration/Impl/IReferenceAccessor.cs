@@ -1,8 +1,8 @@
 ﻿namespace SixShaded.DeTes.Declaration.Impl;
-internal interface IReferenceAccessor : ITokenLinked, IHasDescription
+internal interface IReferenceAccessor : IKorssaLinked, IHasDescription
 {
-    void SetResolution(ResOpt resolution);
-    void SetToken(Tok token);
+    void SetRoggi(RogOpt roggi);
+    void SetKorssa(Kor korssa);
     void SetMemory(IMemoryFZO state);
     void Reset();
 }

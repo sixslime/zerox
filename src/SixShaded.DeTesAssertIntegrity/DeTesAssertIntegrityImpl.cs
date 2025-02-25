@@ -1,37 +1,37 @@
 namespace SixShaded.DeTesAssertIntegrity;
 
 using DeTes.Declaration;
-using FourZeroOne.Token;
+using FourZeroOne.Korssa;
 using FourZeroOne.FZOSpec;
 
 internal class DeTesAssertIntegrityContextProvider : IDeTesContext
 {
     private int _accumulator;
 
-    void IDeTesContext.AddAssertionMemory(IToken<Res> subject, Predicate<IMemoryFZO> assertion, string? description) =>
+    void IDeTesContext.AddAssertionMemory(Kor subject, Predicate<IMemoryFZO> assertion, string? description) =>
         _accumulator += 1;
 
-    void IDeTesContext.AddAssertionResolution<R>(IToken<R> subject, Predicate<R> assertion, string? description) =>
+    void IDeTesContext.AddAssertionRoggi<R>(IKorssa<R> subject, Predicate<R> assertion, string? description) =>
         _accumulator += 1;
 
-    void IDeTesContext.AddAssertionResolutionUnstable<R>(IToken<R> subject, Predicate<IOption<R>> assertion,
+    void IDeTesContext.AddAssertionRoggiUnstable<R>(IKorssa<R> subject, Predicate<IOption<R>> assertion,
         string? description) => _accumulator += 1;
 
-    void IDeTesContext.AddAssertionToken<R>(IToken<R> subject, Predicate<IToken<R>> assertion, string? description) =>
+    void IDeTesContext.AddAssertionKorssa<R>(IKorssa<R> subject, Predicate<IKorssa<R>> assertion, string? description) =>
         _accumulator += 1;
 
-    void IDeTesContext.MakeMultiSelectionDomain(IToken<Res> subject, int[][] selections,
+    void IDeTesContext.MakeMultiSelectionDomain(Kor subject, int[][] selections,
         out IDeTesMultiDomain domainHandle, string? description) =>
-        domainHandle = new DeTesAssertIntegrityDummyObject<Res>();
+        domainHandle = new DeTesAssertIntegrityDummyObject<Rog>();
 
-    void IDeTesContext.MakeReference<R>(IToken<R> subject, out IDeTesReference<R> reference, string? description) =>
+    void IDeTesContext.MakeReference<R>(IKorssa<R> subject, out IDeTesReference<R> reference, string? description) =>
         reference = new DeTesAssertIntegrityDummyObject<R>();
 
-    void IDeTesContext.MakeSingleSelectionDomain(IToken<Res> subject, int[] selections,
+    void IDeTesContext.MakeSingleSelectionDomain(Kor subject, int[] selections,
         out IDeTesSingleDomain domainHandle, string? description) =>
-        domainHandle = new DeTesAssertIntegrityDummyObject<Res>();
+        domainHandle = new DeTesAssertIntegrityDummyObject<Rog>();
 
-    public DeTesAssertIntegrityContext[] GetSanityContexts(TokenDeclaration declaration)
+    public DeTesAssertIntegrityContext[] GetSanityContexts(DeTesDeclaration declaration)
     {
         try
         {
@@ -54,13 +54,13 @@ internal class DeTesAssertIntegrityContextProvider : IDeTesContext
 }
 
 internal class DeTesAssertIntegrityDummyObject<RNon> : IDeTesMultiDomain, IDeTesSingleDomain, IDeTesReference<RNon>
-    where RNon : class, Res
+    where RNon : class, Rog
 {
     public static readonly DeTesAssertIntegrityDummyObject<RNon> INSTANCE = new();
     int[] IDeTesMultiDomain.SelectedIndicies() => throw new UnexpectedDeTesUseException();
-    IToken<RNon> IDeTesReference<RNon>.Token => throw new UnexpectedDeTesUseException();
-    RNon IDeTesReference<RNon>.Resolution => throw new UnexpectedDeTesUseException();
-    IOption<RNon> IDeTesReference<RNon>.ResolutionUnstable => throw new UnexpectedDeTesUseException();
+    IKorssa<RNon> IDeTesReference<RNon>.Korssa => throw new UnexpectedDeTesUseException();
+    RNon IDeTesReference<RNon>.Roggi => throw new UnexpectedDeTesUseException();
+    IOption<RNon> IDeTesReference<RNon>.RoggiUnstable => throw new UnexpectedDeTesUseException();
     IMemoryFZO IDeTesReference<RNon>.Memory => throw new UnexpectedDeTesUseException();
     int IDeTesSingleDomain.SelectedIndex() => throw new UnexpectedDeTesUseException();
 }
@@ -71,26 +71,26 @@ internal class DeTesAssertIntegrityContext(int triggerIndex) : IDeTesContext
     private int? _accumulator;
     private IDeTesContext? _implementingContext;
 
-    void IDeTesContext.AddAssertionMemory(IToken<Res> subject, Predicate<IMemoryFZO> assertion, string? description) =>
+    void IDeTesContext.AddAssertionMemory(Kor subject, Predicate<IMemoryFZO> assertion, string? description) =>
         Trigger(C => C.AddAssertionMemory(subject, _ => false, description));
 
-    void IDeTesContext.AddAssertionResolution<R>(IToken<R> subject, Predicate<R> assertion, string? description) =>
-        Trigger(C => C.AddAssertionResolution(subject, _ => false, description));
+    void IDeTesContext.AddAssertionRoggi<R>(IKorssa<R> subject, Predicate<R> assertion, string? description) =>
+        Trigger(C => C.AddAssertionRoggi(subject, _ => false, description));
 
-    void IDeTesContext.AddAssertionResolutionUnstable<R>(IToken<R> subject, Predicate<IOption<R>> assertion,
-        string? description) => Trigger(C => C.AddAssertionResolutionUnstable(subject, _ => false, description));
+    void IDeTesContext.AddAssertionRoggiUnstable<R>(IKorssa<R> subject, Predicate<IOption<R>> assertion,
+        string? description) => Trigger(C => C.AddAssertionRoggiUnstable(subject, _ => false, description));
 
-    void IDeTesContext.AddAssertionToken<R>(IToken<R> subject, Predicate<IToken<R>> assertion, string? description) =>
-        Trigger(C => C.AddAssertionToken(subject, _ => false, description));
+    void IDeTesContext.AddAssertionKorssa<R>(IKorssa<R> subject, Predicate<IKorssa<R>> assertion, string? description) =>
+        Trigger(C => C.AddAssertionKorssa(subject, _ => false, description));
 
-    void IDeTesContext.MakeMultiSelectionDomain(IToken<Res> subject, int[][] selections,
+    void IDeTesContext.MakeMultiSelectionDomain(Kor subject, int[][] selections,
         out IDeTesMultiDomain domainHandle, string? description) =>
         _implementingContext!.MakeMultiSelectionDomain(subject, selections, out domainHandle, description);
 
-    void IDeTesContext.MakeReference<R>(IToken<R> subject, out IDeTesReference<R> reference, string? description) =>
+    void IDeTesContext.MakeReference<R>(IKorssa<R> subject, out IDeTesReference<R> reference, string? description) =>
         _implementingContext!.MakeReference(subject, out reference, description);
 
-    void IDeTesContext.MakeSingleSelectionDomain(IToken<Res> subject, int[] selections,
+    void IDeTesContext.MakeSingleSelectionDomain(Kor subject, int[] selections,
         out IDeTesSingleDomain domainHandle, string? description) =>
         _implementingContext!.MakeSingleSelectionDomain(subject, selections, out domainHandle, description);
 

@@ -1,9 +1,9 @@
 ﻿namespace SixShaded.FourZeroOne.Plugins.Axiom
 {
-    using Core.Resolutions;
+    using Core.Roggis;
     using Core.Syntax;
-    using Resolution;
-    using Resolution.Defined;
+    using Roggi;
+    using Roggi.Defined;
 
     // GOAL: create an attack ability
     // 'current turn' static player pointer?
@@ -28,20 +28,20 @@
     {
         namespace Unit
         {
-            public record Data : ICompositionType
+            public class Data : Roveggitu
             {
-                public static readonly StaticComponentIdentifier<Data, Number> HP = new("axiom", "hp");
+                public static readonly Rovu<Data, Number> HP = new(Axoi.Du, "hp");
 
-                public static readonly StaticComponentIdentifier<Data, Hex.Position>
-                    POSITION = new("axiom", "position");
+                public static readonly Rovu<Data, Hex.Position>
+                    POSITION = new(Axoi.Du, "position");
 
-                public static readonly StaticComponentIdentifier<Data, Player.Address> OWNER = new("axiom", "owner");
+                public static readonly Rovu<Data, Player.Address> OWNER = new(Axoi.Du, "owner");
 
-                public static readonly StaticComponentIdentifier<Data, Multi<NEffect>>
-                    EFFECTS = new("axiom", "effects");
+                public static readonly Rovu<Data, Multi<NEffect>>
+                    EFFECTS = new(Axoi.Du, "effects");
             }
 
-            public record Address : NoOp, IMemoryObject<CompositionOf<Data>>
+            public record Address : NoOp, IMemoryObject<Roveggi<Data>>
             {
                 public required int ID { get; init; }
 
@@ -51,19 +51,19 @@
 
         namespace Hex
         {
-            public sealed record Data : ICompositionType
+            public sealed class Data : Roveggitu
             {
-                public static readonly StaticComponentIdentifier<Data, Bool> CONTROL_POINT =
-                    new("axiom", "control_point");
+                public static readonly Rovu<Data, Bool> CONTROL_POINT =
+                    new(Axoi.Du, "control_point");
 
-                public static readonly StaticComponentIdentifier<Data, Bool> OPEN = new("axiom", "open");
-                public static readonly StaticComponentIdentifier<Data, Bool> WALL = new("axiom", "wall");
+                public static readonly Rovu<Data, Bool> OPEN = new(Axoi.Du, "open");
+                public static readonly Rovu<Data, Bool> WALL = new(Axoi.Du, "wall");
 
-                public static readonly StaticComponentIdentifier<Data, Player.Address> PLAYER_BASE =
-                    new("axiom", "player_base");
+                public static readonly Rovu<Data, Player.Address> PLAYER_BASE =
+                    new(Axoi.Du, "player_base");
             }
 
-            public sealed record Position : NoOp, IMemoryObject<CompositionOf<Data>>
+            public sealed record Position : NoOp, IMemoryObject<Roveggi<Data>>
             {
                 public required int R { get; init; }
                 public required int U { get; init; }
@@ -82,10 +82,10 @@
 
         namespace Player
         {
-            public sealed record Data : ICompositionType
+            public sealed class Data : Roveggitu
             { }
 
-            public sealed record Address : NoOp, IMemoryAddress<CompositionOf<Data>>
+            public sealed record Address : NoOp, IMemoryAddress<Roveggi<Data>>
             {
                 public required int ID { get; init; }
 
@@ -134,21 +134,21 @@
 
     namespace Action
     {
-        using FourZeroOne.Core.Resolutions.Compositions;
+        using FourZeroOne.Core.Roveggitus;
 
-        public interface IAction<Self> : IDecomposableType<Self, Res> where Self : IAction<Self>, new()
+        public interface IAction<Self> : IDecomposableRoveggitu<Self, Res> where Self : IAction<Self>, new()
         { }
 
-        public record Change<C> : IAction<Change<C>> where C : ICompositionType
+        public class Change<C> : IAction<Change<C>> where C : Roveggitu
         {
-            public static readonly StaticComponentIdentifier<Change<C>, IMemoryObject<ICompositionOf<C>>> ADDRESS =
-                new("axiom", "address");
+            public static readonly Rovu<Change<C>, IMemoryObject<IRoveggi<C>>> ADDRESS =
+                new(Axoi.Du, "address");
 
-            public static readonly StaticComponentIdentifier<Change<C>, ICompositionOf<MergeSpec<C>>> CHANGE =
-                new("axiom", "change");
+            public static readonly Rovu<Change<C>, IRoveggi<MergeSpec<C>>> CHANGE =
+                new(Axoi.Du, "change");
 
-            public MetaFunction<ICompositionOf<Change<C>>, Res> DecompositionFunction =>
-                Core.tMetaFunction<ICompositionOf<Change<C>>, Res>(
+            public MetaFunction<IRoveggi<Change<C>>, Res> DecomposeFunction =>
+                Core.tMetaFunction<IRoveggi<Change<C>>, Res>(
                         thisObj =>
                             thisObj.tRef()
                                 .tGetComponent(ADDRESS)
@@ -156,7 +156,7 @@
                                     subject =>
                                         subject.tRef()
                                             .tMerge(thisObj.tRef().tGetComponent(CHANGE))))
-                    .Resolution;
+                    .Roggi;
         }
     }
 }

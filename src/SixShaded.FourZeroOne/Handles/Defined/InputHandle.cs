@@ -6,5 +6,5 @@ public class InputHandle(FZOSpec.IInputFZO implementation) : IInput
 
     FZOSpec.IInputFZO IInput.InternalValue => _implementation;
 
-    ITask<int[]> IInput.ReadSelection(IHasElements<Res> pool, int count) => _implementation.GetSelection(pool, count).AsITask();
+    ITask<int[]> IInput.ReadSelection(IHasElements<Rog> pool, int count) => _implementation.GetSelection(pool, count).AsITask();
 }

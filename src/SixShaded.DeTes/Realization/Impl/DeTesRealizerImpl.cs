@@ -13,7 +13,7 @@ internal class DeTesRealizerImpl
         var evalState = supplier.UnitializedState.Initialize(new()
         {
             InitialMemory = test.InitialMemory,
-            Program = test.Token(context.PublicContext),
+            Program = test.Declaration(context.PublicContext),
         });
         var processor = supplier.Processor;
         try
@@ -44,7 +44,7 @@ internal class DeTesRealizerImpl
                     {
                         Value = new EDeTesInvalidTest.NoSelectionDomainDefined
                         {
-                            SelectionToken = state.OperationStack.GetAt(0).Expect("How?").Operation,
+                            SelectionKorssa = state.OperationStack.GetAt(0).Expect("How?").Operation,
                         },
                     };
                 }
@@ -54,15 +54,15 @@ internal class DeTesRealizerImpl
                 {
                     int[] thisSelection = domain.Selections[i];
                     domain.MetaIndex = i;
-                    var selToken = state.OperationStack.First().Operation;
+                    var selKorssa = state.OperationStack.First().Operation;
                     paths[i] = new SelectionPathImpl
                     {
-                        RootSelectionToken = selToken,
+                        RootSelectionKorssa = selKorssa,
                         ResultObject = await Eval(state, processor, runtime, new(new()
                         {
                             Domain = domain,
                             Selection = thisSelection,
-                            SelectionToken = selToken,
+                            SelectionKorssa = selKorssa,
                         })),
                         DomainData = new()
                         {
@@ -87,14 +87,14 @@ internal class DeTesRealizerImpl
             {
                 if (halt is EProcessorHalt.Completed complete)
                 {
-                    var linkedToken = runtime.GetLinkedToken(GetLastOperation(state));
-                    var resolution = complete.Resolution;
+                    var linkedKorssa = runtime.GetLinkedKorssa(GetLastOperation(state));
+                    var roggi = complete.Roggi;
                     frames.Add(new EDeTesFrame.Complete
                     {
-                        Origin = linkedToken,
+                        Origin = linkedKorssa,
                         PreState = state,
                         CompletionHalt = complete,
-                        Assertions = GenerateOnResolveAssertionObject(runtime, linkedToken, resolution, GetMemoryAfterResolution(state, resolution), GetLastOperation(state)),
+                        Assertions = GenerateOnResolveAssertionObject(runtime, linkedKorssa, roggi, GetMemoryAfterRoggi(state, roggi), GetLastOperation(state)),
                     });
                 }
 
@@ -104,21 +104,21 @@ internal class DeTesRealizerImpl
 
             switch (step)
             {
-                case EProcessorStep.TokenMutate v:
+                case EProcessorStep.KorssaMutate v:
                     {
                         switch (v.Mutation)
                         {
-                            case ETokenMutation.Identity identity:
+                            case EKorssaMutation.Identity identity:
                                 runtime.PreprocessMap[identity.Result] = identity.Result;
                                 break;
                             default:
                                 runtime.PreprocessMap[v.Mutation.Result] =
-                                    runtime.GetLinkedToken(state.TokenMutationStack.Last().IsA<ETokenMutation.Identity>().Result);
+                                    runtime.GetLinkedKorssa(state.KorssaMutationStack.Last().IsA<EKorssaMutation.Identity>().Result);
                                 break;
                         }
-                        frames.Add(new EDeTesFrame.TokenPrep
+                        frames.Add(new EDeTesFrame.KorssaPrep
                         {
-                            Origin = runtime.GetLinkedToken(v.Mutation.Result),
+                            Origin = runtime.GetLinkedKorssa(v.Mutation.Result),
                             PreState = state,
                             NextStep = v,
                         });
@@ -126,40 +126,40 @@ internal class DeTesRealizerImpl
                     break;
                 case EProcessorStep.PushOperation v:
                     {
-                        var linkedToken = runtime.GetLinkedToken(v.OperationToken);
+                        var linkedKorssa = runtime.GetLinkedKorssa(v.OperationKorssa);
                         frames.Add(new EDeTesFrame.PushOperation
                         {
-                            Origin = linkedToken,
+                            Origin = linkedKorssa,
                             PreState = state,
                             NextStep = v,
                         });
-                        if (runtime.Domains.TryGetValue(linkedToken, out var domains))
+                        if (runtime.Domains.TryGetValue(linkedKorssa, out var domains))
                             foreach (var domain in domains) runtime.DomainQueue.Enqueue(domain);
-                        if (runtime.References.TryGetValue(linkedToken, out var references))
-                            foreach (var reference in references) reference.SetToken(v.OperationToken);
+                        if (runtime.References.TryGetValue(linkedKorssa, out var references))
+                            foreach (var reference in references) reference.SetKorssa(v.OperationKorssa);
                     }
                     break;
                 case EProcessorStep.Resolve v:
                     {
-                        var linkedToken = runtime.GetLinkedToken(GetLastOperation(state));
-                        if (v.Resolution.Split(out var resolution, out var stateImplemented))
+                        var linkedKorssa = runtime.GetLinkedKorssa(GetLastOperation(state));
+                        if (v.Roggi.Split(out var roggi, out var stateImplemented))
                         {
-                            var nMemory = GetMemoryAfterResolution(state, resolution);
-                            var nToken = GetLastOperation(state);
+                            var nMemory = GetMemoryAfterRoggi(state, roggi);
+                            var nKorssa = GetLastOperation(state);
                             frames.Add(new EDeTesFrame.Resolve
                             {
-                                Origin = linkedToken,
+                                Origin = linkedKorssa,
                                 PreState = state,
                                 NextStep = v,
-                                Assertions = GenerateOnResolveAssertionObject(runtime, linkedToken, resolution, nMemory, nToken),
+                                Assertions = GenerateOnResolveAssertionObject(runtime, linkedKorssa, roggi, nMemory, nKorssa),
                             });
-                            if (runtime.References.TryGetValue(linkedToken, out var references))
+                            if (runtime.References.TryGetValue(linkedKorssa, out var references))
                             {
                                 foreach (var reference in references)
                                 {
-                                    reference.SetResolution(resolution);
+                                    reference.SetRoggi(roggi);
                                     reference.SetMemory(nMemory);
-                                    reference.SetToken(nToken);
+                                    reference.SetKorssa(nKorssa);
                                 }
                             }
                         }
@@ -168,7 +168,7 @@ internal class DeTesRealizerImpl
                             switch (stateImplemented)
                             {
                                 case EStateImplemented.MetaExecute metaExecute:
-                                    runtime.PreprocessMap[metaExecute.Token] = linkedToken;
+                                    runtime.PreprocessMap[metaExecute.Korssa] = linkedKorssa;
                                     break;
                                 default:
                                     throw new NotSupportedException();
@@ -191,40 +191,40 @@ internal class DeTesRealizerImpl
         };
     }
 
-    private static Tok GetLastOperation(IStateFZO state) => state.OperationStack.First().Operation;
+    private static Kor GetLastOperation(IStateFZO state) => state.OperationStack.First().Operation;
 
-    private static IMemoryFZO GetMemoryAfterResolution(IStateFZO state, ResOpt resolution) =>
+    private static IMemoryFZO GetMemoryAfterRoggi(IStateFZO state, RogOpt roggi) =>
         (state.OperationStack.GetAt(1).Check(out var node)
             ? node.MemoryStack.First()
             : state.Initialized.Unwrap().InitialMemory)
-        .WithResolution(resolution);
+        .WithRoggi(roggi);
 
-    private static OnResolveAssertionsImpl GenerateOnResolveAssertionObject(RuntimeResources runtime, Tok linkedToken, ResOpt resolution, IMemoryFZO nMemory, Tok token) =>
+    private static OnResolveAssertionsImpl GenerateOnResolveAssertionObject(RuntimeResources runtime, Kor linkedKorssa, RogOpt roggi, IMemoryFZO nMemory, Kor korssa) =>
         new()
         {
-            Resolution =
-                runtime.ResolutionAssertions
-                    .TryGetValue(linkedToken, out var resolutionAssertions)
-                    .ToOption(resolutionAssertions).Or([])!
-                    .Map(assertion => EvaluateAssertion(assertion, linkedToken, resolution))
-                    .ToArray<IDeTesAssertionData<ResOpt>>(),
+            Roggi =
+                runtime.RoggiAssertions
+                    .TryGetValue(linkedKorssa, out var roggiAssertions)
+                    .ToOption(roggiAssertions).Or([])!
+                    .Map(assertion => EvaluateAssertion(assertion, linkedKorssa, roggi))
+                    .ToArray<IDeTesAssertionData<RogOpt>>(),
             Memory =
                 runtime.MemoryAssertions
-                    .TryGetValue(linkedToken, out var memoryAssertions)
+                    .TryGetValue(linkedKorssa, out var memoryAssertions)
                     .ToOption(memoryAssertions).Or([])!
                     .Map(assertion =>
-                        EvaluateAssertion(assertion, linkedToken, nMemory))
+                        EvaluateAssertion(assertion, linkedKorssa, nMemory))
                     .ToArray<IDeTesAssertionData<IMemoryFZO>>(),
-            Token =
-                runtime.TokenAssertions
-                    .TryGetValue(linkedToken, out var tokenAssertions)
-                    .ToOption(tokenAssertions).Or([])!
+            Korssa =
+                runtime.KorssaAssertions
+                    .TryGetValue(linkedKorssa, out var korssaAssertions)
+                    .ToOption(korssaAssertions).Or([])!
                     .Map(assertion =>
-                        EvaluateAssertion(assertion, linkedToken, token))
-                    .ToArray<IDeTesAssertionData<Tok>>(),
+                        EvaluateAssertion(assertion, linkedKorssa, korssa))
+                    .ToArray<IDeTesAssertionData<Kor>>(),
         };
 
-    private static AssertionDataImpl<A> EvaluateAssertion<A>(IAssertionAccessor<A> assertion, Tok linkedToken, A value)
+    private static AssertionDataImpl<A> EvaluateAssertion<A>(IAssertionAccessor<A> assertion, Kor linkedKorssa, A value)
     {
         IResult<bool, Exception>? result = null;
         try { result = result.Ok(assertion.Condition(value)); }
@@ -232,7 +232,7 @@ internal class DeTesRealizerImpl
         catch (Exception e) { result = result.Err(e); }
         return new()
         {
-            OnToken = linkedToken,
+            OnKorssa = linkedKorssa,
             Condition = assertion.Condition,
             Description = assertion.Description,
             Result = result,
@@ -244,35 +244,35 @@ internal class DeTesRealizerImpl
     private class RuntimeResources(IContextAccessor context)
     {
         public readonly Queue<IDomainAccessor> DomainQueue = new();
-        public readonly Dictionary<Tok, List<IDomainAccessor>> Domains = MakeTokenLinkDictionary(context.Domains);
-        public readonly Dictionary<Tok, List<IAssertionAccessor<IMemoryFZO>>> MemoryAssertions = MakeTokenLinkDictionary(context.MemoryAssertions);
-        public readonly Dictionary<Tok, Tok> MetaExecuteMap = new(new EqualityByReference());
-        public readonly Dictionary<Tok, Tok> PreprocessMap = new(new EqualityByReference());
-        public readonly Dictionary<Tok, List<IReferenceAccessor>> References = MakeTokenLinkDictionary(context.References);
-        public readonly Dictionary<Tok, List<IAssertionAccessor<ResOpt>>> ResolutionAssertions = MakeTokenLinkDictionary(context.ResolutionAssertions);
-        public readonly Dictionary<Tok, List<IAssertionAccessor<Tok>>> TokenAssertions = MakeTokenLinkDictionary(context.TokenAssertions);
+        public readonly Dictionary<Kor, List<IDomainAccessor>> Domains = MakeKorssaLinkDictionary(context.Domains);
+        public readonly Dictionary<Kor, List<IAssertionAccessor<IMemoryFZO>>> MemoryAssertions = MakeKorssaLinkDictionary(context.MemoryAssertions);
+        public readonly Dictionary<Kor, Kor> MetaExecuteMap = new(new EqualityByReference());
+        public readonly Dictionary<Kor, Kor> PreprocessMap = new(new EqualityByReference());
+        public readonly Dictionary<Kor, List<IReferenceAccessor>> References = MakeKorssaLinkDictionary(context.References);
+        public readonly Dictionary<Kor, List<IAssertionAccessor<RogOpt>>> RoggiAssertions = MakeKorssaLinkDictionary(context.RoggiAssertions);
+        public readonly Dictionary<Kor, List<IAssertionAccessor<Kor>>> KorssaAssertions = MakeKorssaLinkDictionary(context.KorssaAssertions);
 
-        private static Dictionary<Tok, List<A>> MakeTokenLinkDictionary<A>(IEnumerable<A> accessors) where A : ITokenLinked
+        private static Dictionary<Kor, List<A>> MakeKorssaLinkDictionary<A>(IEnumerable<A> accessors) where A : IKorssaLinked
         {
-            var o = new Dictionary<Tok, List<A>>(new EqualityByReference());
+            var o = new Dictionary<Kor, List<A>>(new EqualityByReference());
             foreach (var a in accessors)
             {
-                if (o.TryGetValue(a.LinkedToken, out var list)) list.Add(a);
-                else o[a.LinkedToken] = [a];
+                if (o.TryGetValue(a.LinkedKorssa, out var list)) list.Add(a);
+                else o[a.LinkedKorssa] = [a];
             }
             return o;
         }
 
-        public Tok GetLinkedTokenOld(Tok token) => PreprocessMap[token].ExprAs(preV => MetaExecuteMap.GetValueOrDefault(preV, preV));
+        public Kor GetLinkedKorssaOld(Kor korssa) => PreprocessMap[korssa].ExprAs(preV => MetaExecuteMap.GetValueOrDefault(preV, preV));
 
-        public Tok GetLinkedToken(Tok token) => PreprocessMap[token];
+        public Kor GetLinkedKorssa(Kor korssa) => PreprocessMap[korssa];
     }
 
     private class Input(Input.Data? data) : IInputFZO
     {
         private Data? _data = data;
 
-        Task<int[]> IInputFZO.GetSelection(IHasElements<Res> pool, int count)
+        Task<int[]> IInputFZO.GetSelection(IHasElements<Rog> pool, int count)
         {
             if (_data is null) throw new RequiresDomainSplit();
             var data = _data;
@@ -287,8 +287,8 @@ internal class DeTesRealizerImpl
                         InvalidSelection = data.Selection,
                         ExpectedSelectionSize = count,
                         ExpectedMaxIndex = pool.Count - 1,
-                        SelectionToken = data.SelectionToken,
-                        NearToken = data.Domain.LinkedToken,
+                        SelectionKorssa = data.SelectionKorssa,
+                        NearKorssa = data.Domain.LinkedKorssa,
                         Description = data.Domain.Description,
                         Domain = data.Domain.Selections,
                     },
@@ -302,7 +302,7 @@ internal class DeTesRealizerImpl
         {
             public required int[] Selection { get; init; }
             public required IDomainAccessor Domain { get; init; }
-            public required Tok SelectionToken { get; init; }
+            public required Kor SelectionKorssa { get; init; }
         }
     }
 

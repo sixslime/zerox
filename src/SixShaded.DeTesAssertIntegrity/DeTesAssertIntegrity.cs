@@ -9,14 +9,14 @@ public static class DeTesAssertIntegritySyntax
 {
     public static IDeTesTest[] GenerateAssertIntegrityTests(this IDeTesTest forTest)
     {
-        var contexts = new DeTesAssertIntegrityContextProvider().GetSanityContexts(forTest.Token);
+        var contexts = new DeTesAssertIntegrityContextProvider().GetSanityContexts(forTest.Declaration);
         var o = new IDeTesTest[contexts.Length];
         foreach ((int i, var sanityContext) in contexts.Enumerate())
         {
             o[i] = new DeTest
             {
                 InitialMemory = forTest.InitialMemory,
-                Token = C => forTest.Token(sanityContext.WithImplementingContext(C)),
+                Declaration = C => forTest.Declaration(sanityContext.WithImplementingContext(C)),
             };
         }
 
@@ -25,7 +25,7 @@ public static class DeTesAssertIntegritySyntax
 }
 
 public class UnexpectedDeTesUseException() : Exception(
-        "DeTesSanity expects all DeTes TokenDeclaration objects (references, domains, etc.) to only be captured/used within non-immediately executing functions (such as assertion statements). This expectation was not upheld."),
+        "DeTesSanity expects all DeTes KorssaDeclaration objects (references, domains, etc.) to only be captured/used within non-immediately executing functions (such as assertion statements). This expectation was not upheld."),
     IKnownException
 { }
 
