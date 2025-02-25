@@ -20,7 +20,7 @@ public interface IStateFZO
     ///     - Pop from <i>OperationStack</i><br></br>
     ///     - If 'Roggi' is
     ///     <b>
-    ///         <see cref="IOk{int,}" />
+    ///         <see cref="IOk{T, E}" />
     ///     </b>
     ///     :<br></br>
     ///     - - Push 'Value' to <i>OperationStack[0].ArgRoggiStack</i><br></br>

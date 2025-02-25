@@ -9,6 +9,7 @@ using SixLib.ICEE;
 using SixLib.ICEE.FZO;
 using C = Console;
 using CCol = ConsoleColor;
+using DeTes.StdEval;
 
 public interface ICatGlanceable : IDeTesTest
 {
@@ -127,7 +128,7 @@ public record Glancer
         WriteLn("------------------", CCol.Magenta);
     }
 
-    private static string FormatLinkedKorssa(Kor korssa) => $"{{{korssa}}}";
+    private static string FormatLinkedKorssa(Kor korssa) => $"`{korssa}`";
 
     private async Task EvalTests()
     {
@@ -248,7 +249,8 @@ public record Glancer
 
     private static void PrintPostHeader(IEnumerable<IDeTesAssertionData<Kor>> korssaAsserts,
         IEnumerable<IDeTesAssertionData<RogOpt>> roggiAsserts,
-        IEnumerable<IDeTesAssertionData<IMemoryFZO>> memoryAsserts, TimeSpan time)
+        IEnumerable<IDeTesAssertionData<IMemoryFZO>> memoryAsserts,
+        TimeSpan time)
     {
         const ConsoleColor blankColor = CCol.DarkGray;
         const ConsoleColor failedColor = CCol.DarkYellow;
@@ -278,7 +280,8 @@ public record Glancer
         //Write($"{Math.Round(time.TotalMilliseconds, 0)}ms", timerColor);
     }
 
-    private static void PrintFailedAssertionSummary(IEnumerable<IDeTesAssertionDataUntyped> assertions, string starter,
+    private static void PrintFailedAssertionSummary(IEnumerable<IDeTesAssertionDataUntyped> assertions,
+        string starter,
         int depth)
     {
         foreach (var failed in assertions.Where(x => !AssertPassed(x)))
