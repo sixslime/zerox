@@ -302,6 +302,21 @@ namespace SixShaded.NotRust
         {
             return $"PStack[{string.Join(", ", Elements)}]";
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is not IPStack<T> other) return false;
+            if (other.Count != Count) return false;
+            foreach (var (a, b) in this.SubStacks().ZipShort(other.SubStacks()))
+            {
+                if (ReferenceEquals(a, b)) return true;
+                if (!a.TopValue.Equals(b.TopValue)) return false;
+            }
+
+            return true;
+        }
+
+        public override int GetHashCode() => HashCode.Combine(Count, TopValue);
     }
 
     public class CachingEnumerable<T> : IEnumerable<T>, IIndexReadable<int, T>
@@ -329,6 +344,7 @@ namespace SixShaded.NotRust
             {
                 while (_iter.MoveNext()) _list.Add(_iter.Current);
                 _list.TrimExcess();
+                _iter.Dispose();
                 _iter = null;
                 _cachedIndex = _list.Count;
             }
@@ -352,6 +368,7 @@ namespace SixShaded.NotRust
                 {
                     if (!IsFullyCached)
                     {
+                        _iter?.Dispose();
                         _iter = null;
                         _list.TrimExcess();
                     }
@@ -370,6 +387,19 @@ namespace SixShaded.NotRust
                 _list.Add(_iter.Current);
             }
             return _list[index];
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is not IEnumerable<T> other) return false;
+            CountAndCache();
+            return _list.SequenceEqual(other);
+        }
+
+        public override int GetHashCode()
+        {
+            CountAndCache();
+            return _list.GetHashCode();
         }
     }
 
