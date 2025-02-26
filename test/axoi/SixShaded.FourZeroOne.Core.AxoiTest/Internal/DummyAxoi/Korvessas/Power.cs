@@ -42,7 +42,7 @@ internal static class Power
                                 B = self.tRef().tGetComponent(PowerExpr.POWER),
                                 C = self.tRef().tGetComponent(PowerExpr.NUM),
                             }))
-                    .Roggi
+                    .Roggi,
         };
 
     public static Korvessa<IRoveggi<PowerExpr>, Number> tTESTPower(this IKorssa<IRoveggi<PowerExpr>> powerve) => Construct(powerve);

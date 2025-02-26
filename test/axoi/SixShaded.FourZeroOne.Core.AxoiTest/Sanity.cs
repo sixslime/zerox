@@ -22,5 +22,6 @@ public class Sanity
             (1..5).tFixed()
             .tMap(x => x.tRef().tAdd(10.tFixed()))
             .AssertRoggi(c, r => r.Count == 5));
+
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }

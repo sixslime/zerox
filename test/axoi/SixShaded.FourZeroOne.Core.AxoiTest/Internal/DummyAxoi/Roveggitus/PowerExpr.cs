@@ -9,5 +9,4 @@ internal class PowerExpr : Roveggitu
 {
     public static readonly Rovu<PowerExpr, Number> NUM = new(TestAxoi.Du, "num");
     public static readonly Rovu<PowerExpr, Number> POWER = new(TestAxoi.Du, "power");
-
 }
