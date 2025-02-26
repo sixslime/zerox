@@ -25,8 +25,6 @@ public sealed class Basics
                 .tMultiply(xa.tFixed())
                 .AssertRoggi(c, r => r.Value == (((xa + xb) * xc) + (xc - xb)) * xa));
 
-
-
     [TestMethod]
     [DataRow(401, new[] { true, true, false }, 2, 6)]
     [DataRow(888, new[] { true, true, false }, 0, 10)]
