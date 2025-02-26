@@ -38,6 +38,8 @@ public sealed class Basics
                 .AssertRoggi(c, r => r.GetComponent(Stuff.NUM).Unwrap().Value == num, "NUM check")
                 .AssertRoggi(c, r => !r.GetComponent(Stuff.MULTI_BOOL).IsSome(), "MULTI_BOOL check before set")
                 .tWithComponent(Stuff.MULTI_BOOL, bools.Map(x => (Bool)x).tFixed())
+                .tWithoutComponent(Stuff.NUM)
+                .AssertRoggi(c, r => !r.GetComponent(Stuff.NUM).IsSome(), "NUM check after remove")
                 .tWithComponent(
                 Stuff.POWER_OBJ,
                 Core.tCompose<PowerExpr>()
@@ -50,7 +52,7 @@ public sealed class Basics
                     r.GetComponent(PowerExpr.NUM).Unwrap().Value == basePower &&
                     r.GetComponent(PowerExpr.POWER).Unwrap().Value > 0, "POWER_OBJ check")
                 .tDecompose()
-                .AssertRoggi(c, r => r.Value == basePower.Yield(power).Accumulate((a, b) => a * b).Unwrap(), "power decompose check"));
+                .AssertRoggi(c, r => r.Value == basePower.Yield(power).Accumulate((a, b) => a * b).Unwrap(), "decompose check"));
 
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }
