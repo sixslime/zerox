@@ -158,7 +158,7 @@
                     thisObj =>
                         thisObj.tRef()
                             .tGetComponent(ADDRESS)
-                            .tMemoryUpdate(
+                            .tUpdate(
                             subject =>
                                 subject.tRef()
                                     .tMerge(thisObj.tRef().tGetComponent(CHANGE))))

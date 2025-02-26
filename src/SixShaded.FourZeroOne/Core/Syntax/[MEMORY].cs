@@ -15,21 +15,21 @@ public static partial class KorssaSyntax
 
     public static DynamicReference<R> tRef<R>(this IMemoryAddress<R> ident) where R : class, Rog => new(ident);
 
-    public static Insert<R> tMemoryWrite<R>(this IKorssa<IMemoryObject<R>> address, IKorssa<R> data)
+    public static Insert<R> tWrite<R>(this IKorssa<IMemoryObject<R>> address, IKorssa<R> data)
         where R : class, Rog =>
         new(address, data);
 
-    public static Get<R> tMemoryGet<R>(this IKorssa<IMemoryObject<R>> address)
+    public static Get<R> tGet<R>(this IKorssa<IMemoryObject<R>> address)
         where R : class, Rog =>
         new(address);
 
-    public static Remove tMemoryRemove(this IKorssa<IMemoryObject<Rog>> address) => new(address);
+    public static Remove tRedact(this IKorssa<IMemoryObject<Rog>> address) => new(address);
 
-    public static Korvessa<IMemoryObject<R>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> tMemoryUpdate<R>(this IKorssa<IMemoryObject<R>> address, IKorssa<MetaFunction<R, R>> updateFunction)
+    public static Korvessa<IMemoryObject<R>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> tUpdate<R>(this IKorssa<IMemoryObject<R>> address, IKorssa<MetaFunction<R, R>> updateFunction)
         where R : class, Rog =>
         Korvessas.UpdateMemoryObject<R>.Construct(address, updateFunction);
 
-    public static Korvessa<IMemoryObject<R>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> tMemoryUpdate<R>(this IKorssa<IMemoryObject<R>> address, Func<DynamicAddress<R>, IKorssa<R>> updateFunction)
+    public static Korvessa<IMemoryObject<R>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> tUpdate<R>(this IKorssa<IMemoryObject<R>> address, Func<DynamicAddress<R>, IKorssa<R>> updateFunction)
         where R : class, Rog =>
         Korvessas.UpdateMemoryObject<R>.Construct(address, Core.tMetaFunction(updateFunction));
 }
