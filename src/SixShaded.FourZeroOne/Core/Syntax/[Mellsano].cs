@@ -82,7 +82,7 @@ public static partial class KorssaSyntax
 public static class MellsanoMatcherSyntax
 {
     public static KorssaTypeUllasem<TMatch> mIsType<TMatch>(this Structure.Mellsano.IMatcherBuilder _)
-        where TMatch : IKorssa<Rog> =>
+        where TMatch : Kor =>
         new();
 
     public static KorvessaUllasem<RVal> mIsKorvessa<RVal>(this Structure.Mellsano.MatcherBuilder<RVal> _, Axodu axoiSource, string identifier)

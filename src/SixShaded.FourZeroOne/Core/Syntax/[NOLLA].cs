@@ -18,5 +18,5 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.CatchNolla<R>.Construct(value, fallback().tMetaBoxed());
 
-    public static Korssas.Exists tExists(this IKorssa<Rog> korssa) => new(korssa);
+    public static Korssas.Exists tExists(this Kor korssa) => new(korssa);
 }
