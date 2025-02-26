@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.AxoiTest;
 
 using DeTes.Declaration;
+using Internal.DummyAxoi.Korvessas;
 using Internal.DummyAxoi.Roveggitus;
 using Roggis;
 using Core = Syntax.Core;
@@ -51,8 +52,8 @@ public sealed class Basics
                 c, r =>
                     r.GetComponent(PowerExpr.NUM).Unwrap().Value == basePower &&
                     r.GetComponent(PowerExpr.POWER).Unwrap().Value > 0, "POWER_OBJ check")
-                .tDecompose()
-                .AssertRoggi(c, r => r.Value == basePower.Yield(power).Accumulate((a, b) => a * b).Unwrap(), "decompose check"));
+                .tTESTPower()
+                .AssertRoggi(c, r => r.Value == basePower.Yield(power).Accumulate((a, b) => a * b).Unwrap(), "korvessa check"));
 
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }
