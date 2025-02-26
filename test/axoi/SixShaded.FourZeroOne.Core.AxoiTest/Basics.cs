@@ -18,6 +18,5 @@ public sealed class Basics
             .tMultiply(xa.tFixed())
             .AssertRoggi(c, u => u.Value == (((xa + xb) * xc) + (xc - xb)) * xa));
 
-    public static Task MultiOperations()
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }
