@@ -14,14 +14,14 @@ internal class PowerExpr : DecomposableRoveggitu<PowerExpr, Number>
         Core.tMetaFunction<IRoveggi<PowerExpr>, Number>(
             self =>
                 Core.tMetaRecursiveFunction<Number, Number, Number, Number>(
-                    (thisFunc, acc, i, num) =>
+                    (recurse, acc, i, num) =>
                         i.tRef()
-                            .tIsGreaterThan(0.tFixed())
+                            .tIsGreaterThan(1.tFixed())
                             .tIfTrue<Number>(
                             new()
                             {
                                 Then =
-                                    thisFunc.tRef()
+                                    recurse.tRef()
                                         .tExecuteWith(
                                         new()
                                         {

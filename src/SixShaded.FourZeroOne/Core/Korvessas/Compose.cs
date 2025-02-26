@@ -7,5 +7,5 @@ using Syntax;
 public static class Compose<C>
     where C : IRoveggitu, new()
 {
-    public static Korvessa<IRoveggi<C>> Construct() => new() { Du = Axoi.Korvedu("Compose"), Definition = new Korssas.Fixed<IRoveggi<C>>(new Roveggi<C>()).tMetaBoxed().Roggi };
+    public static Korvessa<IRoveggi<C>> Construct() => new() { Du = Axoi.Korvedu("compose"), Definition = new Korssas.Fixed<IRoveggi<C>>(new Roveggi<C>()).tMetaBoxed().Roggi };
 }

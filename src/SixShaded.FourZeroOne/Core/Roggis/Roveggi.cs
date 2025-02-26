@@ -12,7 +12,6 @@ public record Roveggi<C> : Roggi.Defined.NoOp, IRoveggi<C> where C : IRoveggitu,
 
     private PMap<Roggi.Unsafe.IRovu<C>, Rog> _componentMap { get; init; }
 
-    public virtual bool Equals(Roveggi<C>? other) => other is not null && ComponentsUnsafe.SequenceEqual(other.ComponentsUnsafe);
 
     public IEnumerable<ITiple<Roggi.Unsafe.IRovu, Rog>> ComponentsUnsafe => _componentMap.Elements;
 
@@ -27,5 +26,6 @@ public record Roveggi<C> : Roggi.Defined.NoOp, IRoveggi<C> where C : IRoveggitu,
 
     public override string ToString() => $"{typeof(C).Namespace!.Split(".")[^1]}.{typeof(C).Name}:{{{string.Join(" ", ComponentsUnsafe.OrderBy(x => x.A.ToString()).Map(x => $"{x.A}={x.B}"))}}}";
 
-    public override int GetHashCode() => ComponentsUnsafe.GetHashCode();
+    public virtual bool Equals(Roveggi<C>? other) => other is not null && _componentMap.Equals(other._componentMap);
+    public override int GetHashCode() => _componentMap.GetHashCode();
 }

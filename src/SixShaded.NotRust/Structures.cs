@@ -346,7 +346,7 @@ namespace SixShaded.NotRust
                 _list.TrimExcess();
                 _iter.Dispose();
                 _iter = null;
-                _cachedIndex = _list.Count;
+                _cachedIndex = _list.Count-1;
             }
             return _list.Count;
         }

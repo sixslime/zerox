@@ -7,6 +7,6 @@ using Roggis;
 internal class Stuff : Roveggitu
 {
     public static readonly Rovu<Stuff, Number> NUM = new(TestAxoi.Du, "num");
-    public static readonly Rovu<Stuff, IMulti<IRoggi>> MULTI_ANY = new(TestAxoi.Du, "multi_any");
-    public static readonly Rovu<Stuff, Roveggi<PowerExpr>> POWER_OBJ = new(TestAxoi.Du, "power_obj");
+    public static readonly Rovu<Stuff, IMulti<Bool>> MULTI_BOOL = new(TestAxoi.Du, "multi_bool");
+    public static readonly Rovu<Stuff, IRoveggi<PowerExpr>> POWER_OBJ = new(TestAxoi.Du, "power_obj");
 }

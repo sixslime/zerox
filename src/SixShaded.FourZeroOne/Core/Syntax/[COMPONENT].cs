@@ -35,7 +35,10 @@ public static partial class KorssaSyntax
         where H : IRoveggitu =>
         new(holder) { Rovu = rovu };
 
-    public static Korvessa<IRoveggi<D>, R> tDecompose<D, R>(this IKorssa<IRoveggi<D>> roveggi) where D : IDecomposableRoveggitu<D, R>, new() where R : class, Rog => Korvessas.Decompose<D, R>.Construct(roveggi);
+    // WARNING:
+    // Assumes Reveggi<out C> stays 'out'
+    // this is just cheugy we aught to just enforce specific handler korvessas
+    public static Korvessa<IRoveggi<D>, R> tDecompose<D, R>(this IKorssa<IRoveggi<IDecomposableRoveggitu<D, R>>> roveggi) where D : IDecomposableRoveggitu<D, R>, new() where R : class, Rog => Korvessas.Decompose<D, R>.Construct(roveggi.IsA<IKorssa<IRoveggi<D>>>());
 
     public static Korssas.Component.With<MergeSpec<C>, R> t_WithMerged<C, R>(this IKorssa<IRoveggi<MergeSpec<C>>> mergeObject, IRovu<C, R> mergingIdentifier, IKorssa<R> component)
         where C : IRoveggitu
