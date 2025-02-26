@@ -41,9 +41,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.MinimaFZO", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.FourZeroOne.Core.AxoiTest", "test\axoi\SixShaded.FourZeroOne.Core.AxoiTest\SixShaded.FourZeroOne.Core.AxoiTest.csproj", "{11456EC1-29AE-4E16-9C88-B55CD021A293}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "[tests]", "[tests]", "{715F1525-5AB6-4F44-B2BC-A928B73AA373}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TESTS", "TESTS", "{715F1525-5AB6-4F44-B2BC-A928B73AA373}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "[axoi]", "[axoi]", "{1C7B3712-2E33-46F6-BB08-3F36D3BFAE1C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AXOI", "AXOI", "{1C7B3712-2E33-46F6-BB08-3F36D3BFAE1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -3,7 +3,6 @@
 namespace SixShaded.CatGlance;
 
 using DeTes.Analysis;
-using DeTes.Declaration;
 using DeTes.Realization;
 using SixLib.ICEE;
 using SixLib.ICEE.FZO;
@@ -11,27 +10,6 @@ using C = Console;
 using CCol = ConsoleColor;
 using DeTes.StdEval;
 
-public interface ICatGlanceable : IDeTesTest
-{
-    public string Name { get; }
-}
-
-public class GlancableTest : ICatGlanceable
-{
-    public GlancableTest() { Name = "(unnamed)"; }
-    public GlancableTest(string name) { Name = name; }
-    public string Name { get; }
-    public required IMemoryFZO InitialMemory { get; init; }
-    public required DeTesDeclaration Declaration { get; init; }
-}
-
-public static class Extensions
-{
-    public static GlancableTest ToGlancable(this IDeTesTest deTesTest, string name)
-    {
-        return new(name) { Declaration = deTesTest.Declaration, InitialMemory = deTesTest.InitialMemory };
-    }
-}
 public record Glancer
 {
     private IOption<IResult<RecursiveEvalTree<IDeTesResult, bool>, EDeTesInvalidTest>[]> _testEvals =
@@ -146,27 +124,9 @@ public record Glancer
 
         for (int i = 0; i < count; i++)
         {
-            results[i] = (await new DeTesRealizer().Realize(tests[i], Supplier))
-                .RemapOk(x =>
-                    x.RecursiveEvalTree(deTesResult =>
-                            deTesResult.CriticalPoint.RemapOk(stop =>
-                                stop.CheckOk(out var halt) &&
-                                halt is EProcessorHalt.Completed &&
-                                deTesResult.EvaluationFrames.All(frame => frame switch
-                                {
-                                    EDeTesFrame.Resolve v
-                                        => v.Assertions.Korssa.All(AssertPassed) &&
-                                           v.Assertions.Roggi.All(AssertPassed) &&
-                                           v.Assertions.Memory.All(AssertPassed),
-                                    EDeTesFrame.Complete v
-                                        => //DEBUG
-                                        //new Func<bool>(() => { Console.WriteLine(v.CompletionHalt.Roggi); return true; })() &&
-                                        v.Assertions.Korssa.All(AssertPassed) &&
-                                        v.Assertions.Roggi.All(AssertPassed) &&
-                                        v.Assertions.Memory.All(AssertPassed),
-                                    _ => true,
-                                })),
-                        others => others.All(y => y)));
+            results[i] =
+                (await new DeTesRealizer().Realize(tests[i], Supplier))
+                .RemapOk(x => x.StdEvalTree());
         }
 
         _testEvals = results.AsSome();

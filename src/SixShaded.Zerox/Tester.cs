@@ -24,7 +24,7 @@ public class Tester
 
     internal static readonly IMemoryFZO MEMORY_IMPLEMENTATION = new MinimaMemoryFZO();
 
-    internal static readonly GlancableTest[] SANITY_CHECKS = new GlancableTest[]
+    internal static readonly CatGlanceableTest[] SANITY_CHECKS = new CatGlanceableTest[]
     {
         new("k")
         {
@@ -303,7 +303,7 @@ public class Tester
             Supplier = RUN_IMPLEMENTATION,
             Tests = SANITY_CHECKS.Enumerate()
                 .Map(original => original.value.GenerateAssertIntegrityTests().Enumerate()
-                    .Map(check => new GlancableTest($"({original.index + 1}:{check.index + 1}) {original.value.Name}")
+                    .Map(check => new CatGlanceableTest($"({original.index + 1}:{check.index + 1}) {original.value.Name}")
                     {
                         InitialMemory = check.value.InitialMemory,
                         Declaration = check.value.Declaration,
