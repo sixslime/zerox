@@ -12,14 +12,20 @@
         public record ActingPlayer : IMemoryAddress<GameObjects.Player.Address>
         {
             public static readonly ActingPlayer PTR = new();
-            private ActingPlayer() { }
+
+            private ActingPlayer()
+            { }
+
             public override string ToString() => "ACTING_PLAYER";
         }
 
         public record TurnCount : IMemoryAddress<Number>
         {
             public static readonly TurnCount PTR = new();
-            private TurnCount() { }
+
+            private TurnCount()
+            { }
+
             public override string ToString() => "TURN_COUNT";
         }
     }
@@ -149,13 +155,13 @@
 
             public MetaFunction<IRoveggi<Change<C>>, Res> DecomposeFunction =>
                 Core.tMetaFunction<IRoveggi<Change<C>>, Res>(
-                        thisObj =>
-                            thisObj.tRef()
-                                .tGetComponent(ADDRESS)
-                                .tMemoryUpdate(
-                                    subject =>
-                                        subject.tRef()
-                                            .tMerge(thisObj.tRef().tGetComponent(CHANGE))))
+                    thisObj =>
+                        thisObj.tRef()
+                            .tGetComponent(ADDRESS)
+                            .tMemoryUpdate(
+                            subject =>
+                                subject.tRef()
+                                    .tMerge(thisObj.tRef().tGetComponent(CHANGE))))
                     .Roggi;
         }
     }
