@@ -1,8 +1,10 @@
 ﻿namespace SixShaded.FourZeroOne.Core.AxoiTest.Internal;
 
 using CatGlance;
+using DeTes.Analysis;
 using MinimaFZO;
 using NotRust;
+using SixLib.ICEE;
 
 internal static class Extensions
 {
@@ -32,6 +34,11 @@ internal static class Extensions
             {
                 Tests = [test],
             }).Glance())[0];
+        if (result.CheckOk(out var ok))
+        {
+            PrintFinalRoggi(ok.Object, "");
+        }
+        Console.WriteLine();
         var integrityResults =
             await (glancer with
             {
@@ -42,6 +49,28 @@ internal static class Extensions
         DoAssert(integrityResults.All(intResult => intResult.CheckOk(out var ri) && !ri.Evaluation));
     }
 
+    private static void PrintFinalRoggi(IDeTesResult result, string prefix)
+    {
+        if (result.CriticalPoint.Split(out var hit, out var paths))
+        {
+            if (hit.Split(out var halt, out var ex))
+            {
+                switch (halt)
+                {
+                case FZOSpec.EProcessorHalt.Completed v:
+                    Console.WriteLine($"{prefix} {v.Roggi}");
+                break;
+                default:
+                    Console.WriteLine($"! {halt}");
+                break;
+                }
+                return;
+            }
+            Console.WriteLine(ex);
+        }
+        foreach (var path in paths)
+            PrintFinalRoggi(path, $"{prefix} {path.Selection.ICEE()}");
+    }
     private static void DoAssert(bool condition)
     {
         if (!condition) throw new AssertFailedException();

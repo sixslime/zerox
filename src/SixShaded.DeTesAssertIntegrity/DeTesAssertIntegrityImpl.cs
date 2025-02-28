@@ -112,7 +112,7 @@ internal class DeTesAssertIntegrityContext(int triggerIndex) : IDeTesContext
         }
 
         action(_implementingContext!);
-        _implementingContext = null;
+        //_implementingContext = null;
         _accumulator = null;
     }
 }
