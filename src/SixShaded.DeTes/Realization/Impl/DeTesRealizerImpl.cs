@@ -38,7 +38,7 @@ internal class DeTesRealizerImpl
             try { processorStep = await processor.GetNextStep(state, input); }
             catch (RequiresDomainSplit)
             {
-                if (!runtime.DomainQueue.TryDequeue(out var domain))
+                if (!runtime.DomainStack.TryPop(out var domain))
                 {
                     throw new DeTesInvalidTestException
                     {
@@ -55,6 +55,8 @@ internal class DeTesRealizerImpl
                     int[] thisSelection = domain.Selections[i];
                     domain.MetaIndex = i;
                     var selKorssa = state.OperationStack.First().Operation;
+                    // DEBUG
+                    Console.WriteLine(selKorssa);
                     paths[i] = new SelectionPathImpl
                     {
                         RootSelectionKorssa = selKorssa,
@@ -89,6 +91,7 @@ internal class DeTesRealizerImpl
                 {
                     var linkedKorssa = runtime.GetLinkedKorssa(GetLastOperation(state));
                     var roggi = complete.Roggi;
+                    
                     frames.Add(new EDeTesFrame.Complete
                     {
                         Origin = linkedKorssa,
@@ -134,7 +137,7 @@ internal class DeTesRealizerImpl
                             NextStep = v,
                         });
                         if (runtime.Domains.TryGetValue(linkedKorssa, out var domains))
-                            foreach (var domain in domains) runtime.DomainQueue.Enqueue(domain);
+                            foreach (var domain in domains) runtime.DomainStack.Push(domain);
                         if (runtime.References.TryGetValue(linkedKorssa, out var references))
                             foreach (var reference in references) reference.SetKorssa(v.OperationKorssa);
                     }
@@ -142,7 +145,11 @@ internal class DeTesRealizerImpl
                 case EProcessorStep.Resolve v:
                     {
                         var linkedKorssa = runtime.GetLinkedKorssa(GetLastOperation(state));
-                        if (v.Roggi.Split(out var roggi, out var stateImplemented))
+                        // DEBUG
+                        Console.WriteLine($"- {linkedKorssa}: {v.Roggi}");
+                        runtime.RoggiAssertions.TryGetValue(linkedKorssa, out var ttt);
+                        Console.WriteLine($"::: {ttt?.Count}");
+                    if (v.Roggi.Split(out var roggi, out var stateImplemented))
                         {
                             var nMemory = GetMemoryAfterRoggi(state, roggi);
                             var nKorssa = GetLastOperation(state);
@@ -248,7 +255,7 @@ internal class DeTesRealizerImpl
     }
     private class RuntimeResources(IContextAccessor context)
     {
-        public readonly Queue<IDomainAccessor> DomainQueue = new();
+        public readonly Stack<IDomainAccessor> DomainStack = new();
         public readonly Dictionary<Kor, List<IDomainAccessor>> Domains = MakeKorssaLinkDictionary(context.Domains);
         public readonly Dictionary<Kor, List<IAssertionAccessor<IMemoryFZO>>> MemoryAssertions = MakeKorssaLinkDictionary(context.MemoryAssertions);
         public readonly Dictionary<Kor, Kor> MetaExecuteMap = new(new EqualityByReference());
@@ -282,7 +289,7 @@ internal class DeTesRealizerImpl
             if (_data is null) throw new RequiresDomainSplit();
             var data = _data;
             _data = null;
-
+            Console.WriteLine(count);
             if (data.Selection.Length != count || data.Selection.Any(i => i >= pool.Count))
             {
                 throw new DeTesInvalidTestException

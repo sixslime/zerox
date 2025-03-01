@@ -54,13 +54,13 @@ public sealed class Basics
                 .AssertRoggi(c, r => r.Value == basePower.Yield(power).Accumulate((a, b) => a * b).Unwrap(), "korvessa check"));
 
     [TestMethod]
-    [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new[] {5, 2, 0, 1}, 0)]
-    [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new[] {9, 0, 3}, 1)]
-    [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new[] {5}, 0)]
+    [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new[] { 5, 2, 0, 1 }, 0)]
+    [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new[] { 9, 0, 3 }, 1)]
+    [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new[] { 5 }, 0)]
     [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new[] { 999, 0, 777 }, 0)]
     [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new[] { 999, 0, 777 }, 0)]
-    [DataRow(new[] {999}, new[] {0}, 0)]
-    [DataRow(new int[0], new[] {999}, 0)]
+    [DataRow(new[] { 999 }, new[] { 0 }, 0)]
+    [DataRow(new int[0], new[] { 999 }, 0)]
     public async Task Selection(int[] initialPool, int[] firstSelection, int secondSelection) =>
         await Run(
         c =>
