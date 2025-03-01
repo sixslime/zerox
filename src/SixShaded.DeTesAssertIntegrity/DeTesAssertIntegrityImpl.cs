@@ -72,16 +72,16 @@ internal class DeTesAssertIntegrityContext(int triggerIndex) : IDeTesContext
     private IDeTesContext? _implementingContext;
 
     void IDeTesContext.AddAssertionMemory(Kor subject, Predicate<IMemoryFZO> assertion, string? description) =>
-        Trigger(C => C.AddAssertionMemory(subject, _ => false, description));
+        Trigger(c => c.AddAssertionMemory(subject, _ => false, description));
 
     void IDeTesContext.AddAssertionRoggi<R>(IKorssa<R> subject, Predicate<R> assertion, string? description) =>
-        Trigger(C => C.AddAssertionRoggi(subject, _ => false, description));
+        Trigger(c => c.AddAssertionRoggi(subject, _ => false, description));
 
     void IDeTesContext.AddAssertionRoggiUnstable<R>(IKorssa<R> subject, Predicate<IOption<R>> assertion,
-        string? description) => Trigger(C => C.AddAssertionRoggiUnstable(subject, _ => false, description));
+        string? description) => Trigger(c => c.AddAssertionRoggiUnstable(subject, _ => false, description));
 
     void IDeTesContext.AddAssertionKorssa<R>(IKorssa<R> subject, Predicate<IKorssa<R>> assertion, string? description) =>
-        Trigger(C => C.AddAssertionKorssa(subject, _ => false, description));
+        Trigger(c => c.AddAssertionKorssa(subject, _ => false, description));
 
     void IDeTesContext.MakeMultiSelectionDomain(Kor subject, int[][] selections,
         out IDeTesMultiDomain domainHandle, string? description) =>

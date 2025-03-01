@@ -8,23 +8,29 @@ public static class Extensions
                 deTesResult.CriticalPoint.RemapOk(stop =>
                     stop.CheckOk(out var halt) &&
                     halt is EProcessorHalt.Completed &&
-                    deTesResult.EvaluationFrames.All(frame => frame switch
-                    {
-                        EDeTesFrame.Resolve v
-                            => v.Assertions.Korssa.All(StdEvalAssertion) &&
-                               v.Assertions.Roggi.All(StdEvalAssertion) &&
-                               v.Assertions.Memory.All(StdEvalAssertion),
-                        EDeTesFrame.Complete v
-                            => //DEBUG
-                            //new Func<bool>(() => { Console.WriteLine(v.CompletionHalt.Roggi); return true; })() &&
-                            v.Assertions.Korssa.All(StdEvalAssertion) &&
-                            v.Assertions.Roggi.All(StdEvalAssertion) &&
-                            v.Assertions.Memory.All(StdEvalAssertion),
-                        _ => true,
-                    })),
-            others => others.All(y => y));
+                    AllAssertsPassed(deTesResult)),
+        (self, others) => AllAssertsPassed(self) && others.All(y => y));
     }
 
+    private static bool AllAssertsPassed(IDeTesResult result)
+    {
+        return result.EvaluationFrames.All(
+        frame =>
+            frame switch
+            {
+                EDeTesFrame.Resolve v
+                    => v.Assertions.Korssa.All(StdEvalAssertion) &&
+                       v.Assertions.Roggi.All(StdEvalAssertion) &&
+                       v.Assertions.Memory.All(StdEvalAssertion),
+                EDeTesFrame.Complete v
+                    => //DEBUG
+                    //new Func<bool>(() => { Console.WriteLine(v.CompletionHalt.Roggi); return true; })() &&
+                    v.Assertions.Korssa.All(StdEvalAssertion) &&
+                    v.Assertions.Roggi.All(StdEvalAssertion) &&
+                    v.Assertions.Memory.All(StdEvalAssertion),
+                _ => true,
+            });
+    }
     public static bool StdEval(this IDeTesResult result) => StdEvalTree(result).Evaluation;
     public static bool StdEvalAssertion<A>(this IDeTesAssertionData<A> assertion) => assertion.Result.KeepOk().Or(false);
 

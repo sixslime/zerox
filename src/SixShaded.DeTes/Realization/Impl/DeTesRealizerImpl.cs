@@ -56,7 +56,7 @@ internal class DeTesRealizerImpl
                     domain.MetaIndex = i;
                     var selKorssa = state.OperationStack.First().Operation;
                     // DEBUG
-                    Console.WriteLine(selKorssa);
+                    //Console.WriteLine(selKorssa);
                     paths[i] = new SelectionPathImpl
                     {
                         RootSelectionKorssa = selKorssa,
@@ -146,9 +146,9 @@ internal class DeTesRealizerImpl
                     {
                         var linkedKorssa = runtime.GetLinkedKorssa(GetLastOperation(state));
                         // DEBUG
-                        Console.WriteLine($"- {linkedKorssa}: {v.Roggi}");
-                        runtime.RoggiAssertions.TryGetValue(linkedKorssa, out var ttt);
-                        Console.WriteLine($"::: {ttt?.Count}");
+                        //Console.WriteLine($"- {linkedKorssa}: {v.Roggi}");
+                        //runtime.RoggiAssertions.TryGetValue(linkedKorssa, out var ttt);
+                        //Console.WriteLine($"::: {ttt?.Count}");
                     if (v.Roggi.Split(out var roggi, out var stateImplemented))
                         {
                             var nMemory = GetMemoryAfterRoggi(state, roggi);
@@ -289,7 +289,6 @@ internal class DeTesRealizerImpl
             if (_data is null) throw new RequiresDomainSplit();
             var data = _data;
             _data = null;
-            Console.WriteLine(count);
             if (data.Selection.Length != count || data.Selection.Any(i => i >= pool.Count))
             {
                 throw new DeTesInvalidTestException

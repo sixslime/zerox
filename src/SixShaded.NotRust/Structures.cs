@@ -84,7 +84,7 @@ namespace SixShaded.NotRust
                 ? stack.At(1).Expect("TopValue implies At(1)").WithEntries(function(top))
                 : stack;
         }
-        public static RecursiveEvalTree<O, T> RecursiveEvalTree<O, T>(this O root, Func<O, IResult<T, IEnumerable<O>>> resolveFunc, Func<IEnumerable<T>, T> combineFunc)
+        public static RecursiveEvalTree<O, T> RecursiveEvalTree<O, T>(this O root, Func<O, IResult<T, IEnumerable<O>>> resolveFunc, Func<O, IEnumerable<T>, T> combineFunc)
         {
             return new(root, resolveFunc, combineFunc);
         }
@@ -409,7 +409,7 @@ namespace SixShaded.NotRust
         public readonly O Object;
         public readonly IOption<RecursiveEvalTree<O, T>[]> Branches;
 
-        public RecursiveEvalTree(O root, Func<O, IResult<T, IEnumerable<O>>> resolveFunc, Func<IEnumerable<T>, T> combineFunc)
+        public RecursiveEvalTree(O root, Func<O, IResult<T, IEnumerable<O>>> resolveFunc, Func<O, IEnumerable<T>, T> combineFunc)
         {
             Object = root;
             if (resolveFunc(root).Split(out Evaluation, out var branches))
@@ -422,7 +422,7 @@ namespace SixShaded.NotRust
                     branches.Map(obj => new RecursiveEvalTree<O, T>(obj, resolveFunc, combineFunc))
                     .ToArray();
                 Branches = branchArr.AsSome();
-                Evaluation = combineFunc(branchArr.Map(x => x.Evaluation));
+                Evaluation = combineFunc(root, branchArr.Map(x => x.Evaluation));
             }
         }
     }
