@@ -55,9 +55,10 @@ public sealed class Basics
 
     [TestMethod]
     [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new[] { 5, 2, 0, 1 }, 0)]
-    [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new[] { 9, 0, 3 }, 1)]
-    [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new[] { 5 }, 0)]
-    [DataRow(new[] { 999 }, new[] { 0 }, 0)]
+    [DataRow(new[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 }, new[] { 9, 0, 3 }, 1)]
+    [DataRow(new[] { 0, 0, 0, 0, 0, 401, 0, 0 }, new[] { 5 }, 0)]
+    [DataRow(new[] { 1 }, new[] { 0 }, 0)]
+    [DataRow(new[] { -6, 66, 4444, 401, 0 }, new[] { 3, 2, 4, 0, 1 }, 0)]
     public async Task Selection(int[] initialPool, int[] firstSelection, int secondSelection) =>
         await Run(
         c =>
@@ -80,7 +81,5 @@ public sealed class Basics
                         ? !r.IsSome()
                         : r.Check(out var sel) && reducedPool.Roggi.Elements.GetAt(secondSelection).Unwrap() == sel));
 
-    // TODO: replace SelectMultiple with macro that enforces no duplicates.
-    // this will mean some inherent DeTes changes.
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }

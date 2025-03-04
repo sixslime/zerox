@@ -36,9 +36,10 @@ internal static class Extensions
             }).Glance())[0];
         if (result.CheckOk(out var ok))
         {
+            Console.WriteLine("=== roggido ===");
             PrintFinalRoggi(ok.Object, "");
         }
-        Console.WriteLine();
+        Console.WriteLine("===============");
         var integrityResults =
             await (glancer with
             {
@@ -58,7 +59,7 @@ internal static class Extensions
                 switch (halt)
                 {
                 case FZOSpec.EProcessorHalt.Completed v:
-                    Console.WriteLine($"{prefix} {v.Roggi}");
+                    Console.WriteLine($"({prefix}) {v.Roggi}");
                 break;
                 default:
                     Console.WriteLine($"! {halt}");
@@ -69,7 +70,7 @@ internal static class Extensions
             Console.WriteLine(ex);
         }
         foreach (var path in paths)
-            PrintFinalRoggi(path, $"{prefix} {path.Selection.ICEE()}");
+            PrintFinalRoggi(path, $"{prefix}->{path.Selection.ICEE()}");
     }
     private static void DoAssert(bool condition)
     {

@@ -33,6 +33,14 @@ namespace SixShaded.NotRust
                 _ => throw new ExpectedValueException(message)
             };
         }
+        public static T Expect<T>(this IOption<T> option, Func<Exception> exceptionExpr)
+        {
+            return option switch
+            {
+                ISome<T> ok => ok.Value,
+                _ => throw exceptionExpr()
+            };
+        }
         public static T Unwrap<T>(this IOption<T> option)
             => option.Expect("'None' value unwrapped, expected 'Some'");
         public static IOption<T> AsSome<T>(this T value)
