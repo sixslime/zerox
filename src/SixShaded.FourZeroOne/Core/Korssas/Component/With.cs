@@ -1,6 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Korssas.Component;
 
-public sealed record With<C, R> : Korssa.Defined.RegularKorssa<IRoveggi<C>>, IHasAttachedComponentIdentifier<C, IRoveggi<C>> where R : class, Rog where C : IRoveggitu
+public sealed record With<C, R> : Korssa.Defined.RegularKorssa<IRoveggi<C>>, IHasAttachedComponentIdentifier<C, IRoveggi<C>> where R : class, Rog where C : IRovetu
 {
     public With(IKorssa<IRoveggi<C>> holder, IKorssa<R> component) : base(holder, component) { }
     public required IRovu<C, R> Rovu { get; init; }

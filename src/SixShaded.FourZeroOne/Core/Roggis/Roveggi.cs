@@ -3,7 +3,7 @@
 // the 'new()' constraint is mega stupid.
 // this is mega stupid.
 // update from HQ, its a regular amount of stupid.
-public record Roveggi<C> : Roggi.Defined.NoOp, IRoveggi<C> where C : IRoveggitu
+public record Roveggi<C> : Roggi.Defined.NoOp, IRoveggi<C> where C : IRovetu
 {
     public Roveggi()
     {

@@ -1,7 +1,6 @@
-﻿namespace SixShaded.FourZeroOne.Core.Roveggitus;
+﻿namespace SixShaded.FourZeroOne.Core.Rovetus;
 
-// not even a roggi, consider moving.
-public record MergeSpec<C> : IRoveggitu where C : IRoveggitu
+public record MergeSpec<C> : IRovetu where C : IRovetu
 {
     public static MergeRovu<R> MERGE<R>(IRovu<C, R> component) where R : class, Rog => new(component);
 

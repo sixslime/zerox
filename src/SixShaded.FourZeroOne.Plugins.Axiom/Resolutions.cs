@@ -34,7 +34,7 @@
     {
         namespace Unit
         {
-            public class Data : Roveggitu
+            public class Data : Rovetu
             {
                 public static readonly Rovu<Data, Number> HP = new(Axoi.Du, "hp");
 
@@ -57,7 +57,7 @@
 
         namespace Hex
         {
-            public sealed class Data : Roveggitu
+            public sealed class Data : Rovetu
             {
                 public static readonly Rovu<Data, Bool> CONTROL_POINT =
                     new(Axoi.Du, "control_point");
@@ -88,7 +88,7 @@
 
         namespace Player
         {
-            public sealed class Data : Roveggitu
+            public sealed class Data : Rovetu
             { }
 
             public sealed record Address : NoOp, IMemoryAddress<Roveggi<Data>>
@@ -140,12 +140,12 @@
 
     namespace Action
     {
-        using FourZeroOne.Core.Roveggitus;
+        using FourZeroOne.Core.Rovetus;
 
-        public interface IAction<Self> : IDecomposableRoveggitu<Self, Res> where Self : IAction<Self>, new()
+        public interface IAction<Self> : IDecomposableRovetu<Self, Res> where Self : IAction<Self>, new()
         { }
 
-        public class Change<C> : IAction<Change<C>> where C : Roveggitu
+        public class Change<C> : IAction<Change<C>> where C : Rovetu
         {
             public static readonly Rovu<Change<C>, IMemoryObject<IRoveggi<C>>> ADDRESS =
                 new(Axoi.Du, "address");

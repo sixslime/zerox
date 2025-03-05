@@ -5,7 +5,7 @@ using Roggi.Defined;
 using Roggis;
 using Core = Syntax.Core;
 
-internal class PowerExpr : Roveggitu
+internal class PowerExpr : Rovetu
 {
     public static readonly Rovu<PowerExpr, Number> NUM = new(TestAxoi.Du, "num");
     public static readonly Rovu<PowerExpr, Number> POWER = new(TestAxoi.Du, "power");

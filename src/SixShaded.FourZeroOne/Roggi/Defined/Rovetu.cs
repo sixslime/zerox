@@ -1,3 +1,3 @@
 ﻿namespace SixShaded.FourZeroOne.Roggi.Defined;
 
-public abstract class Roveggitu : IRoveggitu;
+public abstract class Rovetu : IRovetu;

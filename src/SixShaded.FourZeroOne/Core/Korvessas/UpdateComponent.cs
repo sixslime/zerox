@@ -5,7 +5,7 @@ using Korvessa.Defined;
 using Syntax;
 
 public static class UpdateComponent<C, R>
-    where C : IRoveggitu
+    where C : IRovetu
     where R : class, Rog
 {
     public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> Construct(IKorssa<IRoveggi<C>> roveggi, IKorssa<MetaFunction<R, R>> updateFunction, IRovu<C, R> component) => new(roveggi, updateFunction)

@@ -1,7 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Roggi;
 
 // pretty silly bro im not going even to even lie even.
-public interface IRoveggi<out C> : Rog where C : IRoveggitu
+public interface IRoveggi<out C> : Rog where C : IRovetu
 {
     public IEnumerable<ITiple<Unsafe.IRovu, Rog>> ComponentsUnsafe { get; }
     public IRoveggi<C> WithComponent<R>(IRovu<C, R> identifier, R data) where R : class, Rog;

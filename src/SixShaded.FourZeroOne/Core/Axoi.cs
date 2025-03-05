@@ -6,7 +6,7 @@ public static class Axoi
     internal static Korvessa.Defined.Korvedu Korvedu(string identifier) => new(Du, identifier);
 
     internal static Roggi.Defined.Rovu<C, R> Rovu<C, R>(string identifier)
-        where C : IRoveggitu
+        where C : IRovetu
         where R : class, Rog =>
         new(Du, identifier);
 }

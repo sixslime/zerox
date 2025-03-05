@@ -4,7 +4,7 @@ using Roggi;
 using Roggi.Defined;
 using Roggis;
 
-internal class Stuff : Roveggitu
+internal class Stuff : Rovetu
 {
     public static readonly Rovu<Stuff, Number> NUM = new(TestAxoi.Du, "num");
     public static readonly Rovu<Stuff, IMulti<Bool>> MULTI_BOOL = new(TestAxoi.Du, "multi_bool");
