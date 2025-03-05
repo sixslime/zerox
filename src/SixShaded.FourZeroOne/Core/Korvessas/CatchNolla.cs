@@ -12,7 +12,7 @@ public static class CatchNolla<R>
         Du = Axoi.Korvedu("CatchNolla"),
         Definition = Core.tMetaFunction<R, MetaFunction<R>, R>(
                 (valueI, fallbackI) =>
-                    valueI.tRef().tExists().tIfTrueDirect<R>(new() { Then = valueI.tRef().tMetaBoxed(), Else = fallbackI.tRef() })
+                    valueI.tRef().tExists().kIfTrueExplicit<R>(new() { Then = valueI.tRef().tMetaBoxed(), Else = fallbackI.tRef() })
                         .tExecute())
             .Roggi,
     };

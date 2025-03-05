@@ -11,16 +11,16 @@ public class Sanity
     public async Task Compose() =>
         await Run(
         c =>
-            Core.tCompose<Stuff>()
-                .tWithComponent(Stuff.NUM, 401.tFixed())
+            Core.kRoveggi<Stuff>()
+                .kWithRovi(Stuff.NUM, 401.kFixed())
                 .AssertRoggi(c, r => r.GetComponent(Stuff.NUM).Unwrap().Value == 401, "NUM check"));
 
     [TestMethod]
     public async Task AMap() =>
         await Run(
         c =>
-            (1..5).tFixed()
-            .tMap(x => x.tRef().tAdd(10.tFixed()))
+            (1..5).kFixed()
+            .tMap(x => x.tRef().tAdd(10.kFixed()))
             .AssertRoggi(c, r => r.Count == 5));
 
     [TestMethod]
@@ -28,8 +28,8 @@ public class Sanity
     public async Task Selection(int[] initialPool, int[] firstSelection, int secondSelection) =>
         await Run(
         c =>
-            initialPool.tFixed()
-                .tIOSelectMultiple(firstSelection.Length.tFixed())
+            initialPool.kFixed()
+                .kIOSelectMultiple(firstSelection.Length.kFixed())
                 .WithDomain(c, [firstSelection], out var firstDomain, "first selection")
                 .AssertRoggiUnstable(
                 c, r =>
@@ -39,7 +39,7 @@ public class Sanity
                           multi.Count == firstSelection.Length &&
                           firstSelection.Map(i => initialPool[i]).SequenceEqual(multi.Elements.Map(x => x.Value)))
                 .ReferenceAs(c, out var reducedPool)
-                .tIOSelectOne()
+                .kIOSelectOne()
                 .WithDomain(c, [secondSelection], out var secondDomain, "second selection")
                 .AssertRoggiUnstable(c, r => true));
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);

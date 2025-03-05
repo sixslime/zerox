@@ -14,9 +14,9 @@ public static class UpdateComponent<C, R>
         CustomData = [component],
         Definition = Core.tMetaFunction<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>>(
                 (roveggiI, updateFunctionI) =>
-                    roveggiI.tRef().tWithComponent(component,
+                    roveggiI.tRef().kWithRovi(component,
                         updateFunctionI.tRef()
-                            .tExecuteWith(new() { A = roveggiI.tRef().tGetComponent(component) })))
+                            .tExecuteWith(new() { A = roveggiI.tRef().kGetRovi(component) })))
             .Roggi,
     };
 }

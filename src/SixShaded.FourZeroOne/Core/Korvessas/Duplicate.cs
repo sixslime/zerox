@@ -15,16 +15,16 @@ public static class Duplicate<R>
                     Core.tMetaRecursiveFunction<Number, Multi<R>>(
                             (selfFunc, i) =>
                                 i.tRef().tIsGreaterThan(countI.tRef())
-                                    .tIfTrue<Multi<R>>(new()
+                                    .kIfTrue<Multi<R>>(new()
                                     {
                                         Then = Core.tNollaFor<Multi<R>>(),
                                         Else = Core.tUnionOf(
                                         [
                                             valueI.tRef().tYield(),
-                                            selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.tFixed()) }),
+                                            selfFunc.tRef().tExecuteWith(new() { A = i.tRef().tAdd(1.kFixed()) }),
                                         ]),
                                     }))
-                        .tExecuteWith(new() { A = 1.tFixed() }))
+                        .tExecuteWith(new() { A = 1.kFixed() }))
             .Roggi,
     };
 }

@@ -157,11 +157,11 @@
                 Core.tMetaFunction<IRoveggi<Change<C>>, Res>(
                     thisObj =>
                         thisObj.tRef()
-                            .tGetComponent(ADDRESS)
+                            .kGetRovi(ADDRESS)
                             .tUpdate(
                             subject =>
                                 subject.tRef()
-                                    .tMerge(thisObj.tRef().tGetComponent(CHANGE))))
+                                    .kMerge(thisObj.tRef().kGetRovi(CHANGE))))
                     .Roggi;
         }
     }

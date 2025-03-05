@@ -19,11 +19,11 @@ public sealed class Basics
     public async Task Arithmetic(int xa, int xb, int xc) =>
         await Run(
         c =>
-            xa.tFixed()
-                .tAdd(xb.tFixed())
-                .tMultiply(xc.tFixed())
-                .tAdd(xc.tFixed().tSubtract(xb.tFixed()))
-                .tMultiply(xa.tFixed())
+            xa.kFixed()
+                .tAdd(xb.kFixed())
+                .tMultiply(xc.kFixed())
+                .tAdd(xc.kFixed().tSubtract(xb.kFixed()))
+                .tMultiply(xa.kFixed())
                 .AssertRoggi(c, r => r.Value == (((xa + xb) * xc) + (xc - xb)) * xa));
 
     [TestMethod]
@@ -33,20 +33,20 @@ public sealed class Basics
     public async Task Roveggi(int num, bool[] bools, int basePower, int power) =>
         await Run(
         c =>
-            Core.tCompose<Stuff>()
-                .tWithComponent(Stuff.NUM, num.tFixed())
+            Core.kRoveggi<Stuff>()
+                .kWithRovi(Stuff.NUM, num.kFixed())
                 .AssertRoggi(c, r => r.GetComponent(Stuff.NUM).Unwrap().Value == num, "NUM check")
                 .AssertRoggi(c, r => !r.GetComponent(Stuff.MULTI_BOOL).IsSome(), "MULTI_BOOL check before set")
-                .tWithComponent(Stuff.MULTI_BOOL, bools.tFixed())
-                .tWithoutComponent(Stuff.NUM)
+                .kWithRovi(Stuff.MULTI_BOOL, bools.kFixed())
+                .kWithoutRovi(Stuff.NUM)
                 .AssertRoggi(c, r => !r.GetComponent(Stuff.NUM).IsSome(), "NUM check after remove")
-                .tWithComponent(
+                .kWithRovi(
                 Stuff.POWER_OBJ,
-                Core.tCompose<PowerExpr>()
-                    .tWithComponent(PowerExpr.POWER, power.tFixed())
-                    .tWithComponent(PowerExpr.NUM, basePower.tFixed()))
+                Core.kRoveggi<PowerExpr>()
+                    .kWithRovi(PowerExpr.POWER, power.kFixed())
+                    .kWithRovi(PowerExpr.NUM, basePower.kFixed()))
                 .AssertRoggi(c, r => r.GetComponent(Stuff.MULTI_BOOL).Unwrap().Elements.Map(x => x.IsTrue).SequenceEqual(bools), "MULTI_BOOL check")
-                .tGetComponent(Stuff.POWER_OBJ)
+                .kGetRovi(Stuff.POWER_OBJ)
                 .AssertRoggi(
                 c, r =>
                     r.GetComponent(PowerExpr.NUM).Unwrap().Value == basePower &&
@@ -63,8 +63,8 @@ public sealed class Basics
     public async Task Selection(int[] initialPool, int[] firstSelection, int secondSelection) =>
         await Run(
         c =>
-            initialPool.tFixed()
-                .tIOSelectMultiple(firstSelection.Length.tFixed())
+            initialPool.kFixed()
+                .kIOSelectMultiple(firstSelection.Length.kFixed())
                 .WithDomain(c, [firstSelection], out var firstDomain, "first selection")
                 .AssertRoggiUnstable(
                 c, r =>
@@ -74,7 +74,7 @@ public sealed class Basics
                           multi.Count == firstSelection.Length &&
                           firstSelection.Map(i => initialPool[i]).SequenceEqual(multi.Elements.Map(x => x.Value)))
                 .ReferenceAs(c, out var reducedPool)
-                .tIOSelectOne()
+                .kIOSelectOne()
                 .WithDomain(c, [secondSelection], out var secondDomain, "second selection")
                 .AssertRoggiUnstable(
                 c, r =>
@@ -87,26 +87,26 @@ public sealed class Basics
         await Run(
         c =>
             Iter.Over(0, 1)
-                .tFixed()
-                .tIOSelectOne()
+                .kFixed()
+                .kIOSelectOne()
                 .WithDomain(c, [0, 1], out var firstIf, "firstIf")
-                .tIsGreaterThan(0.tFixed())
-                .tIfTrue<Number>(
+                .tIsGreaterThan(0.kFixed())
+                .kIfTrue<Number>(
                 new()
                 {
                     Then =
                         Iter.Over(0, 1)
-                            .tFixed()
-                            .tIOSelectOne()
+                            .kFixed()
+                            .kIOSelectOne()
                             .WithDomain(c, [0, 1], out var secondIf, "secondIf")
-                            .tIsGreaterThan(0.tFixed())
-                            .tIfTrue<Number>(
+                            .tIsGreaterThan(0.kFixed())
+                            .kIfTrue<Number>(
                             new()
                             {
-                                Then = 11.tFixed(),
-                                Else = 10.tFixed(),
+                                Then = 11.kFixed(),
+                                Else = 10.kFixed(),
                             }),
-                    Else = 0.tFixed(),
+                    Else = 0.kFixed(),
                 })
                 .AssertRoggi(
                 c, r =>
@@ -119,28 +119,28 @@ public sealed class Basics
     public async Task EnvironmentAndMemory() =>
         await Run(
         c =>
-            Core.tSubEnvironment<Number>(
+            Core.kSubEnvironment<Number>(
                 new()
                 {
                     Environment =
                     [
-                        Core.tSubEnvironment<Multi<Number>>(
+                        Core.kSubEnvironment<Multi<Number>>(
                             new()
                             {
                                 Environment =
                                 [
-                                    400.tFixed()
-                                        .tAdd(1.tFixed())
+                                    400.kFixed()
+                                        .tAdd(1.kFixed())
                                         .tAsVariable(out var theNumber),
                                 ],
                                 Value =
-                                    Core.tMultiOf([theNumber.tRef(), theNumber.tRef().tMultiply(2.tFixed())])
+                                    Core.tMultiOf([theNumber.tRef(), theNumber.tRef().tMultiply(2.kFixed())])
                                         .AssertMemory(c, m => m.Objects.Count() == 1, "inner count check (1)")
                                         .AssertMemory(c, m => m.GetObject(theNumber).Check(out var v) && v.Value is 401),
                             })
                             .AssertMemory(c, m => !m.Objects.Any(), "outer pre-count check (0)")
                             .tAsVariable(out var theArray),
-                        1.tFixed().tAsVariable(out var theIndex),
+                        1.kFixed().tAsVariable(out var theIndex),
                         theArray.tRef()
                             .tGetIndex(theIndex.tRef())
                             .tAsVariable(out var theResult),

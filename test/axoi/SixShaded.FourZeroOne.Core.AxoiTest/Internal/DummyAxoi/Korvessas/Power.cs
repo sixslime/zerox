@@ -20,8 +20,8 @@ internal static class Power
                         Core.tMetaRecursiveFunction<Number, Number, Number, Number>(
                             (recurse, acc, i, num) =>
                                 i.tRef()
-                                    .tIsGreaterThan(1.tFixed())
-                                    .tIfTrue<Number>(
+                                    .tIsGreaterThan(1.kFixed())
+                                    .kIfTrue<Number>(
                                     new()
                                     {
                                         Then =
@@ -30,7 +30,7 @@ internal static class Power
                                                 new()
                                                 {
                                                     A = acc.tRef().tMultiply(num.tRef()),
-                                                    B = i.tRef().tSubtract(1.tFixed()),
+                                                    B = i.tRef().tSubtract(1.kFixed()),
                                                     C = num.tRef(),
                                                 }),
                                         Else = acc.tRef(),
@@ -38,9 +38,9 @@ internal static class Power
                             .tExecuteWith(
                             new()
                             {
-                                A = self.tRef().tGetComponent(PowerExpr.NUM),
-                                B = self.tRef().tGetComponent(PowerExpr.POWER),
-                                C = self.tRef().tGetComponent(PowerExpr.NUM),
+                                A = self.tRef().kGetRovi(PowerExpr.NUM),
+                                B = self.tRef().kGetRovi(PowerExpr.POWER),
+                                C = self.tRef().kGetRovi(PowerExpr.NUM),
                             }))
                     .Roggi,
         };

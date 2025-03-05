@@ -17,7 +17,7 @@ public static class Map<RIn, ROut>
                         Core.tMetaRecursiveFunction<Number, Multi<ROut>>(
                                 (selfFunc, i) =>
                                     i.tRef().tIsGreaterThan(multiI.tRef().tCount())
-                                        .tIfTrue<Multi<ROut>>(new()
+                                        .kIfTrue<Multi<ROut>>(new()
                                         {
                                             Then = Core.tNollaFor<Multi<ROut>>(),
                                             Else = Core.tUnionOf(
@@ -25,10 +25,10 @@ public static class Map<RIn, ROut>
                                                 mapFunctionI.tRef().tExecuteWith(
                                                     new() { A = multiI.tRef().tGetIndex(i.tRef()) }).tYield(),
                                                 selfFunc.tRef().tExecuteWith(
-                                                    new() { A = i.tRef().tAdd(1.tFixed()) }),
+                                                    new() { A = i.tRef().tAdd(1.kFixed()) }),
                                             ]),
                                         }))
-                            .tExecuteWith(new() { A = 1.tFixed() }))
+                            .tExecuteWith(new() { A = 1.kFixed() }))
                 .Roggi,
         };
 }

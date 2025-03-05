@@ -6,7 +6,7 @@ using Mellsano.Defined.Ullasems;
 
 public static partial class Core
 {
-    public static Korssas.AddMellsano tAddMellsano<RVal>(Structure.Mellsano.Block<RVal> block)
+    public static Korssas.AddMellsano kAddMellsano<RVal>(Structure.Mellsano.Block<RVal> block)
         where RVal : class, Rog
     {
         var vs = new DynamicAddress<MetaFunction<OriginalProxy<RVal>, RVal>>();
@@ -15,7 +15,7 @@ public static partial class Core
         return new(new Mellsano.Defined.MellsanoForSignature<RVal> { Definition = new() { SelfIdentifier = vs, IdentifierA = vo, Korssa = block.Definition(vo) }, Matcher = block.Matches(new()) });
     }
 
-    public static Korssas.AddMellsano tAddMellsano<RArg1, ROut>(Structure.Mellsano.Block<RArg1, ROut> block)
+    public static Korssas.AddMellsano kAddMellsano<RArg1, ROut>(Structure.Mellsano.Block<RArg1, ROut> block)
         where RArg1 : class, Rog
         where ROut : class, Rog
     {
@@ -25,7 +25,7 @@ public static partial class Core
         return new(new Mellsano.Defined.MellsanoForSignature<RArg1, ROut> { Definition = new() { SelfIdentifier = vs, IdentifierA = vo, IdentifierB = v1, Korssa = block.Definition(vo, v1) }, Matcher = block.Matches(new()) });
     }
 
-    public static Korssas.AddMellsano tAddMellsano<RArg1, RArg2, ROut>(Structure.Mellsano.Block<RArg1, RArg2, ROut> block)
+    public static Korssas.AddMellsano kAddMellsano<RArg1, RArg2, ROut>(Structure.Mellsano.Block<RArg1, RArg2, ROut> block)
         where RArg1 : class, Rog
         where RArg2 : class, Rog
         where ROut : class, Rog
@@ -47,7 +47,7 @@ public static partial class Core
         });
     }
 
-    public static Korssas.AddMellsano tAddMellsano<RArg1, RArg2, RArg3, ROut>(Structure.Mellsano.Block<RArg1, RArg2, RArg3, ROut> block)
+    public static Korssas.AddMellsano kAddMellsano<RArg1, RArg2, RArg3, ROut>(Structure.Mellsano.Block<RArg1, RArg2, RArg3, ROut> block)
         where RArg1 : class, Rog
         where RArg2 : class, Rog
         where RArg3 : class, Rog
@@ -74,7 +74,7 @@ public static partial class Core
 
 public static partial class KorssaSyntax
 {
-    public static Mellsano.Defined.RealizeProxy<R> tRealize<R>(this IKorssa<IProxy<R>> proxy)
+    public static Mellsano.Defined.RealizeProxy<R> kRealize<R>(this IKorssa<IProxy<R>> proxy)
         where R : class, Rog =>
         new(proxy);
 }
