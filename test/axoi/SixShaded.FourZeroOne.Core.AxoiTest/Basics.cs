@@ -20,10 +20,10 @@ public sealed class Basics
         await Run(
         c =>
             xa.kFixed()
-                .tAdd(xb.kFixed())
-                .tMultiply(xc.kFixed())
-                .tAdd(xc.kFixed().tSubtract(xb.kFixed()))
-                .tMultiply(xa.kFixed())
+                .kAdd(xb.kFixed())
+                .kMultiply(xc.kFixed())
+                .kAdd(xc.kFixed().kSubtract(xb.kFixed()))
+                .kMultiply(xa.kFixed())
                 .AssertRoggi(c, r => r.Value == (((xa + xb) * xc) + (xc - xb)) * xa));
 
     [TestMethod]
@@ -90,7 +90,7 @@ public sealed class Basics
                 .kFixed()
                 .kIOSelectOne()
                 .WithDomain(c, [0, 1], out var firstIf, "firstIf")
-                .tIsGreaterThan(0.kFixed())
+                .kIsGreaterThan(0.kFixed())
                 .kIfTrue<Number>(
                 new()
                 {
@@ -99,7 +99,7 @@ public sealed class Basics
                             .kFixed()
                             .kIOSelectOne()
                             .WithDomain(c, [0, 1], out var secondIf, "secondIf")
-                            .tIsGreaterThan(0.kFixed())
+                            .kIsGreaterThan(0.kFixed())
                             .kIfTrue<Number>(
                             new()
                             {
@@ -130,25 +130,25 @@ public sealed class Basics
                                 Environment =
                                 [
                                     400.kFixed()
-                                        .tAdd(1.kFixed())
-                                        .tAsVariable(out var theNumber),
+                                        .kAdd(1.kFixed())
+                                        .kAsVariable(out var theNumber),
                                 ],
                                 Value =
-                                    Core.tMultiOf([theNumber.tRef(), theNumber.tRef().tMultiply(2.kFixed())])
+                                    Core.kMultiOf([theNumber.kRef(), theNumber.kRef().kMultiply(2.kFixed())])
                                         .AssertMemory(c, m => m.Objects.Count() == 1, "inner count check (1)")
                                         .AssertMemory(c, m => m.GetObject(theNumber).Check(out var v) && v.Value is 401),
                             })
                             .AssertMemory(c, m => !m.Objects.Any(), "outer pre-count check (0)")
-                            .tAsVariable(out var theArray),
-                        1.kFixed().tAsVariable(out var theIndex),
-                        theArray.tRef()
-                            .tGetIndex(theIndex.tRef())
-                            .tAsVariable(out var theResult),
-                        theNumber.tRef()
+                            .kAsVariable(out var theArray),
+                        1.kFixed().kAsVariable(out var theIndex),
+                        theArray.kRef()
+                            .kGetIndex(theIndex.kRef())
+                            .kAsVariable(out var theResult),
+                        theNumber.kRef()
                             .AssertRoggiUnstable(c, r => !r.IsSome()),
                     ],
                     Value =
-                        theResult.tRef()
+                        theResult.kRef()
                             .AssertMemory(c, m => m.Objects.Count() == 3, "outer post-count check (3)"),
                 })
                 .AssertRoggi(c, r => r.Value is 401));

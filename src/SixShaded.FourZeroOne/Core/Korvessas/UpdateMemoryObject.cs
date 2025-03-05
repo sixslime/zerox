@@ -12,15 +12,15 @@ public static class UpdateMemoryObject<R>
         {
             Du = Axoi.Korvedu("updatememobj"),
             Definition =
-                Core.tMetaFunction<IMemoryObject<R>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>>(
+                Core.kMetaFunction<IMemoryObject<R>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>>(
                     (memObjI, updateFunctionI) =>
-                        memObjI.tRef()
-                            .tWrite(
-                            updateFunctionI.tRef()
-                                .tExecuteWith(
+                        memObjI.kRef()
+                            .kWrite(
+                            updateFunctionI.kRef()
+                                .kExecuteWith(
                                 new()
                                 {
-                                    A = memObjI.tRef().tGet(),
+                                    A = memObjI.kRef().kGet(),
                                 })))
                     .Roggi,
         };

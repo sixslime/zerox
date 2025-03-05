@@ -20,7 +20,7 @@ public class Sanity
         await Run(
         c =>
             (1..5).kFixed()
-            .tMap(x => x.tRef().tAdd(10.kFixed()))
+            .kMap(x => x.kRef().kAdd(10.kFixed()))
             .AssertRoggi(c, r => r.Count == 5));
 
     [TestMethod]

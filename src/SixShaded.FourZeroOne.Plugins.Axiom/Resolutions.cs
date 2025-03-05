@@ -154,14 +154,14 @@
                 new(Axoi.Du, "change");
 
             public MetaFunction<IRoveggi<Change<C>>, Res> DecomposeFunction =>
-                Core.tMetaFunction<IRoveggi<Change<C>>, Res>(
+                Core.kMetaFunction<IRoveggi<Change<C>>, Res>(
                     thisObj =>
-                        thisObj.tRef()
+                        thisObj.kRef()
                             .kGetRovi(ADDRESS)
-                            .tUpdate(
+                            .kUpdate(
                             subject =>
-                                subject.tRef()
-                                    .kMerge(thisObj.tRef().kGetRovi(CHANGE))))
+                                subject.kRef()
+                                    .kMerge(thisObj.kRef().kGetRovi(CHANGE))))
                     .Roggi;
         }
     }

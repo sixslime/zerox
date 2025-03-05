@@ -29,7 +29,7 @@ public static partial class KorssaSyntax
     public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> kUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, Func<DynamicAddress<R>, IKorssa<R>> changeFunc)
         where C : IRovetu
         where R : class, Rog =>
-        Korvessas.UpdateComponent<C, R>.Construct(holder, Core.tMetaFunction(changeFunc), rovu);
+        Korvessas.UpdateComponent<C, R>.Construct(holder, Core.kMetaFunction(changeFunc), rovu);
 
     public static Korssas.Component.Without<H> kWithoutRovi<H>(this IKorssa<IRoveggi<H>> holder, Roggi.Unsafe.IRovu<H> rovu)
         where H : IRovetu =>

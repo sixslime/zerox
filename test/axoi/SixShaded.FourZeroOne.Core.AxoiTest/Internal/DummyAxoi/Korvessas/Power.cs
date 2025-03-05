@@ -15,32 +15,32 @@ internal static class Power
         {
             Du = new(TestAxoi.Du, "power"),
             Definition =
-                Core.tMetaFunction<IRoveggi<PowerExpr>, Number>(
+                Core.kMetaFunction<IRoveggi<PowerExpr>, Number>(
                     self =>
-                        Core.tMetaRecursiveFunction<Number, Number, Number, Number>(
+                        Core.kMetaFunctionRecursive<Number, Number, Number, Number>(
                             (recurse, acc, i, num) =>
-                                i.tRef()
-                                    .tIsGreaterThan(1.kFixed())
+                                i.kRef()
+                                    .kIsGreaterThan(1.kFixed())
                                     .kIfTrue<Number>(
                                     new()
                                     {
                                         Then =
-                                            recurse.tRef()
-                                                .tExecuteWith(
+                                            recurse.kRef()
+                                                .kExecuteWith(
                                                 new()
                                                 {
-                                                    A = acc.tRef().tMultiply(num.tRef()),
-                                                    B = i.tRef().tSubtract(1.kFixed()),
-                                                    C = num.tRef(),
+                                                    A = acc.kRef().kMultiply(num.kRef()),
+                                                    B = i.kRef().kSubtract(1.kFixed()),
+                                                    C = num.kRef(),
                                                 }),
-                                        Else = acc.tRef(),
+                                        Else = acc.kRef(),
                                     }))
-                            .tExecuteWith(
+                            .kExecuteWith(
                             new()
                             {
-                                A = self.tRef().kGetRovi(PowerExpr.NUM),
-                                B = self.tRef().kGetRovi(PowerExpr.POWER),
-                                C = self.tRef().kGetRovi(PowerExpr.NUM),
+                                A = self.kRef().kGetRovi(PowerExpr.NUM),
+                                B = self.kRef().kGetRovi(PowerExpr.POWER),
+                                C = self.kRef().kGetRovi(PowerExpr.NUM),
                             }))
                     .Roggi,
         };

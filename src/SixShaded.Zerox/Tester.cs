@@ -30,7 +30,7 @@ public class Tester
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
             Declaration = C =>
-                400.kFixed().tAdd(1.kFixed())
+                400.kFixed().kAdd(1.kFixed())
                     .AssertKorssa(C,
                         u => u is k.Number.Add add && add.Arg1 is k.Fixed<r.Number> a && a.Roggi.Value == 400),
         },
@@ -38,24 +38,24 @@ public class Tester
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
             Declaration = C =>
-                400.kFixed().tAdd(1.kFixed())
+                400.kFixed().kAdd(1.kFixed())
                     .AssertRoggi(C, u => u.Value == 401),
         },
         new("m")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
             Declaration = C =>
-                400.kFixed().tAdd(1.kFixed())
+                400.kFixed().kAdd(1.kFixed())
                     .AssertMemory(C, u => !u.Objects.Any()),
         },
         new("meta execute internal assert")
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
             Declaration = C =>
-                400.kFixed().tAdd(1.kFixed())
+                400.kFixed().kAdd(1.kFixed())
                     .AssertRoggi(C, u => u.Value == 401)
-                    .tMetaBoxed()
-                    .tExecute(),
+                    .kMetaBoxed()
+                    .kExecute(),
         },
         new("env var")
         {
@@ -64,10 +64,10 @@ public class Tester
                 Core.kSubEnvironment<r.Number>(new()
                     {
                         Environment = [
-                            10.kFixed().tAsVariable(out var xVar)
+                            10.kFixed().kAsVariable(out var xVar)
                             ],
                         Value =
-                            xVar.tRef().tAdd(1.kFixed())
+                            xVar.kRef().kAdd(1.kFixed())
                                 .AssertMemory(C, u => u.Objects.Count() == 1)
                                 .AssertMemory(C, u => u.GetObject(xVar).Unwrap().Value is 10),
                     })
@@ -77,10 +77,10 @@ public class Tester
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
             Declaration = C =>
-                Core.tMetaFunction<r.Number, r.Number>(
+                Core.kMetaFunction<r.Number, r.Number>(
                         x =>
-                            x.tRef().tAdd(10.kFixed()))
-                    .tExecuteWith(new() { A = 5.kFixed() })
+                            x.kRef().kAdd(10.kFixed()))
+                    .kExecuteWith(new() { A = 5.kFixed() })
                     .AssertKorssa(C, u => u is k.MetaExecuted<r.Number> exe && exe.Arg1 is k.Number.Add)
                     .AssertRoggi(C, u => u.Value == 15),
         },
@@ -91,7 +91,7 @@ public class Tester
                 (1..10).kFixed()
                 .kIOSelectOne()
                 .WithDomain(C, (..5).ToIter(), out var domain)
-                .tMultiply(2.kFixed())
+                .kMultiply(2.kFixed())
                 .AssertRoggi(C, u => u.Value == (domain.SelectedIndex() + 1) * 2),
         },
         new("size 4 domain")
@@ -101,7 +101,7 @@ public class Tester
                 (1..10).kFixed()
                 .kIOSelectMultiple(4.kFixed())
                 .WithDomain(C, (..5).ToIter().Map(x => (x..(x + 4)).ToIter()), out var domain)
-                .tGetIndex(2.kFixed())
+                .kGetIndex(2.kFixed())
                 .AssertRoggi(C, u => u.Value == domain.SelectedIndicies()[1] + 1),
         },
         new("2D domain")
@@ -111,7 +111,7 @@ public class Tester
                 (1..10).kFixed()
                 .kIOSelectOne()
                 .WithDomain(C, (..5).ToIter(), out var d1, "outer")
-                .tMultiply(
+                .kMultiply(
                     (1..10).kFixed()
                     .kIOSelectOne()
                     .WithDomain(C, (..5).ToIter(), out var d2, "inner"))
@@ -123,7 +123,7 @@ public class Tester
             Declaration = C =>
                 400.kFixed()
                     .ReferenceAs(C, out var reference)
-                    .tAdd(1.kFixed())
+                    .kAdd(1.kFixed())
                     .AssertRoggi(C, u => u.Value == reference.Roggi.Value + 1),
         },
         new("reference korssa")
@@ -132,7 +132,7 @@ public class Tester
             Declaration = C =>
                 400.kFixed()
                     .ReferenceAs(C, out var reference)
-                    .tAdd(1.kFixed().AssertKorssa(C, u => u.GetType() == reference.Korssa.GetType()))
+                    .kAdd(1.kFixed().AssertKorssa(C, u => u.GetType() == reference.Korssa.GetType()))
                     .AssertKorssa(C, u => u is k.Number.Add add && add.Arg1 == reference.Korssa),
         },
         new("reference in selection")
@@ -142,9 +142,9 @@ public class Tester
                 (..9).kFixed()
                 .kIOSelectOne()
                 .WithDomain(C, (..3).ToIter(), out var d1)
-                .tMultiply(10.kFixed())
+                .kMultiply(10.kFixed())
                 .ReferenceAs(C, out var reference)
-                .tSubtract(4.kFixed())
+                .kSubtract(4.kFixed())
                 .AssertRoggi(C, u => u.Value == reference.Roggi.Value - 4),
         },
         new("2D domain reference")
@@ -155,7 +155,7 @@ public class Tester
                 .kIOSelectOne()
                 .WithDomain(C, (..5).ToIter(), out var d1, "outer")
                 .ReferenceAs(C, out var r1, "a")
-                .tMultiply(
+                .kMultiply(
                     (1..8).kFixed()
                     .kIOSelectOne()
                     .WithDomain(C, (..5).ToIter(), out var d2, "inner")
@@ -173,10 +173,10 @@ public class Tester
                             {
                                 Matches = x => x.mIsType<k.Number.Add>(),
                                 Definition = (origin, a, b) =>
-                                    origin.tRef().kRealize().tSubtract(1.kFixed()),
+                                    origin.kRef().kRealize().kSubtract(1.kFixed()),
                             })
                             ],
-                        Value = 2.kFixed().tAdd(2.kFixed())
+                        Value = 2.kFixed().kAdd(2.kFixed())
                             .AssertKorssa(C, u => u is k.Number.Subtract),
                     })
                     .AssertRoggi(C, u => u.Value == 3),
@@ -193,10 +193,10 @@ public class Tester
                             {
                                 Matches = x => x.mIsKorvessa(Core.Axodu, "duplicate"),
                                 Definition = (_, a, b) =>
-                                    a.tRef().kRealize().tDuplicate(b.tRef().kRealize().tAdd(1.kFixed())),
+                                    a.kRef().kRealize().kDuplicate(b.kRef().kRealize().kAdd(1.kFixed())),
                             })
                         ],
-                        Value = 401.kFixed().tDuplicate(3.kFixed()),
+                        Value = 401.kFixed().kDuplicate(3.kFixed()),
                     })
                     .AssertRoggi(C, u => u.Count == 4),
         },
@@ -212,7 +212,7 @@ public class Tester
                                 {
                                     Matches = x => x.mIsType<k.Number.Add>(),
                                     Definition = (_, a, b) =>
-                                        a.tRef().kRealize().tSubtract(b.tRef().kRealize()),
+                                        a.kRef().kRealize().kSubtract(b.kRef().kRealize()),
                                 }),
                                 Core.kAddMellsano<r.Number, r.Number, r.Number>(new()
                                 {
@@ -221,7 +221,7 @@ public class Tester
                                         999.kFixed(),
                                 }),
                             ],
-                        Value = 400.kFixed().tAdd(1.kFixed())
+                        Value = 400.kFixed().kAdd(1.kFixed())
                             .AssertKorssa(C, u => u is k.Fixed<r.Number> num && num.Roggi.Value == 999),
                     })
                     .AssertRoggi(C, u => u.Value == 999),
@@ -238,7 +238,7 @@ public class Tester
                                 {
                                     Matches = x => x.mIsType<k.Number.Add>(),
                                     Definition = (_, a, b) =>
-                                        a.tRef().kRealize().tMultiply(b.tRef().kRealize()),
+                                        a.kRef().kRealize().kMultiply(b.kRef().kRealize()),
                                 }),
                                 Core.kAddMellsano<r.Number, r.Number, r.Number>(new()
                                 {
@@ -247,7 +247,7 @@ public class Tester
                                         999.kFixed(),
                                 })
                             ],
-                        Value = 400.kFixed().tAdd(2.kFixed())
+                        Value = 400.kFixed().kAdd(2.kFixed())
                             .AssertKorssa(C, u => u is k.Number.Multiply),
                     })
                     .AssertRoggi(C, u => u.Value == 800),
@@ -256,15 +256,15 @@ public class Tester
         {
             InitialMemory = MEMORY_IMPLEMENTATION,
             Declaration = C =>
-                400.kFixed().tAdd(1.kFixed())
+                400.kFixed().kAdd(1.kFixed())
                     .AssertRoggi(C, u => u.Value is 401)
-                    .tMetaBoxed()
+                    .kMetaBoxed()
                     .AssertKorssa(C, u => u is k.Fixed<r.MetaFunction<r.Number>>)
-                    .tMetaBoxed()
+                    .kMetaBoxed()
                     .AssertKorssa(C, u => u is k.Fixed<r.MetaFunction<r.MetaFunction<r.Number>>>)
-                    .tExecute()
+                    .kExecute()
                     .AssertKorssa(C, u => u is k.MetaExecuted<r.MetaFunction<r.Number>>)
-                    .tExecute()
+                    .kExecute()
                     .AssertRoggi(C, u => u.Value is 401),
         },
     };

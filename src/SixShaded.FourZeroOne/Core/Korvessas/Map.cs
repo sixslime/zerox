@@ -12,23 +12,23 @@ public static class Map<RIn, ROut>
         new(multi, mapFunction)
         {
             Du = Axoi.Korvedu("map"),
-            Definition = Core.tMetaFunction<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>>(
+            Definition = Core.kMetaFunction<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>>(
                     (multiI, mapFunctionI) =>
-                        Core.tMetaRecursiveFunction<Number, Multi<ROut>>(
+                        Core.kMetaFunctionRecursive<Number, Multi<ROut>>(
                                 (selfFunc, i) =>
-                                    i.tRef().tIsGreaterThan(multiI.tRef().tCount())
+                                    i.kRef().kIsGreaterThan(multiI.kRef().kCount())
                                         .kIfTrue<Multi<ROut>>(new()
                                         {
-                                            Then = Core.tNollaFor<Multi<ROut>>(),
-                                            Else = Core.tUnionOf(
+                                            Then = Core.kNollaFor<Multi<ROut>>(),
+                                            Else = Core.kUnionOf(
                                             [
-                                                mapFunctionI.tRef().tExecuteWith(
-                                                    new() { A = multiI.tRef().tGetIndex(i.tRef()) }).tYield(),
-                                                selfFunc.tRef().tExecuteWith(
-                                                    new() { A = i.tRef().tAdd(1.kFixed()) }),
+                                                mapFunctionI.kRef().kExecuteWith(
+                                                    new() { A = multiI.kRef().kGetIndex(i.kRef()) }).kYield(),
+                                                selfFunc.kRef().kExecuteWith(
+                                                    new() { A = i.kRef().kAdd(1.kFixed()) }),
                                             ]),
                                         }))
-                            .tExecuteWith(new() { A = 1.kFixed() }))
+                            .kExecuteWith(new() { A = 1.kFixed() }))
                 .Roggi,
         };
 }
