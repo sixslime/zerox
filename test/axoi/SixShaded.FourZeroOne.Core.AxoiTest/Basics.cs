@@ -114,16 +114,44 @@ public sealed class Basics
                     (firstIf.SelectedIndex() == 0
                         ? 0
                         : 10 + secondIf.SelectedIndex())));
+
     [TestMethod]
     public async Task EnvironmentAndMemory() =>
         await Run(
         c =>
-            Core.tSubEnvironment<Number>(new()
-            {
-                Environment =
+            Core.tSubEnvironment<Number>(
+                new()
+                {
+                    Environment =
                     [
-                        
-                    ]
-            }))
+                        Core.tSubEnvironment<Multi<Number>>(
+                            new()
+                            {
+                                Environment =
+                                [
+                                    400.tFixed()
+                                        .tAdd(1.tFixed())
+                                        .tAsVariable(out var theNumber),
+                                ],
+                                Value =
+                                    Core.tMultiOf([theNumber.tRef(), theNumber.tRef().tMultiply(2.tFixed())])
+                                        .AssertMemory(c, m => m.Objects.Count() == 1, "inner count check (1)")
+                                        .AssertMemory(c, m => m.GetObject(theNumber).Check(out var v) && v.Value is 401),
+                            })
+                            .AssertMemory(c, m => !m.Objects.Any(), "outer pre-count check (0)")
+                            .tAsVariable(out var theArray),
+                        1.tFixed().tAsVariable(out var theIndex),
+                        theArray.tRef()
+                            .tGetIndex(theIndex.tRef())
+                            .tAsVariable(out var theResult),
+                        theNumber.tRef()
+                            .AssertRoggiUnstable(c, r => !r.IsSome()),
+                    ],
+                    Value =
+                        theResult.tRef()
+                            .AssertMemory(c, m => m.Objects.Count() == 3, "outer post-count check (3)"),
+                })
+                .AssertRoggi(c, r => r.Value is 401));
+
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }
