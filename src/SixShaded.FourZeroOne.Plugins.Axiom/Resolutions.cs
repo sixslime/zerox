@@ -138,31 +138,4 @@
         */
     }
 
-    namespace Action
-    {
-        using FourZeroOne.Core.Rovetus;
-
-        public interface IAction<Self> : IDecomposableRovetu<Self, Res> where Self : IAction<Self>, new()
-        { }
-
-        public class Change<C> : IAction<Change<C>> where C : Rovetu
-        {
-            public static readonly Rovu<Change<C>, IMemoryObject<IRoveggi<C>>> ADDRESS =
-                new(Axoi.Du, "address");
-
-            public static readonly Rovu<Change<C>, IRoveggi<MergeSpec<C>>> CHANGE =
-                new(Axoi.Du, "change");
-
-            public MetaFunction<IRoveggi<Change<C>>, Res> DecomposeFunction =>
-                Core.kMetaFunction<IRoveggi<Change<C>>, Res>(
-                    thisObj =>
-                        thisObj.kRef()
-                            .kGetRovi(ADDRESS)
-                            .kUpdate(
-                            subject =>
-                                subject.kRef()
-                                    .kMerge(thisObj.kRef().kGetRovi(CHANGE))))
-                    .Roggi;
-        }
-    }
 }

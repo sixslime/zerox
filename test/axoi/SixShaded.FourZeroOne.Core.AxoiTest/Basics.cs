@@ -51,7 +51,7 @@ public sealed class Basics
                 c, r =>
                     r.GetComponent(PowerExpr.NUM).Unwrap().Value == basePower &&
                     r.GetComponent(PowerExpr.POWER).Unwrap().Value > 0, "POWER_OBJ check")
-                .tTESTPower()
+                .kTESTPower()
                 .AssertRoggi(c, r => r.Value == basePower.Yield(power).Accumulate((a, b) => a * b).Unwrap(), "korvessa check"));
 
     [TestMethod]
@@ -136,7 +136,7 @@ public sealed class Basics
                                 Value =
                                     Core.kMultiOf([theNumber.kRef(), theNumber.kRef().kMultiply(2.kFixed())])
                                         .AssertMemory(c, m => m.Objects.Count() == 1, "inner count check (1)")
-                                        .AssertMemory(c, m => m.GetObject(theNumber).Check(out var v) && v.Value is 401),
+                                        .AssertMemory(c, m => m.GetObject(theNumber).Check(out var v) && v.Value is 401, "reference check"),
                             })
                             .AssertMemory(c, m => !m.Objects.Any(), "outer pre-count check (0)")
                             .kAsVariable(out var theArray),

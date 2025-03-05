@@ -45,5 +45,5 @@ internal static class Power
                     .Roggi,
         };
 
-    public static Korvessa<IRoveggi<PowerExpr>, Number> tTESTPower(this IKorssa<IRoveggi<PowerExpr>> powerve) => Construct(powerve);
+    public static Korvessa<IRoveggi<PowerExpr>, Number> kTESTPower(this IKorssa<IRoveggi<PowerExpr>> powerve) => Construct(powerve);
 }
