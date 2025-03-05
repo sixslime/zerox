@@ -90,7 +90,7 @@ public class Tester
             Declaration = C =>
                 (1..10).tFixed()
                 .tIOSelectOne()
-                .DefineSelectionDomain(C, (..5).ToIter(), out var domain)
+                .WithDomain(C, (..5).ToIter(), out var domain)
                 .tMultiply(2.tFixed())
                 .AssertRoggi(C, u => u.Value == (domain.SelectedIndex() + 1) * 2),
         },
@@ -100,7 +100,7 @@ public class Tester
             Declaration = C =>
                 (1..10).tFixed()
                 .tIOSelectMultiple(4.tFixed())
-                .DefineSelectionDomain(C, (..5).ToIter().Map(x => (x..(x + 4)).ToIter()), out var domain)
+                .WithDomain(C, (..5).ToIter().Map(x => (x..(x + 4)).ToIter()), out var domain)
                 .tGetIndex(2.tFixed())
                 .AssertRoggi(C, u => u.Value == domain.SelectedIndicies()[1] + 1),
         },
@@ -110,11 +110,11 @@ public class Tester
             Declaration = C =>
                 (1..10).tFixed()
                 .tIOSelectOne()
-                .DefineSelectionDomain(C, (..5).ToIter(), out var d1, "outer")
+                .WithDomain(C, (..5).ToIter(), out var d1, "outer")
                 .tMultiply(
                     (1..10).tFixed()
                     .tIOSelectOne()
-                    .DefineSelectionDomain(C, (..5).ToIter(), out var d2, "inner"))
+                    .WithDomain(C, (..5).ToIter(), out var d2, "inner"))
                 .AssertRoggi(C, u => u.Value == (d1.SelectedIndex() + 1) * (d2.SelectedIndex() + 1)),
         },
         new("reference roggi")
@@ -141,7 +141,7 @@ public class Tester
             Declaration = C =>
                 (..9).tFixed()
                 .tIOSelectOne()
-                .DefineSelectionDomain(C, (..3).ToIter(), out var d1)
+                .WithDomain(C, (..3).ToIter(), out var d1)
                 .tMultiply(10.tFixed())
                 .ReferenceAs(C, out var reference)
                 .tSubtract(4.tFixed())
@@ -153,12 +153,12 @@ public class Tester
             Declaration = C =>
                 (1..10).tFixed()
                 .tIOSelectOne()
-                .DefineSelectionDomain(C, (..5).ToIter(), out var d1, "outer")
+                .WithDomain(C, (..5).ToIter(), out var d1, "outer")
                 .ReferenceAs(C, out var r1, "a")
                 .tMultiply(
                     (1..8).tFixed()
                     .tIOSelectOne()
-                    .DefineSelectionDomain(C, (..5).ToIter(), out var d2, "inner")
+                    .WithDomain(C, (..5).ToIter(), out var d2, "inner")
                     .ReferenceAs(C, out var r2, "b"))
                 .AssertRoggi(C, u => u.Value == r1.Roggi.Value * r2.Roggi.Value),
         },

@@ -39,14 +39,14 @@ public static class Extensions
         return subject;
     }
 
-    public static IKorssa<R> DefineSelectionDomain<R>(this IKorssa<R> subject, IDeTesContext context, IEnumerable<int> values, out IDeTesSingleDomain domainHandle, string? description = null)
+    public static IKorssa<R> WithDomain<R>(this IKorssa<R> subject, IDeTesContext context, IEnumerable<int> values, out IDeTesSingleDomain domainHandle, string? description = null)
         where R : class, Rog
     {
         context.MakeSingleSelectionDomain(subject, values.ToArray(), out domainHandle, description);
         return subject;
     }
 
-    public static IKorssa<R> DefineSelectionDomain<R>(this IKorssa<R> subject, IDeTesContext context, IEnumerable<IEnumerable<int>> values, out IDeTesMultiDomain domainHandle, string? description = null)
+    public static IKorssa<R> WithDomain<R>(this IKorssa<R> subject, IDeTesContext context, IEnumerable<IEnumerable<int>> values, out IDeTesMultiDomain domainHandle, string? description = null)
         where R : class, Rog
     {
         context.MakeMultiSelectionDomain(subject, values.Map(x => x.ToArray()).ToArray(), out domainHandle, description);

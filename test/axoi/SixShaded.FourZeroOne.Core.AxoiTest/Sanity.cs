@@ -30,7 +30,7 @@ public class Sanity
         c =>
             initialPool.tFixed()
                 .tIOSelectMultiple(firstSelection.Length.tFixed())
-                .DefineSelectionDomain(c, [firstSelection], out var firstDomain, "first selection")
+                .WithDomain(c, [firstSelection], out var firstDomain, "first selection")
                 .AssertRoggiUnstable(
                 c, r =>
                     (firstSelection.Length > initialPool.Length)
@@ -40,7 +40,7 @@ public class Sanity
                           firstSelection.Map(i => initialPool[i]).SequenceEqual(multi.Elements.Map(x => x.Value)))
                 .ReferenceAs(c, out var reducedPool)
                 .tIOSelectOne()
-                .DefineSelectionDomain(c, [secondSelection], out var secondDomain, "second selection")
+                .WithDomain(c, [secondSelection], out var secondDomain, "second selection")
                 .AssertRoggiUnstable(c, r => true));
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }

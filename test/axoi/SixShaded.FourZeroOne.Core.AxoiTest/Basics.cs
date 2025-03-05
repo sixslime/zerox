@@ -6,6 +6,7 @@ using Internal.DummyAxoi.Korvessas;
 using Internal.DummyAxoi.Roveggitus;
 using Roggis;
 using Core = Syntax.Core;
+
 [TestClass]
 public sealed class Basics
 {
@@ -64,22 +65,65 @@ public sealed class Basics
         c =>
             initialPool.tFixed()
                 .tIOSelectMultiple(firstSelection.Length.tFixed())
-                .DefineSelectionDomain(c, [firstSelection], out var firstDomain, "first selection")
+                .WithDomain(c, [firstSelection], out var firstDomain, "first selection")
                 .AssertRoggiUnstable(
                 c, r =>
-                    (firstSelection.Length > initialPool.Length)
+                    firstSelection.Length > initialPool.Length
                         ? !r.IsSome()
                         : r.Check(out var multi) &&
                           multi.Count == firstSelection.Length &&
                           firstSelection.Map(i => initialPool[i]).SequenceEqual(multi.Elements.Map(x => x.Value)))
                 .ReferenceAs(c, out var reducedPool)
                 .tIOSelectOne()
-                .DefineSelectionDomain(c, [secondSelection], out var secondDomain, "second selection")
+                .WithDomain(c, [secondSelection], out var secondDomain, "second selection")
                 .AssertRoggiUnstable(
                 c, r =>
-                    (secondSelection >= firstSelection.Length)
+                    secondSelection >= firstSelection.Length
                         ? !r.IsSome()
                         : r.Check(out var sel) && reducedPool.Roggi.Elements.GetAt(secondSelection).Unwrap() == sel));
 
+    [TestMethod]
+    public async Task IfElseBranching() =>
+        await Run(
+        c =>
+            Iter.Over(0, 1)
+                .tFixed()
+                .tIOSelectOne()
+                .WithDomain(c, [0, 1], out var firstIf, "firstIf")
+                .tIsGreaterThan(0.tFixed())
+                .tIfTrue<Number>(
+                new()
+                {
+                    Then =
+                        Iter.Over(0, 1)
+                            .tFixed()
+                            .tIOSelectOne()
+                            .WithDomain(c, [0, 1], out var secondIf, "secondIf")
+                            .tIsGreaterThan(0.tFixed())
+                            .tIfTrue<Number>(
+                            new()
+                            {
+                                Then = 11.tFixed(),
+                                Else = 10.tFixed(),
+                            }),
+                    Else = 0.tFixed(),
+                })
+                .AssertRoggi(
+                c, r =>
+                    r.Value ==
+                    (firstIf.SelectedIndex() == 0
+                        ? 0
+                        : 10 + secondIf.SelectedIndex())));
+    [TestMethod]
+    public async Task EnvironmentAndMemory() =>
+        await Run(
+        c =>
+            Core.tSubEnvironment<Number>(new()
+            {
+                Environment =
+                    [
+                        
+                    ]
+            }))
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }
