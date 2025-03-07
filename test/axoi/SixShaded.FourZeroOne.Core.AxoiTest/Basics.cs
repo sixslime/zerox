@@ -24,7 +24,7 @@ public sealed class Basics
                 .kMultiply(xc.kFixed())
                 .kAdd(xc.kFixed().kSubtract(xb.kFixed()))
                 .kMultiply(xa.kFixed())
-                .AssertRoggi(c, r => r.Value == (((xa + xb) * xc) + (xc - xb)) * xa));
+                .DeTesAssertRoggi(c, r => r.Value == (((xa + xb) * xc) + (xc - xb)) * xa));
 
     [TestMethod]
     [DataRow(401, new[] { true, true, false }, 2, 6)]
@@ -35,24 +35,24 @@ public sealed class Basics
         c =>
             Core.kRoveggi<Stuff>()
                 .kWithRovi(Stuff.NUM, num.kFixed())
-                .AssertRoggi(c, r => r.GetComponent(Stuff.NUM).Unwrap().Value == num, "NUM check")
-                .AssertRoggi(c, r => !r.GetComponent(Stuff.MULTI_BOOL).IsSome(), "MULTI_BOOL check before set")
+                .DeTesAssertRoggi(c, r => r.GetComponent(Stuff.NUM).Unwrap().Value == num, "NUM check")
+                .DeTesAssertRoggi(c, r => !r.GetComponent(Stuff.MULTI_BOOL).IsSome(), "MULTI_BOOL check before set")
                 .kWithRovi(Stuff.MULTI_BOOL, bools.kFixed())
                 .kWithoutRovi(Stuff.NUM)
-                .AssertRoggi(c, r => !r.GetComponent(Stuff.NUM).IsSome(), "NUM check after remove")
+                .DeTesAssertRoggi(c, r => !r.GetComponent(Stuff.NUM).IsSome(), "NUM check after remove")
                 .kWithRovi(
                 Stuff.POWER_OBJ,
                 Core.kRoveggi<PowerExpr>()
                     .kWithRovi(PowerExpr.POWER, power.kFixed())
                     .kWithRovi(PowerExpr.NUM, basePower.kFixed()))
-                .AssertRoggi(c, r => r.GetComponent(Stuff.MULTI_BOOL).Unwrap().Elements.Map(x => x.IsTrue).SequenceEqual(bools), "MULTI_BOOL check")
+                .DeTesAssertRoggi(c, r => r.GetComponent(Stuff.MULTI_BOOL).Unwrap().Elements.Map(x => x.IsTrue).SequenceEqual(bools), "MULTI_BOOL check")
                 .kGetRovi(Stuff.POWER_OBJ)
-                .AssertRoggi(
+                .DeTesAssertRoggi(
                 c, r =>
                     r.GetComponent(PowerExpr.NUM).Unwrap().Value == basePower &&
                     r.GetComponent(PowerExpr.POWER).Unwrap().Value > 0, "POWER_OBJ check")
                 .kTESTPower()
-                .AssertRoggi(c, r => r.Value == basePower.Yield(power).Accumulate((a, b) => a * b).Unwrap(), "korvessa check"));
+                .DeTesAssertRoggi(c, r => r.Value == basePower.Yield(power).Accumulate((a, b) => a * b).Unwrap(), "korvessa check"));
 
     [TestMethod]
     [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new[] { 5, 2, 0, 1 }, 0)]
@@ -65,18 +65,18 @@ public sealed class Basics
         c =>
             initialPool.kFixed()
                 .kIOSelectMultiple(firstSelection.Length.kFixed())
-                .WithDomain(c, [firstSelection], out var firstDomain, "first selection")
-                .AssertRoggiUnstable(
+                .DeTesDomain(c, [firstSelection], out var firstDomain, "first selection")
+                .DeTesAssertRoggiUnstable(
                 c, r =>
                     firstSelection.Length > initialPool.Length
                         ? !r.IsSome()
                         : r.Check(out var multi) &&
                           multi.Count == firstSelection.Length &&
                           firstSelection.Map(i => initialPool[i]).SequenceEqual(multi.Elements.Map(x => x.Value)))
-                .ReferenceAs(c, out var reducedPool)
+                .DeTesReference(c, out var reducedPool)
                 .kIOSelectOne()
-                .WithDomain(c, [secondSelection], out var secondDomain, "second selection")
-                .AssertRoggiUnstable(
+                .DeTesDomain(c, [secondSelection], out var secondDomain, "second selection")
+                .DeTesAssertRoggiUnstable(
                 c, r =>
                     secondSelection >= firstSelection.Length
                         ? !r.IsSome()
@@ -89,7 +89,7 @@ public sealed class Basics
             Iter.Over(0, 1)
                 .kFixed()
                 .kIOSelectOne()
-                .WithDomain(c, [0, 1], out var firstIf, "firstIf")
+                .DeTesDomain(c, [0, 1], out var firstIf, "firstIf")
                 .kIsGreaterThan(0.kFixed())
                 .kIfTrue<Number>(
                 new()
@@ -98,7 +98,7 @@ public sealed class Basics
                         Iter.Over(0, 1)
                             .kFixed()
                             .kIOSelectOne()
-                            .WithDomain(c, [0, 1], out var secondIf, "secondIf")
+                            .DeTesDomain(c, [0, 1], out var secondIf, "secondIf")
                             .kIsGreaterThan(0.kFixed())
                             .kIfTrue<Number>(
                             new()
@@ -108,7 +108,7 @@ public sealed class Basics
                             }),
                     Else = 0.kFixed(),
                 })
-                .AssertRoggi(
+                .DeTesAssertRoggi(
                 c, r =>
                     r.Value ==
                     (firstIf.SelectedIndex() == 0
@@ -135,23 +135,23 @@ public sealed class Basics
                                 ],
                                 Value =
                                     Core.kMultiOf([theNumber.kRef(), theNumber.kRef().kMultiply(2.kFixed())])
-                                        .AssertMemory(c, m => m.Objects.Count() == 1, "inner count check (1)")
-                                        .AssertMemory(c, m => m.GetObject(theNumber).Check(out var v) && v.Value is 401, "reference check"),
+                                        .DeTesAssertMemory(c, m => m.Objects.Count() == 1, "inner count check (1)")
+                                        .DeTesAssertMemory(c, m => m.GetObject(theNumber).Check(out var v) && v.Value is 401, "reference check"),
                             })
-                            .AssertMemory(c, m => !m.Objects.Any(), "outer pre-count check (0)")
+                            .DeTesAssertMemory(c, m => !m.Objects.Any(), "outer pre-count check (0)")
                             .kAsVariable(out var theArray),
                         1.kFixed().kAsVariable(out var theIndex),
                         theArray.kRef()
                             .kGetIndex(theIndex.kRef())
                             .kAsVariable(out var theResult),
                         theNumber.kRef()
-                            .AssertRoggiUnstable(c, r => !r.IsSome()),
+                            .DeTesAssertRoggiUnstable(c, r => !r.IsSome()),
                     ],
                     Value =
                         theResult.kRef()
-                            .AssertMemory(c, m => m.Objects.Count() == 3, "outer post-count check (3)"),
+                            .DeTesAssertMemory(c, m => m.Objects.Count() == 3, "outer post-count check (3)"),
                 })
-                .AssertRoggi(c, r => r.Value is 401));
+                .DeTesAssertRoggi(c, r => r.Value is 401));
 
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }
