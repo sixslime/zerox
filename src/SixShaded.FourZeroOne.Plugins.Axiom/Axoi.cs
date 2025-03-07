@@ -3,7 +3,7 @@
 
 public static class Axoi
 {
-    public static Axodu Du = new() { Name = "axiom" };
+    public static Axodu Du { get; } = new() { Name = "axiom" };
 
     internal static Roggi.Defined.Rovu<C, R> Rovu<C, R>(string identifier)
         where C : Roggi.IRovetu

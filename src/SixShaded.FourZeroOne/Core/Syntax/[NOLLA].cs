@@ -16,7 +16,7 @@ public static partial class KorssaSyntax
 
     public static Korvessa<R, MetaFunction<R>, R> kCatchNolla<R>(this IKorssa<R> value, Func<IKorssa<R>> fallback)
         where R : class, Rog =>
-        Korvessas.CatchNolla<R>.Construct(value, fallback().kMetaBoxed());
+        Korvessas.CatchNolla<R>.Construct(value, fallback().kMetaBoxed([]));
 
     public static Korssas.Exists tExists(this Kor korssa) => new(korssa);
 }

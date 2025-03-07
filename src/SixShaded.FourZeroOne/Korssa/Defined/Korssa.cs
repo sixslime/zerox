@@ -1,15 +1,11 @@
 ﻿namespace SixShaded.FourZeroOne.Korssa.Defined;
 
-public abstract record Korssa<R> : IKorssa<R> where R : class, Rog
+public abstract record Korssa<R>(params Kor[] argKorssas) : IKorssa<R> where R : class, Rog
 {
-    public Korssa(params Kor[] args)
-    {
-        ArgKorssas = args;
-    }
 
-    public Korssa(IEnumerable<Kor> args) : this(args.ToArray()) { }
-    public Kor[] ArgKorssas { get; }
-    public IResult<ITask<IOption<R>>, FZOSpec.EStateImplemented> ResolveWith(FZOSpec.IProcessorFZO.IKorssaContext korssaContext, RogOpt[] args) => Resolve(korssaContext.ToHandle(), args);
+    protected Korssa(IEnumerable<Kor> args) : this(args.ToArray()) { }
+    public Kor[] ArgKorssas { get; } = argKorssas;
+    public IResult<ITask<IOption<R>>, FZOSpec.EStateImplemented> ResolveWith(FZOSpec.IProcessorFZO.IKorssaContext context, RogOpt[] args) => Resolve(context.ToHandle(), args);
     protected abstract IResult<ITask<IOption<R>>, FZOSpec.EStateImplemented> Resolve(IKorssaContext runtime, RogOpt[] args);
     protected virtual IOption<string> CustomToString() => new None<string>();
 

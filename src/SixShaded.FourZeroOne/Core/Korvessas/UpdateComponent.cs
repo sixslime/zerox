@@ -12,11 +12,10 @@ public static class UpdateComponent<C, R>
     {
         Du = Axoi.Korvedu("UpdateComponent"),
         CustomData = [component],
-        Definition = Core.kMetaFunction<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>>(
+        Definition = Core.kMetaFunction<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>>([],
                 (roveggiI, updateFunctionI) =>
                     roveggiI.kRef().kWithRovi(component,
                         updateFunctionI.kRef()
                             .kExecuteWith(new() { A = roveggiI.kRef().kGetRovi(component) })))
-            .Roggi,
     };
 }

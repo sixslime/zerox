@@ -10,9 +10,9 @@ public static class Duplicate<R>
     public static Korvessa<R, Number, Multi<R>> Construct(IKorssa<R> value, IKorssa<Number> count) => new(value, count)
     {
         Du = Axoi.Korvedu("Duplicate"),
-        Definition = Core.kMetaFunction<R, Number, Multi<R>>(
+        Definition = Core.kMetaFunction<R, Number, Multi<R>>([],
                 (valueI, countI) =>
-                    Core.kMetaFunctionRecursive<Number, Multi<R>>(
+                    Core.kMetaFunctionRecursive<Number, Multi<R>>([],
                             (selfFunc, i) =>
                                 i.kRef().kIsGreaterThan(countI.kRef())
                                     .kIfTrue<Multi<R>>(new()
@@ -25,6 +25,5 @@ public static class Duplicate<R>
                                         ]),
                                     }))
                         .kExecuteWith(new() { A = 1.kFixed() }))
-            .Roggi,
     };
 }

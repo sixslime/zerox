@@ -15,9 +15,9 @@ internal static class Power
         {
             Du = new(TestAxoi.Du, "power"),
             Definition =
-                Core.kMetaFunction<IRoveggi<PowerExpr>, Number>(
+                Core.kMetaFunction<IRoveggi<PowerExpr>, Number>([],
                     self =>
-                        Core.kMetaFunctionRecursive<Number, Number, Number, Number>(
+                        Core.kMetaFunctionRecursive<Number, Number, Number, Number>([],
                             (recurse, acc, i, num) =>
                                 i.kRef()
                                     .kIsGreaterThan(1.kFixed())
@@ -42,7 +42,6 @@ internal static class Power
                                 B = self.kRef().kGetRovi(PowerExpr.POWER),
                                 C = self.kRef().kGetRovi(PowerExpr.NUM),
                             }))
-                    .Roggi,
         };
 
     public static Korvessa<IRoveggi<PowerExpr>, Number> kTESTPower(this IKorssa<IRoveggi<PowerExpr>> powerve) => Construct(powerve);

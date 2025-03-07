@@ -116,6 +116,6 @@ public record MinimaStateFZO : IStateFZO
     {
         public Kor[] ArgKorssas => throw new System.Diagnostics.UnreachableException();
 
-        public IResult<ITask<RogOpt>, EStateImplemented> ResolveWith(IProcessorFZO.IKorssaContext runtime, RogOpt[] args) => throw new System.Diagnostics.UnreachableException();
+        public IResult<ITask<RogOpt>, EStateImplemented> ResolveWith(IProcessorFZO.IKorssaContext context, RogOpt[] args) => throw new System.Diagnostics.UnreachableException();
     }
 }

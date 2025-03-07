@@ -12,23 +12,41 @@ public static class Map<RIn, ROut>
         new(multi, mapFunction)
         {
             Du = Axoi.Korvedu("map"),
-            Definition = Core.kMetaFunction<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>>(
-                    (multiI, mapFunctionI) =>
-                        Core.kMetaFunctionRecursive<Number, Multi<ROut>>(
-                                (selfFunc, i) =>
-                                    i.kRef().kIsGreaterThan(multiI.kRef().kCount())
-                                        .kIfTrue<Multi<ROut>>(new()
-                                        {
-                                            Then = Core.kNollaFor<Multi<ROut>>(),
-                                            Else = Core.kUnionOf(
-                                            [
-                                                mapFunctionI.kRef().kExecuteWith(
-                                                    new() { A = multiI.kRef().kGetIndex(i.kRef()) }).kYield(),
-                                                selfFunc.kRef().kExecuteWith(
-                                                    new() { A = i.kRef().kAdd(1.kFixed()) }),
-                                            ]),
-                                        }))
-                            .kExecuteWith(new() { A = 1.kFixed() }))
-                .Roggi,
+            Definition =
+                Core.kMetaFunction<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>>(
+                [],
+                (multiI, mapFunctionI) =>
+                    Core.kMetaFunctionRecursive<Number, Multi<ROut>>(
+                        [],
+                        (selfFunc, i) =>
+                            i.kRef()
+                                .kIsGreaterThan(multiI.kRef().kCount())
+                                .kIfTrue<Multi<ROut>>(
+                                new()
+                                {
+                                    Then = Core.kNollaFor<Multi<ROut>>(),
+                                    Else =
+                                        Core.kUnionOf(
+                                        [
+                                            mapFunctionI.kRef()
+                                                .kExecuteWith(
+                                                new()
+                                                {
+                                                    A = multiI.kRef().kGetIndex(i.kRef()),
+                                                })
+                                                .kYield(),
+                                            selfFunc.kRef()
+                                                .kExecuteWith(
+                                                new()
+                                                {
+                                                    A = i.kRef().kAdd(1.kFixed()),
+                                                }),
+                                        ]),
+                                }))
+                        .kExecuteWith(
+                        new()
+                        {
+                            A = 1.kFixed(),
+                        })),
         };
 }

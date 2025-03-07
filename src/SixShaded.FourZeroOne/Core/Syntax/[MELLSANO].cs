@@ -9,63 +9,53 @@ public static partial class Core
     public static Korssas.AddMellsano kAddMellsano<RVal>(Structure.Mellsano.Block<RVal> block)
         where RVal : class, Rog
     {
-        var vs = new DynamicAddress<MetaFunction<OriginalProxy<RVal>, RVal>>();
-        var vo = new DynamicAddress<OriginalProxy<RVal>>();
-
-        return new(new Mellsano.Defined.MellsanoForSignature<RVal> { Definition = new() { SelfIdentifier = vs, IdentifierA = vo, Korssa = block.Definition(vo) }, Matcher = block.Matches(new()) });
+        return new(new Mellsano.Defined.Mellsano<RVal>
+        {
+            Definition = new((_, orig) => block.Definition(orig))
+            {
+                Captures = block.DefinitionCaptures.ToArray()
+            },
+            Matcher = block.Matches(new()),
+        });
     }
-
     public static Korssas.AddMellsano kAddMellsano<RArg1, ROut>(Structure.Mellsano.Block<RArg1, ROut> block)
         where RArg1 : class, Rog
         where ROut : class, Rog
     {
-        var vs = new DynamicAddress<MetaFunction<OriginalProxy<ROut>, ArgProxy<RArg1>, ROut>>();
-        var (vo, v1) = (new DynamicAddress<OriginalProxy<ROut>>(), new DynamicAddress<ArgProxy<RArg1>>());
-
-        return new(new Mellsano.Defined.MellsanoForSignature<RArg1, ROut> { Definition = new() { SelfIdentifier = vs, IdentifierA = vo, IdentifierB = v1, Korssa = block.Definition(vo, v1) }, Matcher = block.Matches(new()) });
+        return new(new Mellsano.Defined.Mellsano<RArg1, ROut>
+        {
+            Definition = new((_, orig, argA) => block.Definition(orig, argA))
+            {
+                Captures = block.DefinitionCaptures.ToArray()
+            },
+            Matcher = block.Matches(new()),
+        });
     }
-
     public static Korssas.AddMellsano kAddMellsano<RArg1, RArg2, ROut>(Structure.Mellsano.Block<RArg1, RArg2, ROut> block)
         where RArg1 : class, Rog
         where RArg2 : class, Rog
         where ROut : class, Rog
     {
-        var vs = new DynamicAddress<MetaFunction<OriginalProxy<ROut>, ArgProxy<RArg1>, ArgProxy<RArg2>, ROut>>();
-        var (vo, v1, v2) = (new DynamicAddress<OriginalProxy<ROut>>(), new DynamicAddress<ArgProxy<RArg1>>(), new DynamicAddress<ArgProxy<RArg2>>());
-
-        return new(new Mellsano.Defined.MellsanoForSignature<RArg1, RArg2, ROut>
+        return new(new Mellsano.Defined.Mellsano<RArg1, RArg2, ROut>
         {
-            Definition = new()
+            Definition = new((_, orig, argA, argB) => block.Definition(orig, argA, argB))
             {
-                SelfIdentifier = vs,
-                IdentifierA = vo,
-                IdentifierB = v1,
-                IdentifierC = v2,
-                Korssa = block.Definition(vo, v1, v2),
+                Captures = block.DefinitionCaptures.ToArray()
             },
             Matcher = block.Matches(new()),
         });
     }
-
     public static Korssas.AddMellsano kAddMellsano<RArg1, RArg2, RArg3, ROut>(Structure.Mellsano.Block<RArg1, RArg2, RArg3, ROut> block)
         where RArg1 : class, Rog
         where RArg2 : class, Rog
         where RArg3 : class, Rog
         where ROut : class, Rog
     {
-        var vs = new DynamicAddress<OverflowingMetaFunction<OriginalProxy<ROut>, ArgProxy<RArg1>, ArgProxy<RArg2>, ArgProxy<RArg3>, ROut>>();
-        var (vo, v1, v2, v3) = (new DynamicAddress<OriginalProxy<ROut>>(), new DynamicAddress<ArgProxy<RArg1>>(), new DynamicAddress<ArgProxy<RArg2>>(), new DynamicAddress<ArgProxy<RArg3>>());
-
-        return new(new Mellsano.Defined.MellsanoForSignature<RArg1, RArg2, RArg3, ROut>
+        return new(new Mellsano.Defined.Mellsano<RArg1, RArg2, RArg3, ROut>
         {
-            Definition = new()
+            Definition = new((_, orig, argA, argB, argC) => block.Definition(orig, argA, argB, argC))
             {
-                SelfIdentifier = vs,
-                IdentifierA = vo,
-                IdentifierB = v1,
-                IdentifierC = v2,
-                IdentifierD = v3,
-                Korssa = block.Definition(vo, v1, v2, v3),
+                Captures = block.DefinitionCaptures.ToArray()
             },
             Matcher = block.Matches(new()),
         });

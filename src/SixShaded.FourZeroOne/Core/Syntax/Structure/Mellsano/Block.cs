@@ -7,6 +7,7 @@ public sealed record Block<RVal>
 {
     public required Func<MatcherBuilder<RVal>, IUllasem<IHasNoArgs<RVal>>> Matches { get; init; }
     public required Func<DynamicAddress<OriginalProxy<RVal>>, IKorssa<RVal>> Definition { get; init; }
+    public IEnumerable<Addr> DefinitionCaptures { get; init; } = [];
 }
 
 public sealed record Block<RArg1, ROut>
@@ -15,6 +16,7 @@ public sealed record Block<RArg1, ROut>
 {
     public required Func<MatcherBuilder<RArg1, ROut>, IUllasem<IHasArgs<RArg1, ROut>>> Matches { get; init; }
     public required Func<DynamicAddress<OriginalProxy<ROut>>, DynamicAddress<ArgProxy<RArg1>>, IKorssa<ROut>> Definition { get; init; }
+    public IEnumerable<Addr> DefinitionCaptures { get; init; } = [];
 }
 
 public sealed record Block<RArg1, RArg2, ROut>
@@ -24,6 +26,7 @@ public sealed record Block<RArg1, RArg2, ROut>
 {
     public required Func<MatcherBuilder<RArg1, RArg2, ROut>, IUllasem<IHasArgs<RArg1, RArg2, ROut>>> Matches { get; init; }
     public required Func<DynamicAddress<OriginalProxy<ROut>>, DynamicAddress<ArgProxy<RArg1>>, DynamicAddress<ArgProxy<RArg2>>, IKorssa<ROut>> Definition { get; init; }
+    public IEnumerable<Addr> DefinitionCaptures { get; init; } = [];
 }
 
 public sealed record Block<RArg1, RArg2, RArg3, ROut>
@@ -34,4 +37,5 @@ public sealed record Block<RArg1, RArg2, RArg3, ROut>
 {
     public required Func<MatcherBuilder<RArg1, RArg2, RArg3, ROut>, IUllasem<IHasArgs<RArg1, RArg2, RArg3, ROut>>> Matches { get; init; }
     public required Func<DynamicAddress<OriginalProxy<ROut>>, DynamicAddress<ArgProxy<RArg1>>, DynamicAddress<ArgProxy<RArg2>>, DynamicAddress<ArgProxy<RArg3>>, IKorssa<ROut>> Definition { get; init; }
+    public IEnumerable<Addr> DefinitionCaptures { get; init; } = [];
 }

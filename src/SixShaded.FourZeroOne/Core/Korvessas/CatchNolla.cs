@@ -10,10 +10,9 @@ public static class CatchNolla<R>
     public static Korvessa<R, MetaFunction<R>, R> Construct(IKorssa<R> value, IKorssa<MetaFunction<R>> fallback) => new(value, fallback)
     {
         Du = Axoi.Korvedu("CatchNolla"),
-        Definition = Core.kMetaFunction<R, MetaFunction<R>, R>(
+        Definition = Core.kMetaFunction<R, MetaFunction<R>, R>([],
                 (valueI, fallbackI) =>
-                    valueI.kRef().tExists().kIfTrueExplicit<R>(new() { Then = valueI.kRef().kMetaBoxed(), Else = fallbackI.kRef() })
+                    valueI.kRef().tExists().kIfTrueExplicit<R>(new() { Then = valueI.kRef().kMetaBoxed([]), Else = fallbackI.kRef() })
                         .kExecute())
-            .Roggi,
     };
 }

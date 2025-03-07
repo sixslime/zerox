@@ -6,15 +6,15 @@ public abstract record MellsanoBehavior<R> : IMellsano<R>
     where R : class, Rog
 {
     protected abstract IUllasem<IKorssa<R>> InternalMatcher { get; }
-    protected abstract Roggi.Unsafe.IBoxedMetaFunction<R> InternalDefinition { get; }
+    protected abstract IMetaFunctionDefinition<R, Roggi.Unsafe.IMetaFunction<R>> InternalDefinition { get; }
     public MellsanoID ID { get; } = MellsanoIDGenerator.Next();
 
     IUllasem<IKorssa<R>> IMellsano<R>.MatcherUnsafe => InternalMatcher;
-    Roggi.Unsafe.IBoxedMetaFunction<R> IMellsano<R>.DefinitionUnsafe => InternalDefinition;
+    IMetaFunctionDefinition<R, Roggi.Unsafe.IMetaFunction<R>> IMellsano<R>.DefinitionUnsafe => InternalDefinition;
 
-    public IOption<IKorssaOfMellsano<R>> TryApply(Kor korssa) =>
+    public IOption<IMellsanossa<R>> TryApply(Kor korssa) =>
         korssa is IKorssa<R> typed && InternalMatcher.MatchesKorssa(korssa)
-            ? new KorssaOfMellsano<R>
+            ? new Mellsanossa<R>
             {
                 AppliedMellsano = this,
                 Proxies =
@@ -22,7 +22,7 @@ public abstract record MellsanoBehavior<R> : IMellsano<R>
                         .Concat(ConstructArgProxies(typed))
                         .ToArray(),
             }.AsSome()
-            : new None<IKorssaOfMellsano<R>>();
+            : new None<IMellsanossa<R>>();
 
     /// <summary>
     ///     Kinda stupid that this has to exist, but the alternative is dynamic instantiation via reflection in TryApply().

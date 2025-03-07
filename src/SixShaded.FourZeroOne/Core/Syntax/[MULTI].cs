@@ -30,10 +30,10 @@ public static partial class KorssaSyntax
 
     public static Korssas.Multi.GetIndex<R> kGetIndex<R>(this IKorssa<IMulti<R>> korssa, IKorssa<Number> index) where R : class, Rog => new(korssa, index);
 
-    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, Func<DynamicAddress<RIn>, IKorssa<ROut>> mapFunction)
+    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IEnumerable<Addr> captures, Func<DynamicAddress<RIn>, IKorssa<ROut>> mapFunction)
         where RIn : class, Rog
         where ROut : class, Rog =>
-        Korvessas.Map<RIn, ROut>.Construct(source, Core.kMetaFunction(mapFunction));
+        Korvessas.Map<RIn, ROut>.Construct(source, Core.kMetaFunction(captures, mapFunction));
 
     public static Korvessa<R, Number, Multi<R>> kDuplicate<R>(this IKorssa<R> value, IKorssa<Number> count)
         where R : class, Rog =>

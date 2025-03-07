@@ -14,5 +14,5 @@ public static partial class KorssaSyntax
     public static Korssas.IfElse<R> kIfTrueExplicit<R>(this IKorssa<Bool> condition, Structure.Korssa.IfElse<MetaFunction<R>> block) where R : class, Rog => new(condition, block.Then, block.Else);
 
     public static Korssas.Execute<R> kIfTrue<R>(this IKorssa<Bool> condition, Structure.Korssa.IfElse<R> block) where R : class, Rog =>
-        condition.kIfTrueExplicit<R>(new() { Then = block.Then.kMetaBoxed(), Else = block.Else.kMetaBoxed() }).kExecute();
+        condition.kIfTrueExplicit<R>(new() { Then = block.Then.kMetaBoxed([]), Else = block.Else.kMetaBoxed([]) }).kExecute();
 }
