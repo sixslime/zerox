@@ -3,6 +3,7 @@
 using DeTes.Declaration;
 using Internal.DummyAxoi.Roveggitus;
 using Core = Syntax.Core;
+using Roggis;
 
 [TestClass]
 public class Sanity
@@ -42,5 +43,39 @@ public class Sanity
                 .kIOSelectOne()
                 .DeTesDomain(c, [secondSelection], out var secondDomain, "second selection")
                 .DeTesAssertRoggiUnstable(c, r => true));
+    [TestMethod]
+    public async Task MetaExecuteCapture() =>
+        await Run(
+        c =>
+            Core.kSubEnvironment<MetaFunction<Number, Number>>(
+                new()
+                {
+                    Environment = [400.kFixed().kAsVariable(out var theNumber)],
+                    Value =
+                        (0..1).kFixed()
+                        .kIOSelectOne()
+                        .DeTesDomain(c, [0, 1], out var domain)
+                        .kIsGreaterThan(0.kFixed())
+                        .kIfTrue<MetaFunction<Number, Number>>(
+                        new()
+                        {
+                            Then =
+                                Core.kMetaFunction<Number, Number>(
+                                [theNumber],
+                                x =>
+                                    theNumber.kRef().kAdd(x.kRef())),
+                            Else =
+                                Core.kMetaFunction<Number, Number>(
+                                [],
+                                x =>
+                                    theNumber.kRef().kAdd(x.kRef()))
+                        })
+                })
+                .kExecuteWith(
+                new()
+                {
+                    A = 1.kFixed()
+                })
+                .DeTesAssertRoggiUnstable(c, r => domain.SelectedIndex() == 1 ? r.Check(out var v) && v.Value is 401 : !r.IsSome()));
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }

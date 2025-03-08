@@ -153,5 +153,50 @@ public sealed class Basics
                 })
                 .DeTesAssertRoggi(c, r => r.Value is 401));
 
+    [TestMethod]
+    public async Task MetaExecuteStressor() =>
+        await Run(
+        c =>
+            (1..5).kFixed()
+            .kMap(
+            [],
+            x =>
+                Core.kMetaFunction<Number, MetaFunction<Number>>(
+                [x],
+                y =>
+                    Core.kSubEnvironment<MetaFunction<Number>>(
+                    new()
+                    {
+                        Environment =
+                        [
+                            x.kRef()
+                                .DeTesAssertRoggiUnstable(c, r => r.IsSome(), "x capture check [x5]")
+                                .kIsGreaterThan(2.kFixed())
+                                .kIfTrue<Number>(
+                                new()
+                                {
+                                    Then = x.kRef().kMultiply(2.kFixed()),
+                                    Else = x.kRef(),
+                                })
+                                .kAsVariable(out var theValue),
+                        ],
+                        Value =
+                            Core.kMetaFunction(
+                            [theValue, y],
+                            () => theValue.kRef().kMultiply(10.kFixed()).kAdd(y.kRef())),
+                    })))
+            .kMap(
+            [],
+            funcII =>
+                funcII.kRef()
+                    .kExecuteWith(
+                    new()
+                    {
+                        A = 5.kFixed(),
+                    })
+                    .kExecute())
+            .DeTesAssertRoggi(c, r => r.Count is 5, "count check (5)")
+            .DeTesAssertRoggi(c, r => r.Elements.Map(x => x.Value).SequenceEqual([15, 25, 65, 85, 105]), "sequence check"));
+
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }

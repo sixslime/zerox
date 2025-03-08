@@ -12,7 +12,7 @@ public static class CatchNolla<R>
         Du = Axoi.Korvedu("CatchNolla"),
         Definition = Core.kMetaFunction<R, MetaFunction<R>, R>([],
                 (valueI, fallbackI) =>
-                    valueI.kRef().tExists().kIfTrueExplicit<R>(new() { Then = valueI.kRef().kMetaBoxed([]), Else = fallbackI.kRef() })
+                    valueI.kRef().kExists().kIfTrueExplicit<R>(new() { Then = valueI.kRef().kMetaBoxed([]), Else = fallbackI.kRef() })
                         .kExecute())
     };
 }
