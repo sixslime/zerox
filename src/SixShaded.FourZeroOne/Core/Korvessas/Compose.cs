@@ -1,9 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Korvessas;
 
-using Roggis;
 using Korvessa.Defined;
 using Syntax;
-using Roveggi;
 
 public static class Compose<C>
     where C : IRovetu
@@ -12,6 +10,6 @@ public static class Compose<C>
         new()
         {
             Du = Axoi.Korvedu("compose"),
-            Definition = new Korssas.Fixed<IRoveggi<C>>(new Roveggi<C>()).kMetaBoxed([]),
+            Definition = new Korssas.Fixed<IRoveggi<C>>(new Roveggi.Defined.Roveggi<C>()).kMetaBoxed([]),
         };
 }
