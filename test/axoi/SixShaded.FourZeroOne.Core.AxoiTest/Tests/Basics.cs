@@ -134,7 +134,7 @@ public sealed class Basics
                                         .kAsVariable(out var theNumber),
                                 ],
                                 Value =
-                                    Core.kMultiOf([theNumber.kRef(), theNumber.kRef().kMultiply(2.kFixed())])
+                                    Core.kMulti([theNumber.kRef(), theNumber.kRef().kMultiply(2.kFixed())])
                                         .DeTesAssertMemory(c, m => m.Objects.Count() == 1, "inner count check (1)")
                                         .DeTesAssertMemory(c, m => m.GetObject(theNumber).Check(out var v) && v.Value is 401, "reference check"),
                             })

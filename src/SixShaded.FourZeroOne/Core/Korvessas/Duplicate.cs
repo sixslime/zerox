@@ -25,7 +25,7 @@ public static class Duplicate<R>
                                 {
                                     Then = Core.kNollaFor<Multi<R>>(),
                                     Else =
-                                        Core.kUnionOf(
+                                        Core.kMulti(
                                         [
                                             valueI.kRef().kYield(),
                                             selfFunc.kRef()
@@ -34,7 +34,7 @@ public static class Duplicate<R>
                                                 {
                                                     A = i.kRef().kAdd(1.kFixed()),
                                                 }),
-                                        ]),
+                                        ]).kFlatten(),
                                 }))
                         .kExecuteWith(
                         new()

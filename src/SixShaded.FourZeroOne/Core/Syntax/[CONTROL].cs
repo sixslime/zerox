@@ -7,8 +7,6 @@ public static partial class Core
     public static Korssas.SubEnvironment<R> kSubEnvironment<R>(Structure.Korssa.SubEnvironment<R> block)
         where R : class, Rog =>
         new(block.Environment.kToMulti(), block.Value);
-
-    public static Korssas.Multi.Create<Rog> kEnv(params Kor[] environment) => new(environment.Map(x => x.kYield()));
 }
 
 public static partial class KorssaSyntax

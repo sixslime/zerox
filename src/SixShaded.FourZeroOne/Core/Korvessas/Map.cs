@@ -26,7 +26,7 @@ public static class Map<RIn, ROut>
                                 {
                                     Then = Core.kNollaFor<Multi<ROut>>(),
                                     Else =
-                                        Core.kUnionOf(
+                                        Core.kMulti(
                                         [
                                             mapFunctionI.kRef()
                                                 .kExecuteWith(
@@ -41,7 +41,7 @@ public static class Map<RIn, ROut>
                                                 {
                                                     A = i.kRef().kAdd(1.kFixed()),
                                                 }),
-                                        ]),
+                                        ]).kFlatten(),
                                 }))
                         .kExecuteWith(
                         new()

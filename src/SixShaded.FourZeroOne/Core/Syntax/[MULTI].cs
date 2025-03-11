@@ -5,9 +5,9 @@ using Korvessa.Defined;
 
 public static partial class Core
 {
-    public static Korssas.Multi.Create<R> kMultiOf<R>(params IKorssa<R>[] korssas)
+    public static Korssas.Multi.Create<R> kMulti<R>(List<IKorssa<R>> korssas)
         where R : class, Rog =>
-        new(korssas);
+        new(korssas.ToArray());
 }
 
 public static partial class KorssaSyntax
