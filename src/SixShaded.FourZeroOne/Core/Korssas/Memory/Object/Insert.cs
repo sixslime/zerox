@@ -1,4 +1,4 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korssas.Memory;
+﻿namespace SixShaded.FourZeroOne.Core.Korssas.Memory.Object;
 
 using Roveggi;
 
