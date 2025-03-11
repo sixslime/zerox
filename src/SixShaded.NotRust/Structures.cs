@@ -1,5 +1,5 @@
 
-global using SixShaded.NotRust;
+
 using System.Collections;
 
 #nullable enable
@@ -151,6 +151,14 @@ namespace SixShaded.NotRust
             var ndict = new Dictionary<K, T>(_dict);
             foreach (var r in entries) _ = ndict.Remove(r);
             return new PMap<K, T>(ndict);
+        }
+
+        public override bool Equals(object? obj) => obj is IPMap<K, T> other && other.Count == Count && other.Elements.Intersect(Elements).Count() == Count;
+        public override int GetHashCode()
+        {
+            if (Count == 0) return 0.GetHashCode();
+            var arr = Elements.ToArray();
+            return HashCode.Combine(arr[(arr[0].GetHashCode() + 2) % arr.Length], Count);
         }
 
         public override string ToString()
