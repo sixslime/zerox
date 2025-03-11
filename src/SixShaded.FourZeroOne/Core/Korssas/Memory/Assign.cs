@@ -1,14 +1,9 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Korssas.Memory;
 
-public sealed record Assign<R> : Korssa.Defined.RegularKorssa<Roggis.Instructions.Assign<R>>
+public sealed record Assign<R>(IMemoryAddress<R> address, IKorssa<R> obj) : Korssa.Defined.RegularKorssa<Roggis.Instructions.Assign<R>>(obj)
     where R : class, Rog
 {
-    public readonly IMemoryAddress<R> AssigningAddress;
-
-    public Assign(IMemoryAddress<R> address, IKorssa<R> obj) : base(obj)
-    {
-        AssigningAddress = address;
-    }
+    public readonly IMemoryAddress<R> Address = address;
 
     protected override ITask<IOption<Roggis.Instructions.Assign<R>>> StandardResolve(IKorssaContext runtime, RogOpt[] args) =>
         args[0]
@@ -16,10 +11,10 @@ public sealed record Assign<R> : Korssa.Defined.RegularKorssa<Roggis.Instruction
             x =>
                 new Roggis.Instructions.Assign<R>
                 {
-                    Address = AssigningAddress,
+                    Address = Address,
                     Subject = (R)x,
                 })
             .ToCompletedITask();
 
-    protected override IOption<string> CustomToString() => $"{AssigningAddress}<- {ArgKorssas[0]}".AsSome();
+    protected override IOption<string> CustomToString() => $"{Address}<- {ArgKorssas[0]}".AsSome();
 }
