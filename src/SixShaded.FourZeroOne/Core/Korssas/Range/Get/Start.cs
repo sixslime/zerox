@@ -4,6 +4,8 @@ using Roggis;
 
 public sealed record Start : Korssa.Defined.PureFunction<NumRange, Number>
 {
-    public Start(IKorssa<NumRange> range) : base(range) { }
+    public Start(IKorssa<NumRange> range) : base(range)
+    { }
+
     protected override Number EvaluatePure(NumRange in1) => in1.Start;
 }

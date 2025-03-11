@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Korssas;
 
-public sealed record Fixed<R> : Korssa.Defined.PureValue<R> where R : class, Rog
+public sealed record Fixed<R> : Korssa.Defined.PureValue<R>
+    where R : class, Rog
 {
     public readonly R Roggi;
 

@@ -5,9 +5,6 @@ using Roggi.Unsafe;
 public sealed record MetaFunction<ROut> : Roggi.Defined.ConcreteMetaFunction<ROut>
     where ROut : class, Rog
 {
-    public MetaFunction() : base()
-    { }
-
     public required DynamicAddress<MetaFunction<ROut>> SelfAddress { get; init; }
     protected override IMemoryAddress<IMetaFunction<ROut>> SelfIdentifierInternal => SelfAddress;
     public override string ToString() => $"{SelfAddress}()::{{{Korssa}}}";
@@ -17,8 +14,7 @@ public sealed record MetaFunction<RArg1, ROut> : Roggi.Defined.ConcreteMetaFunct
     where RArg1 : class, Rog
     where ROut : class, Rog
 {
-    public MetaFunction(
-        DynamicAddress<RArg1> addrA)
+    public MetaFunction(DynamicAddress<RArg1> addrA)
         : base(addrA)
     { }
 

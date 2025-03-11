@@ -9,5 +9,9 @@ public sealed record AddMellsano : Korssa.Defined.PureValue<Roggis.Instructions.
         Mellsano = mellsano;
     }
 
-    protected override Roggis.Instructions.MellsanoAdd EvaluatePure() => new() { Mellsano = Mellsano };
+    protected override Roggis.Instructions.MellsanoAdd EvaluatePure() =>
+        new()
+        {
+            Mellsano = Mellsano,
+        };
 }

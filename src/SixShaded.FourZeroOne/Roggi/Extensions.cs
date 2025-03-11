@@ -5,9 +5,8 @@ using Core.Korssas;
 public static class Extensions
 {
     public static FZOSpec.EStateImplemented.MetaExecute ConstructMetaExecute<R>(this Unsafe.IMetaFunction<R> metaFunction, params RogOpt[] argRoggis)
-    where R : class, Rog
-    {
-        return new()
+        where R : class, Rog =>
+        new()
         {
             Korssa = new MetaExecuted<R>(metaFunction.Korssa),
             ObjectWrites =
@@ -15,7 +14,6 @@ public static class Extensions
                     .Map(x => (x, metaFunction.CapturedMemory.GetObject(x)))
                     .Concat(metaFunction.ArgAddresses.ZipShort(argRoggis))
                     .Concat([(metaFunction.SelfAddress.IsA<Addr>(), metaFunction.AsSome().IsA<RogOpt>())])
-                    .Tipled()
+                    .Tipled(),
         };
-    }
 }

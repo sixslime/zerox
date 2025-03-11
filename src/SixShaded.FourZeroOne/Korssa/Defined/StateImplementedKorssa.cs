@@ -13,8 +13,8 @@ public abstract record StateImplementedKorssa<RArg1, ROut> : Korssa<ROut>,
     where RArg1 : class, Rog
     where ROut : class, Rog
 {
-    protected StateImplementedKorssa(IKorssa<RArg1> in1) : base(in1) { }
-    public IKorssa<RArg1> Arg1 => (IKorssa<RArg1>)ArgKorssas[0];
+    protected StateImplementedKorssa(IKorssa<RArg1> in1) : base(in1)
+    { }
 
     protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(IKorssaContext context, RogOpt[] args) =>
         args[0].Check(out var in1)
@@ -22,6 +22,7 @@ public abstract record StateImplementedKorssa<RArg1, ROut> : Korssa<ROut>,
             : new Ok<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(new None<ROut>().ToCompletedITask());
 
     protected abstract FZOSpec.EStateImplemented MakeData(IKorssaContext context, RArg1 in1);
+    public IKorssa<RArg1> Arg1 => (IKorssa<RArg1>)ArgKorssas[0];
 }
 
 public abstract record StateImplementedKorssa<RArg1, RArg2, ROut> : Korssa<ROut>,
@@ -30,9 +31,8 @@ public abstract record StateImplementedKorssa<RArg1, RArg2, ROut> : Korssa<ROut>
     where RArg2 : class, Rog
     where ROut : class, Rog
 {
-    protected StateImplementedKorssa(IKorssa<RArg1> in1, IKorssa<RArg2> in2) : base(in1, in2) { }
-    public IKorssa<RArg1> Arg1 => (IKorssa<RArg1>)ArgKorssas[0];
-    public IKorssa<RArg2> Arg2 => (IKorssa<RArg2>)ArgKorssas[1];
+    protected StateImplementedKorssa(IKorssa<RArg1> in1, IKorssa<RArg2> in2) : base(in1, in2)
+    { }
 
     protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(IKorssaContext context, RogOpt[] args) =>
         args[0].Check(out var in1) && args[1].Check(out var in2)
@@ -40,6 +40,8 @@ public abstract record StateImplementedKorssa<RArg1, RArg2, ROut> : Korssa<ROut>
             : new Ok<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(new None<ROut>().ToCompletedITask());
 
     protected abstract FZOSpec.EStateImplemented MakeData(IKorssaContext context, RArg1 in1, RArg2 in2);
+    public IKorssa<RArg1> Arg1 => (IKorssa<RArg1>)ArgKorssas[0];
+    public IKorssa<RArg2> Arg2 => (IKorssa<RArg2>)ArgKorssas[1];
 }
 
 public abstract record StateImplementedKorssa<RArg1, RArg2, RArg3, ROut> : Korssa<ROut>,
@@ -49,10 +51,10 @@ public abstract record StateImplementedKorssa<RArg1, RArg2, RArg3, ROut> : Korss
     where RArg3 : class, Rog
     where ROut : class, Rog
 {
-    protected StateImplementedKorssa(IKorssa<RArg1> in1, IKorssa<RArg2> in2, IKorssa<RArg3> in3) : base(in1, in2, in3) { }
+    protected StateImplementedKorssa(IKorssa<RArg1> in1, IKorssa<RArg2> in2, IKorssa<RArg3> in3) : base(in1, in2, in3)
+    { }
+
     public IKorssa<RArg3> Arg3 => (IKorssa<RArg3>)ArgKorssas[2];
-    public IKorssa<RArg1> Arg1 => (IKorssa<RArg1>)ArgKorssas[0];
-    public IKorssa<RArg2> Arg2 => (IKorssa<RArg2>)ArgKorssas[1];
 
     protected sealed override IResult<ITask<IOption<ROut>>, FZOSpec.EStateImplemented> Resolve(IKorssaContext context, RogOpt[] args) =>
         args[0].Check(out var in1) && args[1].Check(out var in2) && args[2].Check(out var in3)
@@ -60,4 +62,6 @@ public abstract record StateImplementedKorssa<RArg1, RArg2, RArg3, ROut> : Korss
             : new Ok<ITask<IOption<ROut>>, FZOSpec.EStateImplemented>(new None<ROut>().ToCompletedITask());
 
     protected abstract FZOSpec.EStateImplemented MakeData(IKorssaContext context, RArg1 in1, RArg2 in2, RArg3 in3);
+    public IKorssa<RArg1> Arg1 => (IKorssa<RArg1>)ArgKorssas[0];
+    public IKorssa<RArg2> Arg2 => (IKorssa<RArg2>)ArgKorssas[1];
 }

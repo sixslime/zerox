@@ -1,6 +1,5 @@
 ﻿namespace SixShaded.FourZeroOne.Korssa;
 
-
 public interface IMetaFunctionDefinition<out R, out M> : IKorssa<M>
     where R : class, Rog
     where M : class, Roggi.Unsafe.IMetaFunction<R>

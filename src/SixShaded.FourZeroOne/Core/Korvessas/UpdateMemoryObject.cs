@@ -3,7 +3,7 @@
 using Roggis;
 using Korvessa.Defined;
 using Syntax;
-using SixShaded.FourZeroOne.Roveggi;
+using Roveggi;
 
 public static class UpdateMemoryObject<R>
     where R : class, Rog

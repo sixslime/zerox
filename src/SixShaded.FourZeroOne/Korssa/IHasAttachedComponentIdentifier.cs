@@ -1,7 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Korssa;
 
-using SixShaded.FourZeroOne.Roveggi;
-using SixShaded.FourZeroOne.Roveggi.Unsafe;
+using Roveggi;
+using Roveggi.Unsafe;
 
 public interface IHasAttachedComponentIdentifier<in C, out R> : IKorssa<R>
     where C : IRovetu

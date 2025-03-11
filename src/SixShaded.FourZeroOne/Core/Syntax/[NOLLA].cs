@@ -5,7 +5,9 @@ using Korvessa.Defined;
 
 public static partial class Core
 {
-    public static Korssas.Nolla<R> kNollaFor<R>() where R : class, Rog => new();
+    public static Korssas.Nolla<R> kNollaFor<R>()
+        where R : class, Rog =>
+        new();
 }
 
 public static partial class KorssaSyntax

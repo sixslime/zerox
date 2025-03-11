@@ -5,12 +5,13 @@ using Roggis;
 public record DefineMetaFunction<ROut> : Korssa.Defined.MetaFunctionDefinition<ROut, MetaFunction<ROut>>
     where ROut : class, Rog
 {
-    public override IKorssa<ROut> Korssa { get; }
     public DefineMetaFunction(Func<DynamicAddress<MetaFunction<ROut>>, IKorssa<ROut>> definition)
-        : base()
     {
         Korssa = definition(SelfAddress);
     }
+
+    public override IKorssa<ROut> Korssa { get; }
+
     public override MetaFunction<ROut> ConstructConcreteMetaFunction(IMemory memory) =>
         new()
         {
@@ -25,14 +26,14 @@ public record DefineMetaFunction<RArg1, ROut> : Korssa.Defined.MetaFunctionDefin
     where RArg1 : class, Rog
     where ROut : class, Rog
 {
-    public DynamicAddress<RArg1> AddressA => (DynamicAddress<RArg1>)ArgAddresses[0];
-    public override IKorssa<ROut> Korssa { get; }
     public DefineMetaFunction(Func<DynamicAddress<MetaFunction<RArg1, ROut>>, DynamicAddress<RArg1>, IKorssa<ROut>> definition)
-        : base(
-        new DynamicAddress<RArg1>())
+        : base(new DynamicAddress<RArg1>())
     {
         Korssa = definition(SelfAddress, AddressA);
     }
+
+    public DynamicAddress<RArg1> AddressA => (DynamicAddress<RArg1>)ArgAddresses[0];
+    public override IKorssa<ROut> Korssa { get; }
 
     public override MetaFunction<RArg1, ROut> ConstructConcreteMetaFunction(IMemory memory) =>
         new(AddressA)
@@ -49,9 +50,6 @@ public record DefineMetaFunction<RArg1, RArg2, ROut> : Korssa.Defined.MetaFuncti
     where RArg2 : class, Rog
     where ROut : class, Rog
 {
-    public DynamicAddress<RArg1> AddressA => (DynamicAddress<RArg1>)ArgAddresses[0];
-    public DynamicAddress<RArg2> AddressB => (DynamicAddress<RArg2>)ArgAddresses[1];
-    public override IKorssa<ROut> Korssa { get; }
     public DefineMetaFunction(Func<DynamicAddress<MetaFunction<RArg1, RArg2, ROut>>, DynamicAddress<RArg1>, DynamicAddress<RArg2>, IKorssa<ROut>> definition)
         : base(
         new DynamicAddress<RArg1>(),
@@ -59,6 +57,10 @@ public record DefineMetaFunction<RArg1, RArg2, ROut> : Korssa.Defined.MetaFuncti
     {
         Korssa = definition(SelfAddress, AddressA, AddressB);
     }
+
+    public DynamicAddress<RArg1> AddressA => (DynamicAddress<RArg1>)ArgAddresses[0];
+    public DynamicAddress<RArg2> AddressB => (DynamicAddress<RArg2>)ArgAddresses[1];
+    public override IKorssa<ROut> Korssa { get; }
 
     public override MetaFunction<RArg1, RArg2, ROut> ConstructConcreteMetaFunction(IMemory memory) =>
         new(AddressA, AddressB)
@@ -76,10 +78,6 @@ public record DefineMetaFunction<RArg1, RArg2, RArg3, ROut> : Korssa.Defined.Met
     where RArg3 : class, Rog
     where ROut : class, Rog
 {
-    public DynamicAddress<RArg1> AddressA => (DynamicAddress<RArg1>)ArgAddresses[0];
-    public DynamicAddress<RArg2> AddressB => (DynamicAddress<RArg2>)ArgAddresses[1];
-    public DynamicAddress<RArg3> AddressC => (DynamicAddress<RArg3>)ArgAddresses[2];
-    public override IKorssa<ROut> Korssa { get; }
     public DefineMetaFunction(Func<DynamicAddress<MetaFunction<RArg1, RArg2, RArg3, ROut>>, DynamicAddress<RArg1>, DynamicAddress<RArg2>, DynamicAddress<RArg3>, IKorssa<ROut>> definition)
         : base(
         new DynamicAddress<RArg1>(),
@@ -88,6 +86,11 @@ public record DefineMetaFunction<RArg1, RArg2, RArg3, ROut> : Korssa.Defined.Met
     {
         Korssa = definition(SelfAddress, AddressA, AddressB, AddressC);
     }
+
+    public DynamicAddress<RArg1> AddressA => (DynamicAddress<RArg1>)ArgAddresses[0];
+    public DynamicAddress<RArg2> AddressB => (DynamicAddress<RArg2>)ArgAddresses[1];
+    public DynamicAddress<RArg3> AddressC => (DynamicAddress<RArg3>)ArgAddresses[2];
+    public override IKorssa<ROut> Korssa { get; }
 
     public override MetaFunction<RArg1, RArg2, RArg3, ROut> ConstructConcreteMetaFunction(IMemory memory) =>
         new(AddressA, AddressB, AddressC)
@@ -106,11 +109,6 @@ public record DefineMetaFunction<RArg1, RArg2, RArg3, RArg4, ROut> : Korssa.Defi
     where RArg4 : class, Rog
     where ROut : class, Rog
 {
-    public DynamicAddress<RArg1> AddressA => (DynamicAddress<RArg1>)ArgAddresses[0];
-    public DynamicAddress<RArg2> AddressB => (DynamicAddress<RArg2>)ArgAddresses[1];
-    public DynamicAddress<RArg3> AddressC => (DynamicAddress<RArg3>)ArgAddresses[2];
-    public DynamicAddress<RArg4> AddressD => (DynamicAddress<RArg4>)ArgAddresses[3];
-    public override IKorssa<ROut> Korssa { get; }
     public DefineMetaFunction(Func<DynamicAddress<OverflowingMetaFunction<RArg1, RArg2, RArg3, RArg4, ROut>>, DynamicAddress<RArg1>, DynamicAddress<RArg2>, DynamicAddress<RArg3>, DynamicAddress<RArg4>, IKorssa<ROut>> definition)
         : base(
         new DynamicAddress<RArg1>(),
@@ -120,6 +118,12 @@ public record DefineMetaFunction<RArg1, RArg2, RArg3, RArg4, ROut> : Korssa.Defi
     {
         Korssa = definition(SelfAddress, AddressA, AddressB, AddressC, AddressD);
     }
+
+    public DynamicAddress<RArg1> AddressA => (DynamicAddress<RArg1>)ArgAddresses[0];
+    public DynamicAddress<RArg2> AddressB => (DynamicAddress<RArg2>)ArgAddresses[1];
+    public DynamicAddress<RArg3> AddressC => (DynamicAddress<RArg3>)ArgAddresses[2];
+    public DynamicAddress<RArg4> AddressD => (DynamicAddress<RArg4>)ArgAddresses[3];
+    public override IKorssa<ROut> Korssa { get; }
 
     public override OverflowingMetaFunction<RArg1, RArg2, RArg3, RArg4, ROut> ConstructConcreteMetaFunction(IMemory memory) =>
         new(AddressA, AddressB, AddressC, AddressD)

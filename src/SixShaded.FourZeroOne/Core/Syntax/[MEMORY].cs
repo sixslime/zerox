@@ -4,17 +4,20 @@ using Roggis;
 using Korssas.Memory;
 using SixShaded.FourZeroOne.Core.Korssas.Memory.Object;
 using Korvessa.Defined;
-using SixShaded.FourZeroOne.Roveggi;
+using Roveggi;
 
 public static partial class KorssaSyntax
 {
-    public static DynamicAssign<R> kAsVariable<R>(this IKorssa<R> korssa, out DynamicAddress<R> ident) where R : class, Rog
+    public static DynamicAssign<R> kAsVariable<R>(this IKorssa<R> korssa, out DynamicAddress<R> ident)
+        where R : class, Rog
     {
         ident = new();
         return new(ident, korssa);
     }
 
-    public static DynamicReference<R> kRef<R>(this IMemoryAddress<R> ident) where R : class, Rog => new(ident);
+    public static DynamicReference<R> kRef<R>(this IMemoryAddress<R> ident)
+        where R : class, Rog =>
+        new(ident);
 
     public static Insert<R> kWrite<R>(this IKorssa<IRoveggi<IMemoryRovetu<R>>> address, IKorssa<R> data)
         where R : class, Rog =>

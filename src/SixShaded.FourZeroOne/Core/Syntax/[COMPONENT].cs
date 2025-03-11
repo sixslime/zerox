@@ -3,12 +3,14 @@
 using Roggis;
 using Rovetus;
 using Korvessa.Defined;
-using SixShaded.FourZeroOne.Roveggi.Unsafe;
-using SixShaded.FourZeroOne.Roveggi;
+using Roveggi.Unsafe;
+using Roveggi;
 
 public static partial class Core
 {
-    public static Korvessa<IRoveggi<C>> kRoveggi<C>() where C : IRovetu => Korvessas.Compose<C>.Construct();
+    public static Korvessa<IRoveggi<C>> kRoveggi<C>()
+        where C : IRovetu =>
+        Korvessas.Compose<C>.Construct();
 }
 
 public static partial class KorssaSyntax
@@ -16,12 +18,18 @@ public static partial class KorssaSyntax
     public static Korssas.Component.Get<C, R> kGetRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu)
         where C : IRovetu
         where R : class, Rog =>
-        new(holder) { Rovu = rovu };
+        new(holder)
+        {
+            Rovu = rovu,
+        };
 
     public static Korssas.Component.With<C, R> kWithRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, IKorssa<R> component)
         where C : IRovetu
         where R : class, Rog =>
-        new(holder, component) { Rovu = rovu };
+        new(holder, component)
+        {
+            Rovu = rovu,
+        };
 
     public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> kUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, IKorssa<MetaFunction<R, R>> changeFunc)
         where C : IRovetu
@@ -35,7 +43,10 @@ public static partial class KorssaSyntax
 
     public static Korssas.Component.Without<H> kWithoutRovi<H>(this IKorssa<IRoveggi<H>> holder, IRovu<H> rovu)
         where H : IRovetu =>
-        new(holder) { Rovu = rovu };
+        new(holder)
+        {
+            Rovu = rovu,
+        };
 
     public static Korssas.Component.With<MergeSpec<C>, R> kMergeRovi<C, R>(this IKorssa<IRoveggi<MergeSpec<C>>> mergeObject, IRovu<C, R> mergingIdentifier, IKorssa<R> component)
         where C : IRovetu

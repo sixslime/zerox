@@ -63,9 +63,10 @@ public interface IStateFZO
         public IEnumerable<RogOpt> ArgRoggiStack { get; }
         public IEnumerable<IMemoryFZO> MemoryStack { get; }
     }
+
     public interface IOrigin
     {
         public Kor Program { get; }
         public IMemoryFZO InitialMemory { get; }
-    } 
+    }
 }

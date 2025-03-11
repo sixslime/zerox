@@ -31,7 +31,7 @@ public static partial class Core
         where ROut : class, Rog =>
         new(korssaFunction)
         {
-            Captures = captures.ToArray()
+            Captures = captures.ToArray(),
         };
 
     public static Korssas.DefineMetaFunction<RArg1, ROut> kMetaFunctionRecursive<RArg1, ROut>(IEnumerable<Addr> captures, Func<DynamicAddress<MetaFunction<RArg1, ROut>>, DynamicAddress<RArg1>, IKorssa<ROut>> korssaFunction)
@@ -39,7 +39,7 @@ public static partial class Core
         where ROut : class, Rog =>
         new(korssaFunction)
         {
-            Captures = captures.ToArray()
+            Captures = captures.ToArray(),
         };
 
     public static Korssas.DefineMetaFunction<RArg1, RArg2, ROut> kMetaFunctionRecursive<RArg1, RArg2, ROut>(IEnumerable<Addr> captures, Func<DynamicAddress<MetaFunction<RArg1, RArg2, ROut>>, DynamicAddress<RArg1>, DynamicAddress<RArg2>, IKorssa<ROut>> korssaFunction)
@@ -48,7 +48,7 @@ public static partial class Core
         where ROut : class, Rog =>
         new(korssaFunction)
         {
-            Captures = captures.ToArray()
+            Captures = captures.ToArray(),
         };
 
     public static Korssas.DefineMetaFunction<RArg1, RArg2, RArg3, ROut> kMetaFunctionRecursive<RArg1, RArg2, RArg3, ROut>(IEnumerable<Addr> captures, Func<DynamicAddress<MetaFunction<RArg1, RArg2, RArg3, ROut>>, DynamicAddress<RArg1>, DynamicAddress<RArg2>, DynamicAddress<RArg3>, IKorssa<ROut>> korssaFunction)
@@ -58,13 +58,15 @@ public static partial class Core
         where ROut : class, Rog =>
         new(korssaFunction)
         {
-            Captures = captures.ToArray()
+            Captures = captures.ToArray(),
         };
 }
 
 public static partial class KorssaSyntax
 {
-    public static Korssas.Execute<R> kExecute<R>(this IKorssa<MetaFunction<R>> source) where R : class, Rog => new(source);
+    public static Korssas.Execute<R> kExecute<R>(this IKorssa<MetaFunction<R>> source)
+        where R : class, Rog =>
+        new(source);
 
     public static Korssas.Execute<RArg1, ROut> kExecuteWith<RArg1, ROut>(this IKorssa<MetaFunction<RArg1, ROut>> source, Structure.Korssa.Args<RArg1> args)
         where RArg1 : class, Rog

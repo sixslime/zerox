@@ -3,10 +3,15 @@
 using Roggis;
 using Korvessa.Defined;
 using Syntax;
-using SixShaded.FourZeroOne.Roveggi;
+using Roveggi;
 
 public static class Compose<C>
     where C : IRovetu
 {
-    public static Korvessa<IRoveggi<C>> Construct() => new() { Du = Axoi.Korvedu("compose"), Definition = new Korssas.Fixed<IRoveggi<C>>(new Roveggi<C>()).kMetaBoxed([]) };
+    public static Korvessa<IRoveggi<C>> Construct() =>
+        new()
+        {
+            Du = Axoi.Korvedu("compose"),
+            Definition = new Korssas.Fixed<IRoveggi<C>>(new Roveggi<C>()).kMetaBoxed([]),
+        };
 }

@@ -5,16 +5,14 @@ public record Mellsanossa<R> : Korssa.Defined.StateImplementedKorssa<R>, Unsafe.
 {
     // [0] is always self/original proxy, rest are arg proxies in-order.
     public required IProxy<Rog>[] Proxies { get; init; }
-    public required Unsafe.IMellsano<R> AppliedMellsano { get; init; }
 
-    protected override FZOSpec.EStateImplemented MakeData(IKorssaContext context)
-    {
-        return AppliedMellsano.DefinitionUnsafe
+    protected override FZOSpec.EStateImplemented MakeData(IKorssaContext context) =>
+        AppliedMellsano.DefinitionUnsafe
                 .ConstructConcreteMetaFunction(context.CurrentMemory)
                 .ConstructMetaExecute(Proxies.Map(x => x.AsSome()).ToArray<RogOpt>()) with
             {
-                MellsanoMutes = [AppliedMellsano.ID]
+                MellsanoMutes = [AppliedMellsano.ID],
             };
-    }
 
+    public required Unsafe.IMellsano<R> AppliedMellsano { get; init; }
 }

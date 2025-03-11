@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Korssas.Memory;
 
-public sealed record DynamicReference<R> : Korssa.Defined.Value<R> where R : class, Rog
+public sealed record DynamicReference<R> : Korssa.Defined.Value<R>
+    where R : class, Rog
 {
     private readonly IMemoryAddress<R> _referenceAddress;
 

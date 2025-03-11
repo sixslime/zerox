@@ -1,8 +1,10 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Korssas.IO.Select;
 
-public sealed record One<R> : Korssa.Defined.Function<IMulti<R>, R> where R : class, Rog
+public sealed record One<R> : Korssa.Defined.Function<IMulti<R>, R>
+    where R : class, Rog
 {
-    public One(IKorssa<IMulti<R>> from) : base(from) { }
+    public One(IKorssa<IMulti<R>> from) : base(from)
+    { }
 
     protected override async ITask<IOption<R>> Evaluate(IKorssaContext runtime, IOption<IMulti<R>> fromOpt) =>
         fromOpt.Check(out var from)

@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Roggi;
 
-public sealed record DynamicAddress<R> : IMemoryAddress<R> where R : class, Rog
+public sealed record DynamicAddress<R> : IMemoryAddress<R>
+    where R : class, Rog
 {
     private static int _idAssigner;
 
