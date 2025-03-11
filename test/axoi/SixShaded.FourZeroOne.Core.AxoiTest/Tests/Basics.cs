@@ -198,18 +198,5 @@ public sealed class Basics
             .DeTesAssertRoggi(c, r => r.Count is 5, "count check (5)")
             .DeTesAssertRoggi(c, r => r.Elements.Map(x => x.Value).SequenceEqual([15, 25, 65, 85, 105]), "sequence check"));
 
-    public async Task MemoryRovetu() =>
-        await Run(
-        c =>
-            Core.kSubEnvironment<Number>(new()
-            {
-                Environment = 
-                    (1..5).kFixed()
-                    .kMap(
-                    [],
-                    numI =>
-                        )
-            })
-            );
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }
