@@ -212,6 +212,13 @@ namespace SixShaded.NotRust
             nset.SymmetricExceptWith(intersection.Elements);
             return new PSet<T>(nset);
         }
+        public override bool Equals(object? obj) => obj is IPSet<T> other && other.Count == Count && other.Elements.Intersect(Elements).Count() == Count;
+        public override int GetHashCode()
+        {
+            if (Count == 0) return 0.GetHashCode();
+            var arr = Elements.ToArray();
+            return HashCode.Combine(arr[Math.Abs(arr[0]!.GetHashCode() + 2) % arr.Length], Count);
+        }
     }
     public class PSequence<T>() : IPSequence<T>
     {
@@ -266,6 +273,10 @@ namespace SixShaded.NotRust
         {
             return $"PSeq[{string.Join(", ", Elements)}]";
         }
+
+        public override bool Equals(object? obj) => obj is IPSequence<T> other && other.Count == Count && other.Elements.SequenceEqual(Elements);
+
+        public override int GetHashCode() => _list.GetHashCode();
     }
     public class PStack<T>() : IPStack<T>
     {
