@@ -160,35 +160,35 @@ public sealed class Basics
             (1..5).kFixed()
             .kMap(
             [],
-            x =>
+            xM =>
                 Core.kMetaFunction<Number, MetaFunction<Number>>(
-                [x],
-                y =>
+                [xM],
+                yM =>
                     Core.kSubEnvironment<MetaFunction<Number>>(
                     new()
                     {
                         Environment =
                         [
-                            x.kRef()
+                            xM.kRef()
                                 .DeTesAssertRoggiUnstable(c, r => r.IsSome(), "x capture check [x5]")
                                 .kIsGreaterThan(2.kFixed())
                                 .kIfTrue<Number>(
                                 new()
                                 {
-                                    Then = x.kRef().kMultiply(2.kFixed()),
-                                    Else = x.kRef(),
+                                    Then = xM.kRef().kMultiply(2.kFixed()),
+                                    Else = xM.kRef(),
                                 })
                                 .kAsVariable(out var theValue),
                         ],
                         Value =
                             Core.kMetaFunction(
-                            [theValue, y],
-                            () => theValue.kRef().kMultiply(10.kFixed()).kAdd(y.kRef())),
+                            [theValue, yM],
+                            () => theValue.kRef().kMultiply(10.kFixed()).kAdd(yM.kRef())),
                     })))
             .kMap(
             [],
-            funcII =>
-                funcII.kRef()
+            funcM =>
+                funcM.kRef()
                     .kExecuteWith(
                     new()
                     {
