@@ -30,10 +30,10 @@ public sealed class Basics
     [DataRow(401, new[] { true, true, false }, 2, 6)]
     [DataRow(888, new[] { true, true, false }, 0, 10)]
     [DataRow(0, new[] { true, true, false }, 3, 4)]
-    public async Task Roveggi(int num, bool[] bools, int basePower, int power) =>
+    public async Task RoveggiRovi(int num, bool[] bools, int basePower, int power) =>
         await Run(
         c =>
-            Core.kRoveggi<FooRovetu>()
+            Core.kCompose<FooRovetu>()
                 .kWithRovi(FooRovetu.NUM, num.kFixed())
                 .DeTesAssertRoggi(c, r => r.GetComponent(FooRovetu.NUM).Unwrap().Value == num, "NUM check")
                 .DeTesAssertRoggi(c, r => !r.GetComponent(FooRovetu.MULTI_BOOL).IsSome(), "MULTI_BOOL check before set")
@@ -42,7 +42,7 @@ public sealed class Basics
                 .DeTesAssertRoggi(c, r => !r.GetComponent(FooRovetu.NUM).IsSome(), "NUM check after remove")
                 .kWithRovi(
                 FooRovetu.POWER_OBJ,
-                Core.kRoveggi<PowerExpr>()
+                Core.kCompose<PowerExpr>()
                     .kWithRovi(PowerExpr.POWER, power.kFixed())
                     .kWithRovi(PowerExpr.NUM, basePower.kFixed()))
                 .DeTesAssertRoggi(c, r => r.GetComponent(FooRovetu.MULTI_BOOL).Unwrap().Elements.Map(x => x.IsTrue).SequenceEqual(bools), "MULTI_BOOL check")
@@ -198,5 +198,100 @@ public sealed class Basics
             .DeTesAssertRoggi(c, r => r.Count is 5, "count check (5)")
             .DeTesAssertRoggi(c, r => r.Elements.Map(x => x.Value).SequenceEqual([15, 25, 65, 85, 105]), "sequence check"));
 
+    [TestMethod]
+    public async Task MemoryRoveggi() =>
+        await Run(
+        c =>
+            Core.kSubEnvironment<Number>(
+                new()
+                {
+                    Environment =
+                    [
+                        (1..5).kFixed()
+                        .kMap(
+                        [],
+                        iNum =>
+                            Core.kSubEnvironment<Multi<Roveggi.IRoveggi<FooMemRovetu>>>(
+                            new()
+                            {
+                                Environment =
+                                [
+                                    Core.kCompose<FooMemRovetu>()
+                                        .kWithRovi(FooMemRovetu.ID, iNum.kRef())
+                                        .kAsVariable(out var iComp)
+                                ],
+                                Value =
+                                    Core.kMulti(
+                                    iComp.kRef()
+                                        .kWithRovi(FooMemRovetu.PART, false.kFixed()),
+                                    iComp.kRef()
+                                        .kWithRovi(FooMemRovetu.PART, true.kFixed()))
+                            }))
+                        .kFlatten()
+                        .DeTesAssertRoggi(c, r => r.Count is 10, "pre memassign count check (10)")
+                        .kMap(
+                        [],
+                        iComp =>
+                            Core.kSubEnvironment<Rog>(
+                            new()
+                            {
+                                Environment =
+                                [
+                                    iComp.kRef()
+                                        .kGetRovi(FooMemRovetu.ID)
+                                        .kAsVariable(out var iNum)
+                                ],
+                                Value =
+                                    iComp.kRef()
+                                        .kWrite(
+                                        iComp.kRef()
+                                            .kGetRovi(FooMemRovetu.PART)
+                                            .kIfTrue<Number>(
+                                            new()
+                                            {
+                                                Then = iNum.kRef().kMultiply(10.kFixed()),
+                                                Else = iNum.kRef().kMultiply((-1).kFixed())
+                                            }))
+                            }))
+                        .DeTesAssertRoggi(c, r => r.Count is 10, "post memassign count check (10)")
+                    ],
+                    Value =
+                        Core.kSubEnvironment<Number>(
+                        new()
+                        {
+                            Environment =
+                            [
+                                (1..5)
+                                .kFixed()
+                                .kIOSelectOne()
+                                .DeTesDomain(c, Iter.Range(0, 4, true), out var idDomain, "id domain")
+                                .DeTesReference(c, out var dtId, "selected id")
+                                .kAsVariable(out var iSelectedId),
+                                Iter.Over(true, false)
+                                    .Map(x => (Bool)x)
+                                    .kFixed()
+                                    .kIOSelectOne()
+                                    .DeTesDomain(c, Iter.Over(0, 1), out var partDomain, "part domain")
+                                    .DeTesReference(c, out var dtPart, "selected part")
+                                    .kAsVariable(out var iSelectedPart)
+                            ],
+                            Value =
+                                Core.kCompose<FooMemRovetu>()
+                                    .kWithRovi(FooMemRovetu.ID, iSelectedId.kRef())
+                                    .kWithRovi(FooMemRovetu.PART, iSelectedPart.kRef())
+                                    .kGet()
+                                    .DeTesAssertRoggiUnstable(c, r => r.IsSome(), "data exists check")
+                        })
+                        .DeTesAssertMemory(c, m => m.Objects.Count() > 1, "memory some data exists check (>1)")
+                        .DeTesAssertMemory(c, m => m.Objects.Count() == 10, "memory exact count check (10)")
+                })
+                .DeTesAssertRoggi(
+                c,
+                r =>
+                    r.Value ==
+                    ((dtPart.Roggi.IsTrue)
+                        ? dtId.Roggi.Value * 10
+                        : dtId.Roggi.Value * -1),
+                "final result check"));
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }

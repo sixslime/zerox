@@ -12,7 +12,7 @@ public class Sanity
     public async Task Compose() =>
         await Run(
         c =>
-            Core.kRoveggi<FooRovetu>()
+            Core.kCompose<FooRovetu>()
                 .kWithRovi(FooRovetu.NUM, 401.kFixed())
                 .DeTesAssertRoggi(c, r => r.GetComponent(FooRovetu.NUM).Unwrap().Value == 401, "NUM check"));
 
@@ -77,5 +77,30 @@ public class Sanity
                     A = 1.kFixed()
                 })
                 .DeTesAssertRoggiUnstable(c, r => domain.SelectedIndex() == 1 ? r.Check(out var v) && v.Value is 401 : !r.IsSome()));
+    [TestMethod]
+    public async Task MemoryRoveggi() =>
+        await Run(
+        c =>
+            Core.kSubEnvironment<Multi<Number>>(
+                new()
+                {
+                    Environment =
+                    [
+                        Core.kCompose<FooMemRovetu>()
+                            .kWithRovi(FooMemRovetu.ID, 8.kFixed())
+                            .kWithRovi(FooMemRovetu.PART, true.kFixed())
+                            .kAsVariable(out var iComp),
+                        iComp.kRef().kWrite(401.kFixed())
+                    ],
+                    Value =
+                        Core.kMulti(
+                        iComp.kRef().kGet()
+                            .DeTesAssertRoggi(c, r => r.Value is 401, "direct reference"),
+                        Core.kCompose<FooMemRovetu>()
+                            .kWithRovi(FooMemRovetu.ID, 8.kFixed())
+                            .kWithRovi(FooMemRovetu.PART, true.kFixed())
+                            .kGet()
+                            .DeTesAssertRoggi(c, r => r.Value is 401, "reconstructed"))
+                }));
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }

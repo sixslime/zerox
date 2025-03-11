@@ -152,6 +152,7 @@ namespace SixShaded.NotRust
             foreach (var r in entries) _ = ndict.Remove(r);
             return new PMap<K, T>(ndict);
         }
+
         public override string ToString()
         {
             return $"PMap[{string.Join(", ", Elements)}]";

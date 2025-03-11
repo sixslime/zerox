@@ -11,10 +11,10 @@ namespace SixShaded.NotRust
         Ta A { get; }
         Tb B { get; }
     }
-    public readonly record struct Tiple<Ta, Tb>(Ta a, Tb b) : ITiple<Ta, Tb>
+    public record Tiple<Ta, Tb>(Ta a, Tb b) : ITiple<Ta, Tb>
     {
-        public Ta A { get; private init; } = a;
-        public Tb B { get; private init; } = b;
+        public Ta A { get; } = a;
+        public Tb B { get; } = b;
         public static implicit operator Tiple<Ta, Tb>(ValueTuple<Ta, Tb> tup) => new(tup.Item1, tup.Item2);
         public static implicit operator ValueTuple<Ta, Tb>(Tiple<Ta, Tb> tup) => new(tup.A, tup.B);
         public override string ToString()

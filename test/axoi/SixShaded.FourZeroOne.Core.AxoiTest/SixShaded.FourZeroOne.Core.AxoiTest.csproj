@@ -13,6 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\SixShaded.SixLib.ICEE.FZO\SixShaded.SixLib.ICEE.FZO.csproj" />
+    <ProjectReference Include="..\..\..\lib\SixShaded.SixLib.ICEE\SixShaded.SixLib.ICEE.csproj" />
     <ProjectReference Include="..\..\..\src\SixShaded.CatGlance\SixShaded.CatGlance.csproj" />
     <ProjectReference Include="..\..\..\src\SixShaded.DeTesAssertIntegrity\SixShaded.DeTesAssertIntegrity.csproj" />
     <ProjectReference Include="..\..\..\src\SixShaded.DeTes\SixShaded.DeTes.csproj" />

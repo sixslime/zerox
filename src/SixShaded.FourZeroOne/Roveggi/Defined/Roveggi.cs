@@ -16,7 +16,7 @@ public record Roveggi<C> : Roggi.Defined.NoOp, IRoveggi<C>
     private PMap<IRovu<C>, Rog> _componentMap { get; init; }
     public override string ToString() => $"{typeof(C).Namespace!.Split(".")[^1]}.{typeof(C).Name}:{{{string.Join(" ", ComponentsUnsafe.OrderBy(x => x.A.ToString()).Map(x => $"{x.A}={x.B}"))}}}";
     public override int GetHashCode() => _componentMap.GetHashCode();
-    public virtual bool Equals(Roveggi<C>? other) => other is not null && _componentMap.Equals(other._componentMap);
+    public virtual bool Equals(Roveggi<C>? other) => other is not null && _componentMap.Elements.Intersect(other._componentMap.Elements).Count() == _componentMap.Count;
     public IEnumerable<ITiple<IRovu, Rog>> ComponentsUnsafe => _componentMap.Elements;
 
     // UNBELIEVABLY stupid
@@ -38,7 +38,6 @@ public record Roveggi<C> : Roggi.Defined.NoOp, IRoveggi<C>
         {
             _componentMap = _componentMap.WithoutEntries(addresses),
         };
-
     public IOption<R> GetComponent<R>(IRovu<C, R> address)
         where R : class, Rog =>
         _componentMap.At(address).RemapAs(x => (R)x);
