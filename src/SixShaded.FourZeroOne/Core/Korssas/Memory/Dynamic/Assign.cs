@@ -1,11 +1,11 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korssas.Memory;
+﻿namespace SixShaded.FourZeroOne.Core.Korssas.Memory.Dynamic;
 
-public sealed record DynamicAssign<R> : Korssa.Defined.RegularKorssa<Roggis.Instructions.Assign<R>>
+public sealed record Assign<R> : Korssa.Defined.RegularKorssa<Roggis.Instructions.Assign<R>>
     where R : class, Rog
 {
     public readonly IMemoryAddress<R> AssigningAddress;
 
-    public DynamicAssign(IMemoryAddress<R> address, IKorssa<R> obj) : base(obj)
+    public Assign(IMemoryAddress<R> address, IKorssa<R> obj) : base(obj)
     {
         AssigningAddress = address;
     }
