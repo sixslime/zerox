@@ -15,12 +15,12 @@ public static class Map<RIn, ROut>
             Definition =
                 Core.kMetaFunction<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>>(
                 [],
-                (multiI, mapFunctionI) =>
+                (iMulti, iMapFunction) =>
                     Core.kMetaFunctionRecursive<Number, Multi<ROut>>(
                         [],
-                        (selfFunc, i) =>
-                            i.kRef()
-                                .kIsGreaterThan(multiI.kRef().kCount())
+                        (iRecurse, iIndex) =>
+                            iIndex.kRef()
+                                .kIsGreaterThan(iMulti.kRef().kCount())
                                 .kIfTrue<Multi<ROut>>(
                                 new()
                                 {
@@ -28,18 +28,18 @@ public static class Map<RIn, ROut>
                                     Else =
                                         Core.kMulti(
                                         [
-                                            mapFunctionI.kRef()
+                                            iMapFunction.kRef()
                                                 .kExecuteWith(
                                                 new()
                                                 {
-                                                    A = multiI.kRef().kGetIndex(i.kRef()),
+                                                    A = iMulti.kRef().kGetIndex(iIndex.kRef()),
                                                 })
                                                 .kYield(),
-                                            selfFunc.kRef()
+                                            iRecurse.kRef()
                                                 .kExecuteWith(
                                                 new()
                                                 {
-                                                    A = i.kRef().kAdd(1.kFixed()),
+                                                    A = iIndex.kRef().kAdd(1.kFixed()),
                                                 }),
                                         ]).kFlatten(),
                                 }))

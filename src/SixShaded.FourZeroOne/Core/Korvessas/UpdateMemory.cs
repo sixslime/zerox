@@ -5,7 +5,7 @@ using Korvessa.Defined;
 using Syntax;
 using Roveggi;
 
-public static class UpdateMemoryObject<R>
+public static class UpdateMemory<R>
     where R : class, Rog
 {
     public static Korvessa<IRoveggi<IMemoryRovetu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> Construct(IKorssa<IRoveggi<IMemoryRovetu<R>>> memObj, IKorssa<MetaFunction<R, R>> updateFunction) =>
@@ -15,14 +15,14 @@ public static class UpdateMemoryObject<R>
             Definition =
                 Core.kMetaFunction<IRoveggi<IMemoryRovetu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>>(
                 [],
-                (memObjI, updateFunctionI) =>
-                    memObjI.kRef()
+                (iMemObj, iUpdateFunction) =>
+                    iMemObj.kRef()
                         .kWrite(
-                        updateFunctionI.kRef()
+                        iUpdateFunction.kRef()
                             .kExecuteWith(
                             new()
                             {
-                                A = memObjI.kRef().kGet(),
+                                A = iMemObj.kRef().kGet(),
                             }))),
         };
 }

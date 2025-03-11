@@ -14,12 +14,12 @@ public static class Duplicate<R>
             Definition =
                 Core.kMetaFunction<R, Number, Multi<R>>(
                 [],
-                (valueI, countI) =>
+                (iValue, iCount) =>
                     Core.kMetaFunctionRecursive<Number, Multi<R>>(
                         [],
-                        (selfFunc, i) =>
-                            i.kRef()
-                                .kIsGreaterThan(countI.kRef())
+                        (iRecurse, iIndex) =>
+                            iIndex.kRef()
+                                .kIsGreaterThan(iCount.kRef())
                                 .kIfTrue<Multi<R>>(
                                 new()
                                 {
@@ -27,12 +27,12 @@ public static class Duplicate<R>
                                     Else =
                                         Core.kMulti(
                                         [
-                                            valueI.kRef().kYield(),
-                                            selfFunc.kRef()
+                                            iValue.kRef().kYield(),
+                                            iRecurse.kRef()
                                                 .kExecuteWith(
                                                 new()
                                                 {
-                                                    A = i.kRef().kAdd(1.kFixed()),
+                                                    A = iIndex.kRef().kAdd(1.kFixed()),
                                                 }),
                                         ]).kFlatten(),
                                 }))

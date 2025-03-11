@@ -14,14 +14,14 @@ public static class CatchNolla<R>
             Definition =
                 Core.kMetaFunction<R, MetaFunction<R>, R>(
                 [],
-                (valueI, fallbackI) =>
-                    valueI.kRef()
+                (iValue, iFallback) =>
+                    iValue.kRef()
                         .kExists()
                         .kIfTrueExplicit<R>(
                         new()
                         {
-                            Then = valueI.kRef().kMetaBoxed([]),
-                            Else = fallbackI.kRef(),
+                            Then = iValue.kRef().kMetaBoxed([]),
+                            Else = iFallback.kRef(),
                         })
                         .kExecute()),
         };

@@ -17,15 +17,15 @@ public static class UpdateComponent<C, R>
             Definition =
                 Core.kMetaFunction<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>>(
                 [],
-                (roveggiI, updateFunctionI) =>
-                    roveggiI.kRef()
+                (roveggiM, updateFunctionM) =>
+                    roveggiM.kRef()
                         .kWithRovi(
                         component,
-                        updateFunctionI.kRef()
+                        updateFunctionM.kRef()
                             .kExecuteWith(
                             new()
                             {
-                                A = roveggiI.kRef().kGetRovi(component),
+                                A = roveggiM.kRef().kGetRovi(component),
                             }))),
         };
 }
