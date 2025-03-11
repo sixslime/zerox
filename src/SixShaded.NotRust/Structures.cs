@@ -158,7 +158,7 @@ namespace SixShaded.NotRust
         {
             if (Count == 0) return 0.GetHashCode();
             var arr = Elements.ToArray();
-            return HashCode.Combine(arr[(arr[0].GetHashCode() + 2) % arr.Length], Count);
+            return HashCode.Combine(arr[Math.Abs(arr[0].GetHashCode() + 2) % arr.Length], Count);
         }
 
         public override string ToString()
