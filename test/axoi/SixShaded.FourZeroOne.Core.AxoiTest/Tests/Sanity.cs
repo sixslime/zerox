@@ -1,4 +1,4 @@
-﻿namespace SixShaded.FourZeroOne.Core.AxoiTest;
+﻿namespace SixShaded.FourZeroOne.Core.AxoiTest.Tests;
 
 using DeTes.Declaration;
 using Internal.DummyAxoi.Roveggitus;
@@ -12,9 +12,9 @@ public class Sanity
     public async Task Compose() =>
         await Run(
         c =>
-            Core.kRoveggi<Stuff>()
-                .kWithRovi(Stuff.NUM, 401.kFixed())
-                .DeTesAssertRoggi(c, r => r.GetComponent(Stuff.NUM).Unwrap().Value == 401, "NUM check"));
+            Core.kRoveggi<FooRovetu>()
+                .kWithRovi(FooRovetu.NUM, 401.kFixed())
+                .DeTesAssertRoggi(c, r => r.GetComponent(FooRovetu.NUM).Unwrap().Value == 401, "NUM check"));
 
     [TestMethod]
     public async Task AMap() =>
@@ -34,7 +34,7 @@ public class Sanity
                 .DeTesDomain(c, [firstSelection], out var firstDomain, "first selection")
                 .DeTesAssertRoggiUnstable(
                 c, r =>
-                    (firstSelection.Length > initialPool.Length)
+                    firstSelection.Length > initialPool.Length
                         ? !r.IsSome()
                         : r.Check(out var multi) &&
                           multi.Count == firstSelection.Length &&

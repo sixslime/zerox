@@ -1,4 +1,4 @@
-﻿namespace SixShaded.FourZeroOne.Core.AxoiTest;
+﻿namespace SixShaded.FourZeroOne.Core.AxoiTest.Tests;
 
 using System.Reflection.Metadata;
 using DeTes.Declaration;
@@ -24,7 +24,7 @@ public sealed class Basics
                 .kMultiply(xc.kFixed())
                 .kAdd(xc.kFixed().kSubtract(xb.kFixed()))
                 .kMultiply(xa.kFixed())
-                .DeTesAssertRoggi(c, r => r.Value == (((xa + xb) * xc) + (xc - xb)) * xa));
+                .DeTesAssertRoggi(c, r => r.Value == ((xa + xb) * xc + (xc - xb)) * xa));
 
     [TestMethod]
     [DataRow(401, new[] { true, true, false }, 2, 6)]
@@ -33,20 +33,20 @@ public sealed class Basics
     public async Task Roveggi(int num, bool[] bools, int basePower, int power) =>
         await Run(
         c =>
-            Core.kRoveggi<Stuff>()
-                .kWithRovi(Stuff.NUM, num.kFixed())
-                .DeTesAssertRoggi(c, r => r.GetComponent(Stuff.NUM).Unwrap().Value == num, "NUM check")
-                .DeTesAssertRoggi(c, r => !r.GetComponent(Stuff.MULTI_BOOL).IsSome(), "MULTI_BOOL check before set")
-                .kWithRovi(Stuff.MULTI_BOOL, bools.kFixed())
-                .kWithoutRovi(Stuff.NUM)
-                .DeTesAssertRoggi(c, r => !r.GetComponent(Stuff.NUM).IsSome(), "NUM check after remove")
+            Core.kRoveggi<FooRovetu>()
+                .kWithRovi(FooRovetu.NUM, num.kFixed())
+                .DeTesAssertRoggi(c, r => r.GetComponent(FooRovetu.NUM).Unwrap().Value == num, "NUM check")
+                .DeTesAssertRoggi(c, r => !r.GetComponent(FooRovetu.MULTI_BOOL).IsSome(), "MULTI_BOOL check before set")
+                .kWithRovi(FooRovetu.MULTI_BOOL, bools.kFixed())
+                .kWithoutRovi(FooRovetu.NUM)
+                .DeTesAssertRoggi(c, r => !r.GetComponent(FooRovetu.NUM).IsSome(), "NUM check after remove")
                 .kWithRovi(
-                Stuff.POWER_OBJ,
+                FooRovetu.POWER_OBJ,
                 Core.kRoveggi<PowerExpr>()
                     .kWithRovi(PowerExpr.POWER, power.kFixed())
                     .kWithRovi(PowerExpr.NUM, basePower.kFixed()))
-                .DeTesAssertRoggi(c, r => r.GetComponent(Stuff.MULTI_BOOL).Unwrap().Elements.Map(x => x.IsTrue).SequenceEqual(bools), "MULTI_BOOL check")
-                .kGetRovi(Stuff.POWER_OBJ)
+                .DeTesAssertRoggi(c, r => r.GetComponent(FooRovetu.MULTI_BOOL).Unwrap().Elements.Map(x => x.IsTrue).SequenceEqual(bools), "MULTI_BOOL check")
+                .kGetRovi(FooRovetu.POWER_OBJ)
                 .DeTesAssertRoggi(
                 c, r =>
                     r.GetComponent(PowerExpr.NUM).Unwrap().Value == basePower &&
@@ -198,5 +198,18 @@ public sealed class Basics
             .DeTesAssertRoggi(c, r => r.Count is 5, "count check (5)")
             .DeTesAssertRoggi(c, r => r.Elements.Map(x => x.Value).SequenceEqual([15, 25, 65, 85, 105]), "sequence check"));
 
+    public async Task MemoryRovetu() =>
+        await Run(
+        c =>
+            Core.kSubEnvironment<Number>(new()
+            {
+                Environment = 
+                    (1..5).kFixed()
+                    .kMap(
+                    [],
+                    numI =>
+                        )
+            })
+            );
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }
