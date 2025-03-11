@@ -11,5 +11,5 @@ public sealed record Fixed<R> : Korssa.Defined.PureValue<R>
     }
 
     protected override R EvaluatePure() => Roggi;
-    protected override IOption<string> CustomToString() => $"|{Roggi}|".AsSome();
+    protected override IOption<string> CustomToString() => $"{Roggi}".AsSome();
 }

@@ -14,5 +14,5 @@ public sealed record Count : Korssa.Defined.Function<IMulti<Rog>, Number>
             }.AsSome()
             .ToCompletedITask();
 
-    protected override IOption<string> CustomToString() => $"{Arg1}.len".AsSome();
+    protected override IOption<string> CustomToString() => $"|{Arg1}|".AsSome();
 }

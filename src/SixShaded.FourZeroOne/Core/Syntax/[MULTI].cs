@@ -5,11 +5,11 @@ using Korvessa.Defined;
 
 public static partial class Core
 {
-    public static Korssas.Multi.Union<R> kMultiOf<R>(List<IKorssa<R>> korssas)
+    public static Korssas.Multi.Create<R> kMultiOf<R>(List<IKorssa<R>> korssas)
         where R : class, Rog =>
         new(korssas.Map(x => x.kYield()));
 
-    public static Korssas.Multi.Union<R> kUnionOf<R>(List<IKorssa<IMulti<R>>> sets)
+    public static Korssas.Multi.Create<R> kUnionOf<R>(List<IKorssa<IMulti<R>>> sets)
         where R : class, Rog =>
         new(sets);
 
@@ -30,15 +30,15 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(korssa);
 
-    public static Korssas.Multi.Union<R> kToMulti<R>(this IEnumerable<IKorssa<R>> korssas)
+    public static Korssas.Multi.Create<R> kToMulti<R>(this IEnumerable<IKorssa<R>> korssas)
         where R : class, Rog =>
         new(korssas.Map(x => x.kYield()));
 
-    public static Korssas.Multi.Union<R> kUnion<R>(this IKorssa<IMulti<R>> left, IKorssa<IMulti<R>> right)
+    public static Korssas.Multi.Create<R> kUnion<R>(this IKorssa<IMulti<R>> left, IKorssa<IMulti<R>> right)
         where R : class, Rog =>
         new(left, right);
 
-    public static Korssas.Multi.Union<R> kFlatten<R>(this IEnumerable<IKorssa<IMulti<R>>> korssas)
+    public static Korssas.Multi.Create<R> kFlatten<R>(this IEnumerable<IKorssa<IMulti<R>>> korssas)
         where R : class, Rog =>
         new(korssas);
 
