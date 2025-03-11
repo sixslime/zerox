@@ -1,10 +1,13 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Korssas.Component;
 
+using SixShaded.FourZeroOne.Roveggi;
+using SixShaded.FourZeroOne.Roveggi.Unsafe;
+
 public sealed record With<C, R> : Korssa.Defined.RegularKorssa<IRoveggi<C>>, IHasAttachedComponentIdentifier<C, IRoveggi<C>> where R : class, Rog where C : IRovetu
 {
     public With(IKorssa<IRoveggi<C>> holder, IKorssa<R> component) : base(holder, component) { }
     public required IRovu<C, R> Rovu { get; init; }
-    Roggi.Unsafe.IRovu<C> IHasAttachedComponentIdentifier<C, IRoveggi<C>>._attachedRovu => Rovu;
+    IRovu<C> IHasAttachedComponentIdentifier<C, IRoveggi<C>>._attachedRovu => Rovu;
 
     protected override ITask<IOption<IRoveggi<C>>> StandardResolve(IKorssaContext _, RogOpt[] args) =>
         (args[0].RemapAs(x => (IRoveggi<C>)x).Check(out var holder)

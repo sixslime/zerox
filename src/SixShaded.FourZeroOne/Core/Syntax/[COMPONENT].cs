@@ -3,6 +3,8 @@
 using Roggis;
 using Rovetus;
 using Korvessa.Defined;
+using SixShaded.FourZeroOne.Roveggi.Unsafe;
+using SixShaded.FourZeroOne.Roveggi;
 
 public static partial class Core
 {
@@ -31,7 +33,7 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.UpdateComponent<C, R>.Construct(holder, Core.kMetaFunction(captures, changeFunc), rovu);
 
-    public static Korssas.Component.Without<H> kWithoutRovi<H>(this IKorssa<IRoveggi<H>> holder, Roggi.Unsafe.IRovu<H> rovu)
+    public static Korssas.Component.Without<H> kWithoutRovi<H>(this IKorssa<IRoveggi<H>> holder, IRovu<H> rovu)
         where H : IRovetu =>
         new(holder) { Rovu = rovu };
 

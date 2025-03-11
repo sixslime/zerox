@@ -1,5 +1,4 @@
-﻿namespace SixShaded.FourZeroOne.Roggi;
-
+﻿namespace SixShaded.FourZeroOne.Roveggi;
 /// <summary>
 /// Allows 'Get' 'Insert' and 'Redact' Korssas.
 /// </summary>

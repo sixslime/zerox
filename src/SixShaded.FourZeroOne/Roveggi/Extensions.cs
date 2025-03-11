@@ -1,5 +1,4 @@
 ﻿namespace SixShaded.FourZeroOne.Roveggi;
-
 public static class Extensions
 {
     internal static MemoryRoveggiWrapper<R> MemWrapped<R>(this IRoveggi<IMemoryRovetu<R>> roveggi)

@@ -3,6 +3,7 @@
 using Roggi;
 using Roggi.Defined;
 using Roggis;
+using SixShaded.FourZeroOne.Roveggi.Defined;
 using Core = Syntax.Core;
 
 internal class PowerExpr : Rovetu

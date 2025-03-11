@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Korssas.Component;
 
 using Rovetus;
+using SixShaded.FourZeroOne.Roveggi;
 
 public sealed record DoMerge<C> : Korssa.Defined.Function<IRoveggi<C>, IRoveggi<MergeSpec<C>>, IRoveggi<C>> where C : IRovetu
 {

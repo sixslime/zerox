@@ -1,4 +1,6 @@
-﻿namespace SixShaded.FourZeroOne.Roggi.Defined;
+﻿namespace SixShaded.FourZeroOne.Roveggi.Defined;
+
+using SixShaded.FourZeroOne.Roveggi;
 
 public sealed class Rovu<C, R>(Axodu axodu, string identifier) : Axovendu(axodu, identifier), IRovu<C, R> where C : IRovetu where R : class, Rog
 {

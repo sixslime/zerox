@@ -1,5 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Korssas.Memory.Object;
 
+using SixShaded.FourZeroOne.Roveggi;
+
 public sealed record Remove : Korssa.Defined.PureFunction<IRoveggi<IMemoryRovetu<Rog>>, Roggis.Instructions.Redact>
 {
     public Remove(IKorssa<IRoveggi<IMemoryRovetu<Rog>>> address) : base(address) { }

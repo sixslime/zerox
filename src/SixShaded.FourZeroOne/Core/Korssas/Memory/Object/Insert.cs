@@ -1,5 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Korssas.Memory.Object;
 
+using SixShaded.FourZeroOne.Roveggi;
+
 public sealed record Insert<R> : Korssa.Defined.PureFunction<IRoveggi<IMemoryRovetu<R>>, R, Roggis.Instructions.Assign<R>>
     where R : class, Rog
 {

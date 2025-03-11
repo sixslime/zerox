@@ -1,4 +1,6 @@
-namespace SixShaded.FourZeroOne.Roggi;
+namespace SixShaded.FourZeroOne.Roveggi;
 
-public interface IRovu<in C, in R> : Unsafe.IRovu<C> where C : IRovetu where R : class, Rog
+using SixShaded.FourZeroOne.Roveggi.Unsafe;
+
+public interface IRovu<in C, in R> : IRovu<C> where C : IRovetu where R : class, Rog
 { }

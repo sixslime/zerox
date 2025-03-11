@@ -4,6 +4,7 @@
     using Core.Syntax;
     using Roggi;
     using Roggi.Defined;
+    using SixShaded.FourZeroOne.Roveggi.Defined;
 
     // GOAL: create an attack ability
     // 'current turn' static player pointer?

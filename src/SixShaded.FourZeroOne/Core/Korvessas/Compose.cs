@@ -3,6 +3,7 @@
 using Roggis;
 using Korvessa.Defined;
 using Syntax;
+using SixShaded.FourZeroOne.Roveggi;
 
 public static class Compose<C>
     where C : IRovetu

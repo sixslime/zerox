@@ -4,6 +4,7 @@ using Roggis;
 using Korssas.Memory;
 using SixShaded.FourZeroOne.Core.Korssas.Memory.Object;
 using Korvessa.Defined;
+using SixShaded.FourZeroOne.Roveggi;
 
 public static partial class KorssaSyntax
 {

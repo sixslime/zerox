@@ -1,5 +1,4 @@
-﻿namespace SixShaded.FourZeroOne.Roggi;
-
+﻿namespace SixShaded.FourZeroOne.Roveggi;
 internal record MemoryRoveggiWrapper<R>(IRoveggi<IMemoryRovetu<R>> Roveggi) : IMemoryAddress<R>
     where R : class, Rog
 {
