@@ -1,4 +1,4 @@
-﻿namespace SixShaded.FourZeroOne.Core.Roggis;
+﻿namespace SixShaded.FourZeroOne.Roveggi.Defined;
 
 using SixShaded.FourZeroOne.Roveggi;
 using SixShaded.FourZeroOne.Roveggi.Unsafe;
