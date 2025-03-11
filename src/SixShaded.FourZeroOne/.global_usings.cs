@@ -4,6 +4,7 @@ global using SixShaded.FourZeroOne.Roggi;
 global using SixShaded.FourZeroOne.Korssa;
 global using SixShaded.FourZeroOne.Mellsano;
 global using SixShaded.FourZeroOne.Korvessa;
+global using SixShaded.FourZeroOne.Roveggi;
 global using SixShaded.FourZeroOne.Handles;
 global using MorseCode.ITask;
 global using Rog = SixShaded.FourZeroOne.Roggi.IRoggi;

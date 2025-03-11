@@ -18,9 +18,4 @@ public static class Extensions
                     .Tipled()
         };
     }
-    internal static MemoryRoveggiWrapper<R> MemWrapped<R>(this IRoveggi<IMemoryRovetu<R>> roveggi)
-        where R : class, Rog
-    {
-        return new(roveggi);
-    }
 }
