@@ -5,24 +5,13 @@ using Korvessa.Defined;
 
 public static partial class Core
 {
-    public static Korssas.Multi.Create<R> kMultiOf<R>(List<IKorssa<R>> korssas)
+    public static Korssas.Multi.Create<R> kMultiOf<R>(params IKorssa<R>[] korssas)
         where R : class, Rog =>
-        new(korssas.Map(x => x.kYield()));
-
-    public static Korssas.Multi.Create<R> kUnionOf<R>(List<IKorssa<IMulti<R>>> sets)
-        where R : class, Rog =>
-        new(sets);
-
-    public static Korssas.Multi.Intersection<R> kIntersectionOf<R>(List<IKorssa<IMulti<R>>> sets)
-        where R : class, Rog =>
-        new(sets);
+        new(korssas);
 }
 
 public static partial class KorssaSyntax
 {
-    public static Korssas.Multi.Exclusion<R> kWithout<R>(this IKorssa<IMulti<R>> source, IKorssa<IMulti<R>> exclude)
-        where R : class, Rog =>
-        new(source, exclude);
 
     public static Korssas.Multi.Count kCount(this IKorssa<IMulti<Rog>> source) => new(source);
 
@@ -32,13 +21,16 @@ public static partial class KorssaSyntax
 
     public static Korssas.Multi.Create<R> kToMulti<R>(this IEnumerable<IKorssa<R>> korssas)
         where R : class, Rog =>
-        new(korssas.Map(x => x.kYield()));
+        new(korssas.ToArray());
 
-    public static Korssas.Multi.Create<R> kUnion<R>(this IKorssa<IMulti<R>> left, IKorssa<IMulti<R>> right)
+    public static Korssas.Multi.Exclusion<R> kExclude<R>(this IKorssa<IMulti<R>> from, IKorssa<IMulti<R>> exclude)
         where R : class, Rog =>
-        new(left, right);
+        new(from, exclude);
 
-    public static Korssas.Multi.Create<R> kFlatten<R>(this IEnumerable<IKorssa<IMulti<R>>> korssas)
+    public static Korssas.Multi.Intersection<R> kIntersection<R>(this IKorssa<IMulti<IMulti<R>>> multis)
+        where R : class, Rog =>
+        new(multis);
+    public static Korssas.Multi.Flatten<R> kFlatten<R>(this IKorssa<IMulti<IMulti<R>>> korssas)
         where R : class, Rog =>
         new(korssas);
 

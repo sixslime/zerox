@@ -3,8 +3,6 @@
 public sealed record Create<R> : Korssa.Defined.PureCombiner<R, Roggis.Multi<R>>
     where R : class, Rog
 {
-    public Create(IEnumerable<IKorssa<R>> elements) : base(elements)
-    { }
 
     public Create(params IKorssa<R>[] elements) : base(elements)
     { }
