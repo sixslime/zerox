@@ -60,6 +60,5 @@ public static class Integer
 public static class Async
 {
     public static ITask<T> ToCompletedITask<T>(this T obj) => Task.FromResult(obj).AsITask();
-
     public static Task<T> ToCompletedTask<T>(this T obj) => Task.FromResult(obj);
 }

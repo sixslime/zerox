@@ -26,15 +26,13 @@ public static class Duplicate<R>
                                     Then = Core.kNollaFor<Multi<R>>(),
                                     Else =
                                         Core.kMulti(
-                                        [
-                                            iValue.kRef().kYield(),
-                                            iRecurse.kRef()
+                                            iValue.kRef().kYield(), iRecurse.kRef()
                                                 .kExecuteWith(
                                                 new()
                                                 {
                                                     A = iIndex.kRef().kAdd(1.kFixed()),
-                                                }),
-                                        ]).kFlatten(),
+                                                }))
+                                            .kFlatten(),
                                 }))
                         .kExecuteWith(
                         new()

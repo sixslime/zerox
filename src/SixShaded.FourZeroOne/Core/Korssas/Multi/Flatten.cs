@@ -8,6 +8,6 @@ public record Flatten<R>(IKorssa<IMulti<IMulti<R>>> multi) : Korssa.Defined.Pure
     protected override Multi<R> EvaluatePure(IMulti<IMulti<R>> in1) =>
         new()
         {
-            Values = in1.Elements.Map(x => x.Elements).Flatten().ToPSequence()
+            Values = in1.Elements.Map(x => x.Elements).Flatten().ToPSequence(),
         };
 }

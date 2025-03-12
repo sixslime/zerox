@@ -1,4 +1,5 @@
 ﻿namespace SixShaded.DeTes.Declaration.Impl;
+
 internal interface IReferenceAccessor : IKorssaLinked, IHasDescription
 {
     void SetRoggi(RogOpt roggi);

@@ -30,11 +30,15 @@ public class ControlledAwaiter : IControlledAwaiter
         _completed = false;
     }
 
+    private static void DoFuckingNothing()
+    { }
+
     public bool IsCompleted => _completed;
 
     public void Resolve()
     {
         Cease();
+
         //this is fucking stupid, i hate this, i want to die, why cant i do anything right
         _continueAction ??= DoFuckingNothing;
         _continueAction();
@@ -52,29 +56,28 @@ public class ControlledAwaiter : IControlledAwaiter
     // the documentation also isnt very helpful. sucks to suck!
     public void UnsafeOnCompleted(Action continuation) => _continueAction = continuation;
 
-    public void GetResult() { }
-
-    private static void DoFuckingNothing() { }
+    public void GetResult()
+    { }
 }
 
 public class ControlledAwaiter<T> : ControlledAwaiter, ICeasableAwaiter<T>
 {
     private T _result;
 
-    // reeks
-    public new T GetResult() => _result;
-
     public virtual void Resolve(T result)
     {
         _result = result;
         Resolve();
     }
+
+    // reeks
+    public new T GetResult() => _result;
 }
 
 public class TransformedAwaiter<T, R> : ICeasableAwaiter<R>
 {
-    private ICeasableAwaiter<T> _awaiter;
-    private Func<T, R> _transformFunction;
+    private readonly ICeasableAwaiter<T> _awaiter;
+    private readonly Func<T, R> _transformFunction;
 
     public TransformedAwaiter(ICeasableAwaiter<T> awaiter, Func<T, R> transformFunction)
     {
@@ -87,7 +90,6 @@ public class TransformedAwaiter<T, R> : ICeasableAwaiter<R>
     public void Cease() => _awaiter.Cease();
     public void OnCompleted(Action continuation) => _awaiter.OnCompleted(continuation);
     public void UnsafeOnCompleted(Action continuation) => _awaiter.UnsafeOnCompleted(continuation);
-
     public R GetResult() => _transformFunction(_baseAwaiter.GetResult());
     void IAwaiter.GetResult() => _baseAwaiter.GetResult();
 }

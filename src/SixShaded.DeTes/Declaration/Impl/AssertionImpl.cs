@@ -1,4 +1,5 @@
 ﻿namespace SixShaded.DeTes.Declaration.Impl;
+
 internal class AssertionImpl<T> : IAssertionAccessor<T>
 {
     public required Kor LinkedKorssa { get; init; }

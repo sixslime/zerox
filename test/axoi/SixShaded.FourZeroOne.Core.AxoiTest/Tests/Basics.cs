@@ -24,7 +24,7 @@ public sealed class Basics
                 .kMultiply(xc.kFixed())
                 .kAdd(xc.kFixed().kSubtract(xb.kFixed()))
                 .kMultiply(xa.kFixed())
-                .DeTesAssertRoggi(c, r => r.Value == ((xa + xb) * xc + (xc - xb)) * xa));
+                .DeTesAssertRoggi(c, r => r.Value == (((xa + xb) * xc) + (xc - xb)) * xa));
 
     [TestMethod]
     [DataRow(401, new[] { true, true, false }, 2, 6)]
@@ -134,7 +134,7 @@ public sealed class Basics
                                         .kAsVariable(out var theNumber),
                                 ],
                                 Value =
-                                    Core.kMulti([theNumber.kRef(), theNumber.kRef().kMultiply(2.kFixed())])
+                                    Core.kMulti(theNumber.kRef(), theNumber.kRef().kMultiply(2.kFixed()))
                                         .DeTesAssertMemory(c, m => m.Objects.Count() == 1, "inner count check (1)")
                                         .DeTesAssertMemory(c, m => m.GetObject(theNumber).Check(out var v) && v.Value is 401, "reference check"),
                             })
@@ -218,14 +218,14 @@ public sealed class Basics
                                 [
                                     Core.kCompose<FooMemRovetu>()
                                         .kWithRovi(FooMemRovetu.ID, iNum.kRef())
-                                        .kAsVariable(out var iComp)
+                                        .kAsVariable(out var iComp),
                                 ],
                                 Value =
                                     Core.kMulti(
                                     iComp.kRef()
                                         .kWithRovi(FooMemRovetu.PART, false.kFixed()),
                                     iComp.kRef()
-                                        .kWithRovi(FooMemRovetu.PART, true.kFixed()))
+                                        .kWithRovi(FooMemRovetu.PART, true.kFixed())),
                             }))
                         .kFlatten()
                         .DeTesAssertRoggi(c, r => r.Count is 10, "pre memassign count check (10)")
@@ -239,7 +239,7 @@ public sealed class Basics
                                 [
                                     iComp.kRef()
                                         .kGetRovi(FooMemRovetu.ID)
-                                        .kAsVariable(out var iNum)
+                                        .kAsVariable(out var iNum),
                                 ],
                                 Value =
                                     iComp.kRef()
@@ -250,48 +250,49 @@ public sealed class Basics
                                             new()
                                             {
                                                 Then = iNum.kRef().kMultiply(10.kFixed()),
-                                                Else = iNum.kRef().kMultiply((-1).kFixed())
-                                            }))
+                                                Else = iNum.kRef().kMultiply((-1).kFixed()),
+                                            })),
                             }))
-                        .DeTesAssertRoggi(c, r => r.Count is 10, "post memassign count check (10)")
+                        .DeTesAssertRoggi(c, r => r.Count is 10, "post memassign count check (10)"),
                     ],
                     Value =
                         Core.kSubEnvironment<Number>(
-                        new()
-                        {
-                            Environment =
-                            [
-                                (1..5)
-                                .kFixed()
-                                .kIOSelectOne()
-                                .DeTesDomain(c, Iter.Range(0, 4, true), out var idDomain, "id domain")
-                                .DeTesReference(c, out var dtId, "selected id")
-                                .kAsVariable(out var iSelectedId),
-                                Iter.Over(true, false)
-                                    .Map(x => (Bool)x)
+                            new()
+                            {
+                                Environment =
+                                [
+                                    (1..5)
                                     .kFixed()
                                     .kIOSelectOne()
-                                    .DeTesDomain(c, Iter.Over(0, 1), out var partDomain, "part domain")
-                                    .DeTesReference(c, out var dtPart, "selected part")
-                                    .kAsVariable(out var iSelectedPart)
-                            ],
-                            Value =
-                                Core.kCompose<FooMemRovetu>()
-                                    .kWithRovi(FooMemRovetu.ID, iSelectedId.kRef())
-                                    .kWithRovi(FooMemRovetu.PART, iSelectedPart.kRef())
-                                    .kGet()
-                                    .DeTesAssertRoggiUnstable(c, r => r.IsSome(), "data exists check")
-                        })
-                        .DeTesAssertMemory(c, m => m.Objects.Count() > 1, "memory some data exists check (>1)")
-                        .DeTesAssertMemory(c, m => m.Objects.Count() == 10, "memory exact count check (10)")
+                                    .DeTesDomain(c, Iter.Range(0, 4, true), out var idDomain, "id domain")
+                                    .DeTesReference(c, out var dtId, "selected id")
+                                    .kAsVariable(out var iSelectedId),
+                                    Iter.Over(true, false)
+                                        .Map(x => (Bool)x)
+                                        .kFixed()
+                                        .kIOSelectOne()
+                                        .DeTesDomain(c, Iter.Over(0, 1), out var partDomain, "part domain")
+                                        .DeTesReference(c, out var dtPart, "selected part")
+                                        .kAsVariable(out var iSelectedPart),
+                                ],
+                                Value =
+                                    Core.kCompose<FooMemRovetu>()
+                                        .kWithRovi(FooMemRovetu.ID, iSelectedId.kRef())
+                                        .kWithRovi(FooMemRovetu.PART, iSelectedPart.kRef())
+                                        .kGet()
+                                        .DeTesAssertRoggiUnstable(c, r => r.IsSome(), "data exists check"),
+                            })
+                            .DeTesAssertMemory(c, m => m.Objects.Count() > 1, "memory some data exists check (>1)")
+                            .DeTesAssertMemory(c, m => m.Objects.Count() == 10, "memory exact count check (10)"),
                 })
                 .DeTesAssertRoggi(
                 c,
                 r =>
                     r.Value ==
-                    ((dtPart.Roggi.IsTrue)
+                    (dtPart.Roggi.IsTrue
                         ? dtId.Roggi.Value * 10
                         : dtId.Roggi.Value * -1),
                 "final result check"));
+
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }

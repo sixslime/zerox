@@ -38,6 +38,7 @@ public record Roveggi<C> : Roggi.Defined.NoOp, IRoveggi<C>
         {
             _componentMap = _componentMap.WithoutEntries(addresses),
         };
+
     public IOption<R> GetComponent<R>(IRovu<C, R> address)
         where R : class, Rog =>
         _componentMap.At(address).RemapAs(x => (R)x);

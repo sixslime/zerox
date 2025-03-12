@@ -10,14 +10,12 @@ public static class BaseConversionExt
     {
         string neg = number < 0 ? negativeSign : "";
         int baseCount = baseRepresentation.Length;
-
         List<char> sb = new();
         do
         {
             sb.Add(baseRepresentation[Math.Abs(number % baseCount)]);
             number /= baseCount;
         } while (number != 0);
-
         sb.Reverse();
         return $"{neg}{new string(sb.ToArray())}";
     }
@@ -37,10 +35,8 @@ public static class BaseConversionExt
             if (index == -1) throw new($"{basedNumber} contains characters not present in {baseRepresentation}.");
             o += index * worth;
         }
-
         return o;
     }
 
-    public static string ConvertBase(this string basedNumber, string fromBase, string toBase) =>
-        basedNumber.FromBase(fromBase).ToBase(toBase);
+    public static string ConvertBase(this string basedNumber, string fromBase, string toBase) => basedNumber.FromBase(fromBase).ToBase(toBase);
 }

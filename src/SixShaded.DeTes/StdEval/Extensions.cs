@@ -2,19 +2,21 @@
 
 public static class Extensions
 {
-    public static RecursiveEvalTree<IDeTesResult, bool> StdEvalTree(this IDeTesResult result)
-    {
-        return result.RecursiveEvalTree(deTesResult =>
-                deTesResult.CriticalPoint.RemapOk(stop =>
-                    stop.CheckOk(out var halt) &&
-                    halt is EProcessorHalt.Completed &&
-                    AllAssertsPassed(deTesResult)),
+    public static RecursiveEvalTree<IDeTesResult, bool> StdEvalTree(this IDeTesResult result) =>
+        result.RecursiveEvalTree(
+        deTesResult =>
+            deTesResult.CriticalPoint.RemapOk(
+            stop =>
+                stop.CheckOk(out var halt) &&
+                halt is EProcessorHalt.Completed &&
+                AllAssertsPassed(deTesResult)),
         (self, others) => AllAssertsPassed(self) && others.All(y => y));
-    }
 
-    private static bool AllAssertsPassed(IDeTesResult result)
-    {
-        return result.EvaluationFrames.All(
+    public static bool StdEval(this IDeTesResult result) => StdEvalTree(result).Evaluation;
+    public static bool StdEvalAssertion<A>(this IDeTesAssertionData<A> assertion) => assertion.Result.KeepOk().Or(false);
+
+    private static bool AllAssertsPassed(IDeTesResult result) =>
+        result.EvaluationFrames.All(
         frame =>
             frame switch
             {
@@ -30,8 +32,4 @@ public static class Extensions
                     v.Assertions.Memory.All(StdEvalAssertion),
                 _ => true,
             });
-    }
-    public static bool StdEval(this IDeTesResult result) => StdEvalTree(result).Evaluation;
-    public static bool StdEvalAssertion<A>(this IDeTesAssertionData<A> assertion) => assertion.Result.KeepOk().Or(false);
-
 }

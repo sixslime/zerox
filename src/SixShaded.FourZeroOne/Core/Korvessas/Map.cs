@@ -27,21 +27,19 @@ public static class Map<RIn, ROut>
                                     Then = Core.kNollaFor<Multi<ROut>>(),
                                     Else =
                                         Core.kMulti(
-                                        [
                                             iMapFunction.kRef()
                                                 .kExecuteWith(
                                                 new()
                                                 {
                                                     A = iMulti.kRef().kGetIndex(iIndex.kRef()),
                                                 })
-                                                .kYield(),
-                                            iRecurse.kRef()
+                                                .kYield(), iRecurse.kRef()
                                                 .kExecuteWith(
                                                 new()
                                                 {
                                                     A = iIndex.kRef().kAdd(1.kFixed()),
-                                                }),
-                                        ]).kFlatten(),
+                                                }))
+                                            .kFlatten(),
                                 }))
                         .kExecuteWith(
                         new()

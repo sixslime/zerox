@@ -43,6 +43,7 @@ public class Sanity
                 .kIOSelectOne()
                 .DeTesDomain(c, [secondSelection], out var secondDomain, "second selection")
                 .DeTesAssertRoggiUnstable(c, r => true));
+
     [TestMethod]
     public async Task MetaExecuteCapture() =>
         await Run(
@@ -52,7 +53,7 @@ public class Sanity
                 {
                     Environment = [400.kFixed().kAsVariable(out var theNumber)],
                     Value =
-                        (0..1).kFixed()
+                        (..1).kFixed()
                         .kIOSelectOne()
                         .DeTesDomain(c, [0, 1], out var domain)
                         .kIsGreaterThan(0.kFixed())
@@ -68,39 +69,42 @@ public class Sanity
                                 Core.kMetaFunction<Number, Number>(
                                 [],
                                 x =>
-                                    theNumber.kRef().kAdd(x.kRef()))
-                        })
+                                    theNumber.kRef().kAdd(x.kRef())),
+                        }),
                 })
                 .kExecuteWith(
                 new()
                 {
-                    A = 1.kFixed()
+                    A = 1.kFixed(),
                 })
                 .DeTesAssertRoggiUnstable(c, r => domain.SelectedIndex() == 1 ? r.Check(out var v) && v.Value is 401 : !r.IsSome()));
+
     [TestMethod]
     public async Task MemoryRoveggi() =>
         await Run(
         c =>
             Core.kSubEnvironment<Multi<Number>>(
-                new()
-                {
-                    Environment =
-                    [
-                        Core.kCompose<FooMemRovetu>()
-                            .kWithRovi(FooMemRovetu.ID, 8.kFixed())
-                            .kWithRovi(FooMemRovetu.PART, true.kFixed())
-                            .kAsVariable(out var iComp),
-                        iComp.kRef().kWrite(401.kFixed())
-                    ],
-                    Value =
-                        Core.kMulti(
-                        iComp.kRef().kGet()
-                            .DeTesAssertRoggi(c, r => r.Value is 401, "direct reference"),
-                        Core.kCompose<FooMemRovetu>()
-                            .kWithRovi(FooMemRovetu.ID, 8.kFixed())
-                            .kWithRovi(FooMemRovetu.PART, true.kFixed())
-                            .kGet()
-                            .DeTesAssertRoggi(c, r => r.Value is 401, "reconstructed"))
-                }));
+            new()
+            {
+                Environment =
+                [
+                    Core.kCompose<FooMemRovetu>()
+                        .kWithRovi(FooMemRovetu.ID, 8.kFixed())
+                        .kWithRovi(FooMemRovetu.PART, true.kFixed())
+                        .kAsVariable(out var iComp),
+                    iComp.kRef().kWrite(401.kFixed()),
+                ],
+                Value =
+                    Core.kMulti(
+                    iComp.kRef()
+                        .kGet()
+                        .DeTesAssertRoggi(c, r => r.Value is 401, "direct reference"),
+                    Core.kCompose<FooMemRovetu>()
+                        .kWithRovi(FooMemRovetu.ID, 8.kFixed())
+                        .kWithRovi(FooMemRovetu.PART, true.kFixed())
+                        .kGet()
+                        .DeTesAssertRoggi(c, r => r.Value is 401, "reconstructed")),
+            }));
+
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }

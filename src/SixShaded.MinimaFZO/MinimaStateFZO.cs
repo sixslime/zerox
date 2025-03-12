@@ -1,7 +1,7 @@
-
 namespace SixShaded.MinimaFZO;
 
 using MorseCode.ITask;
+
 public record MinimaStateFZO : IStateFZO
 {
     private IOption<IStateFZO.IOrigin> _initialized;
@@ -26,14 +26,15 @@ public record MinimaStateFZO : IStateFZO
         return new MinimaStateFZO
         {
             _initialized = _initialized.Some(source),
-            _opStack = _opStack.WithEntries(new OperationNode
-            {
-                Operation = new DummyOperation(),
-                MemCount = 1,
-                MemoryStack = new PStack<IMemoryFZO>().WithEntries(source.InitialMemory),
-                ArgRoggiStack = new(),
-
-            }),
+            _opStack =
+                _opStack.WithEntries(
+                new OperationNode
+                {
+                    Operation = new DummyOperation(),
+                    MemCount = 1,
+                    MemoryStack = new PStack<IMemoryFZO>().WithEntries(source.InitialMemory),
+                    ArgRoggiStack = new(),
+                }),
         };
     }
 
@@ -49,7 +50,9 @@ public record MinimaStateFZO : IStateFZO
             },
             EProcessorStep.PushOperation v => this with
             {
-                _opStack = _opStack.WithEntries(new OperationNode
+                _opStack =
+                _opStack.WithEntries(
+                new OperationNode
                 {
                     Operation = v.OperationKorssa,
                     MemoryStack = _opStack.TopValue.Unwrap().MemoryStack,
@@ -61,18 +64,21 @@ public record MinimaStateFZO : IStateFZO
             EProcessorStep.Resolve v => v.Roggi.Split(out var roggi, out var stateImplemented)
                 ? this with
                 {
-                    _opStack = _opStack.At(1).Expect("No parent operation node?")
+                    _opStack =
+                    _opStack.At(1)
+                        .Expect("No parent operation node?")
                         .MapTopValue(
-                            opNode => opNode with
+                        opNode =>
+                            opNode with
                             {
                                 ArgRoggiStack = opNode.ArgRoggiStack.WithEntries(roggi),
                                 MemCount = opNode.MemCount.ExprAs(x => roggi.IsSome() ? x + 1 : x),
                                 MemoryStack =
                                 roggi.Check(out var r)
                                     ? opNode.MemoryStack.WithEntries(
-                                        r.Instructions.AccumulateInto(
-                                            opNode.MemoryStack.TopValue.Expect("no memory in operation node?"),
-                                            (mem, instruction) => instruction.TransformMemoryUnsafe(mem)))
+                                    r.Instructions.AccumulateInto(
+                                    opNode.MemoryStack.TopValue.Expect("no memory in operation node?"),
+                                    (mem, instruction) => instruction.TransformMemoryUnsafe(mem)))
                                     : opNode.MemoryStack,
                             })
                         .IsA<PStack<OperationNode>>(),
@@ -81,20 +87,32 @@ public record MinimaStateFZO : IStateFZO
                 {
                     EStateImplemented.MetaExecute metaExecute => this with
                     {
-                        _opStack = _opStack.At(1).Expect("No parent operation node?")
-                            .MapTopValue(node => node with
-                            {
-                                MemoryStack = node.MemoryStack.WithEntries(
-                                    node.MemoryStack.TopValue.Unwrap().ExprAs(
+                        _opStack =
+                        _opStack.At(1)
+                            .Expect("No parent operation node?")
+                            .MapTopValue(
+                            node =>
+                                node with
+                                {
+                                    MemoryStack =
+                                    node.MemoryStack.WithEntries(
+                                    node.MemoryStack.TopValue.Unwrap()
+                                        .ExprAs(
                                         mem =>
                                             metaExecute.ObjectWrites.ExprAs(
-                                                    writes =>
-                                                        mem.WithObjects(writes.FilterMap(x => x.B.RemapAs(r => (x.A, r).Tiple())))
-                                                            .WithClearedAddresses(writes.FilterMap(x => x.B.IsSome().Not().ToOption(x.A))))
+                                                writes =>
+                                                    mem.WithObjects(writes.FilterMap(x => x.B.RemapAs(r => (x.A, r).Tiple())))
+                                                        .WithClearedAddresses(writes.FilterMap(x => x.B.IsSome().Not().ToOption(x.A))))
                                                 .WithMellsanoMutes(metaExecute.MellsanoMutes)
                                                 .WithoutMellsanoMutes(metaExecute.MellsanoAllows))),
-                            }).IsA<PStack<OperationNode>>(),
-                        _prepStack = _prepStack.WithEntries(new EKorssaMutation.Identity { Result = metaExecute.Korssa }),
+                                })
+                            .IsA<PStack<OperationNode>>(),
+                        _prepStack =
+                        _prepStack.WithEntries(
+                        new EKorssaMutation.Identity
+                        {
+                            Result = metaExecute.Korssa,
+                        }),
                     },
                     _ => throw new NotSupportedException(),
                 },
@@ -115,7 +133,6 @@ public record MinimaStateFZO : IStateFZO
     private class DummyOperation : Kor
     {
         public Kor[] ArgKorssas => throw new System.Diagnostics.UnreachableException();
-
         public IResult<ITask<RogOpt>, EStateImplemented> ResolveWith(IProcessorFZO.IKorssaContext context, RogOpt[] args) => throw new System.Diagnostics.UnreachableException();
     }
 }

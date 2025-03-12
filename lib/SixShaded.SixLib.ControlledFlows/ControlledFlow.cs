@@ -7,7 +7,7 @@ namespace SixShaded.SixLib.ControlledFlows;
 
 public class ControlledFlow : ICeasableFlow
 {
-    private static ControlledFlow _completedTask;
+    private static readonly ControlledFlow _completedTask;
 
     static ControlledFlow()
     {
@@ -27,11 +27,6 @@ public class ControlledFlow : ICeasableFlow
     public static ControlledFlow CompletedTask => _completedTask;
     public ControlledAwaiter Awaiter { get; private set; }
 
-    public void Cease() => Awaiter.Cease();
-
-    public IAwaiter GetAwaiter() => Awaiter;
-    public IConfiguredTask ConfigureAwait(bool continueOnCapturedContext) => throw new NotImplementedException();
-
     public static ControlledFlow<TResult> Resolved<TResult>(TResult result)
     {
         var o = new ControlledFlow<TResult>();
@@ -43,6 +38,10 @@ public class ControlledFlow : ICeasableFlow
     ///     Resolves this task and releases <see langword="await" /> execution.
     /// </summary>
     public void Resolve() => Awaiter.Resolve();
+
+    public void Cease() => Awaiter.Cease();
+    public IAwaiter GetAwaiter() => Awaiter;
+    public IConfiguredTask ConfigureAwait(bool continueOnCapturedContext) => throw new NotImplementedException();
 }
 
 public class ControlledFlow<T> : ICeasableFlow<T>
@@ -57,17 +56,6 @@ public class ControlledFlow<T> : ICeasableFlow<T>
     }
 
     public ControlledAwaiter<T> Awaiter { get; private set; }
-    public T Result => Awaiter.GetResult();
-
-    public void Cease() => Awaiter.Cease();
-
-    IConfiguredTask<T> ITask<T>.ConfigureAwait(bool continueOnCapturedContext) => throw new NotImplementedException();
-    IConfiguredTask ITask.ConfigureAwait(bool continueOnCapturedContext) => throw new NotImplementedException();
-
-    public IAwaiter<T> GetAwaiter() => Awaiter;
-    IAwaiter ITask.GetAwaiter() => Awaiter;
-
-    public ICeasableAwaiter<T> GetCeasableAwaiter() => Awaiter;
 
     /// <summary>
     ///     <inheritdoc cref="ControlledFlow.Resolve" /> <br></br>
@@ -75,6 +63,14 @@ public class ControlledFlow<T> : ICeasableFlow<T>
     /// </summary>
     /// <param name="result"></param>
     public void Resolve(T result) => Awaiter.Resolve(result);
+
+    public T Result => Awaiter.GetResult();
+    public void Cease() => Awaiter.Cease();
+    IConfiguredTask<T> ITask<T>.ConfigureAwait(bool continueOnCapturedContext) => throw new NotImplementedException();
+    IConfiguredTask ITask.ConfigureAwait(bool continueOnCapturedContext) => throw new NotImplementedException();
+    public IAwaiter<T> GetAwaiter() => Awaiter;
+    IAwaiter ITask.GetAwaiter() => Awaiter;
+    public ICeasableAwaiter<T> GetCeasableAwaiter() => Awaiter;
 }
 
 public class TransformedFlow<I, R> : ICeasableFlow<R>
@@ -86,14 +82,10 @@ public class TransformedFlow<I, R> : ICeasableFlow<R>
 
     public TransformedAwaiter<I, R> Awaiter { get; private set; }
     public R Result => Awaiter.GetResult();
-
     public void Cease() => Awaiter.Cease();
-
     public IConfiguredTask<R> ConfigureAwait(bool continueOnCapturedContext) => throw new NotImplementedException();
-
     public IAwaiter<R> GetAwaiter() => Awaiter;
     IAwaiter ITask.GetAwaiter() => Awaiter;
     public ICeasableAwaiter<R> GetCeasableAwaiter() => Awaiter;
-
     IConfiguredTask ITask.ConfigureAwait(bool continueOnCapturedContext) => throw new NotImplementedException();
 }

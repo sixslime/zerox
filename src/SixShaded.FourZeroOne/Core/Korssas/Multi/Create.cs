@@ -3,7 +3,6 @@
 public sealed record Create<R> : Korssa.Defined.PureCombiner<R, Roggis.Multi<R>>
     where R : class, Rog
 {
-
     public Create(params IKorssa<R>[] elements) : base(elements)
     { }
 
@@ -13,8 +12,5 @@ public sealed record Create<R> : Korssa.Defined.PureCombiner<R, Roggis.Multi<R>>
             Values = inputs.ToPSequence(),
         };
 
-    protected override IOption<string> CustomToString()
-    {
-        return $"[{string.Join(", ", Args.Map(x => x.ToString()))}]".AsSome();
-    }
+    protected override IOption<string> CustomToString() => $"[{string.Join(", ", Args.Map(x => x.ToString()))}]".AsSome();
 }

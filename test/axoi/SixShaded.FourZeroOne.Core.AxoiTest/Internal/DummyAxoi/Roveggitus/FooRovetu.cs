@@ -3,8 +3,8 @@
 using Roggi;
 using Roggi.Defined;
 using Roggis;
-using SixShaded.FourZeroOne.Roveggi;
-using SixShaded.FourZeroOne.Roveggi.Defined;
+using Roveggi;
+using Roveggi.Defined;
 
 internal class FooRovetu : Rovetu
 {

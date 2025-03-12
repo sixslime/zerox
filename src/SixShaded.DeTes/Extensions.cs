@@ -1,9 +1,9 @@
-
 namespace SixShaded.DeTes;
 
 public static class Extensions
 {
     public static Task<IResult<IDeTesResult, EDeTesInvalidTest>> Realize(this IDeTesTest test, DeTesFZOSupplier supplier) => new DeTesRealizer().Realize(test, supplier);
+
     public static IKorssa<R> DeTesAssertRoggi<R>(this IKorssa<R> subject, IDeTesContext context, Predicate<R> assertion, string? description = null)
         where R : class, Rog
     {

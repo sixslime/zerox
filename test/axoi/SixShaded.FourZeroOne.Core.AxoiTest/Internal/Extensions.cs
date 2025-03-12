@@ -72,6 +72,7 @@ internal static class Extensions
         foreach (var path in paths)
             PrintFinalRoggi(path, $"{prefix}->{path.Selection.ICEE()}");
     }
+
     private static void DoAssert(bool condition)
     {
         if (!condition) throw new AssertFailedException();

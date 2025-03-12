@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.DeTes.Declaration;
 
-public interface IDeTesReference<out R> where R : class, Rog
+public interface IDeTesReference<out R>
+    where R : class, Rog
 {
     public IKorssa<R> Korssa { get; }
     public R Roggi { get; }

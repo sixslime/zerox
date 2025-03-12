@@ -1,4 +1,5 @@
 ﻿namespace SixShaded.DeTes.Declaration.Impl;
+
 internal interface IContextAccessor
 {
     IDeTesContext PublicContext { get; }

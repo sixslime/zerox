@@ -2,6 +2,7 @@
 
 using Roggis;
 using Roveggi.Defined;
+
 internal class FooMemRovetu : MemoryRovetu<Number>
 {
     public static readonly Rovu<FooMemRovetu, Number> ID = new(TestAxoi.Du, "id");

@@ -12,7 +12,6 @@ public static partial class Core
 
 public static partial class KorssaSyntax
 {
-
     public static Korssas.Multi.Count kCount(this IKorssa<IMulti<Rog>> source) => new(source);
 
     public static Korssas.Multi.Yield<R> kYield<R>(this IKorssa<R> korssa)
@@ -30,6 +29,7 @@ public static partial class KorssaSyntax
     public static Korssas.Multi.Intersection<R> kIntersection<R>(this IKorssa<IMulti<IMulti<R>>> multis)
         where R : class, Rog =>
         new(multis);
+
     public static Korssas.Multi.Flatten<R> kFlatten<R>(this IKorssa<IMulti<IMulti<R>>> korssas)
         where R : class, Rog =>
         new(korssas);
