@@ -136,6 +136,14 @@ public static class StructureExtensions
     public static PStack<T> ToPStack<T>(this IEnumerable<T> enumerable) => new PStack<T>().WithEntries(enumerable);
     public static PStack<T> NewFromTop<T>(this IPStack<T> stack) => stack.TopValue.Check(out var v) ? new PStack<T>().WithEntries(v) : new();
     public static CachingEnumerable<T> Caching<T>(this IEnumerable<T> enumerable) => new(enumerable);
+    public static T[] ToArr<T>(this IHasElements<T> collection)
+    {
+        var o = new T[collection.Count];
+        int i = 0;
+        foreach (var e in collection.Elements)
+            o[i++] = e;
+        return o;
+    }
 }
 
 public static class StructureICast
