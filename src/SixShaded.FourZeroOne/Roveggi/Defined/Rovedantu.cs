@@ -2,5 +2,5 @@
 
 using Roveggi;
 
-public abstract class MemoryRovetu<R> : Rovetu, IMemoryRovetu<R>
+public abstract class Rovedantu<R> : Rovetu, IRovedantu<R>
     where R : class, Rog;

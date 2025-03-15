@@ -2,7 +2,7 @@
 
 public static class Extensions
 {
-    internal static MemoryRoveggiWrapper<R> MemWrapped<R>(this IRoveggi<IMemoryRovetu<R>> roveggi)
+    internal static RovedanggiWrapper<R> MemWrapped<R>(this IRoveggi<IRovedantu<R>> roveggi)
         where R : class, Rog =>
         new(roveggi);
 }

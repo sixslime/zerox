@@ -1,5 +1,5 @@
 namespace SixShaded.FourZeroOne.Roggi;
 
-public interface IMemoryAddress<out R>
+public interface IRoda<out R>
     where R : class, Rog
 { }

@@ -42,7 +42,7 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(korssa, index);
 
-    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IEnumerable<Addr> captures, Func<DynamicAddress<RIn>, IKorssa<ROut>> mapFunction)
+    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IEnumerable<Addr> captures, Func<DynamicRoda<RIn>, IKorssa<ROut>> mapFunction)
         where RIn : class, Rog
         where ROut : class, Rog =>
         Korvessas.Map<RIn, ROut>.Construct(source, Core.kMetaFunction(captures, mapFunction));

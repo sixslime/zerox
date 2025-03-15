@@ -36,7 +36,7 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.UpdateComponent<C, R>.Construct(holder, changeFunc, rovu);
 
-    public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> kUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, IEnumerable<Addr> captures, Func<DynamicAddress<R>, IKorssa<R>> changeFunc)
+    public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> kUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, IEnumerable<Addr> captures, Func<DynamicRoda<R>, IKorssa<R>> changeFunc)
         where C : IRovetu
         where R : class, Rog =>
         Korvessas.UpdateComponent<C, R>.Construct(holder, Core.kMetaFunction(captures, changeFunc), rovu);

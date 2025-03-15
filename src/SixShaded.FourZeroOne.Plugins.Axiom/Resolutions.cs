@@ -10,7 +10,7 @@ using SixShaded.FourZeroOne.Roveggi.Defined;
 // 'current turn' static player pointer?
 namespace State
 {
-    public record ActingPlayer : IMemoryAddress<GameObjects.Player.Address>
+    public record ActingPlayer : IRoda<GameObjects.Player.Address>
     {
         public static readonly ActingPlayer PTR = new();
 
@@ -20,7 +20,7 @@ namespace State
         public override string ToString() => "ACTING_PLAYER";
     }
 
-    public record TurnCount : IMemoryAddress<Number>
+    public record TurnCount : IRoda<Number>
     {
         public static readonly TurnCount PTR = new();
 
@@ -92,7 +92,7 @@ namespace GameObjects
         public sealed class Data : Rovetu
         { }
 
-        public sealed record Address : NoOp, IMemoryAddress<Roveggi<Data>>
+        public sealed record Address : NoOp, IRoda<Roveggi<Data>>
         {
             public required int ID { get; init; }
 

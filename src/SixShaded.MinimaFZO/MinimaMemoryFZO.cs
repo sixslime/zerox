@@ -19,7 +19,7 @@ public record MinimaMemoryFZO : IMemoryFZO
     IEnumerable<ITiple<Addr, Rog>> IMemoryFZO.Objects => _objects.Elements;
     IEnumerable<Mel> IMemoryFZO.Mellsanos => _mellsanos.Elements;
     IEnumerable<ITiple<MellsanoID, int>> IMemoryFZO.MellsanoMutes => _mellsanoMutes.Elements;
-    IOption<R> IMemoryFZO.GetObject<R>(IMemoryAddress<R> address) => _objects.At(address).RemapAs(x => (R)x);
+    IOption<R> IMemoryFZO.GetObject<R>(IRoda<R> address) => _objects.At(address).RemapAs(x => (R)x);
     int IMemoryFZO.GetMellsanoMuteCount(MellsanoID mellsanoId) => _mellsanoMutes.At(mellsanoId).Or(0);
 
     IMemoryFZO IMemoryFZO.WithMellsanos(IEnumerable<Mel> mellsanos) =>
@@ -28,7 +28,7 @@ public record MinimaMemoryFZO : IMemoryFZO
             _mellsanos = _mellsanos.WithEntries(mellsanos),
         };
 
-    IMemoryFZO IMemoryFZO.WithObjects<R>(IEnumerable<ITiple<IMemoryAddress<R>, R>> insertions) =>
+    IMemoryFZO IMemoryFZO.WithObjects<R>(IEnumerable<ITiple<IRoda<R>, R>> insertions) =>
         this with
         {
             _objects = _objects.WithEntries(insertions),
