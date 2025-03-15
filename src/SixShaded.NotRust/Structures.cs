@@ -26,6 +26,10 @@ public interface IEntryRemovable<in T>
 
 public interface IIndexReadable<in I, out T>
 {
+    public IOption<T> At(I index);
+}
+public interface IIndexReadableInfallible<in I, out T>
+{
     public T At(I index);
 }
 
@@ -42,10 +46,10 @@ public interface IIntersectable<in U>
     public IIntersectable<U> _InversectedWith(U intersection);
 }
 
-public interface IPMap<K, T> : IHasElements<ITiple<K, T>>, IEntryAddable<ITiple<K, T>>, IEntryRemovable<K>, IIndexReadable<K, IOption<T>>, IMergable<IPMap<K, T>>
+public interface IPMap<K, T> : IHasElements<ITiple<K, T>>, IEntryAddable<ITiple<K, T>>, IEntryRemovable<K>, IIndexReadable<K, T>, IMergable<IPMap<K, T>>
 { }
 
-public interface IPSet<T> : IHasElements<T>, IEntryAddable<T>, IEntryRemovable<T>, IIndexReadable<T, bool>, IMergable<IPSet<T>>, IIntersectable<IPSet<T>>
+public interface IPSet<T> : IHasElements<T>, IEntryAddable<T>, IEntryRemovable<T>, IIndexReadableInfallible<T, bool>, IMergable<IPSet<T>>, IIntersectable<IPSet<T>>
 { }
 
 public interface IPSequence<T> : IHasElements<T>, IIndexReadable<int, T>, IEntryAddable<ITiple<int, T>>, IEntryAddable<T>, IMergable<IPSequence<T>>, IEntryRemovable<Range>
@@ -53,7 +57,7 @@ public interface IPSequence<T> : IHasElements<T>, IIndexReadable<int, T>, IEntry
     public IPSequence<T> _WithInsertionAt(int index, IEnumerable<T> items);
 }
 
-public interface IPStack<T> : IEntryAddable<T>, IIndexReadable<int, IOption<IPStack<T>>>, IHasElements<T>
+public interface IPStack<T> : IEntryAddable<T>, IIndexReadable<int, IPStack<T>>, IHasElements<T>
 {
     public IOption<T> TopValue { get; }
 }
@@ -274,7 +278,7 @@ public class PSequence<T>() : IPSequence<T>
     public override int GetHashCode() => _list.GetHashCode();
     public int Count => _list.CountAndCache();
     public IEnumerable<T> Elements => _list;
-    public T At(int index) => _list.At(index);
+    public IOption<T> At(int index) => _list.At(index);
     IMergable<IPSequence<T>> IMergable<IPSequence<T>>._MergedWith(IPSequence<T> union) => this.WithEntries(union.Elements);
 
     IEntryAddable<ITiple<int, T>> IEntryAddable<ITiple<int, T>>._WithEntries(IEnumerable<ITiple<int, T>> entries)
@@ -441,15 +445,15 @@ public class CachingEnumerable<T> : IEnumerable<T>, IIndexReadable<int, T>
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public T At(int index)
+    public IOption<T> At(int index)
     {
         while (_cachedIndex < index && _iter is not null)
         {
-            if (!_iter.MoveNext()) throw new IndexOutOfRangeException();
+            if (!_iter.MoveNext()) return new None<T>();
             _cachedIndex++;
             _list.Add(_iter.Current);
         }
-        return _list[index];
+        return _list[index].AsSome();
     }
 }
 
