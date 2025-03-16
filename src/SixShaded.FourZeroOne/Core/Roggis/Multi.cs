@@ -17,15 +17,5 @@ public sealed record Multi<R> : Roggi.Defined.Roggi, IMulti<R>
     public int Count => Values.Count;
     public override IEnumerable<IInstruction> Instructions => Elements.Map(x => x.Instructions).Flatten();
 
-    public IOption<R> At(int index)
-    {
-        try
-        {
-            return Values.At(index).AsSome();
-        }
-        catch
-        {
-            return new None<R>();
-        }
-    }
+    public IOption<R> At(int index) => Values.At(index);
 }

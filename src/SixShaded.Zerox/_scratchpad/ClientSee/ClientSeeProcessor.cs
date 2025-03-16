@@ -4,7 +4,6 @@ using FourZeroOne.FZOSpec;
 public class ClientSeeProcessor
 {
     public required IProcessorFZO Implementation { get; init; }
-    public required Func<IMemoryFZO, IInputFZO>
 
     public Task<IResult<EProcessorStep, EProcessorHalt>> GetNextStep(IStateFZO state, Func<int, IInputFZO> clientMap)
     {
