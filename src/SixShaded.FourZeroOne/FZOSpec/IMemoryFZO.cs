@@ -2,7 +2,7 @@ namespace SixShaded.FourZeroOne.FZOSpec;
 
 public interface IMemoryFZO
 {
-    public IEnumerable<ITiple<IRoda<>, Rog>> Objects { get; }
+    public IEnumerable<ITiple<Addr, Rog>> Objects { get; }
     public IEnumerable<Mel> Mellsanos { get; }
     public IEnumerable<ITiple<MellsanoID, int>> MellsanoMutes { get; }
 
@@ -22,5 +22,5 @@ public interface IMemoryFZO
     public IMemoryFZO WithObjects<R>(IEnumerable<ITiple<IRoda<R>, R>> insertions)
         where R : class, Rog;
 
-    public IMemoryFZO WithClearedAddresses(IEnumerable<IRoda<>> removals);
+    public IMemoryFZO WithClearedAddresses(IEnumerable<Addr> removals);
 }

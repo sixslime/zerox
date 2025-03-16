@@ -1,11 +1,25 @@
 ﻿namespace SixShaded.Zerox._scratchpad.ClientSee;
 using FourZeroOne.FZOSpec;
 
-public class ClientSeeProcessor(IProcessorFZO implementation)
+public class ClientSeeProcessor
 {
-    public IProcessorFZO Implementation { get; } = implementation;
+    public required IProcessorFZO Implementation { get; init; }
+    public required Func<IMemoryFZO, IInputFZO>
+
     public Task<IResult<EProcessorStep, EProcessorHalt>> GetNextStep(IStateFZO state, Func<int, IInputFZO> clientMap)
     {
-
+        int currentClient =
+            state
+                .OperationStack
+                .First()
+                .MemoryStack
+                .GetAt(0)
+                .Unwrap()
+                .GetObject(Rodais.CURRENT_CLIENT)
+                .Unwrap()
+                .GetComponent(Client.ID)
+                .Unwrap()
+                .Value;
+        return Implementation.GetNextStep(state, clientMap(currentClient));
     }
 }
