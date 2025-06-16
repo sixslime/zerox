@@ -28,7 +28,9 @@ internal class Program
  * 'ro' ~ final / literal relation to roggi
  * '.n' ~ concept of
  *
- * I think 'da' means memory/storage.
+ * SHAKY
+ * 'a' ~ address?
+ * 'da' ~ memory?
  *
  * perhaps rename
  * Korvessa -> Korssave
