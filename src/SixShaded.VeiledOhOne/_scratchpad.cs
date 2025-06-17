@@ -1,7 +1,7 @@
 ﻿namespace SixShaded.VeiledOhOne;
 using FourZeroOne.FZOSpec;
 using FourZeroOne.Core.Roggis;
-using ProcOutput = IResult<EProcessorStep, EProcessorHalt>;
+using ProcOutput = IResult<FourZeroOne.FZOSpec.EProcessorStep, FourZeroOne.FZOSpec.EProcessorHalt>;
 
 public interface IVeil
 {
@@ -14,7 +14,7 @@ public interface IVeiledState<out R> where R : class, Rog
 
 public interface IVeiledProcessor
 {
-    public Task<ProcOutput> GetNextStep(IVeiledState state, IInputFZO input, IClientResolver resolver);
+    public Task<ProcOutput> GetNextStep(IVeiledState<Rog> state, IInputFZO input, IClientResolver resolver);
 }
 
 public interface IClientResolver
