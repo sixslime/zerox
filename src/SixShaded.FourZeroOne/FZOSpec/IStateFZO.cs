@@ -1,5 +1,8 @@
 namespace SixShaded.FourZeroOne.FZOSpec;
 
+// DEV:
+// codesmell: This should be typed, and IOperationNode shoulde be moved out.
+// enum types should also be converted to interfaces so they can be typed too.
 public interface IStateFZO
 {
     public IOption<IOrigin> Initialized { get; }

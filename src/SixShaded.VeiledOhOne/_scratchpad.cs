@@ -14,15 +14,16 @@ public interface IVeiledState
 
 public interface IVeiledProcessor
 {
-    public Task<IResult<ProcOutput, EvalInputs>> GetNextStep(IVeiledState, );
+    public Task<ProcOutput> GetNextStep(IVeiledState state, IInputFZO input, IClientResolver evaluator);
 }
-public class EvalInputs
+public interface IClientOrigin where R : class, Rog
 {
-    public IStateFZO State { get; }
+    public IKorssa<Number> Korssa { get; }
     public IMemoryFZO Memory { get; }
+    public IStateFZO.IOrigin AsFZOOrigin();
 }
-
-public interface IVeiledEvaluator
+public interface IClientResolver
 {
-    public IOption<Number> Evaluate(IStateFZO.IOrigin origin)
+    public IStateFZO UnintializedState { get; }
+    public Task<IOption<Number>> Resolve(IVeiledState state);
 }
