@@ -1,5 +1,11 @@
 ﻿namespace SixShaded.VeiledOhOne;
 
-internal class Veil
+public class Veil
 {
+    public IStateFZO.IOrigin BoundOrigin { get; }
+}
+    public Veil()
+    {
+
+    }
 }
