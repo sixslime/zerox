@@ -1,6 +1,5 @@
 ﻿namespace SixShaded.VeiledOhOne;
 
-public class Class1
+internal class Veil
 {
-
 }
