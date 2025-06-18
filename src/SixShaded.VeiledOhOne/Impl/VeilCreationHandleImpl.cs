@@ -4,8 +4,8 @@ using FourZeroOne.Core.Roggis;
 
 internal class VeilCreationHandleImpl : IVeilCreationHandle
 {
-    public Dictionary<Kor, VeilObservers> KorssaVeils { get; private set; }
-    public Dictionary<Addr, VeilObservers> RodaVeils { get; private set; }
+    internal Dictionary<Kor, VeilObservers> KorssaVeils { get; private set; }
+    internal Dictionary<Addr, VeilObservers> RodaVeils { get; private set; }
     internal VeilCreationHandleImpl()
     {
         KorssaVeils = new();
