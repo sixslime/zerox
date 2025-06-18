@@ -5,5 +5,5 @@ using FourZeroOne.Core.Roggis;
 public interface IMetaResolver
 {
     public IStateFZO UnintializedState { get; }
-    public Task<IOption<Number>> Resolve(IStateFZO state, Veil veil);
+    public Task<IOption<IMulti<Number>>> Resolve(Veil veil);
 }
