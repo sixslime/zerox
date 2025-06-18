@@ -8,8 +8,10 @@ internal class VeilCreationHandleImpl : IVeilCreationHandle
     {
 
     }
-    void IVeilCreationHandle.SetKorssaVeil(Kor korssa, int[] observers) => throw new NotImplementedException();
-    void IVeilCreationHandle.SetKorssaVeil(Kor korssa, IKorssa<IMulti<Number>> observers) => throw new NotImplementedException();
-    void IVeilCreationHandle.SetMemoryVeil(Addr roda, int[] observers) => throw new NotImplementedException();
-    void IVeilCreationHandle.SetMemoryVeil(Addr roda, IKorssa<IMulti<Number>> observers) => throw new NotImplementedException();
+    public void SetKorssaVeil(Kor korssa, EVeilOperation operation, int[] observers) => throw new NotImplementedException();
+    public void SetKorssaVeil(Kor korssa, EVeilOperation operation, IKorssa<IMulti<Number>> observers) => throw new NotImplementedException();
+    public void SetMemoryVeil(Addr roda, EVeilOperation operation, int[] observers) => throw new NotImplementedException();
+    public void SetMemoryVeil(Addr roda, EVeilOperation operation, IKorssa<IMulti<Number>> observers) => throw new NotImplementedException();
+
+    internal 
 }
