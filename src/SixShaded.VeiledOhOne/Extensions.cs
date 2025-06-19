@@ -23,8 +23,18 @@ public static class Extensions
     {
         return roda;
     }
+
     public static Addr VeilMemory(this Addr roda, IVeilCreationHandle handle, EVeilOperation operation, IKorssa<IMulti<Number>> observers)
     {
         return roda;
+    }
+
+    public static IOption<T> AsOption<T>(this IShownOrHidden<T> v)
+    {
+        return v switch
+        {
+            IShown<T> e => new Some<T>(e.Value),
+            _ => new None<T>(),
+        };
     }
 }
