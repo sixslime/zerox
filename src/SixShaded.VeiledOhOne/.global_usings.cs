@@ -1,0 +1,13 @@
+﻿global using SixShaded.NotRust;
+global using SixShaded.SixLib.GFunc;
+global using Rog = SixShaded.FourZeroOne.Roggi.IRoggi;
+global using RogOpt = SixShaded.NotRust.IOption<SixShaded.FourZeroOne.Roggi.IRoggi>;
+global using Kor = SixShaded.FourZeroOne.Korssa.IKorssa<SixShaded.FourZeroOne.Roggi.IRoggi>;
+global using Addr = SixShaded.FourZeroOne.Roggi.IRoda<SixShaded.FourZeroOne.Roggi.IRoggi>;
+global using Mel = SixShaded.FourZeroOne.Mellsano.Unsafe.IMellsano<SixShaded.FourZeroOne.Roggi.IRoggi>;
+global using SixShaded.FourZeroOne.FZOSpec;
+global using SixShaded.FourZeroOne.Roggi;
+global using SixShaded.FourZeroOne.Korssa;
+global using SixShaded.FourZeroOne.Mellsano;
+global using SixShaded.FourZeroOne.Korvessa;
+global using SixShaded.FourZeroOne.Roveggi;
