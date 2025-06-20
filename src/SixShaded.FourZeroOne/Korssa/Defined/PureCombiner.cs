@@ -8,5 +8,5 @@ public abstract record PureCombiner<RArg, ROut> : Combiner<RArg, ROut>
     { }
 
     protected abstract ROut EvaluatePure(IEnumerable<RArg> inputs);
-    protected sealed override ITask<IOption<ROut>> Evaluate(IKorssaContext _, IEnumerable<IOption<RArg>> inputs) => EvaluatePure(inputs.Where(x => x.IsSome()).Map(x => x.Unwrap())).AsSome().ToCompletedITask();
+    protected sealed override ITask<IOption<ROut>> Evaluate(IKorssaContext _, IEnumerable<IOption<RArg>> inputs) => EvaluatePure(inputs.FilterMap(x => x)).AsSome().ToCompletedITask();
 }

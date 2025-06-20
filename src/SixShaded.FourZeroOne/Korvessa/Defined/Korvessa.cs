@@ -28,7 +28,7 @@ public record Korvessa<RArg1, ROut> : Korssa.Defined.StateImplementedKorssa<RArg
     }
 
     public Core.Roggis.MetaFunction<RArg1, ROut> ConcreteDefinition { get; private init; } = null!;
-    protected override FZOSpec.EStateImplemented MakeData(IKorssaContext _, RArg1 in1) => ConcreteDefinition.ConstructMetaExecute(in1.AsSome());
+    protected override FZOSpec.EStateImplemented MakeData(IKorssaContext _, IOption<RArg1> in1) => ConcreteDefinition.ConstructMetaExecute(in1);
     protected override IOption<string> CustomToString() => $"{Du.Axodu.Name}.{Du.Identifier}({Arg1})".AsSome();
     public required Korvedu Du { get; init; }
     public object[] CustomData { get; init; } = [];
@@ -48,7 +48,7 @@ public record Korvessa<RArg1, RArg2, ROut> : Korssa.Defined.StateImplementedKors
     }
 
     public Core.Roggis.MetaFunction<RArg1, RArg2, ROut> ConcreteDefinition { get; private init; } = null!;
-    protected override FZOSpec.EStateImplemented MakeData(IKorssaContext _, RArg1 in1, RArg2 in2) => ConcreteDefinition.ConstructMetaExecute(in1.AsSome(), in2.AsSome());
+    protected override FZOSpec.EStateImplemented MakeData(IKorssaContext _, IOption<RArg1> in1, IOption<RArg2> in2) => ConcreteDefinition.ConstructMetaExecute(in1, in2);
     protected override IOption<string> CustomToString() => $"{Du.Axodu.Name}.{Du.Identifier}({Arg1}, {Arg2})".AsSome();
     public required Korvedu Du { get; init; }
     public object[] CustomData { get; init; } = [];
@@ -69,7 +69,7 @@ public record Korvessa<RArg1, RArg2, RArg3, ROut> : Korssa.Defined.StateImplemen
     }
 
     public Core.Roggis.MetaFunction<RArg1, RArg2, RArg3, ROut> ConcreteDefinition { get; private init; } = null!;
-    protected override FZOSpec.EStateImplemented MakeData(IKorssaContext _, RArg1 in1, RArg2 in2, RArg3 in3) => ConcreteDefinition.ConstructMetaExecute(in1.AsSome(), in2.AsSome(), in3.AsSome());
+    protected override FZOSpec.EStateImplemented MakeData(IKorssaContext _, IOption<RArg1> in1, IOption<RArg2> in2, IOption<RArg3> in3) => ConcreteDefinition.ConstructMetaExecute(in1, in2, in3);
     protected override IOption<string> CustomToString() => $"{Du.Axodu.Name}.{Du.Identifier}({Arg1}, {Arg2}, {Arg3})".AsSome();
     public required Korvedu Du { get; init; }
     public object[] CustomData { get; init; } = [];

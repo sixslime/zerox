@@ -4,6 +4,7 @@ using DeTes.Declaration;
 using Internal.DummyAxoi.Roveggitus;
 using Core = Syntax.Core;
 using Roggis;
+using Roggi;
 using k = Core.Korssas;
 
 [TestClass]
@@ -25,6 +26,23 @@ public class Sanity
             .kMap([], x => x.kRef().kAdd(10.kFixed()))
             .DeTesAssertRoggi(c, r => r.Count == 5));
 
+    [TestMethod]
+    public async Task Concat() =>
+        await Run(c =>
+            (1..5).kFixed()
+            .kConcat((6..10).kFixed())
+            .kConcat(Core.kNollaFor<NumRange>())
+            .DeTesAssertRoggi(c, r => r.Values.Elements.Map(x => x.Value).SequenceEqual((1..10).ToIter(true))));
+
+    [TestMethod]
+    public async Task FlattenNolla() =>
+        await Run(
+        c =>
+            Core.kMulti<IMulti<Number>>(
+                (1..10).kFixed(),
+                Core.kNollaFor<IMulti<Number>>())
+                .kFlatten()
+                .DeTesAssertRoggi(c, _ => true));
     [TestMethod]
     [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new[] { 5, 2, 0, 1 }, 0)]
     public async Task Selection(int[] initialPool, int[] firstSelection, int secondSelection) =>
