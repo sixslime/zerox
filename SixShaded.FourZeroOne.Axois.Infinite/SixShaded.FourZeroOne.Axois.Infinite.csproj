@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\lib\SixShaded.SixLib.GFunc\SixShaded.SixLib.GFunc.csproj" />
+    <ProjectReference Include="..\src\SixShaded.FourZeroOne\SixShaded.FourZeroOne.csproj" />
+    <ProjectReference Include="..\src\SixShaded.NotRust\SixShaded.NotRust.csproj" />
+  </ItemGroup>
+
+</Project>
