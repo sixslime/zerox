@@ -5,7 +5,9 @@ using DeTes.Declaration;
 using Internal.DummyAxoi.Korvessas;
 using Internal.DummyAxoi.Roveggitus;
 using Roggis;
+using Roggis.Instructions;
 using Core = Syntax.Core;
+using k = Core.Korssas;
 
 [TestClass]
 public sealed class Basics
@@ -295,5 +297,89 @@ public sealed class Basics
                         : dtId.Roggi.Value * -1),
                 "final result check"));
 
+    [TestMethod]
+    public async Task Mutation() =>
+        await Run(
+        c =>
+            Core.kSubEnvironment<Multi<Number>>(
+            new()
+            {
+                Environment =
+                [
+                    0.kFixed().kAsVariable(out var iMutable),
+                    iMutable.kRef()
+                        .DeTesAssertRoggi(c, r => r.Value == 0, "init zero")
+                        .kAsVariable(out var iZero),
+                    iMutable.kRef().kAdd(1.kFixed()).kAsVariable(out iMutable),
+                    iMutable.kRef()
+                        .DeTesAssertRoggi(c, r => r.Value == 1, "init one")
+                        .kAsVariable(out var iOne),
+                ],
+                Value =
+                    Core.kMulti<Number>(
+                    iMutable.kRef().DeTesAssertRoggi(c, r => r.Value == 1, "value mutable"),
+                    iZero.kRef().DeTesAssertRoggi(c, r => r.Value == 0, "value zero"),
+                    iOne.kRef().DeTesAssertRoggi(c, r => r.Value == 1, "value one"))
+            }));
+    [TestMethod]
+    public async Task MutationStressor() =>
+        await Run(
+        c =>
+            Core.kSubEnvironment<Rog>(
+            new()
+            {
+                Environment =
+                [
+                    1.kFixed().kAsVariable(out var iCounter),
+                    (1..10)
+                    .kFixed()
+                    .kMap(
+                    [iCounter],
+                    iX =>
+                        Core.kMulti<Rog>(
+                        iCounter.kRef(),
+                        iX.kRef(),
+                        iCounter.kRef().kAdd(1.kFixed()).kAsVariable(out iCounter)))
+                    .kAsVariable(out var iArray),
+                ],
+                Value =
+                    iArray.kRef()
+                        .kMap(
+                        [],
+                        iEntry =>
+                            Core.kMulti<Rog>(
+                            iEntry.kRef().kGetIndex(1.kFixed()),
+                            iEntry.kRef().kGetIndex(2.kFixed())))
+                        .DeTesAssertRoggi(
+                        c, r =>
+                            r.Elements.All(
+                            entry =>
+                                entry.Elements.Map(x => ((Number)x).Value)
+                                    .ToArray()
+                                    .ExprAs(
+                                    arr =>
+                                        arr[0] == arr[1])), "map equal")
+                        
+            }));
+    /*
+    [TestMethod]
+    public async Task MellsanoStressor() =>
+    await Run(c =>
+    Core.kSubEnvironment<Multi<Number>>(new()
+    {
+        Environment =
+            [
+                0.kFixed().kAsVariable(out var iMellsanoCounter),
+                Core.kAddMellsano<Rog>(new()
+                {
+                    Matches = m => m.mIsType<k.AddMellsano>(),
+                    DefinitionCaptures = [iMellsanoCounter],
+                    Definition = iOrig => Core.kMulti(
+                    iOrig.kRef().kRealize(),
+                    iMellsanoCounter.kRef().kAdd(1.kFixed()))
+                })
+            ]
+    })
+    */
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }

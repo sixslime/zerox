@@ -4,6 +4,7 @@ using DeTes.Declaration;
 using Internal.DummyAxoi.Roveggitus;
 using Core = Syntax.Core;
 using Roggis;
+using k = Core.Korssas;
 
 [TestClass]
 public class Sanity
@@ -106,5 +107,29 @@ public class Sanity
                         .DeTesAssertRoggi(c, r => r.Value is 401, "reconstructed")),
             }));
 
+    [TestMethod]
+    public async Task Mellsano() =>
+        await Run(
+        c =>
+            Core.kSubEnvironment<Number>(
+                new()
+                {
+                    Environment =
+                    [
+                        Core.kAddMellsano<Number, Number, Number>(
+                        new()
+                        {
+                            Matches =
+                                m =>
+                                    m.mIsType<k.Number.Add>(),
+                            Definition =
+                                (iOrig, iA, iB) =>
+                                    iOrig.kRef().kRealize().kAdd(iA.kRef().kRealize()),
+                        })
+                    ],
+                    Value =
+                        400.kFixed().kAdd(1.kFixed())
+                })
+                .DeTesAssertRoggi(c, r => r.Value == 801));
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }
