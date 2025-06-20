@@ -8,7 +8,7 @@ public record Execute<ROut> : Korssa.Defined.StateImplementedKorssa<MetaFunction
     public Execute(IKorssa<MetaFunction<ROut>> function) : base(function)
     { }
 
-    protected override FZOSpec.EStateImplemented MakeData(IKorssaContext _, MetaFunction<ROut> func) => func.ConstructMetaExecute();
+    protected override IOption<FZOSpec.EStateImplemented> MakeData(IKorssaContext _, IOption<MetaFunction<ROut>> funcOpt) => funcOpt.RemapAs(x => x.ConstructMetaExecute());
     protected override IOption<string> CustomToString() => $"!{Arg1}:<>;".AsSome();
 }
 
@@ -19,7 +19,10 @@ public record Execute<RArg1, ROut> : Korssa.Defined.StateImplementedKorssa<MetaF
     public Execute(IKorssa<MetaFunction<RArg1, ROut>> function, IKorssa<MetaArgs<RArg1>> args) : base(function, args)
     { }
 
-    protected override FZOSpec.EStateImplemented MakeData(IKorssaContext _, MetaFunction<RArg1, ROut> func, MetaArgs<RArg1> args) => func.ConstructMetaExecute(args.Arg1);
+    protected override IOption<FZOSpec.EStateImplemented> MakeData(IKorssaContext _, IOption<MetaFunction<RArg1, ROut>> funcOpt, IOption<MetaArgs<RArg1>> argsOpt) =>
+        (funcOpt.Check(out var func) && argsOpt.Check(out var args))
+            ? func.ConstructMetaExecute(args.Arg1).AsSome()
+            : new None<FZOSpec.EStateImplemented>();
     protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2};".AsSome();
 }
 
@@ -31,7 +34,10 @@ public record Execute<RArg1, RArg2, ROut> : Korssa.Defined.StateImplementedKorss
     public Execute(IKorssa<MetaFunction<RArg1, RArg2, ROut>> function, IKorssa<MetaArgs<RArg1, RArg2>> args) : base(function, args)
     { }
 
-    protected override FZOSpec.EStateImplemented MakeData(IKorssaContext _, MetaFunction<RArg1, RArg2, ROut> func, MetaArgs<RArg1, RArg2> args) => func.ConstructMetaExecute(args.Arg1, args.Arg2);
+    protected override IOption<FZOSpec.EStateImplemented> MakeData(IKorssaContext _, IOption<MetaFunction<RArg1, RArg2, ROut>> funcOpt, IOption<MetaArgs<RArg1, RArg2>> argsOpt) =>
+        (funcOpt.Check(out var func) && argsOpt.Check(out var args))
+            ? func.ConstructMetaExecute(args.Arg1, args.Arg2).AsSome()
+            : new None<FZOSpec.EStateImplemented>();
     protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2};".AsSome();
 }
 
@@ -44,6 +50,9 @@ public record Execute<RArg1, RArg2, RArg3, ROut> : Korssa.Defined.StateImplement
     public Execute(IKorssa<MetaFunction<RArg1, RArg2, RArg3, ROut>> function, IKorssa<MetaArgs<RArg1, RArg2, RArg3>> args) : base(function, args)
     { }
 
-    protected override FZOSpec.EStateImplemented MakeData(IKorssaContext _, MetaFunction<RArg1, RArg2, RArg3, ROut> func, MetaArgs<RArg1, RArg2, RArg3> args) => func.ConstructMetaExecute(args.Arg1, args.Arg2, args.Arg3);
+    protected override IOption<FZOSpec.EStateImplemented> MakeData(IKorssaContext _, IOption<MetaFunction<RArg1, RArg2, RArg3, ROut>> funcOpt, IOption<MetaArgs<RArg1, RArg2, RArg3>> argsOpt) =>
+        (funcOpt.Check(out var func) && argsOpt.Check(out var args))
+            ? func.ConstructMetaExecute(args.Arg1, args.Arg2, args.Arg3).AsSome()
+            : new None<FZOSpec.EStateImplemented>();
     protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2};".AsSome();
 }
