@@ -334,7 +334,7 @@ public sealed class Basics
                     (1..10)
                     .kFixed()
                     .kMap(
-                    [iCounter],
+                    [],
                     iX =>
                         Core.kMulti<Rog>(
                         iCounter.kRef(),
