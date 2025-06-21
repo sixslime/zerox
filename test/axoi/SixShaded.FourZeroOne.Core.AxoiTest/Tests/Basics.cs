@@ -7,7 +7,7 @@ using Internal.DummyAxoi.Roveggitus;
 using Roggis;
 using Roggis.Instructions;
 using Core = Syntax.Core;
-using k = Core.Korssas;
+using k = Korssas;
 
 [TestClass]
 public sealed class Basics
@@ -314,13 +314,22 @@ public sealed class Basics
                     iMutable.kRef()
                         .DeTesAssertRoggi(c, r => r.Value == 1, "init one")
                         .kAsVariable(out var iOne),
+                    Core.kMulti<Rog>(
+                    10.kFixed().kAsVariable(out var iTest),
+                    iTest.kRef().kAdd(1.kFixed()).kAsVariable(out iTest),
+                    Core.kMulti<Rog>(
+                    iTest.kRef().kAdd(1.kFixed()).kAsVariable(out iTest),
+                    iTest.kRef().kAdd(1.kFixed()).kAsVariable(out iTest)),
+                    iTest.kRef().DeTesAssertRoggi(c, r => r.Value == 13)),
                 ],
                 Value =
                     Core.kMulti<Number>(
                     iMutable.kRef().DeTesAssertRoggi(c, r => r.Value == 1, "value mutable"),
+                    iTest.kRef().DeTesAssertRoggi(c, r => r.Value == 13),
                     iZero.kRef().DeTesAssertRoggi(c, r => r.Value == 0, "value zero"),
-                    iOne.kRef().DeTesAssertRoggi(c, r => r.Value == 1, "value one"))
+                    iOne.kRef().DeTesAssertRoggi(c, r => r.Value == 1, "value one")),
             }));
+
     [TestMethod]
     public async Task MutationStressor() =>
         await Run(
@@ -334,20 +343,21 @@ public sealed class Basics
                     (1..10)
                     .kFixed()
                     .kMap(
-                    [],
+                    [iCounter],
                     iX =>
                         Core.kMulti<Rog>(
+                        iCounter.kRef().kAdd(1.kFixed()).kAsVariable(out iCounter),
                         iCounter.kRef(),
-                        iX.kRef(),
-                        iCounter.kRef().kAdd(1.kFixed()).kAsVariable(out iCounter)))
+                        iX.kRef()))
                     .kAsVariable(out var iArray),
+                    iArray.kRef(),
                 ],
                 Value =
                     iArray.kRef()
                         .kMap(
                         [],
                         iEntry =>
-                            Core.kMulti<Rog>(
+                            Core.kMulti(
                             iEntry.kRef().kGetIndex(1.kFixed()),
                             iEntry.kRef().kGetIndex(2.kFixed())))
                         .DeTesAssertRoggi(
@@ -359,9 +369,9 @@ public sealed class Basics
                                     .ExprAs(
                                     arr =>
                                         arr[0] == arr[1])), "map equal")
-                        .kConcat<Rog>(iCounter.kRef().DeTesAssertRoggi(c, r => r.Value == 10).kYield())
-                        
+                        .kConcat<Rog>(iCounter.kRef().DeTesAssertRoggi(c, r => r.Value == 10).kYield()),
             }));
+
     /*
     [TestMethod]
     public async Task MellsanoStressor() =>
