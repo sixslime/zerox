@@ -297,6 +297,11 @@ public sealed class Basics
                         : dtId.Roggi.Value * -1),
                 "final result check"));
 
+    // This is considered undefined behavior, do not do this.
+    // specifically using 'kAsVariable(out <existing variable>)'.
+    // this may seem to intuitively work at a simple level (as this example shows),
+    // but 'out <existing>' only affects the C# variable and only *looks like* it works.
+    //  it does not change <existing>, it stores a *new* roda in the C# variable.
     [TestMethod]
     public async Task Mutation() =>
         await Run(
@@ -309,6 +314,7 @@ public sealed class Basics
                     0.kFixed().kAsVariable(out var iMutable),
                     iMutable.kRef()
                         .DeTesAssertRoggi(c, r => r.Value == 0, "init zero")
+                        // BAD!
                         .kAsVariable(out var iZero),
                     iMutable.kRef().kAdd(1.kFixed()).kAsVariable(out iMutable),
                     iMutable.kRef()
@@ -328,48 +334,6 @@ public sealed class Basics
                     iTest.kRef().DeTesAssertRoggi(c, r => r.Value == 13),
                     iZero.kRef().DeTesAssertRoggi(c, r => r.Value == 0, "value zero"),
                     iOne.kRef().DeTesAssertRoggi(c, r => r.Value == 1, "value one")),
-            }));
-
-    [TestMethod]
-    public async Task MutationStressor() =>
-        await Run(
-        c =>
-            Core.kSubEnvironment<Rog>(
-            new()
-            {
-                Environment =
-                [
-                    1.kFixed().kAsVariable(out var iCounter),
-                    (1..10)
-                    .kFixed()
-                    .kMap(
-                    [iCounter],
-                    iX =>
-                        Core.kMulti<Rog>(
-                        iCounter.kRef().kAdd(1.kFixed()).kAsVariable(out iCounter),
-                        iCounter.kRef(),
-                        iX.kRef()))
-                    .kAsVariable(out var iArray),
-                    iArray.kRef(),
-                ],
-                Value =
-                    iArray.kRef()
-                        .kMap(
-                        [],
-                        iEntry =>
-                            Core.kMulti(
-                            iEntry.kRef().kGetIndex(1.kFixed()),
-                            iEntry.kRef().kGetIndex(2.kFixed())))
-                        .DeTesAssertRoggi(
-                        c, r =>
-                            r.Elements.All(
-                            entry =>
-                                entry.Elements.Map(x => ((Number)x).Value)
-                                    .ToArray()
-                                    .ExprAs(
-                                    arr =>
-                                        arr[0] == arr[1])), "map equal")
-                        .kConcat<Rog>(iCounter.kRef().DeTesAssertRoggi(c, r => r.Value == 10).kYield()),
             }));
 
     /*
