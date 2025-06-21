@@ -359,6 +359,7 @@ public sealed class Basics
                                     .ExprAs(
                                     arr =>
                                         arr[0] == arr[1])), "map equal")
+                        .kConcat<Rog>(iCounter.kRef().DeTesAssertRoggi(c, r => r.Value == 10).kYield())
                         
             }));
     /*

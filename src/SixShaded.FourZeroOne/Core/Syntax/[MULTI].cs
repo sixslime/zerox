@@ -50,7 +50,11 @@ public static partial class KorssaSyntax
     public static Korvessa<IMulti<R>, IMulti<R>, Multi<R>> kConcat<R>(this IKorssa<IMulti<R>> a, IKorssa<IMulti<R>> b)
         where R : class, Rog =>
         Korvessas.Concat<R>.Construct(a, b);
-
+    /*
+    public static Korssas.Multi.Concat<R> kConcat<R>(this IKorssa<IMulti<R>> a, IKorssa<IMulti<R>> b)
+        where R : class, Rog =>
+        new(a, b);
+    */
     public static Korvessa<R, Number, Multi<R>> kDuplicate<R>(this IKorssa<R> value, IKorssa<Number> count)
         where R : class, Rog =>
         Korvessas.Duplicate<R>.Construct(value, count);
