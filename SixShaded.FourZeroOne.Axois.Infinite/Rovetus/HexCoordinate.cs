@@ -1,7 +1,5 @@
 namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus;
 
-using Core.Roggis;
-using Roveggi.Defined;
 public class HexCoordinate : Rovetu
 {
     protected HexCoordinate() { }

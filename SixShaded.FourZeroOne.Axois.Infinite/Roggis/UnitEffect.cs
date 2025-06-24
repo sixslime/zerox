@@ -1,7 +1,5 @@
 namespace SixShaded.FourZeroOne.Axois.Infinite.Roggis;
 
-using Roggis;
-using Roggi.Defined;
 public record UnitEffect : NoOp
 {
     public EType Type { get; init; }
