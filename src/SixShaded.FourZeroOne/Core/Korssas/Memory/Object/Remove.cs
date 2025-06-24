@@ -2,12 +2,12 @@
 
 using Roveggi;
 
-public sealed record Remove : Korssa.Defined.PureFunction<IRoveggi<IRovedantu<Rog>>, Roggis.Instructions.Redact>
+public sealed record Remove : Korssa.Defined.PureFunction<IRoveggi<Rovedantu<Rog>>, Roggis.Instructions.Redact>
 {
-    public Remove(IKorssa<IRoveggi<IRovedantu<Rog>>> address) : base(address)
+    public Remove(IKorssa<IRoveggi<Rovedantu<Rog>>> address) : base(address)
     { }
 
-    protected override Roggis.Instructions.Redact EvaluatePure(IRoveggi<IRovedantu<Rog>> in1) =>
+    protected override Roggis.Instructions.Redact EvaluatePure(IRoveggi<Rovedantu<Rog>> in1) =>
         new()
         {
             Address = in1.MemWrapped(),

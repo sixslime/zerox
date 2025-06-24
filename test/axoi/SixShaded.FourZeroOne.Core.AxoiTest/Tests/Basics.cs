@@ -35,24 +35,24 @@ public sealed class Basics
     public async Task RoveggiRovi(int num, bool[] bools, int basePower, int power) =>
         await Run(
         c =>
-            Core.kCompose<FooRovetu>()
-                .kWithRovi(FooRovetu.NUM, num.kFixed())
-                .DeTesAssertRoggi(c, r => r.GetComponent(FooRovetu.NUM).Unwrap().Value == num, "NUM check")
-                .DeTesAssertRoggi(c, r => !r.GetComponent(FooRovetu.MULTI_BOOL).IsSome(), "MULTI_BOOL check before set")
-                .kWithRovi(FooRovetu.MULTI_BOOL, bools.kFixed())
-                .kWithoutRovi(FooRovetu.NUM)
-                .DeTesAssertRoggi(c, r => !r.GetComponent(FooRovetu.NUM).IsSome(), "NUM check after remove")
+            Core.kCompose<uFooRovetu>()
+                .kWithRovi(uFooRovetu.NUM, num.kFixed())
+                .DeTesAssertRoggi(c, r => r.GetComponent(uFooRovetu.NUM).Unwrap().Value == num, "NUM check")
+                .DeTesAssertRoggi(c, r => !r.GetComponent(uFooRovetu.MULTI_BOOL).IsSome(), "MULTI_BOOL check before set")
+                .kWithRovi(uFooRovetu.MULTI_BOOL, bools.kFixed())
+                .kWithoutRovi(uFooRovetu.NUM)
+                .DeTesAssertRoggi(c, r => !r.GetComponent(uFooRovetu.NUM).IsSome(), "NUM check after remove")
                 .kWithRovi(
-                FooRovetu.POWER_OBJ,
-                Core.kCompose<PowerExpr>()
-                    .kWithRovi(PowerExpr.POWER, power.kFixed())
-                    .kWithRovi(PowerExpr.NUM, basePower.kFixed()))
-                .DeTesAssertRoggi(c, r => r.GetComponent(FooRovetu.MULTI_BOOL).Unwrap().Elements.Map(x => x.IsTrue).SequenceEqual(bools), "MULTI_BOOL check")
-                .kGetRovi(FooRovetu.POWER_OBJ)
+                uFooRovetu.POWER_OBJ,
+                Core.kCompose<uPowerExpr>()
+                    .kWithRovi(uPowerExpr.POWER, power.kFixed())
+                    .kWithRovi(uPowerExpr.NUM, basePower.kFixed()))
+                .DeTesAssertRoggi(c, r => r.GetComponent(uFooRovetu.MULTI_BOOL).Unwrap().Elements.Map(x => x.IsTrue).SequenceEqual(bools), "MULTI_BOOL check")
+                .kGetRovi(uFooRovetu.POWER_OBJ)
                 .DeTesAssertRoggi(
                 c, r =>
-                    r.GetComponent(PowerExpr.NUM).Unwrap().Value == basePower &&
-                    r.GetComponent(PowerExpr.POWER).Unwrap().Value > 0, "POWER_OBJ check")
+                    r.GetComponent(uPowerExpr.NUM).Unwrap().Value == basePower &&
+                    r.GetComponent(uPowerExpr.POWER).Unwrap().Value > 0, "POWER_OBJ check")
                 .kTESTPower()
                 .DeTesAssertRoggi(c, r => r.Value == basePower.Yield(power).Accumulate((a, b) => a * b).Unwrap(), "korvessa check"));
 
@@ -214,21 +214,21 @@ public sealed class Basics
                         .kMap(
                         [],
                         iNum =>
-                            Core.kSubEnvironment<Multi<Roveggi.IRoveggi<FooMemRovetu>>>(
+                            Core.kSubEnvironment<Multi<Roveggi.IRoveggi<uFooRovedantu>>>(
                             new()
                             {
                                 Environment =
                                 [
-                                    Core.kCompose<FooMemRovetu>()
-                                        .kWithRovi(FooMemRovetu.ID, iNum.kRef())
+                                    Core.kCompose<uFooRovedantu>()
+                                        .kWithRovi(uFooRovedantu.ID, iNum.kRef())
                                         .kAsVariable(out var iComp),
                                 ],
                                 Value =
                                     Core.kMulti(
                                     iComp.kRef()
-                                        .kWithRovi(FooMemRovetu.PART, false.kFixed()),
+                                        .kWithRovi(uFooRovedantu.PART, false.kFixed()),
                                     iComp.kRef()
-                                        .kWithRovi(FooMemRovetu.PART, true.kFixed())),
+                                        .kWithRovi(uFooRovedantu.PART, true.kFixed())),
                             }))
                         .kFlatten()
                         .DeTesAssertRoggi(c, r => r.Count is 10, "pre memassign count check (10)")
@@ -241,14 +241,14 @@ public sealed class Basics
                                 Environment =
                                 [
                                     iComp.kRef()
-                                        .kGetRovi(FooMemRovetu.ID)
+                                        .kGetRovi(uFooRovedantu.ID)
                                         .kAsVariable(out var iNum),
                                 ],
                                 Value =
                                     iComp.kRef()
                                         .kWrite(
                                         iComp.kRef()
-                                            .kGetRovi(FooMemRovetu.PART)
+                                            .kGetRovi(uFooRovedantu.PART)
                                             .kIfTrue<Number>(
                                             new()
                                             {
@@ -279,9 +279,9 @@ public sealed class Basics
                                         .kAsVariable(out var iSelectedPart),
                                 ],
                                 Value =
-                                    Core.kCompose<FooMemRovetu>()
-                                        .kWithRovi(FooMemRovetu.ID, iSelectedId.kRef())
-                                        .kWithRovi(FooMemRovetu.PART, iSelectedPart.kRef())
+                                    Core.kCompose<uFooRovedantu>()
+                                        .kWithRovi(uFooRovedantu.ID, iSelectedId.kRef())
+                                        .kWithRovi(uFooRovedantu.PART, iSelectedPart.kRef())
                                         .kGet()
                                         .DeTesAssertRoggiUnstable(c, r => r.IsSome(), "data exists check"),
                             })

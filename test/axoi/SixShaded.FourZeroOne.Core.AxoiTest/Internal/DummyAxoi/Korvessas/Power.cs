@@ -11,12 +11,12 @@ using Roveggi;
 
 internal static class Power
 {
-    public static Korvessa<IRoveggi<PowerExpr>, Number> Construct(IKorssa<IRoveggi<PowerExpr>> powerve) =>
+    public static Korvessa<IRoveggi<uPowerExpr>, Number> Construct(IKorssa<IRoveggi<uPowerExpr>> powerve) =>
         new(powerve)
         {
             Du = new(TestAxoi.Du, "power"),
             Definition =
-                Core.kMetaFunction<IRoveggi<PowerExpr>, Number>(
+                Core.kMetaFunction<IRoveggi<uPowerExpr>, Number>(
                 [],
                 self =>
                     Core.kMetaFunctionRecursive<Number, Number, Number, Number>(
@@ -41,11 +41,11 @@ internal static class Power
                         .kExecuteWith(
                         new()
                         {
-                            A = self.kRef().kGetRovi(PowerExpr.NUM),
-                            B = self.kRef().kGetRovi(PowerExpr.POWER),
-                            C = self.kRef().kGetRovi(PowerExpr.NUM),
+                            A = self.kRef().kGetRovi(uPowerExpr.NUM),
+                            B = self.kRef().kGetRovi(uPowerExpr.POWER),
+                            C = self.kRef().kGetRovi(uPowerExpr.NUM),
                         })),
         };
 
-    public static Korvessa<IRoveggi<PowerExpr>, Number> kTESTPower(this IKorssa<IRoveggi<PowerExpr>> powerve) => Construct(powerve);
+    public static Korvessa<IRoveggi<uPowerExpr>, Number> kTESTPower(this IKorssa<IRoveggi<uPowerExpr>> powerve) => Construct(powerve);
 }

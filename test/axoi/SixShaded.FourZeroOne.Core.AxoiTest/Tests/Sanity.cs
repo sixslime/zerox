@@ -14,9 +14,9 @@ public class Sanity
     public async Task Compose() =>
         await Run(
         c =>
-            Core.kCompose<FooRovetu>()
-                .kWithRovi(FooRovetu.NUM, 401.kFixed())
-                .DeTesAssertRoggi(c, r => r.GetComponent(FooRovetu.NUM).Unwrap().Value == 401, "NUM check"));
+            Core.kCompose<uFooRovetu>()
+                .kWithRovi(uFooRovetu.NUM, 401.kFixed())
+                .DeTesAssertRoggi(c, r => r.GetComponent(uFooRovetu.NUM).Unwrap().Value == 401, "NUM check"));
 
     [TestMethod]
     public async Task AMap() =>
@@ -107,9 +107,9 @@ public class Sanity
             {
                 Environment =
                 [
-                    Core.kCompose<FooMemRovetu>()
-                        .kWithRovi(FooMemRovetu.ID, 8.kFixed())
-                        .kWithRovi(FooMemRovetu.PART, true.kFixed())
+                    Core.kCompose<uFooRovedantu>()
+                        .kWithRovi(uFooRovedantu.ID, 8.kFixed())
+                        .kWithRovi(uFooRovedantu.PART, true.kFixed())
                         .kAsVariable(out var iComp),
                     iComp.kRef().kWrite(401.kFixed()),
                 ],
@@ -118,9 +118,9 @@ public class Sanity
                     iComp.kRef()
                         .kGet()
                         .DeTesAssertRoggi(c, r => r.Value is 401, "direct reference"),
-                    Core.kCompose<FooMemRovetu>()
-                        .kWithRovi(FooMemRovetu.ID, 8.kFixed())
-                        .kWithRovi(FooMemRovetu.PART, true.kFixed())
+                    Core.kCompose<uFooRovedantu>()
+                        .kWithRovi(uFooRovedantu.ID, 8.kFixed())
+                        .kWithRovi(uFooRovedantu.PART, true.kFixed())
                         .kGet()
                         .DeTesAssertRoggi(c, r => r.Value is 401, "reconstructed")),
             }));

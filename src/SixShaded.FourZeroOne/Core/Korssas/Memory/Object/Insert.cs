@@ -2,13 +2,13 @@
 
 using Roveggi;
 
-public sealed record Insert<R> : Korssa.Defined.PureFunction<IRoveggi<IRovedantu<R>>, R, Roggis.Instructions.Assign<R>>
+public sealed record Insert<R> : Korssa.Defined.PureFunction<IRoveggi<Rovedantu<R>>, R, Roggis.Instructions.Assign<R>>
     where R : class, Rog
 {
-    public Insert(IKorssa<IRoveggi<IRovedantu<R>>> address, IKorssa<R> obj) : base(address, obj)
+    public Insert(IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<R> obj) : base(address, obj)
     { }
 
-    protected override Roggis.Instructions.Assign<R> EvaluatePure(IRoveggi<IRovedantu<R>> in1, R in2) =>
+    protected override Roggis.Instructions.Assign<R> EvaluatePure(IRoveggi<Rovedantu<R>> in1, R in2) =>
         new()
         {
             Address = in1.MemWrapped(),

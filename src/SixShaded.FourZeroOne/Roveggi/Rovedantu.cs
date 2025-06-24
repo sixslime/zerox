@@ -3,6 +3,6 @@
 /// <summary>
 ///     Allows 'Get' 'Insert' and 'Redact' Korssas.
 /// </summary>
-public interface IRovedantu<out R> : IRovetu
+public abstract class Rovedantu<R> : IRovetu
     where R : class, Rog
 { }
