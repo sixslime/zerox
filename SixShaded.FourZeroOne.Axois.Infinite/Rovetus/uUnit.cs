@@ -1,6 +1,6 @@
 namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus;
 
-public interface uUnit : uSided
+public interface uAbility : IRovetu
 {
-    
+
 }
