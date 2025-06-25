@@ -24,7 +24,7 @@ public record Roveggi<C> : Roggi.Defined.NoOp, IRoveggi<C>
         where R : class, Rog =>
         this with
         {
-            _componentMap = _componentMap.WithEntries((identifier.IsA<IRovu<C>>(), data.IsA<Rog>()).Tiple()),
+            _componentMap = _componentMap.WithEntries((identifier, data).Tiple()),
         };
 
     public IRoveggi<C> WithComponentsUnsafe(IEnumerable<ITiple<IRovu<C>, Rog>> components) =>
