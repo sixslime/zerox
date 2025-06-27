@@ -6,4 +6,4 @@ using Roveggi;
 public interface IRovu<in C> : IRovu
     where C : IRovetu;
 
-public interface IRovu : IAxovendu;
+public interface IRovu;
