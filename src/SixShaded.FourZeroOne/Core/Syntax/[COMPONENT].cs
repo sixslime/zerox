@@ -56,4 +56,6 @@ public static partial class KorssaSyntax
     public static Korssas.Component.DoMerge<C> kMerge<C>(this IKorssa<IRoveggi<C>> subject, IKorssa<IRoveggi<MergeSpec<C>>> mergeObject)
         where C : IRovetu =>
         new(subject, mergeObject);
+
+    public static Korssas.Component.Attachment.Get<C, R> kGetRovida
 }
