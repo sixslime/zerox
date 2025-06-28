@@ -1,4 +1,4 @@
-﻿namespace SixShaded.FourZeroOne.Core.AxoiTest.Internal.DummyAxoi.Roveggitus;
+﻿namespace SixShaded.FourZeroOne.Core.AxoiTest.Internal.DummyAxoi.Rovetus;
 
 using Roggis;
 using Roveggi;

@@ -1,7 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.AxoiTest.Tests;
 
 using DeTes.Declaration;
-using Internal.DummyAxoi.Roveggitus;
+using Internal.DummyAxoi.Rovetus;
 using Core = Syntax.Core;
 using Roggis;
 using Roggi;
@@ -149,5 +149,42 @@ public class Sanity
                         400.kFixed().kAdd(1.kFixed())
                 })
                 .DeTesAssertRoggi(c, r => r.Value == 801));
+
+    [TestMethod]
+    public async Task Varovu() =>
+        await Run(c =>
+            Core.kSubEnvironment<Rog>(
+            new()
+            {
+                Environment =
+                [
+                    Core.kCompose<uFooVarovu>()
+                        .kWithRovi(uFooVarovu.RANGE_ID, (5..10).kFixed())
+                        .kAsVariable(out var iAddrA),
+                    Core.kCompose<uFooVarovu>()
+                        .kWithRovi(uFooVarovu.RANGE_ID, (6..10).kFixed())
+                        .kAsVariable(out var iAddrB),
+                    Core.kCompose<uFooRovetu>()
+                        .kWithRovi(uFooRovetu.NUM, 10.kFixed())
+                        .kWithVarovi(iAddrA.kRef(), 100.kFixed())
+                        .kWithVarovi(iAddrB.kRef(), 200.kFixed())
+                        .kAsVariable(out var iObj)
+                ],
+                Value =
+                    Core.kMulti<Rog>(
+                    Core.kCompose<uFooRovetu>()
+                        .kWithRovi(uFooRovetu.NUM, 10.kFixed())
+                        .kGetVarovi(iAddrA.kRef())
+                        .DeTesAssertRoggiUnstable(c, ro => !ro.IsSome()),
+                    iObj.kRef()
+                        .kGetVarovi(iAddrA.kRef())
+                        .DeTesAssertRoggi(c, r => r.Value == 100),
+                    iObj.kRef()
+                        .kGetVarovi(
+                        Core.kCompose<uFooVarovu>()
+                            .kWithRovi(uFooVarovu.RANGE_ID, (6..10).kFixed()))
+                        .DeTesAssertRoggi(c, r => r.Value == 200))
+            }));
+
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }

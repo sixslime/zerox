@@ -3,7 +3,7 @@
 using System.Reflection.Metadata;
 using DeTes.Declaration;
 using Internal.DummyAxoi.Korvessas;
-using Internal.DummyAxoi.Roveggitus;
+using Internal.DummyAxoi.Rovetus;
 using Roggis;
 using Roggis.Instructions;
 using Core = Syntax.Core;
