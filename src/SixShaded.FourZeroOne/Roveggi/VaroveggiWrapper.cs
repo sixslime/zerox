@@ -1,12 +1,12 @@
 ﻿namespace SixShaded.FourZeroOne.Roveggi;
 
-public class VaroveggiWrapper<C, R>(IRoveggi<IVarovu<C, R>> roveggi) : IRovu<C, R>
+public record VarovaWrapper<C, RKey, RVal>(RKey keyRoggi) : IRovu<C, RVal>
     where C : IRovetu
-    where R : class, Rog
+    where RKey : class, Rog
+    where RVal : class, Rog
 {
-    public IRoveggi<IVarovu<C, R>> Roveggi { get; } = roveggi;
-    public override bool Equals(object? obj) => obj is VaroveggiWrapper<C, R> other && Roveggi.Equals(other.Roveggi);
-    public override int GetHashCode() => Roveggi.GetHashCode();
-    public override string? ToString() => Roveggi.ToString();
-    protected bool Equals(VaroveggiWrapper<C, R> other) => Roveggi.Equals(other.Roveggi);
+    public RKey KeyRoggi { get; } = keyRoggi;
+    public override int GetHashCode() => HashCode.Combine(KeyRoggi, typeof(RKey));
+    public override string? ToString() => KeyRoggi.ToString();
+    public virtual bool Equals(VarovaWrapper<C, RKey, RVal>? other) => other is not null && other.KeyRoggi.Equals(KeyRoggi);
 }
