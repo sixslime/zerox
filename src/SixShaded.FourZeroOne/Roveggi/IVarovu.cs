@@ -3,6 +3,6 @@
 /// <summary>
 ///     o
 /// </summary>
-public interface IRovundantu<in C, R> : IRovetu
+public interface IVarovu<in C, R> : IRovetu
     where C : IRovetu
     where R : class, Rog;

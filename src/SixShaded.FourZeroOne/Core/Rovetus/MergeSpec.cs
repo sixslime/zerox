@@ -18,10 +18,7 @@ public record MergeSpec<C> : IRovetu
     public record MergeRovu<R>(IRovu<C, R> ForRovu) : IRovu<MergeSpec<C>, R>, IMergeRovu
         where R : class, Rog
     {
-        public override string ToString() => $"{ForRovu.Identifier}*";
-        public Axodu Axodu => Axoi.Du;
-        public string Identifier => $"{ForRovu.Axodu}~{ForRovu.Identifier}";
-        public string TypeExpression => $"MergeRovu<{typeof(C).Name}>";
+        public override string ToString() => $"{ForRovu}*";
         IRovu<C> IMergeRovu.ForRovuUnsafe => ForRovu;
     }
 }

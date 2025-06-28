@@ -57,5 +57,16 @@ public static partial class KorssaSyntax
         where C : IRovetu =>
         new(subject, mergeObject);
 
-    public static Korssas.Component.Attachment.Get<C, R> kGetRovida
+    public static Korssas.Component.Attachment.Get<C, R> kGetVarovi<C, R>(this IKorssa<IRoveggi<C>> subject, IKorssa<IRoveggi<IVarovu<C, R>>> varovu)
+        where C : IRovetu
+        where R : class, Rog =>
+        new(subject, varovu);
+    public static Korssas.Component.Attachment.With<C, R> kWithVarovi<C, R>(this IKorssa<IRoveggi<C>> subject, IKorssa<IRoveggi<IVarovu<C, R>>> varovu, IKorssa<R> data)
+        where C : IRovetu
+        where R : class, Rog =>
+        new(subject, varovu, data);
+    public static Korssas.Component.Attachment.Without<C, R> kWithoutVarovi<C, R>(this IKorssa<IRoveggi<C>> subject, IKorssa<IRoveggi<IVarovu<C, R>>> varovu)
+        where C : IRovetu
+        where R : class, Rog =>
+        new(subject, varovu);
 }
