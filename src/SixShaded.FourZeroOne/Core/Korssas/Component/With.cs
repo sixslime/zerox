@@ -3,7 +3,7 @@
 using Roveggi;
 using Roveggi.Unsafe;
 
-public sealed record With<C, R> : Korssa.Defined.RegularKorssa<IRoveggi<C>>, IHasAttachedComponentIdentifier<C, IRoveggi<C>>
+public sealed record With<C, R> : Korssa.Defined.RegularKorssa<IRoveggi<C>>
     where R : class, Rog
     where C : IRovetu
 {
@@ -22,5 +22,4 @@ public sealed record With<C, R> : Korssa.Defined.RegularKorssa<IRoveggi<C>>, IHa
         ).ToCompletedITask();
 
     protected override IOption<string> CustomToString() => $"{ArgKorssas[0]}:{{{Rovu}={ArgKorssas[1]}}}".AsSome();
-    IRovu<C> IHasAttachedComponentIdentifier<C, IRoveggi<C>>._attachedRovu => Rovu;
 }

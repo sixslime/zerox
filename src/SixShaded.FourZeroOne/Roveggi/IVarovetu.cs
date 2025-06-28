@@ -3,10 +3,7 @@
 /// <summary>
 ///     o
 /// </summary>
-public interface IVarovu<in C, RKey, RVal> : IAxovendu
-    where C : IRovetu
+public interface IVarovetu<RKey, RVal> : IRovetu
     where RKey : class, Rog
     where RVal : class, Rog
-{   
-    public IRovu<C, RVal> GenerateRovu(RKey keyRoggi);
-}
+{ }

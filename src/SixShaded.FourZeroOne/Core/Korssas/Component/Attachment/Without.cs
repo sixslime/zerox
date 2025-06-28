@@ -2,14 +2,21 @@
 
 using SixShaded.FourZeroOne.Roveggi;
 
-public sealed record Without<C, R> : Korssa.Defined.PureFunction<IRoveggi<C>, IRoveggi<IVarovu<C, R>>, IRoveggi<C>>
-    where C : IRovetu
-    where R : class, Rog
+public sealed record Without<C, RKey, RVal> : Korssa.Defined.RegularKorssa<IRoveggi<C>>
+    where C : IVarovetu<RKey, RVal>
+    where RKey : class, Rog
+    where RVal : class, Rog
 {
-    public Without(IKorssa<IRoveggi<C>> subject, IKorssa<IRoveggi<IVarovu<C, R>>> address) : base(subject, address)
+    public Without(IKorssa<IRoveggi<C>> subject, IKorssa<RKey> key) : base(subject, key)
     { }
 
-    protected override IRoveggi<C> EvaluatePure(IRoveggi<C> subject, IRoveggi<IVarovu<C, R>> address) => subject.WithoutComponents([address.MemWrapped()]);
+    public required IVarovu<C, RKey, RVal> Varovu { get; init; }
 
-    protected override IOption<string> CustomToString() => $"{Arg1}@:{{{Arg2} X}}".AsSome();
+    protected override ITask<IOption<IRoveggi<C>>> StandardResolve(IKorssaContext runtime, RogOpt[] args) =>
+        (args[0].RemapAs(x => (IRoveggi<C>)x).Check(out var subject)
+         && args[1].RemapAs(x => (RKey)x).Check(out var key)
+            ? subject.WithoutComponents([Varovu.GenerateRovu(key)]).AsSome()
+            : new None<IRoveggi<C>>())
+        .ToCompletedITask();
+    protected override IOption<string> CustomToString() => $"{ArgKorssas[0]}@{Varovu.Identifier}->{ArgKorssas[1]}".AsSome();
 }

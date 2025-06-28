@@ -2,17 +2,21 @@
 
 using SixShaded.FourZeroOne.Roveggi;
 
-public sealed record Get<C, R> : Korssa.Defined.Function<IRoveggi<C>, IRoveggi<IVarovu<C, R>>, R>
-    where C : IRovetu
-    where R : class, Rog
+public sealed record Get<C, RKey, RVal> : Korssa.Defined.RegularKorssa<RVal>
+    where C : IVarovetu<RKey, RVal>
+    where RKey : class, Rog
+    where RVal : class, Rog
 {
-    public Get(IKorssa<IRoveggi<C>> subject, IKorssa<IRoveggi<IVarovu<C, R>>> address) : base(subject, address)
+    public Get(IKorssa<IRoveggi<C>> subject, IKorssa<RKey> key) : base(subject, key)
     { }
 
-    protected override ITask<IOption<R>> Evaluate(IKorssaContext _, IOption<IRoveggi<C>> subjectOpt, IOption<IRoveggi<IVarovu<C, R>>> addressOpt) =>
-        subjectOpt.Check(out var subject) && addressOpt.Check(out var address)
-            ? subject.GetComponent(address.MemWrapped()).ToCompletedITask()
-            : new None<R>().ToCompletedITask();
+    public required IVarovu<C, RKey, RVal> Varovu { get; init; }
 
-    protected override IOption<string> CustomToString() => $"{Arg1}@->{Arg2}".AsSome();
+    protected override ITask<IOption<RVal>> StandardResolve(IKorssaContext runtime, RogOpt[] args) =>
+        (args[0].RemapAs(x => (IRoveggi<C>)x).Check(out var subject)
+         && args[1].RemapAs(x => (RKey)x).Check(out var key)
+            ? subject.GetComponent(Varovu.GenerateRovu(key))
+            : new None<RVal>())
+        .ToCompletedITask();
+    protected override IOption<string> CustomToString() => $"{ArgKorssas[0]}@{Varovu.Identifier}->{ArgKorssas[1]}".AsSome();
 }

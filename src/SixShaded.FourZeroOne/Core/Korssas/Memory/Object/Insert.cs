@@ -11,7 +11,7 @@ public sealed record Insert<R> : Korssa.Defined.PureFunction<IRoveggi<Rovedantu<
     protected override Roggis.Instructions.Assign<R> EvaluatePure(IRoveggi<Rovedantu<R>> in1, R in2) =>
         new()
         {
-            Address = in1.MemWrapped(),
+            Address = in1.Rovedanggi(),
             Subject = in2,
         };
 
