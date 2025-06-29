@@ -11,6 +11,10 @@ public static partial class Core
     public static Korvessa<IRoveggi<C>> kCompose<C>()
         where C : IRovetu =>
         Korvessas.Compose<C>.Construct();
+
+    public static Korvessa<IRoveggi<MergeSpec<C>>> kMerger<C>()
+        where C : IRovetu =>
+        Korvessas.Compose<MergeSpec<C>>.Construct();
 }
 
 public static partial class KorssaSyntax
@@ -56,9 +60,11 @@ public static partial class KorssaSyntax
     public static Korssas.Component.DoMerge<C> kMerge<C>(this IKorssa<IRoveggi<C>> subject, IKorssa<IRoveggi<MergeSpec<C>>> mergeObject)
         where C : IRovetu =>
         new(subject, mergeObject);
-
+    public static Korssas.Component.DoMerge<C> kMerge<C>(this IKorssa<IRoveggi<C>> subject, Func<IKorssa<IRoveggi<MergeSpec<C>>>, IKorssa<IRoveggi<MergeSpec<C>>>> mergeStatement)
+        where C : IRovetu =>
+        new(subject, mergeStatement(Core.kMerger<C>()));
     public static Korssas.Component.Attachment.Get<C, RKey, RVal> kGetVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key)
-        where C : IVarovetu<RKey, RVal>
+        where C : IRovetu
         where RKey : class, Rog
         where RVal : class, Rog =>
         new(subject, key)
@@ -66,7 +72,7 @@ public static partial class KorssaSyntax
             Varovu = varovu
         };
     public static Korssas.Component.Attachment.With<C, RKey, RVal> kWithVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, IKorssa<RVal> value)
-        where C : IVarovetu<RKey, RVal>
+        where C : IRovetu
         where RKey : class, Rog
         where RVal : class, Rog =>
         new(subject, key, value)
@@ -74,11 +80,12 @@ public static partial class KorssaSyntax
             Varovu = varovu
         };
     public static Korssas.Component.Attachment.Without<C, RKey, RVal> kWithoutVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key)
-        where C : IVarovetu<RKey, RVal>
+        where C : IRovetu
         where RKey : class, Rog
         where RVal : class, Rog =>
         new(subject, key)
         {
             Varovu = varovu
         };
+    
 }

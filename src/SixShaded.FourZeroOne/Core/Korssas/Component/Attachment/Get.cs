@@ -3,7 +3,7 @@
 using SixShaded.FourZeroOne.Roveggi;
 
 public sealed record Get<C, RKey, RVal> : Korssa.Defined.RegularKorssa<RVal>
-    where C : IVarovetu<RKey, RVal>
+    where C : IRovetu
     where RKey : class, Rog
     where RVal : class, Rog
 {

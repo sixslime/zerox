@@ -158,16 +158,19 @@ public class Sanity
             {
                 Environment =
                 [
-                    Core.kCompose<uFooVarovetu>()
-                        .kWithRovi(uFooVarovetu.RANGE_ID, (5..10).kFixed())
-                        .kAsVariable(out var iAddrA),
-                    Core.kCompose<uFooVarovetu>()
-                        .kWithRovi(uFooVarovetu.RANGE_ID, (6..10).kFixed())
-                        .kAsVariable(out var iAddrB),
                     Core.kCompose<uFooRovetu>()
-                        .kWithRovi(uFooRovetu.NUM, 10.kFixed())
-                        .kWithVarovi(iAddrA.kRef(), 100.kFixed())
-                        .kWithVarovi(iAddrB.kRef(), 200.kFixed())
+                        .kWithRovi(uFooRovetu.NUM, 15.kFixed())
+                        .kAsVariable(out var iFooKeyA),
+                    Core.kCompose<uFooRovetu>()
+                        .kWithRovi(uFooRovetu.NUM, 25.kFixed())
+                        .kAsVariable(out var iFooKeyB),
+                    34.kFixed()
+                        .kAsVariable(out var iNumKeyA),
+                    44.kFixed()
+                        .kAsVariable(out var iNumKeyB),
+                    Core.kCompose<uBarRovetu>()
+                        .kWithRovi<uBarRovetu, Number>(uFooRovetu.NUM, 111.kFixed())
+                        .kWithVarovi(uBarRovetu.FOO_MAP, iFooKeyA.kRef(), 100.kFixed())
                         .kAsVariable(out var iObj)
                 ],
                 Value =
@@ -181,8 +184,8 @@ public class Sanity
                         .DeTesAssertRoggi(c, r => r.Value == 100),
                     iObj.kRef()
                         .kGetVarovi(
-                        Core.kCompose<uFooVarovetu>()
-                            .kWithRovi(uFooVarovetu.RANGE_ID, (6..10).kFixed()))
+                        Core.kCompose<uBarRovetu>()
+                            .kWithRovi(uBarRovetu.RANGE_ID, (6..10).kFixed()))
                         .DeTesAssertRoggi(c, r => r.Value == 200))
             }));
 
