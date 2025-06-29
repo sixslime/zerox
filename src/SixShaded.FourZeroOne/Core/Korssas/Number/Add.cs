@@ -13,5 +13,5 @@ public sealed record Add : Korssa.Defined.PureFunction<Number, Number, Number>
             Value = a.Value + b.Value,
         };
 
-    protected override IOption<string> CustomToString() => $"({Arg1} + {Arg2})".AsSome();
+    protected override IOption<string> CustomToString() => $"{Arg1} + {Arg2}".AsSome();
 }

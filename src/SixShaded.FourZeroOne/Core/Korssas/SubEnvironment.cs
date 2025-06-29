@@ -7,5 +7,5 @@ public record SubEnvironment<ROut> : Korssa.Defined.PureFunction<IMulti<Rog>, RO
     { }
 
     protected override ROut EvaluatePure(IMulti<Rog> _, ROut in2) => in2;
-    protected override IOption<string> CustomToString() => $"let {Arg1} in {Arg2}".AsSome();
+    protected override IOption<string> CustomToString() => $"| {Arg2} |=> {Arg2}".AsSome();
 }

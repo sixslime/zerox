@@ -8,4 +8,5 @@ public sealed record Start : Korssa.Defined.PureFunction<NumRange, Number>
     { }
 
     protected override Number EvaluatePure(NumRange in1) => in1.Start;
+    protected override IOption<string> CustomToString() => $"{Arg1}<".AsSome();
 }

@@ -13,4 +13,6 @@ public sealed record Create : Korssa.Defined.PureFunction<Number, Number, NumRan
             Start = in1,
             End = in2,
         };
+
+    protected override IOption<string> CustomToString() => $"{Arg1}..{Arg2}".AsSome();
 }

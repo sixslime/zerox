@@ -13,5 +13,5 @@ public sealed record Multiply : Korssa.Defined.PureFunction<Number, Number, Numb
             Value = a.Value * b.Value,
         };
 
-    protected override IOption<string> CustomToString() => $"({Arg1} * {Arg2})".AsSome();
+    protected override IOption<string> CustomToString() => $"{Arg1} * {Arg2}".AsSome();
 }

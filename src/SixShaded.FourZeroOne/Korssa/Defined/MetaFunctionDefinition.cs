@@ -9,7 +9,7 @@ public abstract record MetaFunctionDefinition<R, M>(params Addr[] argAddresses) 
     public DynamicRoda<M> SelfRoda { get; } = new();
     public abstract M ConstructConcreteMetaFunction(IMemory memory);
     protected override IResult<ITask<IOption<M>>, EStateImplemented> Resolve(IKorssaContext context, RogOpt[] args) => ConstructConcreteMetaFunction(context.CurrentMemory).AsSome().ToCompletedITask().AsOk(Hint<EStateImplemented>.HINT);
-    protected override IOption<string> CustomToString() => $"#{SelfRoda}{{ {(ArgAddresses.Any() ? string.Join(", ", ArgAddresses.IEnumerable()) + " " : "|")}=> {Korssa} }}".AsSome();
+    protected override IOption<string> CustomToString() => $"#{SelfRoda}{{ {(ArgAddresses.Length != 0 ? string.Join(", ", ArgAddresses.IEnumerable()) + " " : "ͽ ")}=> {Korssa} }}".AsSome();
     public required Addr[] Captures { get; init; }
     public Addr[] ArgAddresses { get; } = argAddresses;
     public abstract IKorssa<R> Korssa { get; }

@@ -13,5 +13,5 @@ public sealed record GreaterThan : Korssa.Defined.PureFunction<Number, Number, B
             IsTrue = in1.Value > in2.Value,
         };
 
-    protected override IOption<string> CustomToString() => $"({Arg1} > {Arg2})".AsSome();
+    protected override IOption<string> CustomToString() => $"{Arg1} > {Arg2}".AsSome();
 }
