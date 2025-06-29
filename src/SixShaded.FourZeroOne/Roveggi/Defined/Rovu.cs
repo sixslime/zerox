@@ -8,6 +8,6 @@ public sealed class Varovu<C, RKey, RVal>(Axodu axodu, string identifier) : Axov
     where RVal : class, Rog
 {
     protected override string TypeExpression => $"Varovu<{typeof(C).Name}>";
-    public IRovu<C, RVal> GenerateRovu(RKey keyRoggi) => new VarovaWrapper<C,RKey,RVal>(keyRoggi);
+    public IRovu<C, RVal> GenerateRovu(RKey keyRoggi) => new VarovaWrapper<C,RKey,RVal>(this, keyRoggi);
     public override string ToString() => $"{Identifier}";
 }
