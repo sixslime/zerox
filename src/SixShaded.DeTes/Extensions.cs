@@ -1,5 +1,7 @@
 namespace SixShaded.DeTes;
 
+using Declaration.Impl;
+
 public static class Extensions
 {
     public static Task<IResult<IDeTesResult, EDeTesInvalidTest>> Realize(this IDeTesTest test, DeTesFZOSupplier supplier) => new DeTesRealizer().Realize(test, supplier);
@@ -52,4 +54,6 @@ public static class Extensions
         context.MakeMultiSelectionDomain(subject, values.Map(x => x.ToArray()).ToArray(), out domainHandle, description);
         return subject;
     }
+
+    public static Kor GetKorssa(this IDeTesTest test) => test.Declaration(new DummyContext());
 }
