@@ -7,7 +7,7 @@ public sealed record MetaFunction<ROut> : Roggi.Defined.ConcreteMetaFunction<ROu
 {
     public required DynamicRoda<MetaFunction<ROut>> SelfRoda { get; init; }
     protected override IRoda<IMetaFunction<ROut>> SelfIdentifierInternal => SelfRoda;
-    public override string ToString() => $"{SelfRoda}()::{{{Korssa}}}";
+    public override string ToString() => $"#{SelfRoda}{{ => {Korssa} }}";
 }
 
 public sealed record MetaFunction<RArg1, ROut> : Roggi.Defined.ConcreteMetaFunction<ROut>
@@ -21,7 +21,7 @@ public sealed record MetaFunction<RArg1, ROut> : Roggi.Defined.ConcreteMetaFunct
     public required DynamicRoda<MetaFunction<RArg1, ROut>> SelfRoda { get; init; }
     public DynamicRoda<RArg1> RodaA => (DynamicRoda<RArg1>)ArgAddresses[0];
     protected override IRoda<IMetaFunction<ROut>> SelfIdentifierInternal => SelfRoda;
-    public override string ToString() => $"{SelfRoda}({RodaA})::{{{Korssa}}}";
+    public override string ToString() => $"#{SelfRoda}{{ {RodaA} => {Korssa} }}";
 }
 
 public sealed record MetaFunction<RArg1, RArg2, ROut> : Roggi.Defined.ConcreteMetaFunction<ROut>
@@ -39,7 +39,7 @@ public sealed record MetaFunction<RArg1, RArg2, ROut> : Roggi.Defined.ConcreteMe
     public DynamicRoda<RArg1> RodaA => (DynamicRoda<RArg1>)ArgAddresses[0];
     public DynamicRoda<RArg2> RodaB => (DynamicRoda<RArg2>)ArgAddresses[1];
     protected override IRoda<IMetaFunction<ROut>> SelfIdentifierInternal => SelfRoda;
-    public override string ToString() => $"{SelfRoda}({RodaA}, {RodaB})::{{{Korssa}}}";
+    public override string ToString() => $"#{SelfRoda}{{ {RodaA}, {RodaB} => {Korssa} }}";
 }
 
 public sealed record MetaFunction<RArg1, RArg2, RArg3, ROut> : Roggi.Defined.ConcreteMetaFunction<ROut>
@@ -60,7 +60,7 @@ public sealed record MetaFunction<RArg1, RArg2, RArg3, ROut> : Roggi.Defined.Con
     public DynamicRoda<RArg2> RodaB => (DynamicRoda<RArg2>)ArgAddresses[1];
     public DynamicRoda<RArg3> RodaC => (DynamicRoda<RArg3>)ArgAddresses[2];
     protected override IRoda<IMetaFunction<ROut>> SelfIdentifierInternal => SelfRoda;
-    public override string ToString() => $"{SelfRoda}({RodaA}, {RodaB}, {RodaC})::{{{Korssa}}}";
+    public override string ToString() => $"#{SelfRoda}{{ {RodaA}, {RodaB}, {RodaC} => {Korssa} }}";
 }
 
 /// <summary>

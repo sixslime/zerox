@@ -15,7 +15,7 @@ public record ToBoxedArgs<R1> : Korssa.Defined.Function<R1, MetaArgs<R1>>
             }.AsSome()
             .ToCompletedITask();
 
-    protected override IOption<string> CustomToString() => $"<${Arg1}>".AsSome();
+    protected override IOption<string> CustomToString() => $"<{Arg1}>".AsSome();
 }
 
 public record ToBoxedArgs<R1, R2> : Korssa.Defined.Function<R1, R2, MetaArgs<R1, R2>>
@@ -33,7 +33,7 @@ public record ToBoxedArgs<R1, R2> : Korssa.Defined.Function<R1, R2, MetaArgs<R1,
             }.AsSome()
             .ToCompletedITask();
 
-    protected override IOption<string> CustomToString() => $"<${Arg1} ${Arg2}>".AsSome();
+    protected override IOption<string> CustomToString() => $"<{Arg1}, {Arg2}>".AsSome();
 }
 
 public record ToBoxedArgs<R1, R2, R3> : Korssa.Defined.Function<R1, R2, R3, MetaArgs<R1, R2, R3>>
@@ -53,5 +53,5 @@ public record ToBoxedArgs<R1, R2, R3> : Korssa.Defined.Function<R1, R2, R3, Meta
             }.AsSome()
             .ToCompletedITask();
 
-    protected override IOption<string> CustomToString() => $"<${Arg1} ${Arg2} ${Arg3}>".AsSome();
+    protected override IOption<string> CustomToString() => $"<{Arg1}, {Arg2}, {Arg3}>".AsSome();
 }
