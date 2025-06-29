@@ -1,6 +1,6 @@
 namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Identifiers;
 
-public interface uUnitIdentifier : IRovetu
+public sealed class uPlayerIdentifier : Rovedantu<IRoveggi<Data.uPlayerData>>
 {
-    public static readonly Rovu<uUnitIdentifier, Number> NUMBER = new(Axoi.Du, "number");
+    public static readonly Rovu<uPlayerIdentifier, Number> NUMBER = new(Axoi.Du, "number");
 }

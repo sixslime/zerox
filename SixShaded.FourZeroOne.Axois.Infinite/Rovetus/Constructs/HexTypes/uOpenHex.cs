@@ -1,6 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.HexTypes;
 
-public interface uOpenHex : uHexType
+public interface uOpenHex : IRovetu, uHexType
 {
 
 }
