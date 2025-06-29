@@ -2,5 +2,4 @@
 
 public interface uUnsourcedAbility : IRovetu, uAbility
 {
-    public static readonly Rovu<uSourcedAbility, IRoveggi<Types.uUnsourcedType>> TYPE = new(Axoi.Du, "type");
 }
