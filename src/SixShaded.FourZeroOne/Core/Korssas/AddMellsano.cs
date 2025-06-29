@@ -12,5 +12,5 @@ public sealed record AddMellsano : Korssa.Defined.RegularKorssa<MellsanoAdd>
                 Mellsano = Mellsano
             }.AsSome()
             .ToCompletedITask();
-    protected override IOption<string> CustomToString() => $"{Mellsano.ToString()}".AsSome();
+    protected override IOption<string> CustomToString() => $"{Mellsano}".AsSome();
 }
