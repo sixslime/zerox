@@ -1,7 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
 using Roggis;
-using Rovetus;
 using Korvessa.Defined;
 using Roveggi.Unsafe;
 using Roveggi;
@@ -11,10 +10,6 @@ public static partial class Core
     public static Korvessa<IRoveggi<C>> kCompose<C>()
         where C : IRovetu =>
         Korvessas.Compose<C>.Construct();
-
-    public static Korvessa<IRoveggi<MergeSpec<C>>> kMerger<C>()
-        where C : IRovetu =>
-        Korvessas.Compose<MergeSpec<C>>.Construct();
 }
 
 public static partial class KorssaSyntax
@@ -52,25 +47,7 @@ public static partial class KorssaSyntax
             Rovu = rovu,
         };
 
-    public static Korssas.Component.With<MergeSpec<C>, R> kMergeRovi<C, R>(this IKorssa<IRoveggi<MergeSpec<C>>> mergeObject, IRovu<C, R> mergingIdentifier, IKorssa<R> component)
-        where C : IRovetu
-        where R : class, Rog =>
-        mergeObject.kWithRovi(MergeSpec<C>.MERGE(mergingIdentifier), component);
 
-    public static Korssas.Component.DoMerge<C> kMerge<C>(this IKorssa<IRoveggi<C>> subject, IKorssa<IRoveggi<MergeSpec<C>>> mergeObject)
-        where C : IRovetu =>
-        new(subject, mergeObject);
-    public static Korssas.Component.DoMerge<C> kMerge<C>(this IKorssa<IRoveggi<C>> subject, Func<IKorssa<IRoveggi<MergeSpec<C>>>, IKorssa<IRoveggi<MergeSpec<C>>>> mergeStatement)
-        where C : IRovetu =>
-        new(subject, mergeStatement(Core.kMerger<C>()));
-    public static Korssas.Component.Attachment.Get<C, RKey, RVal> kGetVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key)
-        where C : IRovetu
-        where RKey : class, Rog
-        where RVal : class, Rog =>
-        new(subject, key)
-        {
-            Varovu = varovu
-        };
     public static Korssas.Component.Attachment.With<C, RKey, RVal> kWithVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, IKorssa<RVal> value)
         where C : IRovetu
         where RKey : class, Rog
@@ -87,5 +64,12 @@ public static partial class KorssaSyntax
         {
             Varovu = varovu
         };
-    
+    public static Korssas.Component.Attachment.Get<C, RKey, RVal> kGetVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key)
+        where C : IRovetu
+        where RKey : class, Rog
+        where RVal : class, Rog =>
+        new(subject, key)
+        {
+            Varovu = varovu
+        };
 }

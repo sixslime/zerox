@@ -152,41 +152,52 @@ public class Sanity
 
     [TestMethod]
     public async Task Varovu() =>
-        await Run(c =>
+        await Run(
+        c =>
             Core.kSubEnvironment<Rog>(
             new()
             {
                 Environment =
                 [
                     Core.kCompose<uFooRovetu>()
-                        .kWithRovi(uFooRovetu.NUM, 15.kFixed())
+                        .kWithRovi(uFooRovetu.NUM, 111.kFixed())
                         .kAsVariable(out var iFooKeyA),
                     Core.kCompose<uFooRovetu>()
-                        .kWithRovi(uFooRovetu.NUM, 25.kFixed())
+                        .kWithRovi(uFooRovetu.NUM, 222.kFixed())
                         .kAsVariable(out var iFooKeyB),
-                    34.kFixed()
+                    333.kFixed()
                         .kAsVariable(out var iNumKeyA),
-                    44.kFixed()
+                    444.kFixed()
                         .kAsVariable(out var iNumKeyB),
                     Core.kCompose<uBarRovetu>()
                         .kWithRovi<uBarRovetu, Number>(uFooRovetu.NUM, 111.kFixed())
                         .kWithVarovi(uBarRovetu.FOO_MAP, iFooKeyA.kRef(), 100.kFixed())
+                        .kWithVarovi(uBarRovetu.FOO_MAP, iFooKeyB.kRef(), 200.kFixed())
+                        .kWithVarovi(uBarRovetu.NUM_MAP, iNumKeyA.kRef(), 300.Yield(3).kFixed())
+                        .kWithVarovi(uBarRovetu.NUM_MAP, iNumKeyB.kRef(), 400.Yield(4).kFixed())
                         .kAsVariable(out var iObj)
                 ],
                 Value =
                     Core.kMulti<Rog>(
-                    Core.kCompose<uFooRovetu>()
-                        .kWithRovi(uFooRovetu.NUM, 10.kFixed())
-                        .kGetVarovi(iAddrA.kRef())
+                    Core.kCompose<uBarRovetu>()
+                        .kWithRovi<uBarRovetu, Number>(uFooRovetu.NUM, 7575.kFixed())
+                        .kGetVarovi(uBarRovetu.FOO_MAP, iFooKeyA.kRef())
                         .DeTesAssertRoggiUnstable(c, ro => !ro.IsSome()),
                     iObj.kRef()
-                        .kGetVarovi(iAddrA.kRef())
+                        .kGetVarovi(
+                        uBarRovetu.FOO_MAP,
+                        Core.kCompose<uFooRovetu>()
+                            .kWithRovi(uFooRovetu.NUM, 111.kFixed()))
                         .DeTesAssertRoggi(c, r => r.Value == 100),
                     iObj.kRef()
-                        .kGetVarovi(
-                        Core.kCompose<uBarRovetu>()
-                            .kWithRovi(uBarRovetu.RANGE_ID, (6..10).kFixed()))
-                        .DeTesAssertRoggi(c, r => r.Value == 200))
+                        .kGetVarovi(uBarRovetu.FOO_MAP, iFooKeyB.kRef())
+                        .DeTesAssertRoggi(c, r => r.Value == 200),
+                    iObj.kRef()
+                        .kGetVarovi(uBarRovetu.NUM_MAP, iNumKeyA.kRef())
+                        .DeTesAssertRoggi(c, r => r.Count == 3 && r.Elements.All(x => x.Value == 300)),
+                    iObj.kRef()
+                        .kGetVarovi(uBarRovetu.NUM_MAP, 444.kFixed())
+                        .DeTesAssertRoggi(c, r => r.Count == 4 && r.Elements.All(x => x.Value == 400)))
             }));
 
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
