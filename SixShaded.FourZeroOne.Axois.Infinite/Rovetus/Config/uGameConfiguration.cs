@@ -1,4 +1,4 @@
-namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus;
+namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Config;
 
 public interface uGameConfiguration : IRovetu
 {

@@ -1,6 +1,7 @@
 namespace SixShaded.FourZeroOne.Axois.Infinite;
 
 using Rovetus;
+using Rovetus.Config;
 
 public static class Rodais
 {
