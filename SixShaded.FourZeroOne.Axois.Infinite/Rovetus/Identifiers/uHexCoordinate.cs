@@ -1,6 +1,6 @@
-namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus;
+namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Identifiers;
 
-using Data;
+using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Data;
 
 public sealed class uHexCoordinate : Rovedantu<IRoveggi<uHexData>>
 {

@@ -1,4 +1,4 @@
-namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus;
+namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Identifiers;
 
 public interface uPlayerIdentifier : IRovetu
 {

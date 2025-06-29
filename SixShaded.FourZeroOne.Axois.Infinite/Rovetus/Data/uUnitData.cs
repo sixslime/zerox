@@ -1,6 +1,6 @@
 namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Data;
 
-public interface uUnitData : IRovetu
+public interface uUnitData : IRovetu, uPositioned
 {
 
 }
