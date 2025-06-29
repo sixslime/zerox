@@ -72,4 +72,20 @@ public static partial class KorssaSyntax
         {
             Varovu = varovu
         };
+    public static Korssas.Component.Attachment.GetKeys<C, RKey, RVal> kGetVarovaKeys<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu)
+        where C : IRovetu
+        where RKey : class, Rog
+        where RVal : class, Rog =>
+        new(subject)
+        {
+            Varovu = varovu
+        };
+    public static Korssas.Component.Attachment.GetValues<C, RKey, RVal> kGetVarovaValues<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu)
+        where C : IRovetu
+        where RKey : class, Rog
+        where RVal : class, Rog =>
+        new(subject)
+        {
+            Varovu = varovu
+        };
 }
