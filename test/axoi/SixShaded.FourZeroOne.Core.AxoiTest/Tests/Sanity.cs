@@ -158,11 +158,11 @@ public class Sanity
             {
                 Environment =
                 [
-                    Core.kCompose<uFooVarovu>()
-                        .kWithRovi(uFooVarovu.RANGE_ID, (5..10).kFixed())
+                    Core.kCompose<uFooVarovetu>()
+                        .kWithRovi(uFooVarovetu.RANGE_ID, (5..10).kFixed())
                         .kAsVariable(out var iAddrA),
-                    Core.kCompose<uFooVarovu>()
-                        .kWithRovi(uFooVarovu.RANGE_ID, (6..10).kFixed())
+                    Core.kCompose<uFooVarovetu>()
+                        .kWithRovi(uFooVarovetu.RANGE_ID, (6..10).kFixed())
                         .kAsVariable(out var iAddrB),
                     Core.kCompose<uFooRovetu>()
                         .kWithRovi(uFooRovetu.NUM, 10.kFixed())
@@ -181,8 +181,8 @@ public class Sanity
                         .DeTesAssertRoggi(c, r => r.Value == 100),
                     iObj.kRef()
                         .kGetVarovi(
-                        Core.kCompose<uFooVarovu>()
-                            .kWithRovi(uFooVarovu.RANGE_ID, (6..10).kFixed()))
+                        Core.kCompose<uFooVarovetu>()
+                            .kWithRovi(uFooVarovetu.RANGE_ID, (6..10).kFixed()))
                         .DeTesAssertRoggi(c, r => r.Value == 200))
             }));
 

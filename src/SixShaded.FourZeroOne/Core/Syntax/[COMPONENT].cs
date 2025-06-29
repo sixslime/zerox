@@ -57,16 +57,28 @@ public static partial class KorssaSyntax
         where C : IRovetu =>
         new(subject, mergeObject);
 
-    public static Korssas.Component.Attachment.Get<C, R> kGetVarovi<C, R>(this IKorssa<IRoveggi<C>> subject, IKorssa<IRoveggi<IVarovu<C, R>>> varovu)
-        where C : IRovetu
-        where R : class, Rog =>
-        new(subject, varovu);
-    public static Korssas.Component.Attachment.With<C, R> kWithVarovi<C, R>(this IKorssa<IRoveggi<C>> subject, IKorssa<IRoveggi<IVarovu<C, R>>> varovu, IKorssa<R> data)
-        where C : IRovetu
-        where R : class, Rog =>
-        new(subject, varovu, data);
-    public static Korssas.Component.Attachment.Without<C, R> kWithoutVarovi<C, R>(this IKorssa<IRoveggi<C>> subject, IKorssa<IRoveggi<IVarovu<C, R>>> varovu)
-        where C : IRovetu
-        where R : class, Rog =>
-        new(subject, varovu);
+    public static Korssas.Component.Attachment.Get<C, RKey, RVal> kGetVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key)
+        where C : IVarovetu<RKey, RVal>
+        where RKey : class, Rog
+        where RVal : class, Rog =>
+        new(subject, key)
+        {
+            Varovu = varovu
+        };
+    public static Korssas.Component.Attachment.With<C, RKey, RVal> kWithVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, IKorssa<RVal> value)
+        where C : IVarovetu<RKey, RVal>
+        where RKey : class, Rog
+        where RVal : class, Rog =>
+        new(subject, key, value)
+        {
+            Varovu = varovu
+        };
+    public static Korssas.Component.Attachment.Without<C, RKey, RVal> kWithoutVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key)
+        where C : IVarovetu<RKey, RVal>
+        where RKey : class, Rog
+        where RVal : class, Rog =>
+        new(subject, key)
+        {
+            Varovu = varovu
+        };
 }
