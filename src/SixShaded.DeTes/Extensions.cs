@@ -55,5 +55,11 @@ public static class Extensions
         return subject;
     }
 
+    /// <summary>
+    /// DEV:
+    /// Actual declaration korssa will differ; Reference generation is stateful.
+    /// </summary>
+    /// <param name="test"></param>
+    /// <returns></returns>
     public static Kor GetDeclarationKorssa(this IDeTesTest test) => test.Declaration(new DummyContext());
 }

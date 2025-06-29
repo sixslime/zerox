@@ -21,5 +21,5 @@ public sealed record With<C, R> : Korssa.Defined.RegularKorssa<IRoveggi<C>>
             : new None<IRoveggi<C>>()
         ).ToCompletedITask();
 
-    protected override IOption<string> CustomToString() => $"{ArgKorssas[0]}:{{{Rovu}={ArgKorssas[1]}}}".AsSome();
+    protected override IOption<string> CustomToString() => $"({ArgKorssas[0]}~{Rovu}={ArgKorssas[1]})".AsSome();
 }

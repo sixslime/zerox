@@ -11,5 +11,5 @@ public sealed record Without<C> : Korssa.Defined.RegularKorssa<IRoveggi<C>>
 
     public required IRovu<C> Rovu { get; init; }
     protected override ITask<IOption<IRoveggi<C>>> StandardResolve(IKorssaContext _, RogOpt[] args) => args[0].RemapAs(x => ((IRoveggi<C>)x).WithoutComponents([Rovu])).ToCompletedITask();
-    protected override IOption<string> CustomToString() => $"{ArgKorssas[0]}:{{{Rovu} X}}".AsSome();
+    protected override IOption<string> CustomToString() => $"({ArgKorssas[0]}~{Rovu}=\u2205)".AsSome();
 }

@@ -20,5 +20,5 @@ public sealed record With<C, RKey, RVal> : Korssa.Defined.RegularKorssa<IRoveggi
                 : subject.WithoutComponents([Varovu.GenerateRovu(key)])).AsSome()
             : new None<IRoveggi<C>>())
         .ToCompletedITask();
-    protected override IOption<string> CustomToString() => $"{ArgKorssas[0]}@{Varovu.Identifier}:{{{ArgKorssas[1]}={ArgKorssas[2]}}}".AsSome();
+    protected override IOption<string> CustomToString() => $"({ArgKorssas[0]}@{Varovu.Identifier}~{ArgKorssas[1]}={ArgKorssas[2]})".AsSome();
 }
