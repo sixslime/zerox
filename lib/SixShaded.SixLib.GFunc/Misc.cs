@@ -18,7 +18,7 @@ public static class Mut
 public static class Casting
 {
     public static T IsA<T>(this object value) => (T)value;
-    public static IOption<T> MightBeA<T>(this object value) => value is T o ? o.AsSome() : new None<T>();
+    public static IOption<T> MaybeA<T>(this object value) => value is T o ? o.AsSome() : new None<T>();
 }
 
 public static class Misc
