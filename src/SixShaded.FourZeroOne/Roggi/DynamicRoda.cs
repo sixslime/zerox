@@ -3,13 +3,13 @@
 public sealed record DynamicRoda<R> : IRoda<R>
     where R : class, Rog
 {
-    private static int _idAssigner;
+    private static ulong _idAssigner = 0;
 
     public DynamicRoda()
     {
-        DynamicId = _idAssigner++;
+        DynamicId = Interlocked.Increment(ref _idAssigner);
     }
 
-    public int DynamicId { get; }
-    public override string ToString() => $"{(DynamicId % 5).ToBase("AOEUI", "")}{(typeof(R).GetHashCode() % 441).ToBase("DHTNSYFPGCRLVWMBXKJQZ".ToLower(), "")}";
+    public ulong DynamicId { get; }
+    public override string ToString() => $"{((int)(DynamicId % 5)).ToBase("JKMWQVZX", "")}{(typeof(R).GetHashCode() % 441).ToBase("AOEUISNTHLRCGFDSVB".ToLower(), "")}";
 }
