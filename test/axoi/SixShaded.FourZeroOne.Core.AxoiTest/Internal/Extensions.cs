@@ -29,6 +29,9 @@ internal static class Extensions
                 InitialMemory = new MinimaMemoryFZO(),
             };
         var integrity = test.GenerateAssertIntegrityTests();
+        Console.WriteLine("=== korssa ===");
+        Console.WriteLine(test.GetDeclarationKorssa());
+        Console.WriteLine("==============");
         var result =
             (await (glancer with
             {

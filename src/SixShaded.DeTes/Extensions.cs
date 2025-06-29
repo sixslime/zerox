@@ -55,5 +55,5 @@ public static class Extensions
         return subject;
     }
 
-    public static Kor GetKorssa(this IDeTesTest test) => test.Declaration(new DummyContext());
+    public static Kor GetDeclarationKorssa(this IDeTesTest test) => test.Declaration(new DummyContext());
 }
