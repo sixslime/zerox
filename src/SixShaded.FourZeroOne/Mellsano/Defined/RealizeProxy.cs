@@ -14,4 +14,7 @@ public record RealizeProxy<R> : Korssa.Defined.StateImplementedKorssa<IProxy<R>,
                 Korssa = proxy.Korssa,
                 MellsanoAllows = proxy.ReallowsMellsano ? proxy.FromMellsano.Yield() : [],
             });
+
+    protected override IOption<string> CustomToString() => $"{Arg1}!".AsSome();
+
 }
