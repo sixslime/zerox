@@ -5,4 +5,5 @@ public record AllUllasem<TRestriction> : IUllasem<TRestriction>
 {
     public required IPSet<IUllasem<TRestriction>> Entries { get; init; }
     public bool MatchesKorssa(Kor korssa) => Entries.Elements.All(x => x.MatchesKorssa(korssa));
+    public override string ToString() => string.Join(" & ", Entries.Elements);
 }

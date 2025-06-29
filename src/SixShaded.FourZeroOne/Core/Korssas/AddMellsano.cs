@@ -1,17 +1,16 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Korssas;
 
-public sealed record AddMellsano : Korssa.Defined.PureValue<Roggis.Instructions.MellsanoAdd>
+using Roggis.Instructions;
+
+public sealed record AddMellsano : Korssa.Defined.RegularKorssa<MellsanoAdd>
 {
-    public readonly Mellsano.Unsafe.IMellsano<Rog> Mellsano;
+    public required Mel Mellsano { get; init; }
 
-    public AddMellsano(Mellsano.Unsafe.IMellsano<Rog> mellsano)
-    {
-        Mellsano = mellsano;
-    }
-
-    protected override Roggis.Instructions.MellsanoAdd EvaluatePure() =>
-        new()
-        {
-            Mellsano = Mellsano,
-        };
+    protected override ITask<IOption<MellsanoAdd>> StandardResolve(IKorssaContext runtime, RogOpt[] args) =>
+        new MellsanoAdd
+            {
+                Mellsano = Mellsano
+            }.AsSome()
+            .ToCompletedITask();
+    protected override IOption<string> CustomToString() => $"{Mellsano.ToString()}".AsSome();
 }

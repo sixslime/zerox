@@ -49,4 +49,6 @@ public abstract record MellsanoBehavior<R> : IMellsano<R>
                         .ToArray(),
             }.AsSome()
             : new None<IMellsanossa<R>>();
+
+    public override string ToString() => $"?RULE {InternalMatcher} :: {InternalDefinition};";
 }

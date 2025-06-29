@@ -8,61 +8,73 @@ public static partial class Core
 {
     public static Korssas.AddMellsano kAddMellsano<RVal>(Structure.Mellsano.Block<RVal> block)
         where RVal : class, Rog =>
-        new(
-        new Mellsano.Defined.Mellsano<RVal>
+        new()
         {
-            Definition =
-                new((_, orig) => block.Definition(orig))
+            Mellsano =
+                new Mellsano.Defined.Mellsano<RVal>
                 {
-                    Captures = block.DefinitionCaptures.ToArray(),
-                },
-            Matcher = block.Matches(new()),
-        });
+                    Definition =
+                        new((_, orig) => block.Definition(orig))
+                        {
+                            Captures = block.DefinitionCaptures.ToArray(),
+                        },
+                    Matcher = block.Matches(new()),
+                }
+        };
 
     public static Korssas.AddMellsano kAddMellsano<RArg1, ROut>(Structure.Mellsano.Block<RArg1, ROut> block)
         where RArg1 : class, Rog
         where ROut : class, Rog =>
-        new(
-        new Mellsano.Defined.Mellsano<RArg1, ROut>
+        new()
         {
-            Definition =
-                new((_, orig, argA) => block.Definition(orig, argA))
+            Mellsano =
+                new Mellsano.Defined.Mellsano<RArg1, ROut>
                 {
-                    Captures = block.DefinitionCaptures.ToArray(),
-                },
-            Matcher = block.Matches(new()),
-        });
+                    Definition =
+                        new((_, orig, argA) => block.Definition(orig, argA))
+                        {
+                            Captures = block.DefinitionCaptures.ToArray(),
+                        },
+                    Matcher = block.Matches(new()),
+                }
+        };
 
     public static Korssas.AddMellsano kAddMellsano<RArg1, RArg2, ROut>(Structure.Mellsano.Block<RArg1, RArg2, ROut> block)
         where RArg1 : class, Rog
         where RArg2 : class, Rog
         where ROut : class, Rog =>
-        new(
-        new Mellsano.Defined.Mellsano<RArg1, RArg2, ROut>
+        new()
         {
-            Definition =
-                new((_, orig, argA, argB) => block.Definition(orig, argA, argB))
+            Mellsano =
+                new Mellsano.Defined.Mellsano<RArg1, RArg2, ROut>
                 {
-                    Captures = block.DefinitionCaptures.ToArray(),
-                },
-            Matcher = block.Matches(new()),
-        });
+                    Definition =
+                        new((_, orig, argA, argB) => block.Definition(orig, argA, argB))
+                        {
+                            Captures = block.DefinitionCaptures.ToArray(),
+                        },
+                    Matcher = block.Matches(new()),
+                }
+        };
 
     public static Korssas.AddMellsano kAddMellsano<RArg1, RArg2, RArg3, ROut>(Structure.Mellsano.Block<RArg1, RArg2, RArg3, ROut> block)
         where RArg1 : class, Rog
         where RArg2 : class, Rog
         where RArg3 : class, Rog
         where ROut : class, Rog =>
-        new(
-        new Mellsano.Defined.Mellsano<RArg1, RArg2, RArg3, ROut>
+        new()
         {
-            Definition =
-                new((_, orig, argA, argB, argC) => block.Definition(orig, argA, argB, argC))
+            Mellsano =
+                new Mellsano.Defined.Mellsano<RArg1, RArg2, RArg3, ROut>
                 {
-                    Captures = block.DefinitionCaptures.ToArray(),
-                },
-            Matcher = block.Matches(new()),
-        });
+                    Definition =
+                        new((_, orig, argA, argB, argC) => block.Definition(orig, argA, argB, argC))
+                        {
+                            Captures = block.DefinitionCaptures.ToArray(),
+                        },
+                    Matcher = block.Matches(new()),
+                }
+        };
 }
 
 public static partial class KorssaSyntax

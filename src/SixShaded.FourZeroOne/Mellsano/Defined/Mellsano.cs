@@ -11,6 +11,7 @@ public record Mellsano<RVal> : MellsanoBehavior<RVal>, IMellsanoSignature<RVal>
     protected override IEnumerable<IProxy<Rog>> ConstructArgProxies(IKorssa<RVal> korssa) => [];
     public required Core.Korssas.DefineMetaFunction<OriginalProxy<RVal>, RVal> Definition { get; init; }
     public required IUllasem<IHasNoArgs<RVal>> Matcher { get; init; }
+    public override string ToString() => base.ToString();
 }
 
 public record Mellsano<RArg1, ROut> : MellsanoBehavior<ROut>, IMellsanoSignature<RArg1, ROut>
@@ -34,6 +35,7 @@ public record Mellsano<RArg1, RArg2, ROut> : MellsanoBehavior<ROut>, IMellsanoSi
     protected override IEnumerable<IProxy<Rog>> ConstructArgProxies(IKorssa<ROut> korssa) => [CreateArgProxy<RArg1>(korssa.ArgKorssas[0]), CreateArgProxy<RArg2>(korssa.ArgKorssas[1])];
     public required Core.Korssas.DefineMetaFunction<OriginalProxy<ROut>, ArgProxy<RArg1>, ArgProxy<RArg2>, ROut> Definition { get; init; }
     public required IUllasem<IHasArgs<RArg1, RArg2, ROut>> Matcher { get; init; }
+    public override string ToString() => base.ToString();
 }
 
 public record Mellsano<RArg1, RArg2, RArg3, ROut> : MellsanoBehavior<ROut>, IMellsanoSignature<RArg1, RArg2, RArg3, ROut>
@@ -47,4 +49,5 @@ public record Mellsano<RArg1, RArg2, RArg3, ROut> : MellsanoBehavior<ROut>, IMel
     protected override IEnumerable<IProxy<Rog>> ConstructArgProxies(IKorssa<ROut> korssa) => [CreateArgProxy<RArg1>(korssa.ArgKorssas[0]), CreateArgProxy<RArg2>(korssa.ArgKorssas[1]), CreateArgProxy<RArg3>(korssa.ArgKorssas[2])];
     public required Core.Korssas.DefineMetaFunction<OriginalProxy<ROut>, ArgProxy<RArg1>, ArgProxy<RArg2>, ArgProxy<RArg3>, ROut> Definition { get; init; }
     public required IUllasem<IHasArgs<RArg1, RArg2, RArg3, ROut>> Matcher { get; init; }
+    public override string ToString() => base.ToString();
 }
