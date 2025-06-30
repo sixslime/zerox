@@ -1,4 +1,4 @@
-namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Identifiers;
+namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Identifier;
 
 public sealed class uUnitIdentifier : Rovedantu<IRoveggi<Data.uUnitData>>
 {

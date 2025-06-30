@@ -1,4 +1,4 @@
-namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Identifiers;
+namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Identifier;
 
 using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Data;
 
