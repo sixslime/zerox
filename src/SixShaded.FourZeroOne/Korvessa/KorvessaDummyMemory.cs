@@ -15,6 +15,11 @@ internal class KorvessaDummyMemory : IMemory
     public IEnumerable<ITiple<Addr, Rog>> Objects => throw _useException;
     public IEnumerable<Mel> Mellsanos => throw _useException;
 
+    public IEnumerable<ITiple<IRoveggi<D>, R>> GetRovedanggiAssignmentsOfType<D, R>()
+        where D : Rovedantu<R>
+        where R : class, Rog =>
+        throw _useException;
+
     public IOption<R> GetObject<R>(IRoda<R> address)
         where R : class, Rog =>
         throw _useException;

@@ -9,6 +9,10 @@ using Roggis.Instructions;
 using Core = Syntax.Core;
 using k = Korssas;
 
+/*
+ * TODO
+ * - test AllValues & AllKeys
+ */
 [TestClass]
 public sealed class Basics
 {
