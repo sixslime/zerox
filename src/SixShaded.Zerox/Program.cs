@@ -1,10 +1,23 @@
 ﻿namespace SixShaded.Zerox;
 
+using System.Reflection;
+using SixShaded.FourZeroOne;
 internal class Program
 {
     public static async Task Main(string[] args)
     {
-        
+        var o = new MinimaFZO.MinimaMemoryFZO();
+        FourZeroOne.Axois.Infinite.Rovetus.uGame e;
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        foreach (var assembly in assemblies)
+        {
+            if (!assembly.FullName!.StartsWith("SixShaded")) continue;
+            Console.WriteLine($"=== {assembly.FullName} ===");
+            foreach (var type in assembly.GetExportedTypes())
+            {
+                Console.WriteLine(type.Name);
+            }
+        }
     }
 }
 
