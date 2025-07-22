@@ -12,5 +12,8 @@ public interface uSourcedAbility : IRovetu, uAbility
     /// </summary>
     public static readonly Rovu<uSourcedAbility, MetaFunction<IRoveggi<uUnitIdentifier>, IMulti<IRoveggi<uUnitIdentifier>>, IMulti<IRoveggi<uUnitIdentifier>>>> POST_TARGETING = new(Axoi.Du, "post_targeting");
     public static readonly Rovu<uSourcedAbility, IMulti<IRoveggi<UnitEffects.uUnitEffect>>> EFFECTS = new(Axoi.Du, "effects");
+    /// <summary>
+    /// (source, target) -> action
+    /// </summary>
     public static readonly Rovu<uSourcedAbility, MetaFunction<IRoveggi<uUnitIdentifier>, IRoveggi<uUnitIdentifier>, Rog>> FOLLOWUP = new(Axoi.Du, "followup");
 }

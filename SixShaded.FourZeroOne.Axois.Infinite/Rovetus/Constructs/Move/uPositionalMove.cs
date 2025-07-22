@@ -1,0 +1,9 @@
+﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Move;
+
+public interface uPositionalMove : uMove
+{
+    /// <summary>
+    /// (subject) -> possible move locations
+    /// </summary>
+    public static readonly Rovu<uPositionalMove, MetaFunction<IRoveggi<Identifier.uUnitIdentifier>, IMulti<IRoveggi<Identifier.uHexCoordinate>>>> MOVE_FUNCTION = new(Axoi.Du, "move_function");
+}
