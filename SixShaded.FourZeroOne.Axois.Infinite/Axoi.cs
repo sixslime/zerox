@@ -1,7 +1,14 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite;
 
-public static class Axoi
+public class Axoi : IsAxoi
 {
+    private Axoi()
+    { }
+
+    static Axoi()
+    {
+        Master.RegisterAxoi<Axoi>();
+    }
     public static Axodu Du =
         new()
         {
