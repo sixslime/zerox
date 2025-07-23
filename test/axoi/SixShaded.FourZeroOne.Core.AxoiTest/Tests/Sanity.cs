@@ -200,5 +200,31 @@ public class Sanity
                         .DeTesAssertRoggi(c, r => r.Count == 4 && r.Elements.All(x => x.Value == 400)))
             }));
 
+    [TestMethod]
+    public async Task AbstractRovis() =>
+        await Run(
+        c =>
+            Core.kSubEnvironment<Rog>(
+            new()
+            {
+                Environment =
+                [
+                    Core.kCompose<uImplement>()
+                        .kWithRovi(uImplement.RANGE, (5..10).kFixed())
+                        .kAsVariable(out var iComp)
+                ],
+                Value =
+                    Core.kMulti<Rog>(
+                    iComp.kRef()
+                        .kGetRovi(uAbstract.ABSTRACT_GET)
+                        .DeTesAssertRoggi(c, r => r.Value == 5),
+                    iComp.kRef()
+                        .kGetRovi(uImplement.ABSTRACT_GET)
+                        .DeTesAssertRoggi(c, r => r.Value == 5),
+                    iComp.kRef()
+                        .kGetRovi(uImplement.RANGE)
+                        .DeTesAssertRoggi(c, r => r.Start.Value == 5 && r.End.Value == 10)),
+            }));
+
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }

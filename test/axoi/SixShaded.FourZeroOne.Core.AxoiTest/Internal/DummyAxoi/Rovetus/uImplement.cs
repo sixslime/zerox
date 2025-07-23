@@ -2,9 +2,9 @@
 
 using Roveggi;
 using Roveggi.Defined;
-public interface uImplement : uAbstract
+public interface uImplement : uAbstract, IConcreteRovetu
 {
-    public static readonly Rovu<uImplement, Roggis.NumRange> RANGE = new(Axoi.Du, "range");
+    public static readonly Rovu<uImplement, Roggis.NumRange> RANGE = new(TestAxoi.Du, "range");
     private static readonly ImplementationStatement<uImplement> __IMPLEMENTS =
         c =>
             c.ImplementGet(ABSTRACT_GET, self => self.kRef().kGetRovi(RANGE).kStart());

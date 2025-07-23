@@ -4,5 +4,5 @@ using Roveggi;
 using Roveggi.Defined;
 public interface uAbstract : IRovetu
 {
-    public static readonly AbstractGetRovu<uAbstract, Roggis.Number> ABSTRACT_GET = new(Axoi.Du, "abstract_get");
+    public static readonly AbstractGetRovu<uAbstract, Roggis.Number> ABSTRACT_GET = new(TestAxoi.Du, "abstract_get");
 }
