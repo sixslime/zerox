@@ -10,12 +10,6 @@ public class Axoi : IsAxoi
         {
             Name = "core",
         };
-
-    static Axoi()
-    {
-        Master.RegisterAxoi<Axoi>();
-    }
-
     private Axoi()
     { }
 

@@ -11,22 +11,19 @@ internal class ImplementationContext<C> : IImplementationContext<C>
     where C : IRovetu
 {
     /// <summary>
-    /// Property name that holds the dictonary of get mappings.
+    /// Property name that holds the dictonary of get mappings. <br></br>
+    /// <i>These properties must be public.</i>
     /// </summary>
     internal const string GETMAPPINGS_PROPERTY = "GetMappings";
     internal const string SETMAPPINGS_PROPERTY = "SetMappings";
     /// <summary>
     /// every entry should satisfy <b>{ for A, R | AbstractGetRovu&lt;A, R&gt; -&gt; MetaFunction&lt;IRoveggi&lt;C&gt;, R&gt; }</b>
     /// </summary>
-    internal Dictionary<Unsafe.IAbstractRovu, Roggi.Unsafe.IMetaFunction<Rog>> GetMappings { get; } = new();
+    public Dictionary<Unsafe.IAbstractRovu, Roggi.Unsafe.IMetaFunction<Rog>> GetMappings { get; } = new();
     /// <summary>
     /// every entry should satisfy <b>{ for A, R | AbstractSetRovu&lt;A, R&gt; -&gt; MetaFunction&lt;R, IRoveggi&lt;C&gt;&gt; }</b>
     /// </summary>
-    internal Dictionary<Unsafe.IAbstractRovu, Roggi.Unsafe.IMetaFunction<Rog>> SetMappings { get; } = new();
-    internal ImplementationContext()
-    {
-
-    }
+    public Dictionary<Unsafe.IAbstractRovu, Roggi.Unsafe.IMetaFunction<Rog>> SetMappings { get; } = new();
     public IImplementationContext<C> ImplementGet<R, A>(Defined.AbstractGetRovu<A, R> abstractGetRovu, Func<DynamicRoda<IRoveggi<C>>, IKorssa<R>> implementation)
         where A : IRovetu
         where R : class, Rog

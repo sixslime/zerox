@@ -11,10 +11,6 @@ internal class TestAxoi : IsAxoi
     private TestAxoi()
     { }
 
-    static TestAxoi()
-    {
-        Master.RegisterAxoi<TestAxoi>();
-    }
     public static Axodu Du =>
         new()
         {

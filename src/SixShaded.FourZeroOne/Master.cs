@@ -1,5 +1,6 @@
 namespace SixShaded.FourZeroOne;
 
+using System.Reflection;
 using GetMapping = Dictionary<Roveggi.Unsafe.IAbstractRovu, Roggi.Unsafe.IMetaFunction<Rog>>;
 using SetMapping = Dictionary<Roveggi.Unsafe.IAbstractRovu, Roggi.Unsafe.IMetaFunction<Rog>>;
 
@@ -9,10 +10,15 @@ public class Master
 {
     internal static readonly Master ASSEMBLY = new();
     internal RovenAssemblyData RovenData { get; } = new();
-
+    internal HashSet<Type> RegisteredAxois { get; } = new();
+    static Master()
+    {
+        RegisterAxoi<Core.Axoi>();
+    }
     /// <summary>
-    ///     type parameter must be the "Axoi" class of an axoi. <br></br>
-    ///     Quite frankly this is some of my most preposterous work.
+    /// type parameter must be the "Axoi" class of an axoi. <br></br>
+    /// Quite frankly this is some of my most preposterous work. <br></br>
+    /// MUST BE RAN FOR EVERY INCLUDED AXOI BEFORE PROGRAM STARTS.
     /// </summary>
     /// <typeparam name="X"></typeparam>
     public static void RegisterAxoi<X>()
@@ -21,13 +27,12 @@ public class Master
         // TODO
         // - make better exception messages.
 
-        // PROCESS
-        // - validate all rovetus
-        // - map abstract rovus to their implementation
         var axoi = typeof(X);
+        if (!ASSEMBLY.RegisteredAxois.Add(axoi)) return;
 
         // DEBUG
         Console.WriteLine($"REGISTERING AXOI: {axoi.Namespace!.Split(".")[^1]}");
+
         Type[] rovetuTypes = axoi.Assembly.ExportedTypes.Where(x => x.IsAssignableTo(typeof(IRovetu))).ToArray();
         (Type genericType, int genericIndex)[] validFieldTypes = [(typeof(Roveggi.Defined.Rovu<,>), 0), (typeof(Roveggi.Defined.AbstractGetRovu<,>), 0), (typeof(Roveggi.Defined.AbstractSetRovu<,>), 0), (typeof(Roveggi.Defined.Varovu<,,>), 0)];
         var implementedAbstractRovus = new Dictionary<Type, HashSet<Roveggi.Unsafe.IAbstractRovu>>();
@@ -37,6 +42,7 @@ public class Master
         {
             var fields = rovetuType.GetFields();
             bool isAbstract = !rovetuType.IsAssignableTo(typeof(IConcreteRovetu));
+            implementedAbstractRovus[rovetuType] = new();
 
             // for all fields:
             foreach (var field in fields)
@@ -122,7 +128,13 @@ public class Master
 
     internal class RovenAssemblyData
     {
+        /// <summary>
+        /// every entry should satisfy <b>{ for A, R | AbstractGetRovu&lt;A, R&gt; -&gt; MetaFunction&lt;IRoveggi&lt;C&gt;, R&gt; }</b>
+        /// </summary>
         internal Dictionary<Type, GetMapping> GetImplementations { get; } = new();
+        /// <summary>
+        /// every entry should satisfy <b>{ for A, R | AbstractSetRovu&lt;A, R&gt; -&gt; MetaFunction&lt;R, IRoveggi&lt;C&gt;&gt; }</b>
+        /// </summary>
         internal Dictionary<Type, SetMapping> SetImplementations { get; } = new();
     }
 }

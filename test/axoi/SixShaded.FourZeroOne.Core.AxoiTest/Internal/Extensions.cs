@@ -10,6 +10,7 @@ internal static class Extensions
 {
     public static async Task DeclarationHolds(this Assert assert, DeTes.Declaration.DeTesDeclaration declaration)
     {
+        Master.RegisterAxoi<DummyAxoi.TestAxoi>();
         var glancer =
             new Glancer
             {
