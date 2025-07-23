@@ -6,6 +6,7 @@ using Core = Syntax.Core;
 using Roggis;
 using Roggi;
 using k = Core.Korssas;
+using Roveggi;
 
 [TestClass]
 public class Sanity
@@ -211,6 +212,8 @@ public class Sanity
                 [
                     Core.kCompose<uImplement>()
                         .kWithRovi(uImplement.RANGE, (5..10).kFixed())
+                        .kWithRovi(uAbstract.ABSTRACT_SET, 15.kFixed())
+                        .kTryCast<IRoveggi<uImplement>>()
                         .kAsVariable(out var iComp)
                 ],
                 Value =
@@ -223,7 +226,7 @@ public class Sanity
                         .DeTesAssertRoggi(c, r => r.Value == 5),
                     iComp.kRef()
                         .kGetRovi(uImplement.RANGE)
-                        .DeTesAssertRoggi(c, r => r.Start.Value == 5 && r.End.Value == 10)),
+                        .DeTesAssertRoggi(c, r => r.Start.Value == 5 && r.End.Value == 15)),
             }));
 
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);

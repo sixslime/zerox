@@ -7,7 +7,7 @@ public sealed record WithOld<C, R> : Korssa.Defined.RegularKorssa<IRoveggi<C>>
     where R : class, Rog
     where C : IRovetu
 {
-    public With(IKorssa<IRoveggi<C>> holder, IKorssa<R> component) : base(holder, component)
+    public WithOld(IKorssa<IRoveggi<C>> holder, IKorssa<R> component) : base(holder, component)
     { }
 
     public required IRovu<C, R> Rovu { get; init; }

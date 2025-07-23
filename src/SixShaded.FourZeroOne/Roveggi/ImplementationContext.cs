@@ -21,7 +21,7 @@ internal class ImplementationContext<C> : IImplementationContext<C>
     /// </summary>
     public Dictionary<Unsafe.IAbstractRovu, Roggi.Unsafe.IMetaFunction<Rog>> GetMappings { get; } = new();
     /// <summary>
-    /// every entry should satisfy <b>{ for A, R | AbstractSetRovu&lt;A, R&gt; -&gt; MetaFunction&lt;R, IRoveggi&lt;C&gt;&gt; }</b>
+    /// every entry should satisfy <b>{ for A, R | AbstractSetRovu&lt;A, R&gt; -&gt; MetaFunction&lt;IRoveggi&lt;C&gt;&gt;, R, IRoveggi&lt;C&gt;&gt; }</b>
     /// </summary>
     public Dictionary<Unsafe.IAbstractRovu, Roggi.Unsafe.IMetaFunction<Rog>> SetMappings { get; } = new();
     public IImplementationContext<C> ImplementGet<R, A>(Defined.AbstractGetRovu<A, R> abstractGetRovu, Func<DynamicRoda<IRoveggi<C>>, IKorssa<R>> implementation)
@@ -40,15 +40,16 @@ internal class ImplementationContext<C> : IImplementationContext<C>
         return this;
     }
 
-    public IImplementationContext<C> ImplementSet<R, A>(AbstractSetRovu<A, R> abstractSetRovu, Func<DynamicRoda<R>, IKorssa<IRoveggi<C>>> implementation)
+    public IImplementationContext<C> ImplementSet<R, A>(AbstractSetRovu<A, R> abstractSetRovu, Func<DynamicRoda<IRoveggi<C>>, DynamicRoda<R>, IKorssa<IRoveggi<C>>> implementation)
         where R : class, Rog
         where A : IRovetu
     {
-        var sourceAddr = new DynamicRoda<R>();
+        var sourceAddr = new DynamicRoda<IRoveggi<C>>();
+        var dataAddr = new DynamicRoda<R>();
         SetMappings.Add(
-        abstractSetRovu, new Core.Roggis.MetaFunction<R, IRoveggi<C>>(sourceAddr)
+        abstractSetRovu, new Core.Roggis.MetaFunction<IRoveggi<C>, R, IRoveggi<C>>(sourceAddr, dataAddr)
         {
-            Korssa = implementation(sourceAddr),
+            Korssa = implementation(sourceAddr, dataAddr),
             SelfRoda = new(),
             CapturedVariables = [],
             CapturedMemory = KorvessaDummyMemory.INSTANCE,

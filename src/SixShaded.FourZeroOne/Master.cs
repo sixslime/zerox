@@ -133,7 +133,7 @@ public class Master
         /// </summary>
         internal Dictionary<Type, GetMapping> GetImplementations { get; } = new();
         /// <summary>
-        /// every entry should satisfy <b>{ for A, R | AbstractSetRovu&lt;A, R&gt; -&gt; MetaFunction&lt;R, IRoveggi&lt;C&gt;&gt; }</b>
+        /// every entry should satisfy <b>{ for A, R | AbstractSetRovu&lt;A, R&gt; -&gt; MetaFunction&lt;IRoveggi&lt;C&gt;&gt;, R, IRoveggi&lt;C&gt;&gt; }</b>
         /// </summary>
         internal Dictionary<Type, SetMapping> SetImplementations { get; } = new();
     }

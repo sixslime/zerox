@@ -22,7 +22,7 @@ public static partial class KorssaSyntax
             Rovu = rovu,
         };
 
-    public static Korssas.Component.With<C, R> kWithRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, IKorssa<R> component)
+    public static Korssas.Component.With<C, R> kWithRovi<C, R>(this IKorssa<IRoveggi<C>> holder, ISetRovu<C, R> rovu, IKorssa<R> component)
         where C : IRovetu
         where R : class, Rog =>
         new(holder, component)

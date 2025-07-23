@@ -19,7 +19,7 @@ public sealed record With<C, R> : Korssa.Defined.Korssa<IRoveggi<C>>
             ? (Rovu is IAbstractRovu abstr)
                 ? Master.ASSEMBLY.RovenData.SetImplementations.TryGetValue(roveggi.GetType().GenericTypeArguments[0], out var setMap)
                     ? setMap.TryGetValue(abstr, out var implementation)
-                        ? implementation.ConstructMetaExecute(args[1]).AsErr(Hint<ITask<IOption<IRoveggi<C>>>>.HINT)
+                        ? implementation.ConstructMetaExecute(roveggi.AsSome(), args[1]).AsErr(Hint<ITask<IOption<IRoveggi<C>>>>.HINT)
                         : throw new Exception($"{roveggi.GetType().GenericTypeArguments[0].Name} has no implementation for abstract setrovu {Rovu}?")
                     : throw new Exception($"No assembly mappings exist for rovetu {roveggi.GetType().GenericTypeArguments[0].Name}?")
                 : ((args[1].RemapAs(x => (R)x).Check(out var data))
