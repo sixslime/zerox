@@ -1,25 +1,31 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Korssas.Component;
 
+using FZOSpec;
 using Roveggi;
 using Roveggi.Unsafe;
 
-public sealed record With<C, R> : Korssa.Defined.RegularKorssa<IRoveggi<C>>
+public sealed record With<C, R> : Korssa.Defined.Korssa<IRoveggi<C>>
     where R : class, Rog
     where C : IRovetu
 {
-    public With(IKorssa<IRoveggi<C>> holder, IKorssa<R> component) : base(holder, component)
+    public With(IKorssa<IRoveggi<C>> holder, IKorssa<R> data) : base(holder, data)
     { }
 
-    public required IRovu<C, R> Rovu { get; init; }
+    public required ISetRovu<C, R> Rovu { get; init; }
 
-    protected override ITask<IOption<IRoveggi<C>>> StandardResolve(IKorssaContext _, RogOpt[] args) =>
-        (args[0].RemapAs(x => (IRoveggi<C>)x).Check(out var holder)
-            ? (args[1].RemapAs(x => (R)x).Check(out var component)
-                ? holder.WithComponent(Rovu, component)
-                : holder
-            ).AsSome()
-            : new None<IRoveggi<C>>()
-        ).ToCompletedITask();
-
-    protected override IOption<string> CustomToString() => $"({ArgKorssas[0]}~{Rovu}={ArgKorssas[1]})".AsSome();
+    // this is crazy
+    protected override IResult<ITask<IOption<IRoveggi<C>>>, EStateImplemented> Resolve(IKorssaContext runtime, RogOpt[] args) =>
+        (args[0].RemapAs(x => x.IsA<IRoveggi<C>>()).Check(out var roveggi))
+            ? (Rovu is IAbstractRovu abstr)
+                ? Master.ASSEMBLY.RovenData.SetImplementations.TryGetValue(roveggi.GetType().GenericTypeArguments[0], out var setMap)
+                    ? setMap.TryGetValue(abstr, out var implementation)
+                        ? implementation.ConstructMetaExecute(args[1]).AsErr(Hint<ITask<IOption<IRoveggi<C>>>>.HINT)
+                        : throw new Exception($"{roveggi.GetType().GenericTypeArguments[0].Name} has no implementation for abstract setrovu {Rovu}?")
+                    : throw new Exception($"No assembly mappings exist for rovetu {roveggi.GetType().GenericTypeArguments[0].Name}?")
+                : ((args[1].RemapAs(x => (R)x).Check(out var data))
+                    ? roveggi.WithComponent(Rovu.IsA<IRovu<C, R>>(), data)
+                    : roveggi.WithoutComponents([Rovu.IsA<IRovu<C, R>>()]))
+                .AsSome().ToCompletedITask().AsOk(Hint<EStateImplemented>.HINT)
+            : new Ok<ITask<IOption<IRoveggi<C>>>, EStateImplemented>(new None<IRoveggi<C>>().ToCompletedITask());
+    protected override IOption<string> CustomToString() => $"{ArgKorssas[0]}->{Rovu}".AsSome();
 }
