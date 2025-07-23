@@ -1,12 +1,12 @@
 ﻿namespace SixShaded.FourZeroOne.Roveggi;
 
-public class ImplementationContext<A, C>
+public class ImplementationContext<C, A>
     where A : IRovetu
     where C : IRovetu
 {
     internal Dictionary<Unsafe.IGetRovu<A>, Roggi.Unsafe.IMetaFunction<Rog>> GetMappings { get; } = new();
 
-    public ImplementationContext<A, C> AddImplementation<R>(Defined.AbstractGetRovu<A, R> abstractGetRovu, Func<DynamicRoda<IRoveggi<C>>, IKorssa<R>> implementation)
+    public ImplementationContext<A, C> ImplementGet<R>(Defined.AbstractGetRovu<A, R> abstractGetRovu, Func<DynamicRoda<IRoveggi<C>>, IKorssa<R>> implementation)
         where R : class, Rog
     {
         var sourceAddr = new DynamicRoda<IRoveggi<C>>();
