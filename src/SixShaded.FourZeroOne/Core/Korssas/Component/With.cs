@@ -27,5 +27,6 @@ public sealed record With<C, R> : Korssa.Defined.Korssa<IRoveggi<C>>
                     : roveggi.WithoutComponents([Rovu.IsA<IRovu<C, R>>()]))
                 .AsSome().ToCompletedITask().AsOk(Hint<EStateImplemented>.HINT)
             : new Ok<ITask<IOption<IRoveggi<C>>>, EStateImplemented>(new None<IRoveggi<C>>().ToCompletedITask());
-    protected override IOption<string> CustomToString() => $"{ArgKorssas[0]}->{Rovu}".AsSome();
+    protected override IOption<string> CustomToString() => $"({ArgKorssas[0]}~{Rovu}={ArgKorssas[1]})".AsSome();
+
 }
