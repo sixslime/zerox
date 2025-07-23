@@ -1,6 +1,7 @@
 namespace SixShaded.FourZeroOne;
 
 using GetMapping = Dictionary<Roveggi.Unsafe.IAbstractRovu, Roggi.Unsafe.IMetaFunction<Rog>>;
+using SetMapping = Dictionary<Roveggi.Unsafe.IAbstractRovu, Roggi.Unsafe.IMetaFunction<Rog>>;
 // TODO
 // temporary name, this is the equavalent of an "Assembly" of 401
 public class Master
@@ -62,12 +63,18 @@ public class Master
 
                     // get mappings from context object:
                     var getMapValue = implContextType.GetProperty(ImplementationContext<IRovetu>.GETMAPPINGS_PROPERTY)?.GetValue(implContext);
+                    var setMapValue = implContextType.GetProperty(ImplementationContext<IRovetu>.SETMAPPINGS_PROPERTY)?.GetValue(implContext);
                     if (getMapValue is null) 
                         throw new PleaseFixException($"get mappings from ImplementationContext was null, probably because there is no property named '{ImplementationContext<IRovetu>.GETMAPPINGS_PROPERTY}'");
+                    if (setMapValue is null)
+                        throw new PleaseFixException($"set mappings from ImplementationContext was null, probably because there is no property named '{ImplementationContext<IRovetu>.SETMAPPINGS_PROPERTY}'");
                     if (getMapValue is not GetMapping getMap) 
                         throw new PleaseFixException($"get mappings in ImplementationContext is not of exact type '{typeof(GetMapping).Name}'");
+                    if (setMapValue is not GetMapping setMap)
+                        throw new PleaseFixException($"set mappings in ImplementationContext is not of exact type '{typeof(SetMapping).Name}'");
 
                     ASSEMBLY.RovenData.GetImplementations[rovetuType] = getMap;
+                    ASSEMBLY.RovenData.SetImplementations[rovetuType] = setMap;
                     continue;
                 }
 
@@ -82,5 +89,6 @@ public class Master
     internal class RovenAssemblyData
     {
         internal Dictionary<Type, GetMapping> GetImplementations { get; } = new();
+        internal Dictionary<Type, SetMapping> SetImplementations { get; } = new();
     }
 }
