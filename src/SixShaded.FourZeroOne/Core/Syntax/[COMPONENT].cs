@@ -8,7 +8,7 @@ using Roveggi;
 public static partial class Core
 {
     public static Korvessa<IRoveggi<C>> kCompose<C>()
-        where C : IRovetu =>
+        where C : IConcreteRovetu =>
         Korvessas.Compose<C>.Construct();
 }
 

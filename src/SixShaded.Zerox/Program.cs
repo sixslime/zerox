@@ -6,24 +6,32 @@ internal class Program
 {
     public static async Task Main(string[] args)
     {
-        var u = FourZeroOne.Core.Axoi.Du;
-        var a = FourZeroOne.Axois.Infinite.Axoi.Du;
-        var o = new MinimaFZO.MinimaMemoryFZO();
-        FourZeroOne.Axois.Infinite.Rovetus.uGame e;
-        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-        foreach (var assembly in assemblies)
+        try
         {
-            if (!assembly.FullName!.StartsWith("SixShaded.FourZeroOne.Axois")) continue;
-            Console.WriteLine($"=== {assembly.FullName} ===");
-            foreach (var type in assembly.GetExportedTypes())
+            var u = FourZeroOne.Core.Axoi.Du;
+            var a = FourZeroOne.Axois.Infinite.Axoi.Du;
+            var o = new MinimaFZO.MinimaMemoryFZO();
+            FourZeroOne.Axois.Infinite.Rovetus.uGame e;
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (var assembly in assemblies)
             {
-                Console.WriteLine(type.Name);
-                foreach (var field in type.GetFields())
+                if (!assembly.FullName!.StartsWith("SixShaded.FourZeroOne.Axois")) continue;
+                Console.WriteLine($"=== {assembly.FullName} ===");
+                foreach (var type in assembly.GetExportedTypes())
                 {
-                    Console.WriteLine($" - {field.Name}");
+                    Console.WriteLine(type.Name);
+                    foreach (var field in type.GetFields())
+                    {
+                        Console.WriteLine($" - {field.Name}");
+                    }
                 }
             }
         }
+        catch (Exception e)
+        {
+            System.Console.WriteLine(e.Message);
+        }
+        
     }
 }
 

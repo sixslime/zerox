@@ -2,7 +2,7 @@
 
 public interface uUnsourcedAbility : IRovetu, uAbility
 {
-    public static readonly Rovu<uSourcedAbility, IRoveggi<Types.uUnsourcedType>> TYPE = new(Axoi.Du, "type");
-    public static readonly Rovu<uSourcedAbility, MetaFunction<Rog>> ACTION = new(Axoi.Du, "action");
+    public static readonly Rovu<uUnsourcedAbility, IRoveggi<Types.uUnsourcedType>> TYPE = new(Axoi.Du, "type");
+    public static readonly Rovu<uUnsourcedAbility, MetaFunction<Rog>> ACTION = new(Axoi.Du, "action");
 
 }
