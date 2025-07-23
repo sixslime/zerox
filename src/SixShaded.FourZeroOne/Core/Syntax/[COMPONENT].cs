@@ -14,7 +14,7 @@ public static partial class Core
 
 public static partial class KorssaSyntax
 {
-    public static Korssas.Component.Get<C, R> kGetRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu)
+    public static Korssas.Component.Get<C, R> kGetRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IGetRovu<C, R> rovu)
         where C : IRovetu
         where R : class, Rog =>
         new(holder)

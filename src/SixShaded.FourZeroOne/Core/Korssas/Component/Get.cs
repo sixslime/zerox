@@ -1,16 +1,28 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Korssas.Component;
 
+using FZOSpec;
 using Roveggi;
 using Roveggi.Unsafe;
 
-public sealed record Get<C, R> : Korssa.Defined.RegularKorssa<R>
+public sealed record Get<C, R> : Korssa.Defined.Korssa<R>
     where R : class, Rog
     where C : IRovetu
 {
     public Get(IKorssa<IRoveggi<C>> holder) : base(holder)
     { }
 
-    public required IRovu<C, R> Rovu { get; init; }
-    protected override ITask<IOption<R>> StandardResolve(IKorssaContext _, RogOpt[] args) => args[0].RemapAs(x => ((IRoveggi<C>)x).GetComponent(Rovu)).Press().ToCompletedITask();
+    public required IGetRovu<C, R> Rovu { get; init; }
+    
+    // this is crazy
+    protected override IResult<ITask<IOption<R>>, EStateImplemented> Resolve(IKorssaContext runtime, RogOpt[] args) =>
+        (args[0].RemapAs(x => x.IsA<IRoveggi<C>>()).Check(out var roveggi))
+            ? (Rovu is IAbstractRovu abstr)
+                ? Master.ASSEMBLY.RovenData.GetImplementations.TryGetValue(typeof(C), out var getMap)
+                    ? getMap.TryGetValue(abstr, out var implementation)
+                        ? implementation.ConstructMetaExecute(roveggi.AsSome()).AsErr(Hint<ITask<IOption<R>>>.HINT)
+                        : throw new Exception($"{typeof(C).Name} has no implementation for abstract getrovu {Rovu}?")
+                    : throw new Exception($"No assembly mappings exist for rovetu {typeof(C)}?")
+                : roveggi.GetComponent(Rovu.IsA<IRovu<C, R>>()).ToCompletedITask().AsOk(Hint<EStateImplemented>.HINT)
+            : new Ok<ITask<IOption<R>>, EStateImplemented>(new None<R>().ToCompletedITask());
     protected override IOption<string> CustomToString() => $"{ArgKorssas[0]}->{Rovu}".AsSome();
 }
