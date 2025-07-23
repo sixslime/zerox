@@ -1,6 +1,5 @@
 namespace SixShaded.FourZeroOne.Roveggi.Unsafe;
 
-public interface IGetRovu<in C, R>
+public interface IGetRovu<in C>
     where C : IRovetu
-    where R : class, Rog
 { }
