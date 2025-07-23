@@ -4,7 +4,7 @@ using Korvessa.Defined;
 using Syntax;
 
 public static class Compose<C>
-    where C : IRovetu
+    where C : IConcreteRovetu
 {
     public static Korvessa<IRoveggi<C>> Construct() =>
         new()
