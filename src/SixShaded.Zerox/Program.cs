@@ -6,16 +6,22 @@ internal class Program
 {
     public static async Task Main(string[] args)
     {
+        var u = FourZeroOne.Core.Axoi.Du;
+        var a = FourZeroOne.Axois.Infinite.Axoi.Du;
         var o = new MinimaFZO.MinimaMemoryFZO();
         FourZeroOne.Axois.Infinite.Rovetus.uGame e;
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
         foreach (var assembly in assemblies)
         {
-            if (!assembly.FullName!.StartsWith("SixShaded")) continue;
+            if (!assembly.FullName!.StartsWith("SixShaded.FourZeroOne.Axois")) continue;
             Console.WriteLine($"=== {assembly.FullName} ===");
             foreach (var type in assembly.GetExportedTypes())
             {
                 Console.WriteLine(type.Name);
+                foreach (var field in type.GetFields())
+                {
+                    Console.WriteLine($" - {field.Name}");
+                }
             }
         }
     }

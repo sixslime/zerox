@@ -2,4 +2,4 @@
 
 // DEV:
 //  may not be needed
-public interface IAbstractRovuTag { }
+public interface IAbstractRovu { }
