@@ -33,7 +33,7 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.UpdateMemory<R>.Construct(address, updateFunction);
 
-    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IEnumerable<Addr> captures, Func<DynamicRoda<R>, IKorssa<R>> updateFunction)
+    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, Func<DynamicRoda<R>, IKorssa<R>> updateFunction)
         where R : class, Rog =>
-        Korvessas.UpdateMemory<R>.Construct(address, Core.kMetaFunction(captures, updateFunction));
+        Korvessas.UpdateMemory<R>.Construct(address, Core.kMetaFunction([], updateFunction));
 }
