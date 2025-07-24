@@ -16,8 +16,8 @@ public sealed record With<C, RKey, RVal> : Korssa.Defined.RegularKorssa<IRoveggi
         (args[0].RemapAs(x => (IRoveggi<C>)x).Check(out var subject)
          && args[1].RemapAs(x => (RKey)x).Check(out var key)
             ? (args[2].RemapAs(x => (RVal)x).Check(out var value)
-                ? subject.WithComponent(Varovu.GenerateRovu(key), value)
-                : subject.WithoutComponents([Varovu.GenerateRovu(key)])).AsSome()
+                ? subject.WithComponent(Varovu.GenerateRovu(key), value).AsSome()
+                : new None<IRoveggi<C>>())
             : new None<IRoveggi<C>>())
         .ToCompletedITask();
     protected override IOption<string> CustomToString() => $"({ArgKorssas[0]}@{Varovu.Identifier}~{ArgKorssas[1]}={ArgKorssas[2]})".AsSome();

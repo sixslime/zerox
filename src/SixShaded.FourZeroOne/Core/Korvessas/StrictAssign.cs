@@ -4,7 +4,7 @@ using Roggis;
 using Korvessa.Defined;
 using Syntax;
 
-public static class CatchNolla<R>
+public static class StrictAssign<R>
     where R : class, Rog
 {
     public static Korvessa<R, MetaFunction<R>, R> Construct(IKorssa<R> value, IKorssa<MetaFunction<R>> fallback) =>

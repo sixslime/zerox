@@ -23,9 +23,9 @@ public sealed record With<C, R> : Korssa.Defined.Korssa<IRoveggi<C>>
                         : throw new Exception($"{roveggi.GetType().GenericTypeArguments[0].Name} has no implementation for abstract setrovu {Rovu}?")
                     : throw new Exception($"No assembly mappings exist for rovetu {roveggi.GetType().GenericTypeArguments[0].Name}?")
                 : ((args[1].RemapAs(x => (R)x).Check(out var data))
-                    ? roveggi.WithComponent(Rovu.IsA<IRovu<C, R>>(), data)
-                    : roveggi.WithoutComponents([Rovu.IsA<IRovu<C, R>>()]))
-                .AsSome().ToCompletedITask().AsOk(Hint<EStateImplemented>.HINT)
+                    ? roveggi.WithComponent(Rovu.IsA<IRovu<C, R>>(), data).AsSome()
+                    : new None<IRoveggi<C>>())
+                .ToCompletedITask().AsOk(Hint<EStateImplemented>.HINT)
             : new Ok<ITask<IOption<IRoveggi<C>>>, EStateImplemented>(new None<IRoveggi<C>>().ToCompletedITask());
     protected override IOption<string> CustomToString() => $"({ArgKorssas[0]}~{Rovu}={ArgKorssas[1]})".AsSome();
 
