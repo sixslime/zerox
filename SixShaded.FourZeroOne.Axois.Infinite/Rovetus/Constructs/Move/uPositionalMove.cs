@@ -1,6 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Move;
 
-public interface uPositionalMove : uMove
+public interface uPositionalMove : uMove, IConcreteRovetu
 {
     /// <summary>
     /// (subject) -> possible move locations

@@ -1,6 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Move;
 
-public interface uNumericalMove : uMove
+public interface uNumericalMove : uMove, IConcreteRovetu
 {
     public static readonly Rovu<uNumericalMove, NumRange> AMOUNT = new(Axoi.Du, "amount");
     /// <summary>
