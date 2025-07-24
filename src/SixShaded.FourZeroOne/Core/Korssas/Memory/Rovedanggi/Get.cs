@@ -1,4 +1,4 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korssas.Memory.Object;
+﻿namespace SixShaded.FourZeroOne.Core.Korssas.Memory.Rovedanggi;
 
 
 public sealed record Get<R> : Korssa.Defined.Function<IRoveggi<Rovedantu<R>>, R>

@@ -1,7 +1,7 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korssas.Memory.Object;
+﻿namespace SixShaded.FourZeroOne.Core.Korssas.Memory.Rovedanggi;
 
-using Roveggi;
-using Roggis;
+using SixShaded.FourZeroOne.Core.Roggis;
+using SixShaded.FourZeroOne.Roveggi;
 
 public sealed record AllKeys<D, R> : Korssa.Defined.Value<Multi<IRoveggi<D>>>
     where D : Rovedantu<R>

@@ -1,4 +1,4 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korssas.Component.Attachment;
+﻿namespace SixShaded.FourZeroOne.Core.Korssas.Rovi.Varovi;
 
 using SixShaded.FourZeroOne.Roveggi;
 

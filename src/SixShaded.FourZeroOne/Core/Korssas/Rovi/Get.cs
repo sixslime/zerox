@@ -1,8 +1,8 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korssas.Component;
+﻿namespace SixShaded.FourZeroOne.Core.Korssas.Rovi;
 
-using FZOSpec;
-using Roveggi;
-using Roveggi.Unsafe;
+using SixShaded.FourZeroOne.FZOSpec;
+using SixShaded.FourZeroOne.Roveggi;
+using SixShaded.FourZeroOne.Roveggi.Unsafe;
 
 public sealed record Get<C, R> : Korssa.Defined.Korssa<R>
     where R : class, Rog

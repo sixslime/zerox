@@ -1,5 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
+using Korssas.Rovi;
+using Korssas.Rovi.Varovi;
 using Roggis;
 using Korvessa.Defined;
 using Roveggi.Unsafe;
@@ -14,7 +16,7 @@ public static partial class Core
 
 public static partial class KorssaSyntax
 {
-    public static Korssas.Component.Get<C, R> kGetRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IGetRovu<C, R> rovu)
+    public static Get<C, R> kGetRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IGetRovu<C, R> rovu)
         where C : IRovetu
         where R : class, Rog =>
         new(holder)
@@ -22,14 +24,14 @@ public static partial class KorssaSyntax
             Rovu = rovu,
         };
 
-    public static Korssas.Component.With<C, R> kWithRovi<C, R>(this IKorssa<IRoveggi<C>> holder, ISetRovu<C, R> rovu, IKorssa<R> data)
+    public static With<C, R> kWithRovi<C, R>(this IKorssa<IRoveggi<C>> holder, ISetRovu<C, R> rovu, IKorssa<R> data)
         where C : IRovetu
         where R : class, Rog =>
         new(holder, data)
         {
             Rovu = rovu,
         };
-    public static Korssas.Component.With<C, R> kWithoutRovi<C, R>(this IKorssa<IRoveggi<C>> holder, ISetRovu<C, R> rovu)
+    public static With<C, R> kWithoutRovi<C, R>(this IKorssa<IRoveggi<C>> holder, ISetRovu<C, R> rovu)
         where C : IRovetu
         where R : class, Rog =>
         new(holder, Core.kNollaFor<R>())
@@ -47,7 +49,7 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.UpdateComponent<C, R>.Construct(holder, Core.kMetaFunction([], changeFunc), rovu);
 
-    public static Korssas.Component.Attachment.With<C, RKey, RVal> kWithVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, IKorssa<RVal> value)
+    public static With<C, RKey, RVal> kWithVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, IKorssa<RVal> value)
         where C : IRovetu
         where RKey : class, Rog
         where RVal : class, Rog =>
@@ -55,7 +57,7 @@ public static partial class KorssaSyntax
         {
             Varovu = varovu
         };
-    public static Korssas.Component.Attachment.With<C, RKey, RVal> kWithoutVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key)
+    public static With<C, RKey, RVal> kWithoutVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key)
         where C : IRovetu
         where RKey : class, Rog
         where RVal : class, Rog =>
@@ -63,7 +65,7 @@ public static partial class KorssaSyntax
         {
             Varovu = varovu
         };
-    public static Korssas.Component.Attachment.Get<C, RKey, RVal> kGetVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key)
+    public static Get<C, RKey, RVal> kGetVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key)
         where C : IRovetu
         where RKey : class, Rog
         where RVal : class, Rog =>
@@ -71,7 +73,7 @@ public static partial class KorssaSyntax
         {
             Varovu = varovu
         };
-    public static Korssas.Component.Attachment.GetKeys<C, RKey, RVal> kGetVarovaKeys<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu)
+    public static GetKeys<C, RKey, RVal> kGetVarovaKeys<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu)
         where C : IRovetu
         where RKey : class, Rog
         where RVal : class, Rog =>
@@ -79,7 +81,7 @@ public static partial class KorssaSyntax
         {
             Varovu = varovu
         };
-    public static Korssas.Component.Attachment.GetValues<C, RKey, RVal> kGetVarovaValues<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu)
+    public static GetValues<C, RKey, RVal> kGetVarovaValues<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu)
         where C : IRovetu
         where RKey : class, Rog
         where RVal : class, Rog =>

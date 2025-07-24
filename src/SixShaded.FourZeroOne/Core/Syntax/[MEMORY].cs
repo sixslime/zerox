@@ -2,7 +2,7 @@
 
 using Roggis;
 using Korssas.Memory;
-using SixShaded.FourZeroOne.Core.Korssas.Memory.Object;
+using Korssas.Memory.Rovedanggi;
 using Korvessa.Defined;
 using Roveggi;
 

@@ -1,6 +1,6 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korssas.Memory.Object;
+﻿namespace SixShaded.FourZeroOne.Core.Korssas.Memory.Rovedanggi;
 
-using Roveggi;
+using SixShaded.FourZeroOne.Roveggi;
 
 public sealed record Insert<R> : Korssa.Defined.Function<IRoveggi<Rovedantu<R>>, R, Roggis.Instructions.Assign<R>>
     where R : class, Rog
