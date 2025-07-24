@@ -8,10 +8,7 @@ internal class Program
     {
         try
         {
-            var u = FourZeroOne.Core.Axoi.Du;
-            var a = FourZeroOne.Axois.Infinite.Axoi.Du;
-            var o = new MinimaFZO.MinimaMemoryFZO();
-            FourZeroOne.Axois.Infinite.Rovetus.uGame e;
+            Master.RegisterAxoi<FourZeroOne.Axois.Infinite.Axoi>();
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var assembly in assemblies)
             {

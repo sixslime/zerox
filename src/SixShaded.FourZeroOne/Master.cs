@@ -115,10 +115,12 @@ public class Master
             {
                 foreach (var field in abstractBaseRovetuType.GetFields())
                 {
-                    if (!implementedAbstractRovus[rovetuType].Contains((Roveggi.Unsafe.IAbstractRovu)field.GetValue(null)!))
+                    if (!implementedAbstractRovus[rovetuType].Remove((Roveggi.Unsafe.IAbstractRovu)field.GetValue(null)!))
                         throw new MetaAssemblyException(axoi, $"rovetu '{rovetuType.Name}' does not implement '{field.Name}' from '{abstractBaseRovetuType.Name}'.");
                 }
             }
+            if (implementedAbstractRovus[rovetuType].Count > 0)
+                throw new MetaAssemblyException(axoi, $"rovetu '{rovetuType.Name}' implements rovus from rovetus it does not inheret from:\n {string.Join("\n", implementedAbstractRovus[rovetuType])})");
         }
     }
 

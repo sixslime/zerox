@@ -5,6 +5,8 @@ global using SixShaded.FourZeroOne.Korssa;
 global using SixShaded.FourZeroOne.Mellsano;
 global using SixShaded.FourZeroOne.Korvessa;
 global using SixShaded.FourZeroOne.Roveggi;
+global using SixShaded.FourZeroOne.Core.Syntax;
+global using SixShaded.FourZeroOne.Axois.Infinite.Syntax;
 global using SixShaded.FourZeroOne.Roveggi.Defined;
 global using SixShaded.FourZeroOne.Roggi.Defined;
 global using SixShaded.FourZeroOne.Korvessa.Defined;
