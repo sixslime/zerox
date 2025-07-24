@@ -22,12 +22,13 @@ public static partial class KorssaSyntax
     public static Insert<R> kWrite<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<R> data)
         where R : class, Rog =>
         new(address, data);
+    public static Insert<R> kRedact<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address)
+        where R : class, Rog =>
+        new(address, Core.kNollaFor<R>());
 
     public static Get<R> kGet<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address)
         where R : class, Rog =>
         new(address);
-
-    public static Remove kRedact(this IKorssa<IRoveggi<Rovedantu<Rog>>> address) => new(address);
 
     public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<MetaFunction<R, R>> updateFunction)
         where R : class, Rog =>
