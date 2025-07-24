@@ -42,12 +42,12 @@ public static partial class KorssaSyntax
     public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> kUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, IKorssa<MetaFunction<R, R>> changeFunc)
         where C : IRovetu
         where R : class, Rog =>
-        Korvessas.UpdateComponent<C, R>.Construct(holder, changeFunc, rovu);
+        Korvessas.UpdateRovi<C, R>.Construct(holder, changeFunc, rovu);
 
     public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> kUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, Func<DynamicRoda<R>, IKorssa<R>> changeFunc)
         where C : IRovetu
         where R : class, Rog =>
-        Korvessas.UpdateComponent<C, R>.Construct(holder, Core.kMetaFunction([], changeFunc), rovu);
+        Korvessas.UpdateRovi<C, R>.Construct(holder, Core.kMetaFunction([], changeFunc), rovu);
 
     public static With<C, RKey, RVal> kWithVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, IKorssa<RVal> value)
         where C : IRovetu

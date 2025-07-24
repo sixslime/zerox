@@ -5,7 +5,7 @@ using Korvessa.Defined;
 using Syntax;
 using Roveggi;
 
-public static class UpdateComponent<C, R>
+public static class UpdateRovi<C, R>
     where C : IRovetu
     where R : class, Rog
 {

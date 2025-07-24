@@ -5,7 +5,7 @@ using Korvessa.Defined;
 using Syntax;
 using Roveggi;
 
-public static class UpdateMemory<R>
+public static class UpdateRovedanggi<R>
     where R : class, Rog
 {
     public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> Construct(IKorssa<IRoveggi<Rovedantu<R>>> memObj, IKorssa<MetaFunction<R, R>> updateFunction) =>
