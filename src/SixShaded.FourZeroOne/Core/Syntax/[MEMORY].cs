@@ -37,3 +37,15 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.UpdateMemory<R>.Construct(address, Core.kMetaFunction([], updateFunction));
 }
+
+partial class Core
+{
+    public static AllKeys<C, R> kAllRovedanggiKeys<C, R>()
+        where C : Rovedantu<R>
+        where R : class, Rog =>
+        new();
+    public static AllValues<C, R> kAllRovedanggiValues<C, R>()
+        where C : Rovedantu<R>
+        where R : class, Rog =>
+        new();
+}
