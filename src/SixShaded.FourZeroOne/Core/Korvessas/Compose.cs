@@ -9,7 +9,7 @@ public static class Compose<C>
     public static Korvessa<IRoveggi<C>> Construct() =>
         new()
         {
-            Du = Axoi.Korvedu("compose"),
+            Du = Axoi.Korvedu("Compose"),
             Definition = new Korssas.Fixed<IRoveggi<C>>(new Roveggi.Defined.Roveggi<C>()).kMetaBoxed([]),
         };
 }

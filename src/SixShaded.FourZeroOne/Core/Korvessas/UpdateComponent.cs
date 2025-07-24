@@ -12,7 +12,7 @@ public static class UpdateComponent<C, R>
     public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> Construct(IKorssa<IRoveggi<C>> roveggi, IKorssa<MetaFunction<R, R>> updateFunction, IRovu<C, R> component) =>
         new(roveggi, updateFunction)
         {
-            Du = Axoi.Korvedu("UpdateComponent"),
+            Du = Axoi.Korvedu("UpdateRovi"),
             CustomData = [component],
             Definition =
                 Core.kMetaFunction<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>>(

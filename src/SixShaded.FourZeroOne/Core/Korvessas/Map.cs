@@ -11,7 +11,7 @@ public static class Map<RIn, ROut>
     public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> Construct(IKorssa<IMulti<RIn>> multi, IKorssa<MetaFunction<RIn, ROut>> mapFunction) =>
         new(multi, mapFunction)
         {
-            Du = Axoi.Korvedu("map"),
+            Du = Axoi.Korvedu("Map"),
             Definition =
                 Core.kMetaFunction<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>>(
                 [],

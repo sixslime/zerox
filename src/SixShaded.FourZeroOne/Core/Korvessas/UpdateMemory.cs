@@ -11,7 +11,7 @@ public static class UpdateMemory<R>
     public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> Construct(IKorssa<IRoveggi<Rovedantu<R>>> memObj, IKorssa<MetaFunction<R, R>> updateFunction) =>
         new(memObj, updateFunction)
         {
-            Du = Axoi.Korvedu("updatememobj"),
+            Du = Axoi.Korvedu("UpdateRovedanggi"),
             Definition =
                 Core.kMetaFunction<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>>(
                 [],
