@@ -22,7 +22,7 @@ public static partial class KorssaSyntax
 
     public static Korssas.Exists kExists(this Kor korssa) => new(korssa);
 
-    public static IKorssa<R> ksKeepNolla<R>(this Kor potentialNolla, IKorssa<R> value)
+    public static IKorssa<R> ksRemapNonNolla<R>(this Kor potentialNolla, IKorssa<R> value)
         where R : class, Rog =>
         potentialNolla.kExists()
             .kIfTrue<R>(

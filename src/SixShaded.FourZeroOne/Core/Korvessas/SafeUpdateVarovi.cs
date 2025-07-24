@@ -5,17 +5,18 @@ using Korvessa.Defined;
 using Syntax;
 using Roveggi;
 
-public static class SafeUpdateRovi<C, R>
+public static class SafeUpdateVarovi<C, RKey, RVal>
     where C : IRovetu
-    where R : class, Rog
+    where RKey : class, Rog
+    where RVal : class, Rog
 {
-    public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> Construct(IKorssa<IRoveggi<C>> roveggi, IKorssa<MetaFunction<R, R>> updateFunction, IRovu<C, R> rovu) =>
-        new(roveggi, updateFunction)
+    public static Korvessa<IRoveggi<C>, RKey, MetaFunction<RVal, RVal>, IRoveggi<C>> Construct(IKorssa<IRoveggi<C>> roveggi, IKorssa<RKey> key, IKorssa<MetaFunction<RVal, RVal>> updateFunction, IVarovu<C, RKey, RVal> varovu) =>
+        new(roveggi, key, updateFunction)
         {
-            Du = Axoi.Korvedu("SafeUpdateRovi"),
-            CustomData = [rovu],
+            Du = Axoi.Korvedu("SafeUpdateVarovi"),
+            CustomData = [varovu],
             Definition =
-                (_, iHolder, iUpdateFunction) =>
+                (_, iHolder, iKey, iUpdateFunction) =>
                     Core.kSubEnvironment<IRoveggi<C>>(
                     new()
                     {
@@ -25,7 +26,7 @@ public static class SafeUpdateRovi<C, R>
                                 .kExecuteWith(
                                 new()
                                 {
-                                    A = iHolder.kRef().kGetRovi(rovu),
+                                    A = iHolder.kRef().kGetVarovi(varovu, iKey.kRef()),
                                 })
                                 .kAsVariable(out var iValue)
                         ],
@@ -33,7 +34,7 @@ public static class SafeUpdateRovi<C, R>
                             iValue.kRef()
                                 .ksRemapNonNolla(
                                 iHolder.kRef()
-                                    .kWithRovi(rovu, iValue.kRef()))
+                                    .kWithVarovi(varovu, iKey.kRef(), iValue.kRef()))
                     })
         };
 }
