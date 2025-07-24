@@ -8,21 +8,21 @@ using Roveggi;
 public static class UpdateRovedanggi<R>
     where R : class, Rog
 {
-    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> Construct(IKorssa<IRoveggi<Rovedantu<R>>> memObj, IKorssa<MetaFunction<R, R>> updateFunction) =>
-        new(memObj, updateFunction)
+    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> Construct(IKorssa<IRoveggi<Rovedantu<R>>> rovedanggi, IKorssa<MetaFunction<R, R>> updateFunction) =>
+        new(rovedanggi, updateFunction)
         {
             Du = Axoi.Korvedu("UpdateRovedanggi"),
             Definition =
                 Core.kMetaFunction<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>>(
                 [],
-                (iMemObj, iUpdateFunction) =>
-                    iMemObj.kRef()
+                (iDan, iUpdateFunction) =>
+                    iDan.kRef()
                         .kWrite(
                         iUpdateFunction.kRef()
                             .kExecuteWith(
                             new()
                             {
-                                A = iMemObj.kRef().kGet(),
+                                A = iDan.kRef().kGet(),
                             }))),
         };
 }

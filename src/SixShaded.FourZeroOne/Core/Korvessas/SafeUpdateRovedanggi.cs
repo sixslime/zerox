@@ -5,20 +5,18 @@ using Korvessa.Defined;
 using Syntax;
 using Roveggi;
 
-public static class SafeUpdateRovi<C, R>
-    where C : IRovetu
+public static class SafeUpdateRovedanggi<R>
     where R : class, Rog
 {
-    public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> Construct(IKorssa<IRoveggi<C>> roveggi, IKorssa<MetaFunction<R, R>> updateFunction, IRovu<C, R> rovi) =>
-        new(roveggi, updateFunction)
+    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> Construct(IKorssa<IRoveggi<Rovedantu<R>>> rovedanggi, IKorssa<MetaFunction<R, R>> updateFunction) =>
+        new(rovedanggi, updateFunction)
         {
-            Du = Axoi.Korvedu("SafeUpdateRovi"),
-            CustomData = [rovi],
+            Du = Axoi.Korvedu("SafeUpdateRovedanggi"),
             Definition =
-                Core.kMetaFunction<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>>(
+                Core.kMetaFunction<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>>(
                 [],
-                (iHolder, iUpdateFunction) =>
-                    Core.kSubEnvironment<IRoveggi<C>>(
+                (iDan, iUpdateFunction) =>
+                    Core.kSubEnvironment<Roggis.Instructions.Assign<R>>(
                     new()
                     {
                         Environment =
@@ -27,15 +25,15 @@ public static class SafeUpdateRovi<C, R>
                                 .kExecuteWith(
                                 new()
                                 {
-                                    A = iHolder.kRef().kGetRovi(rovi),
+                                    A = iDan.kRef().kGet(),
                                 })
                                 .kAsVariable(out var iValue)
                         ],
                         Value =
                             iValue.kRef()
                                 .ksKeepNolla(
-                                iHolder.kRef()
-                                    .kWithRovi(rovi, iValue.kRef()))
+                                iDan.kRef()
+                                    .kWrite(iValue.kRef()))
                     }))
         };
 }
