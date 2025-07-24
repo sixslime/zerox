@@ -5,11 +5,12 @@ public class Axoi : IsAxoi
     private Axoi()
     { }
 
-    public static Axodu Du =
+    public static Axodu Du { get; } =
         new()
         {
             Name = "infinite",
         };
+
     internal static Korvedu Korvedu(string identifier) => new(Du, identifier);
 
     internal static Rovu<C, R> Rovu<C, R>(string identifier)
