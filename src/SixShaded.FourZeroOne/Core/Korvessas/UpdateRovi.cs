@@ -24,6 +24,6 @@ public static class UpdateRovi<C, R>
                             new()
                             {
                                 A = iHolder.kRef().kGetRovi(rovi),
-                            }))),
+                            })),
         };
 }

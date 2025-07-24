@@ -16,35 +16,33 @@ internal static class Power
         {
             Du = new(TestAxoi.Du, "power"),
             Definition =
-                Core.kMetaFunction<IRoveggi<uPowerExpr>, Number>(
-                [],
-                self =>
+                (_, iSelf) =>
                     Core.kMetaFunctionRecursive<Number, Number, Number, Number>(
                         [],
-                        (recurse, acc, i, num) =>
-                            i.kRef()
+                        (iRecurse, iAcc, iI, iNum) =>
+                            iI.kRef()
                                 .kIsGreaterThan(1.kFixed())
                                 .kIfTrue<Number>(
                                 new()
                                 {
                                     Then =
-                                        recurse.kRef()
+                                        iRecurse.kRef()
                                             .kExecuteWith(
                                             new()
                                             {
-                                                A = acc.kRef().kMultiply(num.kRef()),
-                                                B = i.kRef().kSubtract(1.kFixed()),
-                                                C = num.kRef(),
+                                                A = iAcc.kRef().kMultiply(iNum.kRef()),
+                                                B = iI.kRef().kSubtract(1.kFixed()),
+                                                C = iNum.kRef(),
                                             }),
-                                    Else = acc.kRef(),
+                                    Else = iAcc.kRef(),
                                 }))
                         .kExecuteWith(
                         new()
                         {
-                            A = self.kRef().kGetRovi(uPowerExpr.NUM),
-                            B = self.kRef().kGetRovi(uPowerExpr.POWER),
-                            C = self.kRef().kGetRovi(uPowerExpr.NUM),
-                        })),
+                            A = iSelf.kRef().kGetRovi(uPowerExpr.NUM),
+                            B = iSelf.kRef().kGetRovi(uPowerExpr.POWER),
+                            C = iSelf.kRef().kGetRovi(uPowerExpr.NUM),
+                        }),
         };
 
     public static Korvessa<IRoveggi<uPowerExpr>, Number> kTESTPower(this IKorssa<IRoveggi<uPowerExpr>> powerve) => Construct(powerve);
