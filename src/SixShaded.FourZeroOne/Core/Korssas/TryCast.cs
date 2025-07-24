@@ -9,5 +9,5 @@ public record TryCast<R> : Korssa.Defined.Function<Rog, R>
     { }
 
     protected override ITask<IOption<R>> Evaluate(IKorssaContext _, RogOpt in1) => in1.RemapAs(x => x.MaybeA<R>()).Press().ToCompletedITask();
-    protected override IOption<string> CustomToString() => $"{Arg1}%({typeof(R).Name})".AsSome();
+    protected override IOption<string> CustomToString() => $"{Arg1} is {typeof(R).Name}{(typeof(R).IsGenericType ? "<" + string.Join(", ", typeof(R).GenericTypeArguments.Map(x => x.Name)) + ">" : "")};".AsSome();
 }
