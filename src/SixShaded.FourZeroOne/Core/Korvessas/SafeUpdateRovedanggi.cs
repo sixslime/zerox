@@ -13,9 +13,7 @@ public static class SafeUpdateRovedanggi<R>
         {
             Du = Axoi.Korvedu("SafeUpdateRovedanggi"),
             Definition =
-                Core.kMetaFunction<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>>(
-                [],
-                (iDan, iUpdateFunction) =>
+                (_, iDan, iUpdateFunction) =>
                     Core.kSubEnvironment<Roggis.Instructions.Assign<R>>(
                     new()
                     {
@@ -34,6 +32,6 @@ public static class SafeUpdateRovedanggi<R>
                                 .ksKeepNolla(
                                 iDan.kRef()
                                     .kWrite(iValue.kRef()))
-                    }))
+                    })
         };
 }

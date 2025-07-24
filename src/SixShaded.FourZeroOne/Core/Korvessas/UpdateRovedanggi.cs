@@ -13,9 +13,7 @@ public static class UpdateRovedanggi<R>
         {
             Du = Axoi.Korvedu("UpdateRovedanggi"),
             Definition =
-                Core.kMetaFunction<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>>(
-                [],
-                (iDan, iUpdateFunction) =>
+                (_, iDan, iUpdateFunction) =>
                     iDan.kRef()
                         .kWrite(
                         iUpdateFunction.kRef()
@@ -23,6 +21,6 @@ public static class UpdateRovedanggi<R>
                             new()
                             {
                                 A = iDan.kRef().kGet(),
-                            }))),
+                            })),
         };
 }

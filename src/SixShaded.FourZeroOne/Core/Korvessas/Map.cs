@@ -13,9 +13,7 @@ public static class Map<RIn, ROut>
         {
             Du = Axoi.Korvedu("Map"),
             Definition =
-                Core.kMetaFunction<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>>(
-                [],
-                (iMulti, iMapFunction) =>
+                (_, iMulti, iMapFunction) =>
                     Core.kMetaFunctionRecursive<Number, Multi<ROut>>(
                         [],
                         (iRecurse, iIndex) =>
@@ -46,6 +44,6 @@ public static class Map<RIn, ROut>
                         new()
                         {
                             A = 1.kFixed(),
-                        })),
+                        }),
         };
 }

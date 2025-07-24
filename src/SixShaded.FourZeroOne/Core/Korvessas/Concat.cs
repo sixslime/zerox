@@ -12,12 +12,10 @@ public static class Concat<R>
         {
             Du = Axoi.Korvedu("Concat"),
             Definition =
-                Core.kMetaFunction<IMulti<R>, IMulti<R>, Multi<R>>(
-                [],
-                (iA, iB) =>
+                (_, iA, iB) =>
                     Core.kMulti<IMulti<R>>(
                         iA.kRef(),
                         iB.kRef())
-                        .kFlatten()),
+                        .kFlatten(),
         };
 }

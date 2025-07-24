@@ -12,9 +12,7 @@ public static class Duplicate<R>
         {
             Du = Axoi.Korvedu("Duplicate"),
             Definition =
-                Core.kMetaFunction<R, Number, Multi<R>>(
-                [],
-                (iValue, iCount) =>
+                (_, iValue, iCount) =>
                     Core.kMetaFunctionRecursive<Number, Multi<R>>(
                         [],
                         (iRecurse, iIndex) =>
@@ -38,6 +36,6 @@ public static class Duplicate<R>
                         new()
                         {
                             A = 1.kFixed(),
-                        })),
+                        }),
         };
 }

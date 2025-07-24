@@ -15,9 +15,7 @@ public static class SafeUpdateRovi<C, R>
             Du = Axoi.Korvedu("SafeUpdateRovi"),
             CustomData = [rovi],
             Definition =
-                Core.kMetaFunction<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>>(
-                [],
-                (iHolder, iUpdateFunction) =>
+                (_, iHolder, iUpdateFunction) =>
                     Core.kSubEnvironment<IRoveggi<C>>(
                     new()
                     {
@@ -36,6 +34,6 @@ public static class SafeUpdateRovi<C, R>
                                 .ksKeepNolla(
                                 iHolder.kRef()
                                     .kWithRovi(rovi, iValue.kRef()))
-                    }))
+                    })
         };
 }

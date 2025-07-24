@@ -10,6 +10,6 @@ public static class Compose<C>
         new()
         {
             Du = Axoi.Korvedu("Compose"),
-            Definition = new Korssas.Fixed<IRoveggi<C>>(new Roveggi.Defined.Roveggi<C>()).kMetaBoxed([]),
+            Definition = _ => new Korssas.Fixed<IRoveggi<C>>(new Roveggi.Defined.Roveggi<C>()),
         };
 }

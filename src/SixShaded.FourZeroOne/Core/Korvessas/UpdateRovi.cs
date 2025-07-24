@@ -9,23 +9,21 @@ public static class UpdateRovi<C, R>
     where C : IRovetu
     where R : class, Rog
 {
-    public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> Construct(IKorssa<IRoveggi<C>> roveggi, IKorssa<MetaFunction<R, R>> updateFunction, IRovu<C, R> component) =>
+    public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> Construct(IKorssa<IRoveggi<C>> roveggi, IKorssa<MetaFunction<R, R>> updateFunction, IRovu<C, R> rovi) =>
         new(roveggi, updateFunction)
         {
             Du = Axoi.Korvedu("UpdateRovi"),
-            CustomData = [component],
+            CustomData = [rovi],
             Definition =
-                Core.kMetaFunction<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>>(
-                [],
-                (roveggiM, updateFunctionM) =>
-                    roveggiM.kRef()
+                (_, iHolder, iUpdateFunction) =>
+                    iHolder.kRef()
                         .kWithRovi(
-                        component,
-                        updateFunctionM.kRef()
+                        rovi,
+                        iUpdateFunction.kRef()
                             .kExecuteWith(
                             new()
                             {
-                                A = roveggiM.kRef().kGetRovi(component),
+                                A = iHolder.kRef().kGetRovi(rovi),
                             }))),
         };
 }
