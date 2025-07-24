@@ -1,6 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.UnitEffects;
 
-public interface uDamageEffect : IRovetu, uUnitEffect
+public interface uDamageEffect : IConcreteRovetu, uUnitEffect
 {
 
 }

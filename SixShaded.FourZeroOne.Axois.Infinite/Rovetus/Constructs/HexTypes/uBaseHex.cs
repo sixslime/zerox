@@ -2,7 +2,7 @@
 
 using Identifier;
 
-public interface uBaseHex : IRovetu, uHexType
+public interface uBaseHex : IConcreteRovetu, uHexType
 {
     public static readonly Rovu<uBaseHex, IRoveggi<uPlayerIdentifier>> OWNER = new(Axoi.Du, "owner");
 }

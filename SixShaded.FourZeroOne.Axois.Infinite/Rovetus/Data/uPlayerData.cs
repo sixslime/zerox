@@ -3,7 +3,7 @@ namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Data;
 using Constructs.Ability;
 using Identifier;
 
-public interface uPlayerData : IRovetu
+public interface uPlayerData : IConcreteRovetu
 {
     public static readonly Rovu<uPlayerData, IRoveggi<uPlayerIdentifier>> ID = new(Axoi.Du, "id");
     public static readonly Rovu<uPlayerData, IMulti<IRoveggi<uAbility>>> HAND = new(Axoi.Du, "hand");

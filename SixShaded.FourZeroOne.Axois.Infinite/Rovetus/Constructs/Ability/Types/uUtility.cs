@@ -1,6 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Ability.Types;
 
-public interface uUtility : IRovetu, uUnsourcedType
+public interface uUtility : IConcreteRovetu, uUnsourcedType
 {
 
 }

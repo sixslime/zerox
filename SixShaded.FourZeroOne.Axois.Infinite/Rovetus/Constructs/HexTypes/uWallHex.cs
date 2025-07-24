@@ -1,6 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.HexTypes;
 
-public interface uWallHex : IRovetu, uHexType
+public interface uWallHex : IConcreteRovetu, uHexType
 {
 
 }

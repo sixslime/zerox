@@ -2,7 +2,7 @@ namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Data;
 
 using Identifier;
 
-public interface uUnitData : IRovetu
+public interface uUnitData : IConcreteRovetu
 {
     public static readonly Rovu<uUnitData, IRoveggi<uHexCoordinate>> POSITION = new(Axoi.Du, "position");
     public static readonly Rovu<uUnitData, IRoveggi<uUnitIdentifier>> ID = new(Axoi.Du, "id");

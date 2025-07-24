@@ -1,6 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs;
 
-public interface uRelativeCoordinate : IRovetu
+public interface uRelativeCoordinate : IConcreteRovetu
 {
     public static readonly Rovu<uRelativeCoordinate, Number> R = new(Axoi.Du, "r");
     public static readonly Rovu<uRelativeCoordinate, Number> U = new(Axoi.Du, "u");

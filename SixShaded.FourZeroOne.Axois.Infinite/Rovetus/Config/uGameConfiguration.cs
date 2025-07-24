@@ -2,7 +2,7 @@ namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Config;
 
 using Identifier;
 
-public interface uGameConfiguration : IRovetu
+public interface uGameConfiguration : IConcreteRovetu
 {
     public static readonly Varovu<uGameConfiguration, IRoveggi<uPlayerIdentifier>, IRoveggi<uPlayerDeclaration>> PLAYERS = new(Axoi.Du, "players");
     public static readonly Varovu<uGameConfiguration, IRoveggi<uHexCoordinate>, IMulti<IRoveggi<Constructs.HexTypes.uHexType>>> MAP = new(Axoi.Du, "map");

@@ -2,7 +2,7 @@
 
 using Identifier;
 
-public interface uSourcedAbility : IRovetu, uAbility
+public interface uSourcedAbility : IConcreteRovetu, uAbility
 {
     public static readonly Rovu<uSourcedAbility, IRoveggi<Types.uSourcedType>> TYPE = new(Axoi.Du, "type");
     public static readonly Rovu<uSourcedAbility, IMulti<IRoveggi<uRelativeCoordinate>>> HIT_AREA = new(Axoi.Du, "hit_area");

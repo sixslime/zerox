@@ -1,6 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Resolution;
 
-public interface uSourcedAbilityResolution : IRovetu
+public interface uSourcedAbilityResolution : IConcreteRovetu
 {
     public static readonly Rovu<uSourcedAbilityResolution, IRoveggi<Ability.uSourcedAbility>> ABILITY = new(Axoi.Du, "ability");
     public static readonly Rovu<uSourcedAbilityResolution, IRoveggi<Identifier.uUnitIdentifier>> SOURCE = new(Axoi.Du, "source");

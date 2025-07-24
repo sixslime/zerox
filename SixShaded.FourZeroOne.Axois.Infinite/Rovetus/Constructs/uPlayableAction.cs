@@ -2,7 +2,7 @@ namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs;
 
 using Identifier;
 
-public interface uPlayableAction : IRovetu
+public interface uPlayableAction : IConcreteRovetu
 {
     /// <summary>
     /// Returns the energy cost of this action.<br></br>
