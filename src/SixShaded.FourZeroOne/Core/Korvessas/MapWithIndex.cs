@@ -4,14 +4,14 @@ using Roggis;
 using Korvessa.Defined;
 using Syntax;
 
-public static class Map<RIn, ROut>
+public static class MapWithIndex<RIn, ROut>
     where RIn : class, Rog
     where ROut : class, Rog
 {
-    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> Construct(IKorssa<IMulti<RIn>> multi, IKorssa<MetaFunction<RIn, ROut>> mapFunction) =>
+    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, Number, ROut>, Multi<ROut>> Construct(IKorssa<IMulti<RIn>> multi, IKorssa<MetaFunction<RIn, Number, ROut>> mapFunction) =>
         new(multi, mapFunction)
         {
-            Du = Axoi.Korvedu("Map"),
+            Du = Axoi.Korvedu("MapWithIndex"),
             Definition =
                 (_, iMulti, iMapFunction) =>
                     Core.kMetaFunctionRecursive<Number, Multi<ROut>>(
@@ -29,6 +29,7 @@ public static class Map<RIn, ROut>
                                             new()
                                             {
                                                 A = iMulti.kRef().kGetIndex(iIndex.kRef()),
+                                                B = iIndex.kRef()
                                             })
                                             .kYield()
                                             .kConcat(
