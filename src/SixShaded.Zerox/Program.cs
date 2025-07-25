@@ -6,29 +6,22 @@ internal class Program
 {
     public static async Task Main(string[] args)
     {
-        try
+        Master.RegisterAxoi<FourZeroOne.Axois.Infinite.Axoi>();
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        foreach (var assembly in assemblies)
         {
-            Master.RegisterAxoi<FourZeroOne.Axois.Infinite.Axoi>();
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (var assembly in assemblies)
+            if (!assembly.FullName!.StartsWith("SixShaded.FourZeroOne.Axois")) continue;
+            Console.WriteLine($"=== {assembly.FullName} ===");
+            foreach (var type in assembly.GetExportedTypes())
             {
-                if (!assembly.FullName!.StartsWith("SixShaded.FourZeroOne.Axois")) continue;
-                Console.WriteLine($"=== {assembly.FullName} ===");
-                foreach (var type in assembly.GetExportedTypes())
+                Console.WriteLine(type.Name);
+                foreach (var field in type.GetFields())
                 {
-                    Console.WriteLine(type.Name);
-                    foreach (var field in type.GetFields())
-                    {
-                        Console.WriteLine($" - {field.Name}");
-                    }
+                    Console.WriteLine($" - {field.Name}");
                 }
             }
         }
-        catch (Exception e)
-        {
-            System.Console.WriteLine(e.Message);
-        }
-        
+
     }
 }
 
