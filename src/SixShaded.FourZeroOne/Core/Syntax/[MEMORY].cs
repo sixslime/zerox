@@ -52,7 +52,15 @@ partial class Core
         where C : Rovedantu<R>
         where R : class, Rog =>
         new();
+    public static AllKeys<C, R> kAllRovedanggiKeys<C, R>(Structure.Hint<C> _)
+        where C : Rovedantu<R>
+        where R : class, Rog =>
+        new();
     public static AllValues<C, R> kAllRovedanggiValues<C, R>()
+        where C : Rovedantu<R>
+        where R : class, Rog =>
+        new();
+    public static AllValues<C, R> kAllRovedanggiValues<C, R>(Structure.Hint<C> _)
         where C : Rovedantu<R>
         where R : class, Rog =>
         new();

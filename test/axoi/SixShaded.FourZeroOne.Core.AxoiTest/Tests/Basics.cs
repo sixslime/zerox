@@ -165,7 +165,6 @@ public sealed class Basics
         c =>
             (1..5).kFixed()
             .kMap(
-            [],
             iX =>
                 Core.kMetaFunction<Number, MetaFunction<Number>>(
                 [iX],
@@ -192,7 +191,6 @@ public sealed class Basics
                             () => theValue.kRef().kMultiply(10.kFixed()).kAdd(iY.kRef())),
                     })))
             .kMap(
-            [],
             iFunc =>
                 iFunc.kRef()
                     .kExecuteWith(
@@ -216,7 +214,6 @@ public sealed class Basics
                     [
                         (1..5).kFixed()
                         .kMap(
-                        [],
                         iNum =>
                             Core.kSubEnvironment<Multi<Roveggi.IRoveggi<uFooRovedantu>>>(
                             new()
@@ -237,7 +234,6 @@ public sealed class Basics
                         .kFlatten()
                         .DeTesAssertRoggi(c, r => r.Count is 10, "pre memassign count check (10)")
                         .kMap(
-                        [],
                         iComp =>
                             Core.kSubEnvironment<Rog>(
                             new()

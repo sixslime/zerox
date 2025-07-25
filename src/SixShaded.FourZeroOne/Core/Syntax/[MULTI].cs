@@ -53,7 +53,7 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.DistinctBy<R>.Construct(source, keyFunction);
 
-    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IEnumerable<Addr> captures, Func<DynamicRoda<RIn>, IKorssa<ROut>> mapFunction)
+    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, Func<DynamicRoda<RIn>, IKorssa<ROut>> mapFunction)
         where RIn : class, Rog
         where ROut : class, Rog =>
         Korvessas.Map<RIn, ROut>.Construct(source, Core.kMetaFunction(captures, mapFunction));
@@ -63,7 +63,7 @@ public static partial class KorssaSyntax
         where ROut : class, Rog =>
         Korvessas.Map<RIn, ROut>.Construct(source, mapFunction);
 
-    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, Number, ROut>, Multi<ROut>> kMapWithIndex<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IEnumerable<Addr> captures, Func<DynamicRoda<RIn>, DynamicRoda<Number>, IKorssa<ROut>> mapFunction)
+    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, Number, ROut>, Multi<ROut>> kMapWithIndex<RIn, ROut>(this IKorssa<IMulti<RIn>> source, Func<DynamicRoda<RIn>, DynamicRoda<Number>, IKorssa<ROut>> mapFunction)
         where RIn : class, Rog
         where ROut : class, Rog =>
         Korvessas.MapWithIndex<RIn, ROut>.Construct(source, Core.kMetaFunction(captures, mapFunction));

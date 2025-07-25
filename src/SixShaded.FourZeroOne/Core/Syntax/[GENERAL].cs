@@ -11,3 +11,8 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(obj);
 }
+
+public static partial class Core
+{
+    public static Structure.Hint<T> Hint<T>() => new();
+}
