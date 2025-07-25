@@ -42,6 +42,17 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(korssa, index);
 
+    public static Korvessa<IMulti<R>, Multi<R>> kDistinct<R>(this IKorssa<IMulti<R>> source)
+        where R : class, Rog =>
+        Korvessas.Distinct<R>.Construct(source);
+
+    public static Korvessa<IMulti<R>, MetaFunction<R, Rog>, Multi<R>> kDistinctBy<R>(this IKorssa<IMulti<R>> source, Func<DynamicRoda<R>, Kor> keyFunction)
+        where R : class, Rog =>
+        Korvessas.DistinctBy<R>.Construct(source, Core.kMetaFunction([], keyFunction));
+    public static Korvessa<IMulti<R>, MetaFunction<R, Rog>, Multi<R>> kDistinctBy<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Rog>> keyFunction)
+        where R : class, Rog =>
+        Korvessas.DistinctBy<R>.Construct(source, keyFunction);
+
     public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IEnumerable<Addr> captures, Func<DynamicRoda<RIn>, IKorssa<ROut>> mapFunction)
         where RIn : class, Rog
         where ROut : class, Rog =>
