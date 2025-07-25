@@ -4,16 +4,16 @@ using Roggis;
 using Korvessa.Defined;
 using Syntax;
 
-public static class DistinctBy<R>
+public static class Distinct<R>
     where R : class, Rog
 {
-    public static Korvessa<IMulti<R>, MetaFunction<R, Rog>, Multi<R>> Construct(IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Rog>> keyFunction) =>
-        new(source, keyFunction)
+    public static Korvessa<IMulti<R>, Multi<R>> Construct(IKorssa<IMulti<R>> source) =>
+        new(source)
         {
-            Du = Axoi.Korvedu("DistinctBy"),
+            Du = Axoi.Korvedu("Distinct"),
             Definition =
-                (_, iSource, iKeyFunction) =>
-                    Core.kMetaFunctionRecursive<Multi<R>, IMulti<Rog>, Number, Multi<R>>(
+                (_, iSource) =>
+                    Core.kMetaFunctionRecursive<Multi<R>, IMulti<R>, Number, Multi<R>>(
                         [],
                         (iRecurse, iOut, iSeen, iIndex) =>
                             iIndex.kRef()
@@ -31,15 +31,8 @@ public static class DistinctBy<R>
                                                 iSource.kRef()
                                                     .kGetIndex(iIndex.kRef())
                                                     .kAsVariable(out var iElement),
-                                                iKeyFunction.kRef()
-                                                    .kExecuteWith(
-                                                    new()
-                                                    {
-                                                        A = iElement.kRef(),
-                                                    })
-                                                    .kAsVariable(out var iKeyValue),
                                                 iSeen.kRef()
-                                                    .kContains(iKeyValue.kRef())
+                                                    .kContains(iElement.kRef())
                                                     .kAsVariable(out var iIsDuplicate)
                                             ],
                                             Value =
@@ -61,11 +54,11 @@ public static class DistinctBy<R>
                                                             iSeen.kRef()
                                                                 .kConcat(
                                                                 iIsDuplicate.kRef()
-                                                                    .kIfTrue<IMulti<Rog>>(
+                                                                    .kIfTrue<IMulti<R>>(
                                                                     new()
                                                                     {
-                                                                        Then = Core.kMulti<Rog>(),
-                                                                        Else = iKeyValue.kRef().kYield()
+                                                                        Then = Core.kMulti<R>(),
+                                                                        Else = iElement.kRef().kYield()
                                                                     })),
                                                         C =
                                                             iIndex.kRef().kAdd(1.kFixed())
@@ -76,7 +69,7 @@ public static class DistinctBy<R>
                         new()
                         {
                             A = Core.kMulti<R>(),
-                            B = Core.kMulti<Rog>(),
+                            B = Core.kMulti<R>(),
                             C = 1.kFixed()
                         })
         };

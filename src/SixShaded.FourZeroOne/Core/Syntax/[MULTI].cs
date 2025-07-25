@@ -38,10 +38,6 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(from, element);
 
-    public static Korssas.Multi.Distinct<R> kDistinct<R>(this IKorssa<IMulti<R>> multi)
-        where R : class, Rog =>
-        new(multi);
-
     public static Korssas.Multi.GetIndex<R> kGetIndex<R>(this IKorssa<IMulti<R>> korssa, IKorssa<Number> index)
         where R : class, Rog =>
         new(korssa, index);
