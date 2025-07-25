@@ -115,7 +115,7 @@ public class Master
             {
                 foreach (var field in abstractBaseRovetuType.GetFields())
                 {
-                    if (field.GetValue(null) is Roveggi.Unsafe.IAbstractRovu abstractField && !implementedAbstractRovus[rovetuType].Remove(abstractField))
+                    if (field.GetValue(null) is Roveggi.Unsafe.IAbstractRovu abstractRovu && !implementedAbstractRovus[rovetuType].Remove(abstractRovu))
                         throw new MetaAssemblyException(axoi, $"rovetu '{rovetuType.Name}' does not implement '{field.Name}' from '{abstractBaseRovetuType.Name}'.");
                 }
             }
