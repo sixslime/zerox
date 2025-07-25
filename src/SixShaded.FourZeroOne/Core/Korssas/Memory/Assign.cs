@@ -13,5 +13,5 @@ public sealed record Assign<R>(IRoda<R> address, IKorssa<R> obj) : Korssa.Define
             }.AsSome()
             .ToCompletedITask();
 
-    protected override IOption<string> CustomToString() => $"*{Address}<-{ArgKorssas[0]}".AsSome();
+    protected override IOption<string> CustomToString() => $"{Address}<- {ArgKorssas[0]}".AsSome();
 }

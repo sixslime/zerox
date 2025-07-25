@@ -11,5 +11,5 @@ public sealed record DynamicRoda<R> : IRoda<R>
     }
 
     public ulong DynamicId { get; }
-    public override string ToString() => $"{((int)(DynamicId % 5)).ToBase("JKMWQVZX", "")}{(typeof(R).GetHashCode() % 441).ToBase("AOEUISNTHLRCGFDSVB".ToLower(), "")}";
+    public override string ToString() => $"{(typeof(R).GetHashCode() % 441).ToBase("AOEUISNTHLRCGFDSVB".ToLower(), "")}{((int)(DynamicId % 5)).ToBase("JKMWQVZX", "")}";
 }
