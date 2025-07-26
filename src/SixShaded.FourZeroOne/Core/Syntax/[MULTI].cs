@@ -38,13 +38,22 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(from, element);
 
-    public static Korssas.Multi.GetIndex<R> kGetIndex<R>(this IKorssa<IMulti<R>> korssa, IKorssa<Number> index)
+    public static Korssas.Multi.GetIndex<R> kGetIndex<R>(this IKorssa<IMulti<R>> from, IKorssa<Number> index)
         where R : class, Rog =>
         new(korssa, index);
+
+    public static Korssas.Multi.GetSlice<R> kGetSlice<R>(this IKorssa<IMulti<R>> from, IKorssa<NumRange> index)
+        where R : class, Rog =>
+        new(korssa, index);
+
+    public static Korssas.Multi.Reverse<R> kReversed<R>(this IKorssa<IMulti<R>> source)
+        where R : class, Rog =>
+        new(source);
 
     public static Korvessa<IMulti<R>, Multi<R>> kDistinct<R>(this IKorssa<IMulti<R>> source)
         where R : class, Rog =>
         Korvessas.Distinct<R>.Construct(source);
+
 
     public static Korvessa<IMulti<R>, MetaFunction<R, Rog>, Multi<R>> kDistinctBy<R>(this IKorssa<IMulti<R>> source, Func<DynamicRoda<R>, Kor> keyFunction)
         where R : class, Rog =>
