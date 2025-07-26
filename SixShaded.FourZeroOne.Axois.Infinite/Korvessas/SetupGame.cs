@@ -43,8 +43,8 @@ public static class SetupGame
                                 iCoordinate =>
                                     iCoordinate.kRef()
                                         .kWrite(
-                                        Core.kCompose<u.Data.uHexData>()
-                                            .kWithRovi(u.Data.uHexData.TYPE, iConfig.kRef().kGetVarovi(uGameConfiguration.MAP, iCoordinate.kRef()))))
+                                        Core.kCompose<uHexData>()
+                                            .kWithRovi(uHexData.TYPE, iConfig.kRef().kGetVarovi(uGameConfiguration.MAP, iCoordinate.kRef()))))
                                 .kAsVariable(out var iMakeMap),
                             // players:
                             iConfig.kRef()
