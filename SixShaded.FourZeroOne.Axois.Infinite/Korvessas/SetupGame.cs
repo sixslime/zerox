@@ -5,6 +5,8 @@ using u.Config;
 using u;
 using u.Identifier;
 using u.Data;
+using u.Constructs;
+using u.Constructs.Resolved;
 using Infinite = Syntax.Infinite;
 
 public static class SetupGame
@@ -20,9 +22,8 @@ public static class SetupGame
                     {
                         Environment =
                         [
-                            // init:
+                            // MAKE clear:
                             Core.kMulti<Rog>(
-                                Infinite.Game.kWrite(Core.kCompose<uGame>()),
                                 Core.kAllRovedanggiKeys<uPlayerIdentifier, IRoveggi<uPlayerData>>()
                                     .kMap(
                                     iIdentifier =>
@@ -35,8 +36,88 @@ public static class SetupGame
                                     .kMap(
                                     iIdentifier =>
                                         iIdentifier.kRef().kRedact()))
-                                .kAsVariable(out var iMakeInit),
-                            // map:
+                                .kAsVariable(out var iMakeClear),
+
+                            // player declarations:
+                            iConfig.kRef()
+                                .kGetRovi(uGameConfiguration.PLAYERS)
+                                .kAsVariable(out var iPlayerDeclarations),
+
+                            // player identifiers:
+                            1.kFixed()
+                                .kRangeTo(iPlayerDeclarations.kRef().kCount())
+                                .kMap(
+                                iIndex =>
+                                    Core.kCompose<uPlayerIdentifier>()
+                                        .kWithRovi(uPlayerIdentifier.NUMBER, iIndex.kRef()))
+                                .kAsVariable(out var iPlayerIdentifiers),
+
+                            // player objects:
+                            iPlayerDeclarations.kRef()
+                                .kMap(
+                                iDeclaredPlayer =>
+                                    Core.kSubEnvironment<IRoveggi<uPlayerData>>(
+                                    new()
+                                    {
+                                        Environment =
+                                        [
+                                            iDeclaredPlayer.kRef()
+                                                .kGetRovi(uPlayerDeclaration.DECK)
+                                                .kAsVariable(out var iDeck),
+                                            iDeclaredPlayer.kRef()
+                                                .kGetRovi(uPlayerDeclaration.HAND_SIZE)
+                                                .kAsVariable(out var iHandSize)
+                                        ],
+                                        Value =
+                                            Core.kCompose<uPlayerData>()
+                                                .kWithRovi(uPlayerData.HAND_SIZE, iHandSize.kRef())
+                                                .kWithRovi(
+                                                uPlayerData.HAND,
+                                                iDeck.kRef().kGetSlice(1.kFixed().kRangeTo(iHandSize.kRef())))
+                                                .kWithRovi(
+                                                uPlayerData.STACK,
+                                                iDeck.kRef().kGetSlice(iHandSize.kRef().kAdd(1.kFixed()).kRangeTo(iDeck.kRef().kCount())))
+                                                .kWithRovi(uPlayerData.CONTROL, 0.kFixed())
+                                                .kWithRovi(uPlayerData.ENERGY, 0.kFixed())
+                                    }))
+                                .kAsVariable(out var iPlayerObjects),
+
+                            // playable actions:
+                            // silly syntax hack(s) to avoid writing a shitton of generics
+                            new Func<IKorssa<IMulti<IRoveggi<uPlayableAction>>>>(
+                            () =>
+                            {
+                                var kForPlayer = Core::kMetaFunction<IRoveggi<uPlayerIdentifier>, MetaFunction<IRoveggi<uResolvedAction>>>;
+                                var kAction = Core::kMetaFunction<IRoveggi<uResolvedAction>>;
+                                return
+                                    Core.kSubEnvironment<IMulti<IRoveggi<uPlayableAction>>>(
+                                    new()
+                                    {
+                                        Environment =
+                                            [
+                                                kForPlayer([],
+                                                _ =>
+                                                    kAction([], Core.kNollaFor<IRoveggi<uResolvedAction>>))
+                                                .kAsVariable(out var iActionEndTurn),
+
+                                            ],
+                                        Value =
+                                            Core.kMulti<IRoveggi<uPlayableAction>>()
+                                    });
+                            }).Invoke()
+                            .kAsVariable(out var iPlayableActions),
+
+                            // MAKE populate game:
+                            Infinite.Game.kUpdate(
+                                iGame =>
+                                    iGame.kRef()
+                                        .kWithRovi(uGame.ROTATION_COUNT, 0.kFixed())
+                                        .kWithRovi(uGame.TURN_INDEX, 1.kFixed())
+                                        .kWithRovi(uGame.TURN_ORDER, iPlayerIdentifiers.kRef())
+                                        .kWithRovi(uGame.PLAYABLE_ACTIONS, iPlayableActions.kRef()))
+                                .kAsVariable(out var iMakeGame),
+
+                            // MAKE map:
                             iConfig.kRef()
                                 .kGetVarovaKeys(uGameConfiguration.MAP)
                                 .kMap(
@@ -46,30 +127,12 @@ public static class SetupGame
                                         Core.kCompose<uHexData>()
                                             .kWithRovi(uHexData.TYPE, iConfig.kRef().kGetVarovi(uGameConfiguration.MAP, iCoordinate.kRef()))))
                                 .kAsVariable(out var iMakeMap),
-                            // players:
-                            iConfig.kRef()
-                                .kGetRovi(uGameConfiguration.PLAYERS)
-                                .kMapWithIndex(
-                                (iDeclaredPlayer, iIndex) =>
-                                    Core.kSubEnvironment<Rog>(
-                                    new()
-                                    {
-                                        Environment =
-                                        [
-                                            Core.kCompose<uPlayerIdentifier>()
-                                                .kWithRovi(uPlayerIdentifier.NUMBER, iIndex.kRef())
-                                                .kAsVariable(out var iIdentifier),
-                                            Core.kCompose<uPlayerData>()
-                                                .kWithRovi(uPlayerData.HAND_SIZE, iDeclaredPlayer.kRef().kGetRovi(uPlayerDeclaration.HAND_SIZE))
-                                        ],
-                                        Value =
-                                            Core.kMulti<Rog>()
-                                    }))
                         ],
                         Value =
                             Core.kMulti<Rog>(
-                            iMakeInit.kRef(),
-                            iMakeMap.kRef())
+                            iMakeClear.kRef(),
+                            iMakeGame.kRef(),
+                            iMakeMap.kRef()),
                     })
-        }
+        };
 }
