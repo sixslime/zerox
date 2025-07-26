@@ -59,6 +59,8 @@ public static class SetupGame
                                             Core.kCompose<uPlayerIdentifier>()
                                                 .kWithRovi(uPlayerIdentifier.NUMBER, iIndex.kRef())
                                                 .kAsVariable(out var iIdentifier),
+                                            Core.kCompose<uPlayerData>()
+                                                .kWithRovi(uPlayerData.HAND_SIZE, iDeclaredPlayer.kRef().kGetRovi(uPlayerDeclaration.HAND_SIZE))
                                         ],
                                         Value =
                                             Core.kMulti<Rog>()
