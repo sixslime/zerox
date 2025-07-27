@@ -4,43 +4,41 @@ using Roggis;
 using Korvessa.Defined;
 using Syntax;
 
-public static class Switch<RIn, ROut>
-    where ROut : class, Rog
-    where RIn : class, Rog
+public static class Switch<R>
+where R : class, Rog
 {
-    public static Korvessa<RIn, IMulti<MetaFunction<RIn, Bool>>, IMulti<MetaFunction<ROut>>, ROut> Construct(IKorssa<RIn> input, IKorssa<IMulti<MetaFunction<RIn, Bool>>> matchers, IKorssa<IMulti<MetaFunction<ROut>>> returners) =>
-        new(input, matchers, returners)
+    public static Korvessa<IMulti<MetaFunction<R>>, R> Construct(IKorssa<IMulti<MetaFunction<R>>> statements) =>
+        new(statements)
         {
             Du = Axoi.Korvedu("Switch"),
             Definition =
-                (_, iInput, iMatchers, iReturners) =>
-                    Core.kMetaFunctionRecursive<Number, ROut>(
+                (_, iStatements) =>
+                    Core.kMetaFunctionRecursive<Number, R>(
                         [],
                         (iRecurse, iIndex) =>
-                            iMatchers.kRef()
-                                .kGetIndex(iIndex.kRef())
-                                .kExecuteWith(
+                            iIndex.kRef()
+                                .kIsGreaterThan(iStatements.kRef().kCount())
+                                .kIfTrue<R>(
                                 new()
                                 {
-                                    A = iInput.kRef()
-                                })
-                                .kIfTrue<ROut>(
-                                new()
-                                {
-                                    Then = iReturners.kRef().kGetIndex(iIndex.kRef()).kExecute(),
+                                    Then = Core.kNollaFor<R>(),
                                     Else =
-                                        iRecurse.kRef()
-                                            .kExecuteWith(
-                                            new()
-                                            {
-                                                A = iIndex.kRef().kAdd(1.kFixed())
-                                            })
+                                        iStatements.kRef()
+                                            .kGetIndex(iIndex.kRef())
+                                            .kExecute()
+                                            .kCatchNolla(
+                                            () =>
+                                                iRecurse.kRef()
+                                                    .kExecuteWith(
+                                                    new()
+                                                    {
+                                                        A = iIndex.kRef().kAdd(1.kFixed())
+                                                    }))
                                 }))
                         .kExecuteWith(
                         new()
                         {
                             A = 1.kFixed()
                         })
-
         };
 }

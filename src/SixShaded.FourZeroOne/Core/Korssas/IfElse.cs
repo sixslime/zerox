@@ -3,13 +3,13 @@
 using FZOSpec;
 using Roggis;
 
-public record IfElse<R> : Korssa.Defined.StateImplementedKorssa<Bool, MetaFunction<R>, MetaFunction<R>, R>
+public record IfElse<R> : Korssa.Defined.StateImplementedKorssa<Roggis.Bool, MetaFunction<R>, MetaFunction<R>, R>
     where R : class, Rog
 {
-    public IfElse(IKorssa<Bool> condition, IKorssa<MetaFunction<R>> positive, IKorssa<MetaFunction<R>> negative) : base(condition, positive, negative)
+    public IfElse(IKorssa<Roggis.Bool> condition, IKorssa<MetaFunction<R>> positive, IKorssa<MetaFunction<R>> negative) : base(condition, positive, negative)
     { }
 
-    protected override IOption<EStateImplemented> MakeData(IKorssaContext context, IOption<Bool> in1, IOption<MetaFunction<R>> in2, IOption<MetaFunction<R>> in3) =>
+    protected override IOption<EStateImplemented> MakeData(IKorssaContext context, IOption<Roggis.Bool> in1, IOption<MetaFunction<R>> in2, IOption<MetaFunction<R>> in3) =>
         in1.RemapAs(
             condition =>
                 condition.IsTrue

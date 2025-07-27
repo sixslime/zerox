@@ -2,6 +2,8 @@
 
 using u.Constructs.Ability;
 using u.Constructs.Resolved;
+using Core = Core.Syntax.Core;
+
 public static class ResolveAbility
 {
     public static Korvessa<IRoveggi<uAbility>, IRoveggi<uResolvedAbility>> Construct(IKorssa<IRoveggi<uAbility>> ability)
@@ -10,8 +12,9 @@ public static class ResolveAbility
         Du = Axoi.Korvedu("ResolveAbility"),
         Definition = 
             (_, iAbility) =>
-                iAbility.kRef().kSwitch([
-                    ()
+                iAbility.kRef().kSwitch(Core.Hint<IRoveggi<uResolvedAbility>>(),
+                    [
+                        new(iX => iX.kRef().kCast<IRoveggi<uSourcedAbility>>().kExists(), )
                     ]
     }
 }

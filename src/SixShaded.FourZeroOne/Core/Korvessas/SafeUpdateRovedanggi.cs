@@ -29,8 +29,8 @@ public static class SafeUpdateRovedanggi<R>
                         ],
                         Value =
                             iValue.kRef()
-                                .ksRemapNonNolla(
-                                iDan.kRef()
+                                .ksKeepNolla(
+                                () => iDan.kRef()
                                     .kWrite(iValue.kRef()))
                     })
         };
