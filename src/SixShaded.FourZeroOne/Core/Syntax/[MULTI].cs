@@ -7,7 +7,10 @@ public static partial class Core
 {
     public static Korssas.Multi.Create<R> kMulti<R>(params IKorssa<R>[] korssas)
         where R : class, Rog =>
-        new(korssas.ToArray());
+        new(korssas);
+    public static Korssas.Multi.Create<R> kMulti<R>(IEnumerable< IKorssa<R>> korssas)
+        where R : class, Rog =>
+        new(korssas);
 }
 
 public static partial class KorssaSyntax

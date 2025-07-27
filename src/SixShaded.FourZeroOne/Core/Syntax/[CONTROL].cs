@@ -17,6 +17,17 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(condition, block.Then.kMetaBoxed([]), block.Else.kMetaBoxed([]));
 
+    public static Korvessa<RIn, IMulti<MetaFunction<RIn, Bool>>, IMulti<MetaFunction<ROut>>, ROut> kSwitch<RIn, ROut>(this IKorssa<RIn> value, IEnumerable<(Func<DynamicRoda<RIn>, IKorssa<Bool>>, IKorssa<ROut>)> matchPairs)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        matchPairs.ToArray()
+            .ExprAs(
+            matchArr =>
+                Korvessas.Switch<RIn, ROut>.Construct(
+                value,
+                Core.kMulti(matchArr.Map(x => Core.kMetaFunction([], x.Item1)).ToArray()),
+                Core.kMulti(matchArr.Map(x => x.Item2.kMetaBoxed([])).ToArray())));
+
     public static Korvessa<RIn, IMulti<MetaFunction<RIn, Bool>>, IMulti<MetaFunction<ROut>>, ROut> kSwitch<RIn, ROut>(this IKorssa<RIn> value, IEnumerable<(IKorssa<MetaFunction<RIn, Bool>>, IKorssa<MetaFunction<ROut>>)> matchPairs)
         where RIn : class, Rog
         where ROut : class, Rog =>
