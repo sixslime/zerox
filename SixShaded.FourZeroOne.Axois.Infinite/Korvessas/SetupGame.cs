@@ -36,6 +36,7 @@ public static class SetupGame
                                     .kMap(
                                     iIdentifier =>
                                         iIdentifier.kRef().kRedact()))
+                                .kMetaBoxed([])
                                 .kAsVariable(out var iMakeClear),
 
                             // player declarations:
@@ -85,29 +86,35 @@ public static class SetupGame
                             // playable actions:
                             // silly syntax hack(s) to avoid writing a shitton of generics
                             new Func<IKorssa<IMulti<IRoveggi<uPlayableAction>>>>(
-                            () =>
-                            {
-                                var kForPlayer = Core::kMetaFunction<IRoveggi<uPlayerIdentifier>, MetaFunction<IRoveggi<uResolvedAction>>>;
-                                var kAction = Core::kMetaFunction<IRoveggi<uResolvedAction>>;
-                                return
-                                    Core.kSubEnvironment<IMulti<IRoveggi<uPlayableAction>>>(
-                                    new()
-                                    {
-                                        Environment =
+                                () =>
+                                {
+                                    var kForPlayer = Core::kMetaFunction<IRoveggi<uPlayerIdentifier>, MetaFunction<IRoveggi<uResolvedAction>>>;
+                                    var kAction = Core::kMetaFunction<IRoveggi<uResolvedAction>>;
+                                    return
+                                        Core.kSubEnvironment<IMulti<IRoveggi<uPlayableAction>>>(
+                                        new()
+                                        {
+                                            Environment =
                                             [
-                                                kForPlayer([],
-                                                _ =>
-                                                    kAction([], Core.kNollaFor<IRoveggi<uResolvedAction>>))
-                                                .kAsVariable(out var iActionEndTurn),
+                                                kForPlayer(
+                                                    [],
+                                                    _ =>
+                                                        kAction([], Core.kNollaFor<IRoveggi<uResolvedAction>>))
+                                                    .kAsVariable(out var iActionEndTurn),
 
+                                                // TODO: define rest of actions
                                             ],
-                                        Value =
-                                            Core.kMulti<IRoveggi<uPlayableAction>>()
-                                    });
-                            }).Invoke()
-                            .kAsVariable(out var iPlayableActions),
+                                            Value =
+                                                Core.kMulti(iActionEndTurn.kRef())
+                                                    .kMap(
+                                                    iActionPlayerFunction =>
+                                                        Core.kCompose<uPlayableAction>()
+                                                            .kWithRovi(uPlayableAction.FOR_PLAYER, iActionPlayerFunction.kRef()))
+                                        });
+                                }).Invoke()
+                                .kAsVariable(out var iPlayableActions),
 
-                            // MAKE populate game:
+                            // MAKE game:
                             Infinite.Game.kUpdate(
                                 iGame =>
                                     iGame.kRef()
@@ -116,6 +123,14 @@ public static class SetupGame
                                         .kWithRovi(uGame.TURN_ORDER, iPlayerIdentifiers.kRef())
                                         .kWithRovi(uGame.PLAYABLE_ACTIONS, iPlayableActions.kRef()))
                                 .kAsVariable(out var iMakeGame),
+
+                            // MAKE players:
+                            iPlayerIdentifiers.kRef()
+                                .kMap(
+                                iPlayerIdentifier =>
+                                    iPlayerIdentifier.kRef()
+                                        .kWrite(iPlayerObjects.kRef().kGetIndex(iPlayerIdentifier.kRef().kGetRovi(uPlayerIdentifier.NUMBER))))
+                                .kAsVariable(out var iMakePlayers),
 
                             // MAKE map:
                             iConfig.kRef()
@@ -127,12 +142,42 @@ public static class SetupGame
                                         Core.kCompose<uHexData>()
                                             .kWithRovi(uHexData.TYPE, iConfig.kRef().kGetVarovi(uGameConfiguration.MAP, iCoordinate.kRef()))))
                                 .kAsVariable(out var iMakeMap),
+
+                            // MOD game:
+                            iConfig.kRef()
+                                .kGetRovi(uGameConfiguration.MODIFIERS)
+                                .kMap(iModifier => iModifier.kRef().kExecute())
+                                .kMetaBoxed([])
+                                .kAsVariable(out var iModGame),
+
+                            // MOD players:
+                            Infinite.Game.kGet()
+                                .kGetRovi(uGame.TURN_ORDER)
+                                .kMap(
+                                iIdentifier =>
+                                    iConfig.kRef()
+                                        .kGetRovi(uGameConfiguration.PLAYERS)
+                                        .kGetIndex(iIdentifier.kRef().kGetRovi(uPlayerIdentifier.NUMBER))
+                                        .kGetRovi(uPlayerDeclaration.MODIFIERS)
+                                        .kMap(
+                                        iModifier =>
+                                            iModifier.kRef()
+                                                .kExecuteWith(
+                                                new()
+                                                {
+                                                    A = iIdentifier.kRef()
+                                                })))
+                                .kMetaBoxed([])
+                                .kAsVariable(out var iModPlayers),
                         ],
                         Value =
                             Core.kMulti<Rog>(
                             iMakeClear.kRef(),
                             iMakeGame.kRef(),
-                            iMakeMap.kRef()),
+                            iMakePlayers.kRef(),
+                            iMakeMap.kRef(),
+                            iModGame.kRef().kExecute(),
+                            iModPlayers.kRef().kExecute())
                     })
         };
 }
