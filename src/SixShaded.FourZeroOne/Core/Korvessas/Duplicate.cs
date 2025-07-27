@@ -23,7 +23,7 @@ public static class Duplicate<R>
                                 {
                                     Then = Core.kNollaFor<Multi<R>>(),
                                     Else =
-                                        Core.kMulti(
+                                        Core.kMultiOld(
                                             iValue.kRef().kYield(), iRecurse.kRef()
                                                 .kExecuteWith(
                                                 new()

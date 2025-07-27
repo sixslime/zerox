@@ -8,6 +8,9 @@ public static partial class Core
     public static Korssas.SubEnvironment<R> kSubEnvironment<R>(Structure.Korssa.SubEnvironment<R> block)
         where R : class, Rog =>
         new(block.Environment.kToMulti(), block.Value);
+    public static Korvessa<IMulti<MetaFunction<R>>, R> kSelector<R>(List<Func<IKorssa<R>>> statements)
+        where R : class, Rog =>
+        Korvessas.Switch<R>.Construct(kMulti([..statements.Map(x => x().kMetaBoxed([]))]));
 }
 
 public static partial class KorssaSyntax
@@ -17,17 +20,15 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(condition, block.Then.kMetaBoxed([]), block.Else.kMetaBoxed([]));
 
-    public static Korvessa<RIn, IMulti<MetaFunction<RIn, Bool>>, IMulti<MetaFunction<ROut>>, ROut> kSwitch<RIn, ROut>(this IKorssa<RIn> value, List<KeyValuePair<Func<DynamicRoda<RIn>, IKorssa<Bool>>, IKorssa<ROut>>> matchPairs)
+
+
+    public static Korssas.SubEnvironment<ROut> ksSelectorExpr<RIn, ROut>(this IKorssa<RIn> val, Func<DynamicRoda<RIn>, List<Func<IKorssa<ROut>>>> relativeStatements)
         where RIn : class, Rog
         where ROut : class, Rog =>
-        Korvessas.Switch<RIn, ROut>.Construct(
-        value,
-        Core.kMulti(matchPairs.Map(x => Core.kMetaFunction([], x.Key))),
-        Core.kMulti(matchPairs.Map(x => x.Value.kMetaBoxed([]))));
-
-    public static Korvessa<RIn, IMulti<MetaFunction<RIn, Bool>>, IMulti<MetaFunction<ROut>>, ROut> kSwitch<RIn, ROut>(this IKorssa<RIn> value, Structure.Hint<ROut> resultHint, List<KeyValuePair<Func<DynamicRoda<RIn>, IKorssa<Bool>>, IKorssa<ROut>>> matchPairs)
-        where RIn : class, Rog
-        where ROut : class, Rog =>
-        kSwitch(value, matchPairs);
-
+        Core.kSubEnvironment<ROut>(
+        new()
+        {
+            Environment = [val.kAsVariable(out var iVal)],
+            Value = Core.kSelector<ROut>(relativeStatements(iVal))
+        });
 }

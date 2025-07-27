@@ -5,10 +5,11 @@ using Korvessa.Defined;
 
 public static partial class Core
 {
-    public static Korssas.Multi.Create<R> kMulti<R>(params IKorssa<R>[] korssas)
+    [Obsolete("use kMulti")]
+    public static Korssas.Multi.Create<R> kMultiOld<R>(params IKorssa<R>[] korssas)
         where R : class, Rog =>
         new(korssas);
-    public static Korssas.Multi.Create<R> kMulti<R>(IEnumerable<IKorssa<R>> korssas)
+    public static Korssas.Multi.Create<R> kMulti<R>(List<IKorssa<R>> korssas)
         where R : class, Rog =>
         new(korssas);
 }

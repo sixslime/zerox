@@ -4,7 +4,7 @@ using Roggis;
 
 public sealed record Not : Korssa.Defined.PureFunction<Bool, Bool>
 {
-    public Or(IKorssa<Bool> val) : base(val)
+    public Not(IKorssa<Bool> val) : base(val)
     { }
 
     protected override Bool EvaluatePure(Bool val) =>

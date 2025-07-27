@@ -4,7 +4,7 @@ using Roggis;
 
 public sealed record And : Korssa.Defined.PureFunction<Bool, Bool, Bool>
 {
-    public Add(IKorssa<Bool> a, IKorssa<Bool> b) : base(a, b)
+    public And(IKorssa<Bool> a, IKorssa<Bool> b) : base(a, b)
     { }
 
     protected override Bool EvaluatePure(Bool a, Bool b) =>

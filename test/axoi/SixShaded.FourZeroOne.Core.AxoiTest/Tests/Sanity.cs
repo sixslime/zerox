@@ -39,7 +39,7 @@ public class Sanity
     public async Task FlattenNolla() =>
         await Run(
         c =>
-            Core.kMulti<IMulti<Number>>(
+            Core.kMultiOld<IMulti<Number>>(
                 (1..10).kFixed(),
                 Core.kNollaFor<IMulti<Number>>())
                 .kFlatten()
@@ -115,7 +115,7 @@ public class Sanity
                     iComp.kRef().kWrite(401.kFixed()),
                 ],
                 Value =
-                    Core.kMulti(
+                    Core.kMultiOld(
                     iComp.kRef()
                         .kGet()
                         .DeTesAssertRoggi(c, r => r.Value is 401, "direct reference"),
@@ -179,7 +179,7 @@ public class Sanity
                         .kAsVariable(out var iObj)
                 ],
                 Value =
-                    Core.kMulti<Rog>(
+                    Core.kMultiOld<Rog>(
                     Core.kCompose<uBarRovetu>()
                         .kWithRovi<uBarRovetu, Number>(uFooRovetu.NUM, 7575.kFixed())
                         .kGetVarovi(uBarRovetu.FOO_MAP, iFooKeyA.kRef())
@@ -217,7 +217,7 @@ public class Sanity
                         .kAsVariable(out var iComp)
                 ],
                 Value =
-                    Core.kMulti<Rog>(
+                    Core.kMultiOld<Rog>(
                     iComp.kRef()
                         .kGetRovi(uAbstract.ABSTRACT_GET)
                         .DeTesAssertRoggi(c, r => r.Value == 5),

@@ -22,7 +22,7 @@ public static class MapWithIndex<RIn, ROut>
                                 .kIfTrue<Multi<ROut>>(
                                 new()
                                 {
-                                    Then = Core.kMulti<ROut>(),
+                                    Then = Core.kMultiOld<ROut>(),
                                     Else =
                                         iMapFunction.kRef()
                                             .kExecuteWith(

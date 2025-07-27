@@ -12,7 +12,7 @@ public static class ResolveAbility
         Du = Axoi.Korvedu("ResolveAbility"),
         Definition = 
             (_, iAbility) =>
-                iAbility.kRef().kSwitch(Core.Hint<IRoveggi<uResolvedAbility>>(),
+                iAbility.kRef().kSelector(Core.Hint<IRoveggi<uResolvedAbility>>(),
                     [
                         new(iX => iX.kRef().kCast<IRoveggi<uSourcedAbility>>().kExists(), )
                     ]

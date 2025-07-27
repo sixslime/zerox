@@ -88,7 +88,7 @@ public static class SetupGame
                                                 // TODO: define rest of actions
                                             ],
                                             Value =
-                                                Core.kMulti(iActionEndTurn.kRef())
+                                                Core.kMultiOld(iActionEndTurn.kRef())
                                                     .kMap(
                                                     iActionPlayerFunction =>
                                                         Core.kCompose<uPlayableAction>()
@@ -98,7 +98,7 @@ public static class SetupGame
                                 .kAsVariable(out var iPlayableActions),
 
                             // MAKE clear:
-                            Core.kMulti<Rog>(
+                            Core.kMultiOld<Rog>(
                                 Core.kAllRovedanggiKeys<uPlayerIdentifier, IRoveggi<uPlayerData>>()
                                     .kMap(
                                     iIdentifier =>
@@ -173,7 +173,7 @@ public static class SetupGame
                                 .kAsVariable(out var iMakePlayerModifiers),
                         ],
                         Value =
-                            Core.kMulti<Rog>(
+                            Core.kMultiOld<Rog>(
                             iMakeClear.kRef().kExecute(),
                             iMakeGame.kRef().kExecute(),
                             iMakePlayers.kRef().kExecute(),

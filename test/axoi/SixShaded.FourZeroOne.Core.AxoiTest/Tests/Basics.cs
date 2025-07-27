@@ -140,7 +140,7 @@ public sealed class Basics
                                         .kAsVariable(out var theNumber),
                                 ],
                                 Value =
-                                    Core.kMulti(theNumber.kRef(), theNumber.kRef().kMultiply(2.kFixed()))
+                                    Core.kMultiOld(theNumber.kRef(), theNumber.kRef().kMultiply(2.kFixed()))
                                         .DeTesAssertMemory(c, m => m.Objects.Count() == 1, "inner count check (1)")
                                         .DeTesAssertMemory(c, m => m.GetObject(theNumber).Check(out var v) && v.Value is 401, "reference check"),
                             })
@@ -225,7 +225,7 @@ public sealed class Basics
                                         .kAsVariable(out var iComp),
                                 ],
                                 Value =
-                                    Core.kMulti(
+                                    Core.kMultiOld(
                                     iComp.kRef()
                                         .kWithRovi(uFooRovedantu.PART, false.kFixed()),
                                     iComp.kRef()
@@ -320,16 +320,16 @@ public sealed class Basics
                     iMutable.kRef()
                         .DeTesAssertRoggi(c, r => r.Value == 1, "init one")
                         .kAsVariable(out var iOne),
-                    Core.kMulti<Rog>(
+                    Core.kMultiOld<Rog>(
                     10.kFixed().kAsVariable(out var iTest),
                     iTest.kRef().kAdd(1.kFixed()).kAsVariable(out iTest),
-                    Core.kMulti<Rog>(
+                    Core.kMultiOld<Rog>(
                     iTest.kRef().kAdd(1.kFixed()).kAsVariable(out iTest),
                     iTest.kRef().kAdd(1.kFixed()).kAsVariable(out iTest)),
                     iTest.kRef().DeTesAssertRoggi(c, r => r.Value == 13)),
                 ],
                 Value =
-                    Core.kMulti<Number>(
+                    Core.kMultiOld<Number>(
                     iMutable.kRef().DeTesAssertRoggi(c, r => r.Value == 1, "value mutable"),
                     iTest.kRef().DeTesAssertRoggi(c, r => r.Value == 13),
                     iZero.kRef().DeTesAssertRoggi(c, r => r.Value == 0, "value zero"),

@@ -47,7 +47,7 @@ public static class Distinct<R>
                                                                     .kIfTrue<Multi<R>>(
                                                                     new()
                                                                     {
-                                                                        Then = Core.kMulti<R>(),
+                                                                        Then = Core.kMultiOld<R>(),
                                                                         Else = iElement.kRef().kYield()
                                                                     })),
                                                         B =
@@ -57,7 +57,7 @@ public static class Distinct<R>
                                                                     .kIfTrue<IMulti<R>>(
                                                                     new()
                                                                     {
-                                                                        Then = Core.kMulti<R>(),
+                                                                        Then = Core.kMultiOld<R>(),
                                                                         Else = iElement.kRef().kYield()
                                                                     })),
                                                         C =
@@ -68,8 +68,8 @@ public static class Distinct<R>
                         .kExecuteWith(
                         new()
                         {
-                            A = Core.kMulti<R>(),
-                            B = Core.kMulti<R>(),
+                            A = Core.kMultiOld<R>(),
+                            B = Core.kMultiOld<R>(),
                             C = 1.kFixed()
                         })
         };
