@@ -6,15 +6,22 @@ using Core = Core.Syntax.Core;
 
 public static class ResolveAbility
 {
-    public static Korvessa<IRoveggi<uAbility>, IRoveggi<uResolvedAbility>> Construct(IKorssa<IRoveggi<uAbility>> ability)
-    => new(ability)
-    {
-        Du = Axoi.Korvedu("ResolveAbility"),
-        Definition = 
-            (_, iAbility) =>
-                iAbility.kRef().kSelector(Core.Hint<IRoveggi<uResolvedAbility>>(),
+    public static Korvessa<IRoveggi<uAbility>, IRoveggi<uResolvedAbility>> Construct(IKorssa<IRoveggi<uAbility>> ability) =>
+        new(ability)
+        {
+            Du = Axoi.Korvedu("ResolveAbility"),
+            Definition =
+                (_, iAbility) =>
+                    Core.kSelector<IRoveggi<uResolvedAbility>>(
                     [
-                        new(iX => iX.kRef().kCast<IRoveggi<uSourcedAbility>>().kExists(), )
-                    ]
-    }
+                        () =>
+                            iAbility.kRef()
+                                .kCast<IRoveggi<uSourcedAbility>>()
+                                .kResolve(),
+                        () =>
+                            iAbility.kRef()
+                                .kCast<IRoveggi<uUnsourcedAbility>>()
+                                .kResolve(),
+                    ])
+        };
 }

@@ -31,4 +31,9 @@ public static partial class KorssaSyntax
             Environment = [val.kAsVariable(out var iVal)],
             Value = Core.kSelector<ROut>(relativeStatements(iVal))
         });
+
+    public static Korssas.SubEnvironment<ROut> ksSelectorExpr<RIn, ROut>(this IKorssa<RIn> val, Structure.Hint<ROut> resultHint, Func<DynamicRoda<RIn>, List<Func<IKorssa<ROut>>>> relativeStatements)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        ksSelectorExpr(val, relativeStatements);
 }
