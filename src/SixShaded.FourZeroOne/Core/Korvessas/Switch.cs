@@ -24,10 +24,10 @@ public static class Switch<RIn, ROut>
                                 {
                                     A = iInput.kRef()
                                 })
-                                .kIfTrueExplicit<ROut>(
+                                .kIfTrue<ROut>(
                                 new()
                                 {
-                                    Then = iReturners.kRef().kGetIndex(iIndex.kRef()),
+                                    Then = iReturners.kRef().kGetIndex(iIndex.kRef()).kExecute(),
                                     Else =
                                         iRecurse.kRef()
                                             .kExecuteWith(
@@ -35,9 +35,7 @@ public static class Switch<RIn, ROut>
                                             {
                                                 A = iIndex.kRef().kAdd(1.kFixed())
                                             })
-                                            .kMetaBoxed([])
-                                })
-                                .kExecute())
+                                }))
                         .kExecuteWith(
                         new()
                         {

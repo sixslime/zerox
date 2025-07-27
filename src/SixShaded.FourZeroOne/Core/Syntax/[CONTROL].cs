@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
 using Roggis;
+using Korvessa.Defined;
 
 public static partial class Core
 {
@@ -11,17 +12,20 @@ public static partial class Core
 
 public static partial class KorssaSyntax
 {
-    public static Korssas.IfElse<R> kIfTrueExplicit<R>(this IKorssa<Bool> condition, Structure.Korssa.IfElse<MetaFunction<R>> block)
-        where R : class, Rog =>
-        new(condition, block.Then, block.Else);
 
-    public static Korssas.Execute<R> kIfTrue<R>(this IKorssa<Bool> condition, Structure.Korssa.IfElse<R> block)
+    public static Korssas.IfElse<R> kIfTrue<R>(this IKorssa<Bool> condition, Structure.Korssa.IfElse<R> block)
         where R : class, Rog =>
-        condition.kIfTrueExplicit<R>(
-            new()
-            {
-                Then = block.Then.kMetaBoxed([]),
-                Else = block.Else.kMetaBoxed([]),
-            })
-            .kExecute();
+        new(condition, block.Then.kMetaBoxed([]), block.Else.kMetaBoxed([]));
+
+    public static Korvessa<RIn, IMulti<MetaFunction<RIn, Bool>>, IMulti<MetaFunction<ROut>>, ROut> kSwitch<RIn, ROut>(this IKorssa<RIn> value, IEnumerable<(IKorssa<MetaFunction<RIn, Bool>>, IKorssa<MetaFunction<ROut>>)> matchPairs)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        matchPairs.ToArray()
+            .ExprAs(
+            matchArr =>
+                Korvessas.Switch<RIn, ROut>.Construct(
+                value,
+                Core.kMulti(matchArr.Map(x => x.Item1).ToArray()),
+                Core.kMulti(matchArr.Map(x => x.Item2).ToArray())));
+
 }

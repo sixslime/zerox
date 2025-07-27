@@ -15,12 +15,11 @@ public static class CatchNolla<R>
                 (_, iValue, iFallback) =>
                     iValue.kRef()
                         .kExists()
-                        .kIfTrueExplicit<R>(
+                        .kIfTrue<R>(
                         new()
                         {
-                            Then = iValue.kRef().kMetaBoxed([]),
-                            Else = iFallback.kRef(),
-                        })
-                        .kExecute(),
+                            Then = iValue.kRef(),
+                            Else = iFallback.kRef().kExecute(),
+                        }),
         };
 }

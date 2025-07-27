@@ -145,14 +145,14 @@ public static class SetupGame
                                 .kMetaBoxed([])
                                 .kAsVariable(out var iMakeMap),
 
-                            // MOD game:
+                            // MAKE game modifiers:
                             iConfig.kRef()
                                 .kGetRovi(uGameConfiguration.MODIFIERS)
                                 .kMap(iModifier => iModifier.kRef().kExecute())
                                 .kMetaBoxed([])
                                 .kAsVariable(out var iMakeGameModifiers),
 
-                            // MOD players:
+                            // MAKE player modifiers:
                             Infinite.Game.kGet()
                                 .kGetRovi(uGame.TURN_ORDER)
                                 .kMap(
