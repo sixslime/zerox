@@ -40,11 +40,11 @@ public static partial class KorssaSyntax
 
     public static Korssas.Multi.GetIndex<R> kGetIndex<R>(this IKorssa<IMulti<R>> from, IKorssa<Number> index)
         where R : class, Rog =>
-        new(korssa, index);
+        new(from, index);
 
     public static Korssas.Multi.GetSlice<R> kGetSlice<R>(this IKorssa<IMulti<R>> from, IKorssa<NumRange> index)
         where R : class, Rog =>
-        new(korssa, index);
+        new(from, index);
 
     public static Korssas.Multi.Reverse<R> kReversed<R>(this IKorssa<IMulti<R>> source)
         where R : class, Rog =>
@@ -65,7 +65,7 @@ public static partial class KorssaSyntax
     public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, Func<DynamicRoda<RIn>, IKorssa<ROut>> mapFunction)
         where RIn : class, Rog
         where ROut : class, Rog =>
-        Korvessas.Map<RIn, ROut>.Construct(source, Core.kMetaFunction(captures, mapFunction));
+        Korvessas.Map<RIn, ROut>.Construct(source, Core.kMetaFunction([], mapFunction));
 
     public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IKorssa<MetaFunction<RIn, ROut>> mapFunction)
         where RIn : class, Rog
@@ -75,7 +75,7 @@ public static partial class KorssaSyntax
     public static Korvessa<IMulti<RIn>, MetaFunction<RIn, Number, ROut>, Multi<ROut>> kMapWithIndex<RIn, ROut>(this IKorssa<IMulti<RIn>> source, Func<DynamicRoda<RIn>, DynamicRoda<Number>, IKorssa<ROut>> mapFunction)
         where RIn : class, Rog
         where ROut : class, Rog =>
-        Korvessas.MapWithIndex<RIn, ROut>.Construct(source, Core.kMetaFunction(captures, mapFunction));
+        Korvessas.MapWithIndex<RIn, ROut>.Construct(source, Core.kMetaFunction([], mapFunction));
 
     public static Korvessa<IMulti<RIn>, MetaFunction<RIn, Number, ROut>, Multi<ROut>> kMapWithIndex<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IKorssa<MetaFunction<RIn, Number, ROut>> mapFunction)
         where RIn : class, Rog
