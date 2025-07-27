@@ -12,11 +12,13 @@ public static class ResolveSourcedAbility
         Du = Axoi.Korvedu("ResolveSourcedAbility"),
         Definition = 
             (_, iAbility) =>
-                Core.kSelector<IRoveggi<uResolvedAbility>>(new()
+                Core.kSubEnvironment<IRoveggi<uResolvedSourcedAbility>>(
+                new()
                 {
-                    () => 
-                        iAbility.kRef().kCast<IRoveggi<uSourcedAbility>>(),
-                    () =>
+                    Environment =
+                        [
+
+                        ]
                 })
     }
 }
