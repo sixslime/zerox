@@ -18,7 +18,8 @@ public static class ResolveSourcedAbility
                     Environment =
                         [
 
-                        ]
+                        ],
+                    Value =
                 })
     }
 }

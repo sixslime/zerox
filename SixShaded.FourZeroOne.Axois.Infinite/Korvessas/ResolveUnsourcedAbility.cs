@@ -23,10 +23,14 @@ public static class ResolveUnsourcedAbility
                                 .kAsVariable(out var iInstructions)
                         ],
                         Value =
-                            Core.kCompose<uResolvedUnsourcedAbility>()
-                                .kWithRovi(uResolvedUnsourcedAbility.ABILITY, iAbility.kRef())
-                                .kWithRovi(uResolved.INSTRUCTIONS, iInstructions.kRef())
-                                .kCast<IRoveggi<uResolvedUnsourcedAbility>>()
+                            iInstructions.kRef()
+                                .ksKeepNolla(
+                                () =>
+                                    Core.kCompose<uResolvedUnsourcedAbility>()
+                                        .kWithRovi(uResolvedUnsourcedAbility.ABILITY, iAbility.kRef())
+                                        .kWithRovi(uResolved.INSTRUCTIONS, iInstructions.kRef())
+                                        .kCast<IRoveggi<uResolvedUnsourcedAbility>>())
+
                     })
         };
 }
