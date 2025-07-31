@@ -12,16 +12,63 @@ public static class ResolveAbility
             Du = Axoi.Korvedu("ResolveAbility"),
             Definition =
                 (_, iAbility) =>
-                    Core.kSelector<IRoveggi<uResolvedAbility>>(
-                    [
-                        () =>
+                    Core.kSubEnvironment<IRoveggi<uResolvedAbility>>(
+                    new()
+                    {
+                        Environment =
+                        [
                             iAbility.kRef()
-                                .kCast<IRoveggi<uSourcedAbility>>()
-                                .kResolve(),
-                        () =>
-                            iAbility.kRef()
-                                .kCast<IRoveggi<uUnsourcedAbility>>()
-                                .kResolve(),
-                    ])
+                                .kGetRovi(uAbility.ENVIRONMENT_PREMOD)
+                                .kExecute()
+                        ],
+                        Value =
+                            Core.kSelector<IRoveggi<uResolvedAbility>>(
+                            [
+                                // SOURCED:
+                                () =>
+                                    iAbility.kRef()
+                                        .kCast<IRoveggi<uSourcedAbility>>()
+                                        .kResolve(),
+
+                                // UNSOURCED:
+                                () =>
+                                    Core.kSubEnvironment<IRoveggi<uResolvedUnsourcedAbility>>(
+                                    new()
+                                    {
+                                        Environment =
+                                        [
+                                            iAbility.kRef()
+                                                .kCast<IRoveggi<uUnsourcedAbility>>()
+                                                .kAsVariable(out var iUnsourced)
+                                        ],
+                                        Value =
+                                            iUnsourced.kRef()
+                                                .ksKeepNolla(
+                                                () =>
+                                                    Core.kSubEnvironment<IRoveggi<uResolvedUnsourcedAbility>>(
+                                                    new()
+                                                    {
+                                                        Environment =
+                                                        [
+                                                            iUnsourced.kRef()
+                                                                .kGetRovi(uUnsourcedAbility.ACTION)
+                                                                .kExecute()
+                                                                .kAsVariable(out var iInstructions)
+                                                        ],
+                                                        Value =
+                                                            iInstructions.kRef()
+                                                                .ksKeepNolla(
+                                                                () =>
+                                                                    Core.kCompose<uResolvedUnsourcedAbility>()
+                                                                        .kWithRovi(uResolvedUnsourcedAbility.ABILITY, iUnsourced.kRef())
+                                                                        .kWithRovi(uResolved.INSTRUCTIONS, iInstructions.kRef())
+                                                                        .kCast<IRoveggi<uResolvedUnsourcedAbility>>())
+
+                                                    }))
+
+                                    })
+                            ])
+                    })
+
         };
 }

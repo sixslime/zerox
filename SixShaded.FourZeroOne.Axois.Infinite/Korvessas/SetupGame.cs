@@ -93,6 +93,7 @@ public static class SetupGame
                                                 uPlayerData.STACK,
                                                 iDeck.kRef().kGetSlice(iHandSize.kRef().kAdd(1.kFixed()).kRangeTo(iDeck.kRef().kCount())))
                                                 .kWithRovi(uPlayerData.AVAILABLE_ACTIONS, iPlayableActions.kRef())
+                                                .kWithRovi(uPlayerData.PERSPECTIVE_ROTATION, iDeclaredPlayer.kRef().kGetRovi(uPlayerDeclaration.PERSPECTIVE_ROTATION))
                                                 .kWithRovi(uPlayerData.CONTROL, 0.kFixed())
                                                 .kWithRovi(uPlayerData.ENERGY, 0.kFixed()),
                                     }))
