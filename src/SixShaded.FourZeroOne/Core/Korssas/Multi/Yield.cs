@@ -9,7 +9,7 @@ public sealed record Yield<R> : Korssa.Defined.PureFunction<R, Roggis.Multi<R>>
     protected override Roggis.Multi<R> EvaluatePure(R in1) =>
         new()
         {
-            Values = in1.Yield().ToPSequence(),
+            Values = in1.AsSome().Yield().ToPSequence(),
         };
 
     protected override IOption<string> CustomToString() => $"^{Arg1}".AsSome();
