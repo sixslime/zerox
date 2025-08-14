@@ -64,13 +64,11 @@ public static partial class KorssaSyntax
         Korvessas.Map<RIn, ROut>.Construct(source, Core.kMetaFunction([], mapFunction));
 
     public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Multi<R>> kWhere<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Bool>> predicate)
-        where R : class, Rog
-        where ROut : class, Rog =>
+        where R : class, Rog =>
         Korvessas.Filter<R>.Construct(source, predicate);
 
     public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Multi<R>> kWhere<R>(this IKorssa<IMulti<R>> source, Func<DynamicRoda<R>, IKorssa<Bool>> predicate)
-        where R : class, Rog
-        where ROut : class, Rog =>
+        where R : class, Rog =>
         Korvessas.Filter<R>.Construct(source, Core.kMetaFunction([], predicate));
 
     public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IKorssa<MetaFunction<RIn, ROut>> mapFunction)
