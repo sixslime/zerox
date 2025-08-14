@@ -17,4 +17,5 @@ public record Flatten<R>(IKorssa<IMulti<IMulti<R>>> multi) : Korssa.Defined.Func
             .Press()
             .ToCompletedITask();
 
+    protected override IOption<string> CustomToString() => $"{Arg1}__".AsSome();
 }

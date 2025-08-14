@@ -16,5 +16,5 @@ public record IfElse<R> : Korssa.Defined.StateImplementedKorssa<Roggis.Bool, Met
                     ? in2.RemapAs(func => func.ConstructMetaExecute())
                     : in3.RemapAs(func => func.ConstructMetaExecute()))
             .Press();
-    protected override IOption<string> CustomToString() => $"( if {Arg1} then {Arg2} else {Arg3} )".AsSome();
+    protected override IOption<string> CustomToString() => $"( if {Arg1} then {(Arg2 is DefineMetaFunction<R> f1 ? f1.Korssa : $"do {Arg2}")} else {(Arg3 is DefineMetaFunction<R> f2 ? f2.Korssa : $"do {Arg3}")} )".AsSome();
 }
