@@ -46,6 +46,10 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(source);
 
+    public static Korssas.Multi.Clean<R> kClean<R>(this IKorssa<IMulti<R>> source)
+        where R : class, Rog =>
+        new(source);
+
     public static Korvessa<IMulti<R>, Multi<R>> kDistinct<R>(this IKorssa<IMulti<R>> source)
         where R : class, Rog =>
         Korvessas.Distinct<R>.Construct(source);
