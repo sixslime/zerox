@@ -32,7 +32,7 @@ public static class SafeUpdateVarovi<C, RKey, RVal>
                         ],
                         Value =
                             iValue.kRef()
-                                .ksKeepNolla(
+                                .kKeepNolla(
                                 () => iHolder.kRef()
                                     .kWithVarovi(varovu, iKey.kRef(), iValue.kRef()))
                     })

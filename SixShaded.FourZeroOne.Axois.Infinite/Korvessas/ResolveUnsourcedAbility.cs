@@ -24,7 +24,7 @@ public static class ResolveUnsourcedAbility
                         ],
                         Value =
                             iInstructions.kRef()
-                                .ksKeepNolla(
+                                .kKeepNolla(
                                 () =>
                                     Core.kCompose<uResolvedUnsourcedAbility>()
                                         .kWithRovi(uResolvedUnsourcedAbility.ABILITY, iAbility.kRef())

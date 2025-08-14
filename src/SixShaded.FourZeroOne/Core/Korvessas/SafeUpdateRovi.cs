@@ -31,7 +31,7 @@ public static class SafeUpdateRovi<C, R>
                         ],
                         Value =
                             iValue.kRef()
-                                .ksKeepNolla(
+                                .kKeepNolla(
                                 () => iHolder.kRef()
                                     .kWithRovi(rovu, iValue.kRef()))
                     })

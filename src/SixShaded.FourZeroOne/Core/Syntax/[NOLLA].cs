@@ -22,13 +22,11 @@ public static partial class KorssaSyntax
 
     public static Korssas.Exists kExists(this Kor korssa) => new(korssa);
 
-    public static IKorssa<R> ksKeepNolla<R>(this Kor potentialNolla, Func<IKorssa<R>> value)
+    public static Korvessa<Rog, MetaFunction<R>, R> kKeepNolla<R>(this Kor potentialNolla, Func<IKorssa<R>> value)
         where R : class, Rog =>
-        potentialNolla.kExists()
-            .kIfTrue<R>(
-            new()
-            {
-                Then = value(),
-                Else = Core.kNollaFor<R>()
-            });
+        Korvessas.KeepNolla<R>.Construct(potentialNolla, Core.kMetaFunction([], value));
+
+    public static Korvessa<Rog, MetaFunction<R>, R> kKeepNolla<R>(this Kor potentialNolla, IKorssa<MetaFunction<R>> value)
+        where R : class, Rog =>
+        Korvessas.KeepNolla<R>.Construct(potentialNolla, value);
 }

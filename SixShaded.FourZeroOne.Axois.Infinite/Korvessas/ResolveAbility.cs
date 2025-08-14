@@ -43,7 +43,7 @@ public static class ResolveAbility
                                         ],
                                         Value =
                                             iUnsourced.kRef()
-                                                .ksKeepNolla(
+                                                .kKeepNolla(
                                                 () =>
                                                     Core.kSubEnvironment<IRoveggi<uResolvedUnsourcedAbility>>(
                                                     new()
@@ -57,7 +57,7 @@ public static class ResolveAbility
                                                         ],
                                                         Value =
                                                             iInstructions.kRef()
-                                                                .ksKeepNolla(
+                                                                .kKeepNolla(
                                                                 () =>
                                                                     Core.kCompose<uResolvedUnsourcedAbility>()
                                                                         .kWithRovi(uResolvedUnsourcedAbility.ABILITY, iUnsourced.kRef())
