@@ -13,9 +13,12 @@ public static class Concat<R>
             Du = Axoi.Korvedu("Concat"),
             Definition =
                 (_, iA, iB) =>
-                    Core.kMultiOld<IMulti<R>>(
-                        iA.kRef(),
-                        iB.kRef())
+                    Core.kMulti<IMulti<R>>(
+                        new()
+                        {
+                            iA.kRef(),
+                            iB.kRef()
+                        })
                         .kFlatten(),
         };
 }
