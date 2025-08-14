@@ -28,8 +28,7 @@ public static class ResolveUnsourcedAbility
                                 () =>
                                     Core.kCompose<uResolvedUnsourcedAbility>()
                                         .kWithRovi(uResolvedUnsourcedAbility.ABILITY, iAbility.kRef())
-                                        .kWithRovi(uResolved.INSTRUCTIONS, iInstructions.kRef())
-                                        .kCast<IRoveggi<uResolvedUnsourcedAbility>>())
+                                        .kWithRovi(Core.Hint<uResolvedUnsourcedAbility>(), uResolved.INSTRUCTIONS, iInstructions.kRef()))
 
                     })
         };

@@ -32,7 +32,23 @@ public static partial class KorssaSyntax
             Rovu = rovu,
         };
 
+    public static With<C, R> kWithRovi<C, R>(this IKorssa<IRoveggi<C>> holder, Structure.Hint<C> hint, ISetRovu<C, R> rovu, IKorssa<R> data)
+        where C : IRovetu
+        where R : class, Rog =>
+        new(holder, data)
+        {
+            Rovu = rovu,
+        };
+
     public static With<C, R> kWithoutRovi<C, R>(this IKorssa<IRoveggi<C>> holder, ISetRovu<C, R> rovu)
+        where C : IRovetu
+        where R : class, Rog =>
+        new(holder, Core.kNollaFor<R>())
+        {
+            Rovu = rovu,
+        };
+
+    public static With<C, R> kWithoutRovi<C, R>(this IKorssa<IRoveggi<C>> holder, Structure.Hint<C> hint, ISetRovu<C, R> rovu)
         where C : IRovetu
         where R : class, Rog =>
         new(holder, Core.kNollaFor<R>())

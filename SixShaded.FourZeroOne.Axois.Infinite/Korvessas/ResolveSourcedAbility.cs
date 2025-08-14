@@ -15,8 +15,22 @@ public static class ResolveSourcedAbility
                     Core.kSubEnvironment<IRoveggi<uResolvedSourcedAbility>>(
                     new()
                     {
-                        Environment = [],
-                        Value = Core.kCompose<uResolvedSourcedAbility>()
+                        Environment =
+                        [
+                            iAbility.kRef()
+                                .kGetRovi(uSourcedAbility.ACTION)
+                                .kExecute()
+                                .kAsVariable(out var iInstructions)
+                        ],
+                        Value =
+                            iInstructions.kRef()
+                                .kKeepNolla(
+                                () =>
+                                    Core.kCompose<uResolvedSourcedAbility>()
+                                        .kWithRovi(uResolvedSourcedAbility.ABILITY, iAbility.kRef())
+                                        .kWithRovi(uResolved.INSTRUCTIONS, iInstructions.kRef())
+                                        .kCast<IRoveggi<uResolvedSourcedAbility>>())
+
                     })
         };
 }

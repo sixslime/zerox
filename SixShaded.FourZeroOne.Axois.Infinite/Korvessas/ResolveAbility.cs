@@ -32,41 +32,9 @@ public static class ResolveAbility
 
                                 // UNSOURCED:
                                 () =>
-                                    Core.kSubEnvironment<IRoveggi<uResolvedUnsourcedAbility>>(
-                                    new()
-                                    {
-                                        Environment =
-                                        [
-                                            iAbility.kRef()
-                                                .kCast<IRoveggi<uUnsourcedAbility>>()
-                                                .kAsVariable(out var iUnsourced)
-                                        ],
-                                        Value =
-                                            iUnsourced.kRef()
-                                                .kKeepNolla(
-                                                () =>
-                                                    Core.kSubEnvironment<IRoveggi<uResolvedUnsourcedAbility>>(
-                                                    new()
-                                                    {
-                                                        Environment =
-                                                        [
-                                                            iUnsourced.kRef()
-                                                                .kGetRovi(uUnsourcedAbility.ACTION)
-                                                                .kExecute()
-                                                                .kAsVariable(out var iInstructions)
-                                                        ],
-                                                        Value =
-                                                            iInstructions.kRef()
-                                                                .kKeepNolla(
-                                                                () =>
-                                                                    Core.kCompose<uResolvedUnsourcedAbility>()
-                                                                        .kWithRovi(uResolvedUnsourcedAbility.ABILITY, iUnsourced.kRef())
-                                                                        .kWithRovi(uResolved.INSTRUCTIONS, iInstructions.kRef())
-                                                                        .kCast<IRoveggi<uResolvedUnsourcedAbility>>())
-
-                                                    }))
-
-                                    })
+                                    iAbility.kRef()
+                                        .kCast<IRoveggi<uUnsourcedAbility>>()
+                                        .kResolve(),
                             ])
                     })
 
