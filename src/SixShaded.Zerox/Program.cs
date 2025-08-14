@@ -63,5 +63,5 @@ internal class Program
  */
 
 /* TODO
- * assigning korssas should assign nolla (as opposed to just not assigning if data is nolla, how it is now).
+ * - player rotations :/
  */
