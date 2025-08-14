@@ -40,6 +40,7 @@ public static class DistinctBy<R>
                                                     .kAsVariable(out var iKeyValue),
                                                 iSeen.kRef()
                                                     .kContains(iKeyValue.kRef())
+                                                    .kCatchNolla(() => true.kFixed())
                                                     .kAsVariable(out var iIsDuplicate)
                                             ],
                                             Value =
@@ -54,7 +55,7 @@ public static class DistinctBy<R>
                                                                     .kIfTrue<Multi<R>>(
                                                                     new()
                                                                     {
-                                                                        Then = Core.kMultiOld<R>(),
+                                                                        Then = Core.kMulti<R>([]),
                                                                         Else = iElement.kRef().kYield()
                                                                     })),
                                                         B =
@@ -64,7 +65,7 @@ public static class DistinctBy<R>
                                                                     .kIfTrue<IMulti<Rog>>(
                                                                     new()
                                                                     {
-                                                                        Then = Core.kMultiOld<Rog>(),
+                                                                        Then = Core.kMulti<Rog>([]),
                                                                         Else = iKeyValue.kRef().kYield()
                                                                     })),
                                                         C =
@@ -75,8 +76,8 @@ public static class DistinctBy<R>
                         .kExecuteWith(
                         new()
                         {
-                            A = Core.kMultiOld<R>(),
-                            B = Core.kMultiOld<Rog>(),
+                            A = Core.kMulti<R>([]),
+                            B = Core.kMulti<Rog>([]),
                             C = 1.kFixed()
                         })
         };

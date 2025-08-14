@@ -33,6 +33,7 @@ public static class Distinct<R>
                                                     .kAsVariable(out var iElement),
                                                 iSeen.kRef()
                                                     .kContains(iElement.kRef())
+                                                    .kCatchNolla(() => true.kFixed())
                                                     .kAsVariable(out var iIsDuplicate)
                                             ],
                                             Value =
@@ -47,7 +48,7 @@ public static class Distinct<R>
                                                                     .kIfTrue<Multi<R>>(
                                                                     new()
                                                                     {
-                                                                        Then = Core.kMultiOld<R>(),
+                                                                        Then = Core.kMulti<R>([]),
                                                                         Else = iElement.kRef().kYield()
                                                                     })),
                                                         B =
@@ -57,7 +58,7 @@ public static class Distinct<R>
                                                                     .kIfTrue<IMulti<R>>(
                                                                     new()
                                                                     {
-                                                                        Then = Core.kMultiOld<R>(),
+                                                                        Then = Core.kMulti<R>([]),
                                                                         Else = iElement.kRef().kYield()
                                                                     })),
                                                         C =
@@ -68,8 +69,8 @@ public static class Distinct<R>
                         .kExecuteWith(
                         new()
                         {
-                            A = Core.kMultiOld<R>(),
-                            B = Core.kMultiOld<R>(),
+                            A = Core.kMulti<R>([]),
+                            B = Core.kMulti<R>([]),
                             C = 1.kFixed()
                         })
         };
