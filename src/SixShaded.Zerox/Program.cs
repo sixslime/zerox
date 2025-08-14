@@ -54,6 +54,8 @@ internal class Program
  * perhaps rename
  * Korvessa -> Korssave
  * Roveggi -> Roggive
+ *
+ * NOLLA CHAR : \u2205
  */
 
 /* DEV

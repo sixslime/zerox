@@ -5,7 +5,7 @@ public sealed record Multi<R> : Roggi.Defined.Roggi, IMulti<R>
 {
     public required PSequence<IOption<R>> Values { get; init; }
     public override int GetHashCode() => Elements.GetHashCode();
-    public override string ToString() => $"[{string.Join(", ", Elements.Map(x => x.ToString()))}]";
+    public override string ToString() => $"[{string.Join(", ", Elements.Map(x => x.Check(out var val) ? val.ToString() : "\u2205"))}]";
     public bool Equals(Multi<R>? other) => other is not null && Elements.SequenceEqual(other.Elements);
     public IEnumerable<IOption<R>> Elements => Values.Elements;
     public int Count => Values.Count;

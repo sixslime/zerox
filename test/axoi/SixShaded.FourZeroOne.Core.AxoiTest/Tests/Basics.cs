@@ -51,7 +51,7 @@ public sealed class Basics
                 Core.kCompose<uPowerExpr>()
                     .kWithRovi(uPowerExpr.POWER, power.kFixed())
                     .kWithRovi(uPowerExpr.NUM, basePower.kFixed()))
-                .DeTesAssertRoggi(c, r => r.GetComponent(uFooRovetu.MULTI_BOOL).Unwrap().Elements.Map(x => x.IsTrue).SequenceEqual(bools), "MULTI_BOOL check")
+                .DeTesAssertRoggi(c, r => r.GetComponent(uFooRovetu.MULTI_BOOL).Unwrap().Elements.Map(x => x.Check(out var v) && v.IsTrue).SequenceEqual(bools), "MULTI_BOOL check")
                 .kGetRovi(uFooRovetu.POWER_OBJ)
                 .DeTesAssertRoggi(
                 c, r =>
@@ -78,7 +78,7 @@ public sealed class Basics
                         ? !r.IsSome()
                         : r.Check(out var multi) &&
                           multi.Count == firstSelection.Length &&
-                          firstSelection.Map(i => initialPool[i]).SequenceEqual(multi.Elements.Map(x => x.Value)))
+                          firstSelection.Map(i => initialPool[i]).SequenceEqual(multi.Elements.Map(x => x.Unwrap().Value)))
                 .DeTesReference(c, out var reducedPool)
                 .kIOSelectOne()
                 .DeTesDomain(c, [secondSelection], out var secondDomain, "second selection")
@@ -86,7 +86,7 @@ public sealed class Basics
                 c, r =>
                     secondSelection >= firstSelection.Length
                         ? !r.IsSome()
-                        : r.Check(out var sel) && reducedPool.Roggi.Elements.GetAt(secondSelection).Unwrap() == sel));
+                        : r.Check(out var sel) && reducedPool.Roggi.Elements.GetAt(secondSelection).Press().Unwrap() == sel));
 
     [TestMethod]
     public async Task IfElseBranching() =>
@@ -200,7 +200,7 @@ public sealed class Basics
                     })
                     .kExecute())
             .DeTesAssertRoggi(c, r => r.Count is 5, "count check (5)")
-            .DeTesAssertRoggi(c, r => r.Elements.Map(x => x.Value).SequenceEqual([15, 25, 65, 85, 105]), "sequence check")
+            .DeTesAssertRoggi(c, r => r.Elements.Map(x => x.Unwrap().Value).SequenceEqual([15, 25, 65, 85, 105]), "sequence check")
             .DeTesAssertMemory(c, m => !m.Objects.Any(), "memory empty check"));
 
     [TestMethod]

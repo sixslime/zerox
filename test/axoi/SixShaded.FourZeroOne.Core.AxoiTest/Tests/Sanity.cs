@@ -24,7 +24,7 @@ public class Sanity
         await Run(
         c =>
             (1..5).kFixed()
-            .kMap([], x => x.kRef().kAdd(10.kFixed()))
+            .kMap(x => x.kRef().kAdd(10.kFixed()))
             .DeTesAssertRoggi(c, r => r.Count == 5));
 
     [TestMethod]
@@ -32,8 +32,8 @@ public class Sanity
         await Run(c =>
             (1..5).kFixed()
             .kConcat((6..10).kFixed())
-            .kConcat(Core.kNollaFor<NumRange>())
-            .DeTesAssertRoggi(c, r => r.Values.Elements.Map(x => x.Value).SequenceEqual((1..10).ToIter(true))));
+            .kConcat(Core.kMulti<Number>([]))
+            .DeTesAssertRoggi(c, r => r.Values.Elements.Map(x => x.Unwrap().Value).SequenceEqual((1..10).ToIter(true))));
 
     [TestMethod]
     public async Task FlattenNolla() =>
@@ -43,7 +43,17 @@ public class Sanity
                 (1..10).kFixed(),
                 Core.kNollaFor<IMulti<Number>>())
                 .kFlatten()
-                .DeTesAssertRoggi(c, _ => true));
+                .DeTesAssertRoggiUnstable(c, r => !r.IsSome()));
+
+    [TestMethod]
+    public async Task Flatten() =>
+        await Run(
+        c =>
+            (1..10).ToIter(true)
+            .Map(x => x.kFixed().kYield())
+            .kToMulti()
+            .kFlatten()
+            .DeTesAssertRoggi(c, r => r.Elements.Map(x => x.Unwrap().Value).SequenceEqual((1..10).ToIter(true))));
     [TestMethod]
     [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new[] { 5, 2, 0, 1 }, 0)]
     public async Task Selection(int[] initialPool, int[] firstSelection, int secondSelection) =>
@@ -58,7 +68,7 @@ public class Sanity
                         ? !r.IsSome()
                         : r.Check(out var multi) &&
                           multi.Count == firstSelection.Length &&
-                          firstSelection.Map(i => initialPool[i]).SequenceEqual(multi.Elements.Map(x => x.Value)))
+                          firstSelection.Map(i => initialPool[i]).SequenceEqual(multi.Elements.Map(x => x.Unwrap().Value)))
                 .DeTesReference(c, out var reducedPool)
                 .kIOSelectOne()
                 .DeTesDomain(c, [secondSelection], out var secondDomain, "second selection")
@@ -195,10 +205,10 @@ public class Sanity
                         .DeTesAssertRoggi(c, r => r.Value == 200),
                     iObj.kRef()
                         .kGetVarovi(uBarRovetu.NUM_MAP, iNumKeyA.kRef())
-                        .DeTesAssertRoggi(c, r => r.Count == 3 && r.Elements.All(x => x.Value == 300)),
+                        .DeTesAssertRoggi(c, r => r.Count == 3 && r.Elements.All(x => x.Unwrap().Value == 300)),
                     iObj.kRef()
                         .kGetVarovi(uBarRovetu.NUM_MAP, 444.kFixed())
-                        .DeTesAssertRoggi(c, r => r.Count == 4 && r.Elements.All(x => x.Value == 400)))
+                        .DeTesAssertRoggi(c, r => r.Count == 4 && r.Elements.All(x => x.Unwrap().Value == 400)))
             }));
 
     [TestMethod]
