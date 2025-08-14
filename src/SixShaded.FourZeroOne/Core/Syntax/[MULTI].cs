@@ -26,14 +26,6 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(korssas.ToArray());
 
-    public static Korssas.Multi.Exclusion<R> kExclude<R>(this IKorssa<IMulti<R>> from, IKorssa<IMulti<R>> exclude)
-        where R : class, Rog =>
-        new(from, exclude);
-
-    public static Korssas.Multi.Intersection<R> kIntersection<R>(this IKorssa<IMulti<IMulti<R>>> multis)
-        where R : class, Rog =>
-        new(multis);
-
     public static Korssas.Multi.Flatten<R> kFlatten<R>(this IKorssa<IMulti<IMulti<R>>> korssas)
         where R : class, Rog =>
         new(korssas);
