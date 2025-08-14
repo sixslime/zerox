@@ -24,6 +24,7 @@ public sealed record GetKeys<C, RKey, RVal> : Korssa.Defined.RegularKorssa<Multi
                             x.A.MaybeA<VarovaWrapper<C, RKey, RVal>>()
                                 .Retain(y => y.Varovu.Equals(Varovu))
                                 .RemapAs(y => y.KeyRoggi))
+                        .Map(x => x.AsSome())
                         .ToPSequence()
             }.AsSome()
             : new None<Multi<RKey>>())

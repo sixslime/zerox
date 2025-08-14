@@ -1,5 +1,4 @@
 namespace SixShaded.NotRust;
-
 public interface IOption<out T>
 { }
 
@@ -68,7 +67,6 @@ public static class Option
         some
             ? someValue().AsSome()
             : new None<T>();
-
     public static IOption<T> ToOption<T>(this bool some, T someValue) =>
         some
             ? someValue.AsSome()

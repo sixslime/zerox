@@ -12,7 +12,7 @@ public sealed record GetSlice<R> : Korssa.Defined.PureFunction<IMulti<R>, NumRan
         new()
         {
             Values =
-                in2.Elements.FilterMap(i => in1.At(i.Value-1)).ToPSequence()
+                in2.Numbers.FilterMap(i => in1.At(i.Value-1)).ToPSequence()
         };
     protected override IOption<string> CustomToString() => $"{Arg1}[{Arg2}]".AsSome();
 }

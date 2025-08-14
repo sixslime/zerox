@@ -13,7 +13,7 @@ public sealed record AllValues<D, R> : Korssa.Defined.Value<Multi<R>>
                 Values =
                     runtime.CurrentMemory
                         .GetRovedanggiAssignmentsOfType<D, R>()
-                        .Map(x => x.B)
+                        .Map(x => x.B.AsSome())
                         .ToPSequence(),
             }.AsSome()
             .ToCompletedITask();

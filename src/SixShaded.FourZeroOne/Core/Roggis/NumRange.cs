@@ -15,10 +15,12 @@ public sealed record NumRange : Roggi.Defined.NoOp, IMulti<Number>
     public override string ToString() => $"{Start}..{End}";
     public int Count => Start.Value <= End.Value ? End.Value - Start.Value + 1 : 0;
 
-    public IEnumerable<IOption<Number>> Elements =>
+    public IEnumerable<Number> Numbers =>
         Start.Value <= End.Value
-            ? Start.Sequence(x => x.Value + 1).TakeWhile(x => x.Value <= End.Value).Map(x => x.AsSome())
+            ? Start.Sequence(x => x.Value + 1).TakeWhile(x => x.Value <= End.Value)
             : [];
+
+    IEnumerable<IOption<Number>> IHasElements<IOption<Number>>.Elements => Numbers.Map(x => x.AsSome());
 
     public IOption<IOption<Number>> At(int index) =>
         (index <= End.Value - Start.Value)
