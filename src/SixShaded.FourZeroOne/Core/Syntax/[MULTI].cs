@@ -50,6 +50,10 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(source);
 
+    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Bool> kAllMatch<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Bool>> predicate)
+        where R : class, Rog =>
+        Korvessas.AllMatch<R>.Construct(source, predicate);
+
     public static Korvessa<IMulti<R>, Multi<R>> kDistinct<R>(this IKorssa<IMulti<R>> source)
         where R : class, Rog =>
         Korvessas.Distinct<R>.Construct(source);

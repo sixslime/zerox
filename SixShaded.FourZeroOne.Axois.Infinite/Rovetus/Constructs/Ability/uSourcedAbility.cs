@@ -5,6 +5,14 @@ using Identifier;
 public interface uSourcedAbility : IConcreteRovetu, uAbility
 {
     public static new readonly Rovu<uSourcedAbility, IRoveggi<Types.uSourcedType>> TYPE = new(Axoi.Du, "type");
+    /// <summary>
+    /// (targetMatchesType, hasLineOfSight) -> ((source, target) -> isValidTarget)
+    /// </summary>
+    public static readonly Rovu<uSourcedAbility, MetaFunction<Bool, Bool, MetaFunction<IRoveggi<uUnitIdentifier>, IRoveggi<uUnitIdentifier>, Bool>>> TARGET_SELECTOR = new(Axoi.Du, "target_selector");
+    /// <summary>
+    /// (unitIsOnPlayingTeam) -> ((unit) -> isValidSource)
+    /// </summary>
+    public static readonly Rovu<uSourcedAbility, MetaFunction<Bool, MetaFunction<IRoveggi<uUnitIdentifier>, Bool>>> SOURCE_SELECTOR = new(Axoi.Du, "source_selector");
     public static readonly Rovu<uSourcedAbility, IMulti<IRoveggi<uRelativeCoordinate>>> HIT_AREA = new(Axoi.Du, "hit_area");
     public static readonly Rovu<uSourcedAbility, IMulti<IRoveggi<UnitEffects.uUnitEffect>>> EFFECTS = new(Axoi.Du, "effects");
     /// <summary>

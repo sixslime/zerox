@@ -223,7 +223,7 @@ public class Sanity
                     Core.kCompose<uImplement>()
                         .kWithRovi(uImplement.RANGE, (5..10).kFixed())
                         .kWithRovi(uAbstract.ABSTRACT_SET, 15.kFixed())
-                        .kCast<IRoveggi<uImplement>>()
+                        .kIsType<IRoveggi<uImplement>>()
                         .kAsVariable(out var iComp)
                 ],
                 Value =

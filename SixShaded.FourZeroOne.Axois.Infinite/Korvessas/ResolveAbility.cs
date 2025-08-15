@@ -27,13 +27,13 @@ public static class ResolveAbility
                                 // SOURCED:
                                 () =>
                                     iAbility.kRef()
-                                        .kCast<IRoveggi<uSourcedAbility>>()
+                                        .kIsType<IRoveggi<uSourcedAbility>>()
                                         .kResolve(),
 
                                 // UNSOURCED:
                                 () =>
                                     iAbility.kRef()
-                                        .kCast<IRoveggi<uUnsourcedAbility>>()
+                                        .kIsType<IRoveggi<uUnsourcedAbility>>()
                                         .kResolve(),
                             ])
                     })
