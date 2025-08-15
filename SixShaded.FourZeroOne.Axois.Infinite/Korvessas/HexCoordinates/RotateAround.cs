@@ -16,48 +16,50 @@ public static class RotateAround
             Du = Axoi.Korvedu("HexCoordinates.RotateAround"),
             Definition =
                 (_, iCoordinate, iAnchor, iRotation) =>
-                    Core.kSubEnvironment<HexOffset>(new()
-                    {
-                        Environment =
-                            [
-
-                            ],
-                        Value = Core.kMetaFunctionRecursive<HexOffset, Number, HexOffset>(
+                    Core.kMetaFunctionRecursive<HexOffset, Number, HexOffset>(
                         [], (iRecurse, iHex, iRotationsLeft) =>
                             iRotationsLeft.kRef()
                                 .kIsGreaterThan(0.kFixed())
-                                .kIfTrue<HexOffset>(new()
+                                .kIfTrue<HexOffset>(
+                                new()
                                 {
                                     Then =
                                         iRecurse.kRef()
-                                            .kExecuteWith(new()
+                                            .kExecuteWith(
+                                            new()
                                             {
-                                                A = _zero.kSubtract(
-                                                Core.kCompose<HexOffsetType>()
-                                                    .kWithRovi(Core.Hint<HexOffsetType>(),
-                                                    HexType.R,
-                                                    iHex.kRef()
-                                                        .kGetRovi(HexType.U))
-                                                    .kWithRovi(Core.Hint<HexOffsetType>(),
-                                                    HexType.U,
-                                                    iHex.kRef()
-                                                        .kGetRovi(HexType.D))
-                                                    .kWithRovi(Core.Hint<HexOffsetType>(),
-                                                    HexType.D,
-                                                    iHex.kRef()
-                                                        .kGetRovi(HexType.R))),
+                                                A =
+                                                    _zero.kSubtract(
+                                                    Core.kCompose<HexOffsetType>()
+                                                        .kWithRovi(
+                                                        Core.Hint<HexOffsetType>(),
+                                                        HexType.R,
+                                                        iHex.kRef()
+                                                            .kGetRovi(HexType.U))
+                                                        .kWithRovi(
+                                                        Core.Hint<HexOffsetType>(),
+                                                        HexType.U,
+                                                        iHex.kRef()
+                                                            .kGetRovi(HexType.D))
+                                                        .kWithRovi(
+                                                        Core.Hint<HexOffsetType>(),
+                                                        HexType.D,
+                                                        iHex.kRef()
+                                                            .kGetRovi(HexType.R))),
                                                 B = iRotationsLeft.kRef().kSubtract(1.kFixed())
                                             }),
                                     Else = iHex.kRef()
                                 }))
-                            .kExecuteWith(new()
-                            {
-                                A = iCoordinate.kRef()
+                        .kExecuteWith(
+                        new()
+                        {
+                            A =
+                                iCoordinate.kRef()
                                     .kSubtract(iAnchor.kRef()),
-                                B = iRotation.kRef()
+                            B =
+                                iRotation.kRef()
                                     .kModulo(6.kFixed())
-                            })
-                            .kAdd(iAnchor.kRef())
-                    })
+                        })
+                        .kAdd(iAnchor.kRef())
         };
 }
