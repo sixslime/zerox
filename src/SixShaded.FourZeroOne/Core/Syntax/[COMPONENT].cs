@@ -61,7 +61,7 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.UpdateRovi<C, R>.Construct(holder, changeFunc, rovu);
 
-    public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> kUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, Func<DynamicRoda<R>, IKorssa<R>> changeFunc)
+    public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> kUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, MetaDefinition<R, R> changeFunc)
         where C : IRovetu
         where R : class, Rog =>
         Korvessas.UpdateRovi<C, R>.Construct(holder, Core.kMetaFunction([], changeFunc), rovu);
@@ -71,7 +71,7 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.SafeUpdateRovi<C, R>.Construct(holder, changeFunc, rovu);
 
-    public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> kSafeUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, Func<DynamicRoda<R>, IKorssa<R>> changeFunc)
+    public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> kSafeUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, MetaDefinition<R, R> changeFunc)
         where C : IRovetu
         where R : class, Rog =>
         Korvessas.SafeUpdateRovi<C, R>.Construct(holder, Core.kMetaFunction([], changeFunc), rovu);
@@ -100,7 +100,7 @@ public static partial class KorssaSyntax
         where RVal : class, Rog =>
         Korvessas.UpdateVarovi<C, RKey, RVal>.Construct(holder, key, changeFunc, varovu);
 
-    public static Korvessa<IRoveggi<C>, RKey, MetaFunction<RVal, RVal>, IRoveggi<C>> kSafeUpdateVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> holder, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, Func<DynamicRoda<RVal>, IKorssa<RVal>> changeFunc)
+    public static Korvessa<IRoveggi<C>, RKey, MetaFunction<RVal, RVal>, IRoveggi<C>> kSafeUpdateVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> holder, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, MetaDefinition<RVal, RVal> changeFunc)
         where C : IRovetu
         where RKey : class, Rog
         where RVal : class, Rog =>

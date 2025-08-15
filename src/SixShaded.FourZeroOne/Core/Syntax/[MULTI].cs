@@ -54,19 +54,23 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.AllMatch<R>.Construct(source, predicate);
 
+    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Bool> kAllMatch<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Bool> predicate)
+        where R : class, Rog =>
+        Korvessas.AllMatch<R>.Construct(source, Core.kMetaFunction([], predicate));
+
     public static Korvessa<IMulti<R>, Multi<R>> kDistinct<R>(this IKorssa<IMulti<R>> source)
         where R : class, Rog =>
         Korvessas.Distinct<R>.Construct(source);
 
-
-    public static Korvessa<IMulti<R>, MetaFunction<R, Rog>, Multi<R>> kDistinctBy<R>(this IKorssa<IMulti<R>> source, Func<DynamicRoda<R>, Kor> keyFunction)
+    public static Korvessa<IMulti<R>, MetaFunction<R, Rog>, Multi<R>> kDistinctBy<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Rog> keyFunction)
         where R : class, Rog =>
         Korvessas.DistinctBy<R>.Construct(source, Core.kMetaFunction([], keyFunction));
+
     public static Korvessa<IMulti<R>, MetaFunction<R, Rog>, Multi<R>> kDistinctBy<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Rog>> keyFunction)
         where R : class, Rog =>
         Korvessas.DistinctBy<R>.Construct(source, keyFunction);
 
-    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, Func<DynamicRoda<RIn>, IKorssa<ROut>> mapFunction)
+    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, MetaDefinition<RIn, ROut> mapFunction)
         where RIn : class, Rog
         where ROut : class, Rog =>
         Korvessas.Map<RIn, ROut>.Construct(source, Core.kMetaFunction([], mapFunction));
@@ -75,7 +79,7 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.Filter<R>.Construct(source, predicate);
 
-    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Multi<R>> kWhere<R>(this IKorssa<IMulti<R>> source, Func<DynamicRoda<R>, IKorssa<Bool>> predicate)
+    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Multi<R>> kWhere<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Bool> predicate)
         where R : class, Rog =>
         Korvessas.Filter<R>.Construct(source, Core.kMetaFunction([], predicate));
 
@@ -84,7 +88,7 @@ public static partial class KorssaSyntax
         where ROut : class, Rog =>
         Korvessas.Map<RIn, ROut>.Construct(source, mapFunction);
 
-    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, Number, ROut>, Multi<ROut>> kMapWithIndex<RIn, ROut>(this IKorssa<IMulti<RIn>> source, Func<DynamicRoda<RIn>, DynamicRoda<Number>, IKorssa<ROut>> mapFunction)
+    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, Number, ROut>, Multi<ROut>> kMapWithIndex<RIn, ROut>(this IKorssa<IMulti<RIn>> source, MetaDefinition<RIn, Number, ROut> mapFunction)
         where RIn : class, Rog
         where ROut : class, Rog =>
         Korvessas.MapWithIndex<RIn, ROut>.Construct(source, Core.kMetaFunction([], mapFunction));
@@ -97,11 +101,7 @@ public static partial class KorssaSyntax
     public static Korvessa<IMulti<R>, IMulti<R>, Multi<R>> kConcat<R>(this IKorssa<IMulti<R>> a, IKorssa<IMulti<R>> b)
         where R : class, Rog =>
         Korvessas.Concat<R>.Construct(a, b);
-    /*
-    public static Korssas.Multi.Concat<R> kConcat<R>(this IKorssa<IMulti<R>> a, IKorssa<IMulti<R>> b)
-        where R : class, Rog =>
-        new(a, b);
-    */
+
     public static Korvessa<R, Number, Multi<R>> kDuplicate<R>(this IKorssa<R> value, IKorssa<Number> count)
         where R : class, Rog =>
         Korvessas.Duplicate<R>.Construct(value, count);

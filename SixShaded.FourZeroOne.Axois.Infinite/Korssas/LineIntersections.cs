@@ -78,7 +78,7 @@ public record LineIntersections(IKorssa<HexCoords> from, IKorssa<HexCoords> to) 
         int n = start.DistanceTo(end);
         for (int i = 1; i < n; i++) // skip start (0) and end (n)
         {
-            double t = (double)i / N;
+            double t = (double)i / n;
             results.Add(__Round(__Lerp(start, end, t)));
         }
         return results;

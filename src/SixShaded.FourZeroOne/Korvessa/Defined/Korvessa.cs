@@ -2,11 +2,12 @@ namespace SixShaded.FourZeroOne.Korvessa.Defined;
 
 using Core.Roggis;
 using Core.Korssas;
+using Core.Syntax;
 
 public record Korvessa<RVal> : Korssa.Defined.StateImplementedKorssa<RVal>, IKorvessaSignature<RVal>
     where RVal : class, Rog
 {
-    public required Func<DynamicRoda<MetaFunction<RVal>>, IKorssa<RVal>> Definition
+    public required RecursiveMetaDefinition<RVal> Definition
     {
         init =>
             ConcreteDefinition =
@@ -30,7 +31,7 @@ public record Korvessa<RArg1, ROut> : Korssa.Defined.StateImplementedKorssa<RArg
     public Korvessa(IKorssa<RArg1> in1) : base(in1)
     { }
 
-    public required Func<DynamicRoda<MetaFunction<RArg1, ROut>>, DynamicRoda<RArg1>, IKorssa<ROut>> Definition
+    public required RecursiveMetaDefinition<RArg1, ROut> Definition
     {
         init =>
             ConcreteDefinition =
@@ -55,7 +56,7 @@ public record Korvessa<RArg1, RArg2, ROut> : Korssa.Defined.StateImplementedKors
     public Korvessa(IKorssa<RArg1> in1, IKorssa<RArg2> in2) : base(in1, in2)
     { }
 
-    public required Func<DynamicRoda<MetaFunction<RArg1, RArg2, ROut>>, DynamicRoda<RArg1>, DynamicRoda<RArg2>, IKorssa<ROut>> Definition
+    public required RecursiveMetaDefinition<RArg1, RArg2, ROut> Definition
     {
         init =>
             ConcreteDefinition =
@@ -81,7 +82,7 @@ public record Korvessa<RArg1, RArg2, RArg3, ROut> : Korssa.Defined.StateImplemen
     public Korvessa(IKorssa<RArg1> in1, IKorssa<RArg2> in2, IKorssa<RArg3> in3) : base(in1, in2, in3)
     { }
 
-    public required Func<DynamicRoda<MetaFunction<RArg1, RArg2, RArg3, ROut>>, DynamicRoda<RArg1>, DynamicRoda<RArg2>, DynamicRoda<RArg3>, IKorssa<ROut>> Definition
+    public required RecursiveMetaDefinition<RArg1, RArg2, RArg3, ROut> Definition
     {
         init =>
             ConcreteDefinition =

@@ -34,14 +34,14 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.UpdateRovedanggi<R>.Construct(address, updateFunction);
 
-    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, Func<DynamicRoda<R>, IKorssa<R>> updateFunction)
+    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, MetaDefinition<R, R> updateFunction)
         where R : class, Rog =>
         Korvessas.UpdateRovedanggi<R>.Construct(address, Core.kMetaFunction([], updateFunction));
     public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kSafeUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<MetaFunction<R, R>> updateFunction)
         where R : class, Rog =>
         Korvessas.SafeUpdateRovedanggi<R>.Construct(address, updateFunction);
 
-    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kSafeUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, Func<DynamicRoda<R>, IKorssa<R>> updateFunction)
+    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kSafeUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, MetaDefinition<R, R> updateFunction)
         where R : class, Rog =>
         Korvessas.SafeUpdateRovedanggi<R>.Construct(address, Core.kMetaFunction([], updateFunction));
 }

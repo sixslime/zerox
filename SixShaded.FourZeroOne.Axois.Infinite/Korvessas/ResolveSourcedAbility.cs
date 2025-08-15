@@ -95,7 +95,7 @@ public static class ResolveSourcedAbility
                                                             iPotentialTarget.kRef()
                                                                 .kRead()
                                                                 .kGetRovi(uUnitData.POSITION))
-                                                            .kAllMatch()
+                                                            .kAllMatch(ix => true.kFixed())
                                                     })
                                                     .kExecuteWith(new()
                                                     {
@@ -103,7 +103,7 @@ public static class ResolveSourcedAbility
                                                         B = iPotentialTarget.kRef()
                                                     }))
                                         ],
-                                    Value =
+                                    Value = Core.kNollaFor<ResolvedObj>()
                                 }))
                     })
         };

@@ -16,13 +16,13 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.CatchNolla<R>.Construct(value, fallback);
 
-    public static Korvessa<R, MetaFunction<R>, R> kCatchNolla<R>(this IKorssa<R> value, Func<IKorssa<R>> fallback)
+    public static Korvessa<R, MetaFunction<R>, R> kCatchNolla<R>(this IKorssa<R> value, MetaDefinition<R> fallback)
         where R : class, Rog =>
         Korvessas.CatchNolla<R>.Construct(value, fallback().kMetaBoxed([]));
 
     public static Korssas.Exists kExists(this Kor korssa) => new(korssa);
 
-    public static Korvessa<Rog, MetaFunction<R>, R> kKeepNolla<R>(this Kor potentialNolla, Func<IKorssa<R>> value)
+    public static Korvessa<Rog, MetaFunction<R>, R> kKeepNolla<R>(this Kor potentialNolla, MetaDefinition<R> value)
         where R : class, Rog =>
         Korvessas.KeepNolla<R>.Construct(potentialNolla, Core.kMetaFunction([], value));
 

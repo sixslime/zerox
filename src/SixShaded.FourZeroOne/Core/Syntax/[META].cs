@@ -5,36 +5,36 @@ using Roggis;
 
 public static partial class Core
 {
-    public static Korssas.DefineMetaFunction<ROut> kMetaFunction<ROut>(IEnumerable<Addr> captures, Func<IKorssa<ROut>> korssaFunction)
+    public static Korssas.DefineMetaFunction<ROut> kMetaFunction<ROut>(IEnumerable<Addr> captures, MetaDefinition<ROut> korssaFunction)
         where ROut : class, Rog =>
         kMetaFunctionRecursive<ROut>(captures, _ => korssaFunction());
 
-    public static Korssas.DefineMetaFunction<RArg1, ROut> kMetaFunction<RArg1, ROut>(IEnumerable<Addr> captures, Func<DynamicRoda<RArg1>, IKorssa<ROut>> korssaFunction)
+    public static Korssas.DefineMetaFunction<RArg1, ROut> kMetaFunction<RArg1, ROut>(IEnumerable<Addr> captures, MetaDefinition<RArg1, ROut> korssaFunction)
         where RArg1 : class, Rog
         where ROut : class, Rog =>
         kMetaFunctionRecursive<RArg1, ROut>(captures, (_, a) => korssaFunction(a));
 
-    public static Korssas.DefineMetaFunction<RArg1, RArg2, ROut> kMetaFunction<RArg1, RArg2, ROut>(IEnumerable<Addr> captures, Func<DynamicRoda<RArg1>, DynamicRoda<RArg2>, IKorssa<ROut>> korssaFunction)
+    public static Korssas.DefineMetaFunction<RArg1, RArg2, ROut> kMetaFunction<RArg1, RArg2, ROut>(IEnumerable<Addr> captures, MetaDefinition<RArg1, RArg2, ROut> korssaFunction)
         where RArg1 : class, Rog
         where RArg2 : class, Rog
         where ROut : class, Rog =>
         kMetaFunctionRecursive<RArg1, RArg2, ROut>(captures, (_, a, b) => korssaFunction(a, b));
 
-    public static Korssas.DefineMetaFunction<RArg1, RArg2, RArg3, ROut> kMetaFunction<RArg1, RArg2, RArg3, ROut>(IEnumerable<Addr> captures, Func<DynamicRoda<RArg1>, DynamicRoda<RArg2>, DynamicRoda<RArg3>, IKorssa<ROut>> korssaFunction)
+    public static Korssas.DefineMetaFunction<RArg1, RArg2, RArg3, ROut> kMetaFunction<RArg1, RArg2, RArg3, ROut>(IEnumerable<Addr> captures, MetaDefinition<RArg1, RArg2, RArg3, ROut> korssaFunction)
         where RArg1 : class, Rog
         where RArg2 : class, Rog
         where RArg3 : class, Rog
         where ROut : class, Rog =>
         kMetaFunctionRecursive<RArg1, RArg2, RArg3, ROut>(captures, (_, a, b, c) => korssaFunction(a, b, c));
 
-    public static Korssas.DefineMetaFunction<ROut> kMetaFunctionRecursive<ROut>(IEnumerable<Addr> captures, Func<DynamicRoda<MetaFunction<ROut>>, IKorssa<ROut>> korssaFunction)
+    public static Korssas.DefineMetaFunction<ROut> kMetaFunctionRecursive<ROut>(IEnumerable<Addr> captures, RecursiveMetaDefinition<ROut> korssaFunction)
         where ROut : class, Rog =>
         new(korssaFunction)
         {
             Captures = captures.ToArray(),
         };
 
-    public static Korssas.DefineMetaFunction<RArg1, ROut> kMetaFunctionRecursive<RArg1, ROut>(IEnumerable<Addr> captures, Func<DynamicRoda<MetaFunction<RArg1, ROut>>, DynamicRoda<RArg1>, IKorssa<ROut>> korssaFunction)
+    public static Korssas.DefineMetaFunction<RArg1, ROut> kMetaFunctionRecursive<RArg1, ROut>(IEnumerable<Addr> captures, RecursiveMetaDefinition<RArg1, ROut> korssaFunction)
         where RArg1 : class, Rog
         where ROut : class, Rog =>
         new(korssaFunction)
@@ -42,7 +42,7 @@ public static partial class Core
             Captures = captures.ToArray(),
         };
 
-    public static Korssas.DefineMetaFunction<RArg1, RArg2, ROut> kMetaFunctionRecursive<RArg1, RArg2, ROut>(IEnumerable<Addr> captures, Func<DynamicRoda<MetaFunction<RArg1, RArg2, ROut>>, DynamicRoda<RArg1>, DynamicRoda<RArg2>, IKorssa<ROut>> korssaFunction)
+    public static Korssas.DefineMetaFunction<RArg1, RArg2, ROut> kMetaFunctionRecursive<RArg1, RArg2, ROut>(IEnumerable<Addr> captures, RecursiveMetaDefinition<RArg1, RArg2, ROut> korssaFunction)
         where RArg1 : class, Rog
         where RArg2 : class, Rog
         where ROut : class, Rog =>
@@ -51,7 +51,7 @@ public static partial class Core
             Captures = captures.ToArray(),
         };
 
-    public static Korssas.DefineMetaFunction<RArg1, RArg2, RArg3, ROut> kMetaFunctionRecursive<RArg1, RArg2, RArg3, ROut>(IEnumerable<Addr> captures, Func<DynamicRoda<MetaFunction<RArg1, RArg2, RArg3, ROut>>, DynamicRoda<RArg1>, DynamicRoda<RArg2>, DynamicRoda<RArg3>, IKorssa<ROut>> korssaFunction)
+    public static Korssas.DefineMetaFunction<RArg1, RArg2, RArg3, ROut> kMetaFunctionRecursive<RArg1, RArg2, RArg3, ROut>(IEnumerable<Addr> captures, RecursiveMetaDefinition<RArg1, RArg2, RArg3, ROut> korssaFunction)
         where RArg1 : class, Rog
         where RArg2 : class, Rog
         where RArg3 : class, Rog
