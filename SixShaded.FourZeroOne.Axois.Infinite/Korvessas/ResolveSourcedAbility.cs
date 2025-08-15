@@ -29,8 +29,9 @@ public static class ResolveSourcedAbility
                                         .kExecuteWith(
                                         new()
                                         {
-                                            A = iAbility.kRef()
-                                                .kSourceChecks(iPotentialSource.kRef())
+                                            A =
+                                                iAbility.kRef()
+                                                    .kSourceChecks(iPotentialSource.kRef())
                                         })
                                         .kExecuteWith(
                                         new()
@@ -66,100 +67,8 @@ public static class ResolveSourcedAbility
                                                         new()
                                                         {
                                                             A =
-                                                                Core.kSubEnvironment<Bool>(
-                                                                new()
-                                                                {
-                                                                    Environment =
-                                                                    [
-                                                                        iPotentialTarget.kRef()
-                                                                            .kRead()
-                                                                            .kGetRovi(uUnitData.OWNER)
-                                                                            .kEquals(Infinite.CurrentPlayer)
-                                                                            .kAsVariable(out var iMatchesTeam)
-                                                                    ],
-                                                                    Value =
-                                                                        Core.kSelector<Bool>(
-                                                                        new()
-                                                                        {
-                                                                            () =>
-                                                                                iType.kRef()
-                                                                                    .kIsType<uAttack>()
-                                                                                    .kKeepNolla(() => iMatchesTeam.kRef().kNot()),
-                                                                            () =>
-                                                                                iType.kRef()
-                                                                                    .kIsType<uDefense>()
-                                                                                    .kKeepNolla(() => iMatchesTeam.kRef()),
-                                                                        })
-                                                                }),
-                                                            B =
-                                                                iHitZone.kRef()
-                                                                    .kContains(
-                                                                    iPotentialTarget.kRef()
-                                                                        .kRead()
-                                                                        .kGetRovi(uUnitData.POSITION)),
-                                                            C =
-                                                                Core.kSubEnvironment<Bool>(
-                                                                new()
-                                                                {
-                                                                    Environment =
-                                                                    [
-                                                                        iSourceUnit.kRef()
-                                                                            .kRead()
-                                                                            .kGetRovi(uUnitData.POSITION)
-                                                                            .kLineIntersectionsTo(
-                                                                            iPotentialTarget.kRef()
-                                                                                .kRead()
-                                                                                .kGetRovi(uUnitData.POSITION))
-                                                                            .kAsVariable(out var iIntersections),
-                                                                        Infinite.AllUnits
-                                                                            .kWhere(
-                                                                            iUnit =>
-                                                                                iUnit.kRef()
-                                                                                    .kRead()
-                                                                                    .kGetRovi(uUnitData.OWNER)
-                                                                                    .kEquals(Infinite.CurrentPlayer)
-                                                                                    .kNot())
-                                                                            .kMap(
-                                                                            iUnit =>
-                                                                                iUnit.kRef()
-                                                                                    .kRead()
-                                                                                    .kGetRovi(uUnitData.POSITION))
-                                                                            .kAsVariable(out var iEnemyPositions)
-                                                                    ],
-                                                                    Value =
-                                                                        iIntersections.kRef()
-                                                                            .kAllMatch(
-                                                                            iPathStep =>
-                                                                                iPathStep.kRef()
-                                                                                    .kAllMatch(
-                                                                                    iX =>
-                                                                                        Core.kSubEnvironment<Bool>(
-                                                                                        new()
-                                                                                        {
-                                                                                            Environment =
-                                                                                            [
-                                                                                                iX.kRef()
-                                                                                                    .kAsAbsolute()
-                                                                                                    .kAsVariable(out var iPathHex)
-                                                                                            ],
-                                                                                            Value =
-                                                                                                iPathHex.kRef()
-                                                                                                    .kRead()
-                                                                                                    .kGetRovi(uHexData.TYPE)
-                                                                                                    .kIsType<u.Constructs.HexTypes.uWallHex>()
-                                                                                                    .kExists()
-                                                                                                    .kIfTrue<Bool>(
-                                                                                                    new()
-                                                                                                    {
-                                                                                                        Then = true.kFixed(),
-                                                                                                        Else =
-                                                                                                            iEnemyPositions.kRef()
-                                                                                                                .kContains(iPathHex.kRef())
-                                                                                                    })
-                                                                                        }))
-                                                                                    .kNot())
-
-                                                                })
+                                                                iAbility.kRef()
+                                                                    .kTargetChecks(iPotentialTarget.kRef(), iSourceUnit.kRef())
                                                         })
                                                         .kExecuteWith(
                                                         new()

@@ -16,19 +16,135 @@ public static class DoTargetChecks
             Du = Axoi.Korvedu("DoTargetChecks"),
             Definition =
                 (_, iAbility, iUnit, iSource) =>
-                    Core.kCompose<uSourceChecks>()
+                    Core.kCompose<uTargetChecks>()
+
+                        // correct team:
                         .kWithRovi(
-                        uSourceChecks.CORRECT_TEAM,
-                        iUnit.kRef()
-                            .kRead()
-                            .kGetRovi(uUnitData.OWNER)
-                            .kEquals(Infinite.CurrentPlayer))
+                        uTargetChecks.CORRECT_TEAM,
+                        Core.kSubEnvironment<Bool>(
+                        new()
+                        {
+                            Environment =
+                            [
+                                iUnit.kRef()
+                                    .kRead()
+                                    .kGetRovi(uUnitData.OWNER)
+                                    .kEquals(Infinite.CurrentPlayer)
+                                    .kAsVariable(out var iMatchesTeam),
+                                iAbility.kRef()
+                                    .kGetRovi(uSourcedAbility.TYPE)
+                                    .kAsVariable(out var iType)
+                            ],
+                            Value =
+                                Core.kSelector<Bool>(
+                                new()
+                                {
+                                    () =>
+                                        iType.kRef()
+                                            .kIsType<uAttack>()
+                                            .kKeepNolla(() => iMatchesTeam.kRef().kNot()),
+                                    () =>
+                                        iType.kRef()
+                                            .kIsType<uDefense>()
+                                            .kKeepNolla(() => iMatchesTeam.kRef()),
+                                })
+                        }))
+
+                        // hit area:
                         .kWithRovi(
-                        uSourceChecks.EFFECT_CHECK,
-                        iUnit.kRef()
-                            .kRead()
-                            .kGetRovi(uUnitData.EFFECTS)
-                            .kContains(Core.kCompose<u.Constructs.UnitEffects.uShockEffect>())
-                            .kNot())
+                        uTargetChecks.HIT_AREA,
+                        iAbility.kRef()
+                            .kGetRovi(uSourcedAbility.HIT_AREA)
+                            .kAffixToUnit(iSource.kRef())
+                            .kContains(
+                            iUnit.kRef()
+                                .kRead()
+                                .kGetRovi(uUnitData.POSITION)))
+
+                        // line of sight:
+                        .kWithRovi(
+                        uTargetChecks.LINE_OF_SIGHT,
+                        Core.kSubEnvironment<Bool>(
+                        new()
+                        {
+                            Environment =
+                            [
+                                iSource.kRef()
+                                    .kRead()
+                                    .kGetRovi(uUnitData.POSITION)
+                                    .kLineIntersectionsTo(
+                                    iUnit.kRef()
+                                        .kRead()
+                                        .kGetRovi(uUnitData.POSITION))
+                                    .kAsVariable(out var iIntersections),
+                                Infinite.AllUnits
+                                    .kWhere(
+                                    iOtherUnit =>
+                                        iOtherUnit.kRef()
+                                            .kRead()
+                                            .kGetRovi(uUnitData.OWNER)
+                                            .kEquals(Infinite.CurrentPlayer)
+                                            .kNot())
+                                    .kMap(
+                                    iEnemy =>
+                                        iEnemy.kRef()
+                                            .kRead()
+                                            .kGetRovi(uUnitData.POSITION))
+                                    .kAsVariable(out var iEnemyPositions)
+                            ],
+                            Value =
+                                iIntersections.kRef()
+                                    .kAllMatch(
+                                    iPathStep =>
+                                        iPathStep.kRef()
+                                            .kAllMatch(
+                                            iX =>
+                                                Core.kSubEnvironment<Bool>(
+                                                new()
+                                                {
+                                                    Environment =
+                                                    [
+                                                        iX.kRef()
+                                                            .kAsAbsolute()
+                                                            .kAsVariable(out var iPathHex)
+                                                    ],
+                                                    Value =
+                                                        iPathHex.kRef()
+                                                            .kRead()
+                                                            .kGetRovi(uHexData.TYPE)
+                                                            .kIsType<u.Constructs.HexTypes.uWallHex>()
+                                                            .kExists()
+                                                            .kIfTrue<Bool>(
+                                                            new()
+                                                            {
+                                                                Then = true.kFixed(),
+                                                                Else =
+                                                                    iEnemyPositions.kRef()
+                                                                        .kContains(iPathHex.kRef())
+                                                            })
+                                                }))
+                                            .kNot())
+
+                        }))
+
+                        // effects check:
+                        .kWithRovi(
+                        uTargetChecks.EFFECT_CHECK,
+                        iAbility.kRef()
+                            .kGetRovi(uSourcedAbility.TYPE)
+                            .kIsType<uDefense>()
+                            .kExists()
+                            .kIfTrue<Bool>(
+                            new()
+                            {
+                                Then =
+                                    iUnit.kRef()
+                                        .kRead()
+                                        .kGetRovi(uUnitData.EFFECTS)
+                                        .kContains(Core.kCompose<u.Constructs.UnitEffects.uShockEffect>())
+                                        .kNot(),
+                                Else = true.kFixed()
+                            }))
+
         };
 }
