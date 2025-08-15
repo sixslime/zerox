@@ -40,4 +40,6 @@ internal static class Extensions
         yield return pos.U;
         yield return pos.D;
     }
+
+    public static int DistanceTo(this HexPos a, HexPos b) => (Math.Abs(a.R - b.R) + Math.Abs(a.U - b.U) + Math.Abs(a.D - b.D)) / 2;
 }

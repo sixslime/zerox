@@ -16,12 +16,11 @@ public record LineIntersections(IKorssa<HexObject> from, IKorssa<HexObject> to) 
     {
         if (in1.RemapAs(x => x.GetStruct()).Press().CheckNone(out var fromHex) || in1.RemapAs(x => x.GetStruct()).Press().CheckNone(out var toHex))
             return new None<Multi<Multi<HexObject>>>().ToCompletedITask();
-
         var hexTarget = toHex - fromHex;
 
         // check for perfect diagonal (i.e. contains perfect splits):
         int diagonalIndex =
-            (0..3).ToIter(true)
+            (..3).ToIter(true)
             .FirstMatch(i => hexTarget[(i + 1) % 3] == hexTarget[(i + 2) % 3])
             .Or(-1);
         if (diagonalIndex != -1)
@@ -34,8 +33,8 @@ public record LineIntersections(IKorssa<HexObject> from, IKorssa<HexObject> to) 
                 pair: (a: new HexPos(0, 0, 0), b: new HexPos(0, 0, 0)))
                 .Sequence(
                 x =>
-                    (new HexPos(x.hop.R + (2 * step), x.hop.U - step, x.hop.D - step),
-                    (new HexPos(x.hop.R + step, x.hop.U - step, x.hop.D), new HexPos(x.hop.R + step, x.hop.U, x.hop.D - step))))
+                    (new(x.hop.R + (2 * step), x.hop.U - step, x.hop.D - step),
+                    (new(x.hop.R + step, x.hop.U - step, x.hop.D), new(x.hop.R + step, x.hop.U, x.hop.D - step))))
                 .Skip(1)
                 .Map(
                 x =>
@@ -48,29 +47,63 @@ public record LineIntersections(IKorssa<HexObject> from, IKorssa<HexObject> to) 
 
         // check for perfect axis (i.e. straight line of hexes):
         int straightIndex =
-            (0..3).ToIter(true)
-            .FirstMatch(i => hexTarget[(i + 1) % 3] == -(hexTarget[(i + 2) % 3]))
+            (..3).ToIter(true)
+            .FirstMatch(i => hexTarget[(i + 1) % 3] == -hexTarget[(i + 2) % 3])
             .Or(-1);
-
         if (straightIndex != -1)
         {
             int targetValue = hexTarget[(straightIndex + 1) % 3];
             int step = Math.Sign(targetValue);
             var o =
                 new HexPos(0, 0, 0)
-                    .Sequence(x => new HexPos(0, x.U + step, x.D - step))
+                    .Sequence(x => new(0, x.U + step, x.D - step))
                     .Skip(1)
                     .Take(Math.Abs(targetValue) - 1)
                     .Map(x => (x.Shift(straightIndex) + fromHex).Yield());
             return FormatResult(o);
         }
+
+        // not perfect straight or diagonal, normal algorithm:
+        return FormatResult(
+        GeneralAlgorithm(fromHex, toHex)
+            .Map(x => x.Yield()));
+    }
+
+    // me when i fucking chatGPT
+    // sad that i didnt think of this algorithm; i should kill myself
+    private List<HexPos> GeneralAlgorithm(HexPos start, HexPos end)
+    {
+        
+        var results = new List<HexPos>();
+        int n = start.DistanceTo(end);
+        for (int i = 1; i < n; i++) // skip start (0) and end (n)
         {
-            var o = 6;
+            double t = (double)i / N;
+            results.Add(__Round(__Lerp(start, end, t)));
         }
-        // imperfect line, must do geometry:
+        return results;
 
-
-        throw new NotImplementedException();
+        (double R, double U, double D) __Lerp(HexPos a, HexPos b, double t)
+        {
+            return (
+            a.R + ((b.R - a.R) * t),
+            a.U + ((b.U - a.U) * t),
+            a.D + ((b.D - a.D) * t)
+            );
+        }
+        HexPos __Round((double R, double U, double D) h)
+        {
+            int rr = (int)Math.Round(h.R);
+            int ru = (int)Math.Round(h.U);
+            int rd = (int)Math.Round(h.D);
+            double rDiff = Math.Abs(rr - h.R);
+            double uDiff = Math.Abs(ru - h.U);
+            double dDiff = Math.Abs(rd - h.D);
+            if (rDiff > uDiff && rDiff > dDiff) rr = -ru - rd;
+            else if (uDiff > dDiff) ru = -rr - rd;
+            else rd = -rr - ru;
+            return new(rr, ru, rd);
+        }
     }
 
     private ITask<IOption<Multi<Multi<HexObject>>>> FormatResult(IEnumerable<IEnumerable<HexPos>> resultValue) =>
@@ -81,9 +114,9 @@ public record LineIntersections(IKorssa<HexObject> from, IKorssa<HexObject> to) 
                         val =>
                             new Multi<HexObject>
                             {
-                                Values = val.Map(x => x.GetRoveggi().AsSome()).ToPSequence()
+                                Values = val.Map(x => x.GetRoveggi().AsSome()).ToPSequence(),
                             }.AsSome())
-                        .ToPSequence()
+                        .ToPSequence(),
             }.AsSome()
             .ToCompletedITask();
 }
