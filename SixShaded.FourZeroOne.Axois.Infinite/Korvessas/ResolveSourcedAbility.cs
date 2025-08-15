@@ -49,6 +49,21 @@ public static class ResolveSourcedAbility
                                             iAbility.kRef()
                                                 .kGetRovi(uSourcedAbility.TYPE)
                                                 .kAsVariable(out var iType),
+                                            
+                                            iAbility.kRef()
+                                                .kGetRovi(uSourcedAbility.HIT_AREA)
+                                                .kAffixToUnit(
+                                                iSourceUnit.kRef()
+                                                    .kRead()
+                                                    .kGetRovi(uUnitData.OWNER))
+                                                .kMap(
+                                                iHex =>
+                                                    iHex.kRef()
+                                                        .kAdd(
+                                                        iSourceUnit.kRef()
+                                                            .kRead()
+                                                            .kGetRovi(uUnitData.POSITION)))
+                                                .k
 
                                             Infinite.AllUnits.kWhere(
                                             iPotentialTarget =>
