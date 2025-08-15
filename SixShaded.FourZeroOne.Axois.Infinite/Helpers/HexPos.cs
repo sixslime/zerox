@@ -1,5 +1,7 @@
 namespace SixShaded.FourZeroOne.Axois.Infinite.Helpers;
 
+using System.Diagnostics;
+
 internal readonly struct HexPos(int rVal, int uVal, int dVal)
 {
     public readonly int R = rVal;
