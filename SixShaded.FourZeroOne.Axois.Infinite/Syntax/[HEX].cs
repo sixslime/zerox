@@ -12,7 +12,7 @@ using HexPosition = IRoveggi<u.Identifier.uHexIdentifier>;
 
 partial class KorssaSyntax
 {
-    public static Korssas.LineIntersections kLineIntersectionsTo(this IKorssa<HexOffset> from, IKorssa<HexOffset> to) => new(from, to);
+    public static Korssas.LineIntersections kLineIntersectionsTo(this IKorssa<HexCoords> from, IKorssa<HexCoords> to) => new(from, to);
     public static Korvessa<HexCoords, HexCoords, HexOffset> kAdd(this IKorssa<HexCoords> a, IKorssa<HexCoords> b) => Korvessas.HexCoordinates.Add.Construct(a, b);
     public static Korvessa<HexCoords, HexCoords, HexOffset> kSubtract(this IKorssa<HexCoords> a, IKorssa<HexCoords> b) => Korvessas.HexCoordinates.Subtract.Construct(a, b);
     public static Korvessa<HexCoords, HexOffset> kAsOffset(this IKorssa<HexCoords> coords) => Korvessas.HexCoordinates.AsOffset.Construct(coords);

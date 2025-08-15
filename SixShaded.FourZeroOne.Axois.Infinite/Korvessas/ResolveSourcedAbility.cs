@@ -52,18 +52,8 @@ public static class ResolveSourcedAbility
                                             
                                             iAbility.kRef()
                                                 .kGetRovi(uSourcedAbility.HIT_AREA)
-                                                .kAffixToUnit(
-                                                iSourceUnit.kRef()
-                                                    .kRead()
-                                                    .kGetRovi(uUnitData.OWNER))
-                                                .kMap(
-                                                iHex =>
-                                                    iHex.kRef()
-                                                        .kAdd(
-                                                        iSourceUnit.kRef()
-                                                            .kRead()
-                                                            .kGetRovi(uUnitData.POSITION)))
-                                                .k
+                                                .kAffixToUnit(iSourceUnit.kRef())
+                                                .kAsVariable(out var iHitZone),
 
                                             Infinite.AllUnits.kWhere(
                                             iPotentialTarget =>
@@ -93,11 +83,25 @@ public static class ResolveSourcedAbility
                                                                     () => iMatchesTeam.kRef()),
                                                             })
                                                         }),
-                                                        B = iSourceUnit.kRef()
+                                                        B = iHitZone.kRef()
+                                                            .kContains(
+                                                            iPotentialTarget.kRef()
+                                                                .kRead()
+                                                                .kGetRovi(uUnitData.POSITION)),
+                                                        C = iSourceUnit.kRef()
                                                             .kRead()
                                                             .kGetRovi(uUnitData.POSITION)
-                                                            .
+                                                            .kLineIntersectionsTo(
+                                                            iPotentialTarget.kRef()
+                                                                .kRead()
+                                                                .kGetRovi(uUnitData.POSITION))
+                                                            .kAllMatch()
                                                     })
+                                                    .kExecuteWith(new()
+                                                    {
+                                                        A = iSourceUnit.kRef(),
+                                                        B = iPotentialTarget.kRef()
+                                                    }))
                                         ],
                                     Value =
                                 }))
