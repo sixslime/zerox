@@ -58,6 +58,14 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.AllMatch<R>.Construct(source, Core.kMetaFunction([], predicate));
 
+    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Bool> kAnyMatch<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Bool>> predicate)
+        where R : class, Rog =>
+        Korvessas.AnyMatch<R>.Construct(source, predicate);
+
+    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Bool> kAnyMatch<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Bool> predicate)
+        where R : class, Rog =>
+        Korvessas.AnyMatch<R>.Construct(source, Core.kMetaFunction([], predicate));
+
     public static Korvessa<IMulti<R>, Multi<R>> kDistinct<R>(this IKorssa<IMulti<R>> source)
         where R : class, Rog =>
         Korvessas.Distinct<R>.Construct(source);
