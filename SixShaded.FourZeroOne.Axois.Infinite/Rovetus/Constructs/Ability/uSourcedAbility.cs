@@ -13,7 +13,7 @@ public interface uSourcedAbility : IConcreteRovetu, uAbility
     /// (unitIsOnPlayingTeam) -> ((unit) -> isValidSource)
     /// </summary>
     public static readonly Rovu<uSourcedAbility, MetaFunction<Bool, MetaFunction<IRoveggi<uUnitIdentifier>, Bool>>> SOURCE_SELECTOR = new(Axoi.Du, "source_selector");
-    public static readonly Rovu<uSourcedAbility, IMulti<IRoveggi<uRelativeCoordinate>>> HIT_AREA = new(Axoi.Du, "hit_area");
+    public static readonly Rovu<uSourcedAbility, IMulti<IRoveggi<uHexOffset>>> HIT_AREA = new(Axoi.Du, "hit_area");
     public static readonly Rovu<uSourcedAbility, IMulti<IRoveggi<UnitEffects.uUnitEffect>>> EFFECTS = new(Axoi.Du, "effects");
     /// <summary>
     /// (source, target) -> action

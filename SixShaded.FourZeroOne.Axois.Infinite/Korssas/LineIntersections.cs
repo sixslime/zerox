@@ -3,8 +3,7 @@ namespace SixShaded.FourZeroOne.Axois.Infinite.Korssas;
 using Handles;
 using Helpers;
 using MorseCode.ITask;
-using HexObject = IRoveggi<u.Constructs.uRelativeCoordinate>;
-using Hex = u.Constructs.uRelativeCoordinate;
+using HexObject = IRoveggi<u.Constructs.uHexOffset>;
 
 // returns a multi of multis such that each element contains either 1 or 2 hex coordinates.
 // 1 denotes a single normal intersection.

@@ -7,5 +7,5 @@ public interface uNumericalMove : uMove, IConcreteRovetu
     /// default always true. <br></br>
     /// wall detection should probably be built in?
     /// </summary>
-    public static readonly Rovu<uNumericalMove, MetaFunction<IRoveggi<Identifier.uHexCoordinate>, IRoveggi<Identifier.uHexCoordinate>, Bool>> PATH_CONDITION = new(Axoi.Du, "path_condition");
+    public static readonly Rovu<uNumericalMove, MetaFunction<IRoveggi<Identifier.uHexIdentifier>, IRoveggi<Identifier.uHexIdentifier>, Bool>> PATH_CONDITION = new(Axoi.Du, "path_condition");
 }

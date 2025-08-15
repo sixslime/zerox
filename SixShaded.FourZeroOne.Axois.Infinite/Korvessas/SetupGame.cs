@@ -106,7 +106,7 @@ public static class SetupGame
                                         .kMap(
                                         iIdentifier =>
                                             iIdentifier.kRef().kRedact()),
-                                    Core.kAllRovedanggiKeys<uHexCoordinate, IRoveggi<uHexData>>()
+                                    Core.kAllRovedanggiKeys<uHexIdentifier, IRoveggi<uHexData>>()
                                         .kMap(
                                         iIdentifier =>
                                             iIdentifier.kRef().kRedact()),
