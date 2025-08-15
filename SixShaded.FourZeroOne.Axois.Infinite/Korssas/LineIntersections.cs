@@ -3,18 +3,19 @@ namespace SixShaded.FourZeroOne.Axois.Infinite.Korssas;
 using Handles;
 using Helpers;
 using MorseCode.ITask;
-using HexObject = IRoveggi<u.Constructs.uHexOffset>;
+using HexCoords = IRoveggi<u.Constructs.uHexCoordinates>;
+using HexOffset = IRoveggi<u.Constructs.uHexOffset>;
 
 // returns a multi of multis such that each element contains either 1 or 2 hex coordinates.
 // 1 denotes a single normal intersection.
 // 2 denotes an exact line split pair.
 // this does not include the start/end hexes.
-public record LineIntersections(IKorssa<HexObject> from, IKorssa<HexObject> to) : Korssa.Defined.Function<HexObject, HexObject, Multi<Multi<HexObject>>>(from, to)
+public record LineIntersections(IKorssa<HexCoords> from, IKorssa<HexCoords> to) : Korssa.Defined.Function<HexCoords, HexCoords, Multi<Multi<HexOffset>>>(from, to)
 {
-    protected override ITask<IOption<Multi<Multi<HexObject>>>> Evaluate(IKorssaContext _, IOption<HexObject> in1, IOption<HexObject> in2)
+    protected override ITask<IOption<Multi<Multi<HexOffset>>>> Evaluate(IKorssaContext _, IOption<HexCoords> in1, IOption<HexCoords> in2)
     {
         if (in1.RemapAs(x => x.GetStruct()).Press().CheckNone(out var fromHex) || in1.RemapAs(x => x.GetStruct()).Press().CheckNone(out var toHex))
-            return new None<Multi<Multi<HexObject>>>().ToCompletedITask();
+            return new None<Multi<Multi<HexOffset>>>().ToCompletedITask();
         var hexTarget = toHex - fromHex;
 
         // check for perfect diagonal (i.e. contains perfect splits):
@@ -105,13 +106,13 @@ public record LineIntersections(IKorssa<HexObject> from, IKorssa<HexObject> to) 
         }
     }
 
-    private ITask<IOption<Multi<Multi<HexObject>>>> FormatResult(IEnumerable<IEnumerable<HexPos>> resultValue) =>
-        new Multi<Multi<HexObject>>
+    private ITask<IOption<Multi<Multi<HexOffset>>>> FormatResult(IEnumerable<IEnumerable<HexPos>> resultValue) =>
+        new Multi<Multi<HexOffset>>
             {
                 Values =
                     resultValue.Map(
                         val =>
-                            new Multi<HexObject>
+                            new Multi<HexOffset>
                             {
                                 Values = val.Map(x => x.GetRoveggi().AsSome()).ToPSequence(),
                             }.AsSome())

@@ -6,9 +6,9 @@ public interface uSourcedAbility : IConcreteRovetu, uAbility
 {
     public static new readonly Rovu<uSourcedAbility, IRoveggi<Types.uSourcedType>> TYPE = new(Axoi.Du, "type");
     /// <summary>
-    /// (targetMatchesType, hasLineOfSight) -> ((source, target) -> isValidTarget)
+    /// (targetMatchesType, inHitArea, hasLineOfSight) -> ((source, target) -> isValidTarget)
     /// </summary>
-    public static readonly Rovu<uSourcedAbility, MetaFunction<Bool, Bool, MetaFunction<IRoveggi<uUnitIdentifier>, IRoveggi<uUnitIdentifier>, Bool>>> TARGET_SELECTOR = new(Axoi.Du, "target_selector");
+    public static readonly Rovu<uSourcedAbility, MetaFunction<Bool, Bool, Bool, MetaFunction<IRoveggi<uUnitIdentifier>, IRoveggi<uUnitIdentifier>, Bool>>> TARGET_SELECTOR = new(Axoi.Du, "target_selector");
     /// <summary>
     /// (unitIsOnPlayingTeam) -> ((unit) -> isValidSource)
     /// </summary>
