@@ -45,10 +45,19 @@ public static class RotateAround
                                                     .kWithRovi(Core.Hint<HexOffsetType>(),
                                                     HexType.D,
                                                     iHex.kRef()
-                                                        .kGetRovi(HexType.R)))
-                                            })
-                                })
-
+                                                        .kGetRovi(HexType.R))),
+                                                B = iRotationsLeft.kRef().kSubtract(1.kFixed())
+                                            }),
+                                    Else = iHex.kRef()
+                                }))
+                            .kExecuteWith(new()
+                            {
+                                A = iCoordinate.kRef()
+                                    .kSubtract(iAnchor.kRef()),
+                                B = iRotation.kRef()
+                                    .kModulo(6.kFixed())
+                            })
+                            .kAdd(iAnchor.kRef())
                     })
         };
 }
