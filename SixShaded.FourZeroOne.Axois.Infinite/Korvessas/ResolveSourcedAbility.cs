@@ -29,11 +29,8 @@ public static class ResolveSourcedAbility
                                         .kExecuteWith(
                                         new()
                                         {
-                                            A =
-                                                iPotentialSource.kRef()
-                                                    .kRead()
-                                                    .kGetRovi(uUnitData.OWNER)
-                                                    .kEquals(Infinite.CurrentPlayer)
+                                            A = iAbility.kRef()
+                                                .kSourceChecks(iPotentialSource.kRef())
                                         })
                                         .kExecuteWith(
                                         new()

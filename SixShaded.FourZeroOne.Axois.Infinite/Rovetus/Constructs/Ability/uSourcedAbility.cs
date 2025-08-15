@@ -6,13 +6,13 @@ public interface uSourcedAbility : IConcreteRovetu, uAbility
 {
     public static new readonly Rovu<uSourcedAbility, IRoveggi<Types.uSourcedType>> TYPE = new(Axoi.Du, "type");
     /// <summary>
-    /// (targetMatchesType, inHitArea, hasLineOfSight) -> ((source, target) -> isValidTarget)
+    /// (targetChecks) -> ((source, target) -> isValidTarget)
     /// </summary>
-    public static readonly Rovu<uSourcedAbility, MetaFunction<Bool, Bool, Bool, MetaFunction<IRoveggi<uUnitIdentifier>, IRoveggi<uUnitIdentifier>, Bool>>> TARGET_SELECTOR = new(Axoi.Du, "target_selector");
+    public static readonly Rovu<uSourcedAbility, MetaFunction<IRoveggi<uTargetChecks>, MetaFunction<IRoveggi<uUnitIdentifier>, IRoveggi<uUnitIdentifier>, Bool>>> TARGET_SELECTOR = new(Axoi.Du, "target_selector");
     /// <summary>
-    /// (unitIsOnPlayingTeam) -> ((unit) -> isValidSource)
+    /// (sourceChecks) -> ((unit) -> isValidSource)
     /// </summary>
-    public static readonly Rovu<uSourcedAbility, MetaFunction<Bool, MetaFunction<IRoveggi<uUnitIdentifier>, Bool>>> SOURCE_SELECTOR = new(Axoi.Du, "source_selector");
+    public static readonly Rovu<uSourcedAbility, MetaFunction<IRoveggi<uSourceChecks>, MetaFunction<IRoveggi<uUnitIdentifier>, Bool>>> SOURCE_SELECTOR = new(Axoi.Du, "source_selector");
     public static readonly Rovu<uSourcedAbility, IMulti<IRoveggi<uHexOffset>>> HIT_AREA = new(Axoi.Du, "hit_area");
     public static readonly Rovu<uSourcedAbility, IMulti<IRoveggi<UnitEffects.uUnitEffect>>> EFFECTS = new(Axoi.Du, "effects");
     /// <summary>

@@ -4,6 +4,8 @@ using u.Anchors;
 using u.Identifier;
 using u.Data;
 using Core = Core.Syntax.Core;
+using u.Constructs;
+using u.Constructs.Ability;
 public static partial class Infinite
 {
     public static IKorssa<IRoveggi<uGameAnchor>> Game => Core.kCompose<uGameAnchor>();
@@ -14,5 +16,6 @@ public static partial class Infinite
 
 public static partial class KorssaSyntax
 {
-
+    public static Korvessa<IRoveggi<uSourcedAbility>, IRoveggi<uUnitIdentifier>, IRoveggi<uSourceChecks>> kSourceChecks(this IKorssa<IRoveggi<uSourcedAbility>> ability, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.DoSourceChecks.Construct(ability, unit);
+    public static Korvessa<IRoveggi<uSourcedAbility>, IRoveggi<uUnitIdentifier>, IRoveggi<uUnitIdentifier>, IRoveggi<uTargetChecks>> kTargetChecks(this IKorssa<IRoveggi<uSourcedAbility>> ability, IKorssa<IRoveggi<uUnitIdentifier>> unit, IKorssa<IRoveggi<uUnitIdentifier>> source) => Korvessas.DoTargetChecks.Construct(ability, unit, source);
 }
