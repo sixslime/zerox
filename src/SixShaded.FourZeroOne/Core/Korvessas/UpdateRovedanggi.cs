@@ -20,7 +20,7 @@ public static class UpdateRovedanggi<R>
                             .kExecuteWith(
                             new()
                             {
-                                A = iDan.kRef().kGet(),
+                                A = iDan.kRef().kRead(),
                             })),
         };
 }

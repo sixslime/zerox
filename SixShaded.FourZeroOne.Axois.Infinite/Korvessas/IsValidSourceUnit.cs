@@ -17,12 +17,12 @@ public static class IsValidSourceUnit
             Definition =
                 (_, iUnit, iAbility) =>
                     iUnit.kRef()
-                        .kGet()
+                        .kRead()
                         .kGetRovi(uUnitData.OWNER)
                         .kEquals(Infinite.CurrentPlayer)
                         .kAnd(
                         iUnit.kRef()
-                            .kGet()
+                            .kRead()
                             .kGetRovi(uUnitData.EFFECTS)
                             .kContains(Core.kCompose<u.Constructs.UnitEffects.uShockEffect>())
                             .kNot())

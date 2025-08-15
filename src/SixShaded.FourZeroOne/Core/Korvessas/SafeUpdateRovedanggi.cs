@@ -23,7 +23,7 @@ public static class SafeUpdateRovedanggi<R>
                                 .kExecuteWith(
                                 new()
                                 {
-                                    A = iDan.kRef().kGet(),
+                                    A = iDan.kRef().kRead(),
                                 })
                                 .kAsVariable(out var iValue)
                         ],

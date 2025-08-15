@@ -165,7 +165,7 @@ public static class SetupGame
                                 .kAsVariable(out var iMakeGameModifiers),
 
                             // MAKE player modifiers:
-                            Infinite.Game.kGet()
+                            Infinite.Game.kRead()
                                 .kGetRovi(uGame.TURN_ORDER)
                                 .kMap(
                                 iIdentifier =>

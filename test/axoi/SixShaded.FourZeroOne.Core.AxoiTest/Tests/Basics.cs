@@ -282,7 +282,7 @@ public sealed class Basics
                                     Core.kCompose<uFooRovedantu>()
                                         .kWithRovi(uFooRovedantu.ID, iSelectedId.kRef())
                                         .kWithRovi(uFooRovedantu.PART, iSelectedPart.kRef())
-                                        .kGet()
+                                        .kRead()
                                         .DeTesAssertRoggiUnstable(c, r => r.IsSome(), "data exists check"),
                             })
                             .DeTesAssertMemory(c, m => m.Objects.Count() > 1, "memory some data exists check (>1)")

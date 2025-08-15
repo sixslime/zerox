@@ -127,12 +127,12 @@ public class Sanity
                 Value =
                     Core.kMultiOld(
                     iComp.kRef()
-                        .kGet()
+                        .kRead()
                         .DeTesAssertRoggi(c, r => r.Value is 401, "direct reference"),
                     Core.kCompose<uFooRovedantu>()
                         .kWithRovi(uFooRovedantu.ID, 8.kFixed())
                         .kWithRovi(uFooRovedantu.PART, true.kFixed())
-                        .kGet()
+                        .kRead()
                         .DeTesAssertRoggi(c, r => r.Value is 401, "reconstructed")),
             }));
 

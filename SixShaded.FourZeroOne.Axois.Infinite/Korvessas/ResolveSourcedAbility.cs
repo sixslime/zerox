@@ -28,7 +28,7 @@ public static class ResolveSourcedAbility
                                     .kExecuteWith(new()
                                     {
                                         A = iPotentialSource.kRef()
-                                            .kGet()
+                                            .kRead()
                                             .kGetRovi(uUnitData.OWNER)
                                             .kEquals(Infinite.CurrentPlayer)
                                     })
@@ -61,7 +61,7 @@ public static class ResolveSourcedAbility
                                                             Environment =
                                                                 [
                                                                     iPotentialTarget.kRef()
-                                                                        .kGet()
+                                                                        .kRead()
                                                                         .kGetRovi(uUnitData.OWNER)
                                                                         .kEquals(Infinite.CurrentPlayer)
                                                                         .kAsVariable(out var iMatchesTeam)
@@ -78,13 +78,10 @@ public static class ResolveSourcedAbility
                                                                     () => iMatchesTeam.kRef()),
                                                             })
                                                         }),
-                                                        B = Core.kSubEnvironment<Bool>(new()
-                                                        {
-                                                            Environment =
-                                                                [
-
-                                                                ]
-                                                        })
+                                                        B = iSourceUnit.kRef()
+                                                            .kRead()
+                                                            .kGetRovi(uUnitData.POSITION)
+                                                            .
                                                     })
                                         ],
                                     Value =
