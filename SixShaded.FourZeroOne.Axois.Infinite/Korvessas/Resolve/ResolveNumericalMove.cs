@@ -62,8 +62,8 @@ public static class ResolveNumericalMove
                                 .kIfTrue<Multi<ResolvedObj>>(new()
                                 {
                                     Then = Core.kNollaFor<Multi<ResolvedObj>>(),
-                                    Else = Core.kMetaFunctionRecursive<IMulti<IRoveggi<uUnitIdentifier>>, Number, Multi<ResolvedObj>>(
-                                        [], (iRecurse, iAvailableSubjects, iMovedDistance) =>
+                                    Else = Core.kMetaFunctionRecursive<IMulti<IRoveggi<uUnitIdentifier>>, Number, Number, Multi<ResolvedObj>>(
+                                        [], (iRecurse, iAvailableSubjects, iMovedDistance, iRemainingCount) =>
                                             iAvailableSubjects.kRef()
                                                 .kCount()
                                                 .kIsGreaterThan(0.kFixed())
@@ -73,7 +73,16 @@ public static class ResolveNumericalMove
                                                     {
                                                         Environment =
                                                         [
-
+                                                            iMoveRange.kRef()
+                                                                .kStart()
+                                                                .kSubtract(iMovedDistance.kRef())
+                                                                .kSubtract(
+                                                                iRemainingCount.kRef()
+                                                                    .kSubtract(1.kFixed())
+                                                                    .kMultiply(iMaxPerUnit.kRef()))
+                                                                .kClampMin(1.kFixed())
+                                                                .kAsVariable(out var iMinMove),
+                                                            iMoved
                                                         ],
                                                         Value =
                                                     }),
@@ -84,7 +93,8 @@ public static class ResolveNumericalMove
                                         new()
                                         {
                                             A = iValidSubjects.kRef(),
-                                            B = 0.kFixed()
+                                            B = 0.kFixed(),
+                                            C = iMaxSubjects.kRef()
                                         })
                                 })
                     })
