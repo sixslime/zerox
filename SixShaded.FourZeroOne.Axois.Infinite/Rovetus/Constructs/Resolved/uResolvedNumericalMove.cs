@@ -3,7 +3,7 @@
 public interface uResolvedNumericalMove : IConcreteRovetu, uResolvedMove
 {
     public static new readonly Rovu<uResolvedNumericalMove, IRoveggi<Move.uNumericalMove>> MOVE = new(Axoi.Du, "move");
-    public static readonly Rovu<uResolvedNumericalMove, Number> DISTANCE = new(Axoi.Du, "distance");
+    public static readonly Rovu<uResolvedNumericalMove, Number> PATH_DISTANCE = new(Axoi.Du, "path_distance");
     public static readonly ImplementationStatement<uResolvedNumericalMove> __IMPLEMENTS =
         c =>
             c.ImplementGet(
