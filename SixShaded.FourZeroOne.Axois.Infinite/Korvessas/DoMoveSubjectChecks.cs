@@ -2,37 +2,24 @@ namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas;
 
 using u.Constructs.Move;
 using u.Constructs.Resolved;
-using u.Constructs.HexTypes;
 using u.Identifier;
 using u.Data;
 using Core = Core.Syntax.Core;
 
-public static class DoMoveSpaceChecks
+public static class DoMoveSubjectChecks
 {
-    public static Korvessa<IRoveggi<uUnitIdentifier>, IRoveggi<uHexIdentifier>, IRoveggi<uSpaceChecks>> Construct(IKorssa<IRoveggi<uUnitIdentifier>> unit, IKorssa<IRoveggi<uHexIdentifier>> hex) =>
-        new(unit, hex)
+    public static Korvessa<IRoveggi<uMove>, IRoveggi<uUnitIdentifier>, IRoveggi<uSubjectChecks>> Construct(IKorssa<IRoveggi<uMove>> move, IKorssa<IRoveggi<uUnitIdentifier>> unit) =>
+        new(move, unit)
         {
-            Du = Axoi.Korvedu("DoMoveSpaceChecks"),
+            Du = Axoi.Korvedu("DoMoveSubjectChecks"),
             Definition =
-                (_, iUnit, iHex) =>
-                    Core.kCompose<uSpaceChecks>()
-                        .kWithRovi(uSpaceChecks.WALL,
-                        iHex.kRef()
+                (_, iMove, iUnit) =>
+                    Core.kCompose<uSubjectChecks>()
+                        .kWithRovi(uSubjectChecks.EFFECT_CHECK,
+                        iUnit.kRef()
                             .kRead()
-                            .kGetRovi(uHexData.TYPE)
-                            .kIsType<uWallHex>()
-                            .kExists())
-                        .kWithRovi(uSpaceChecks.PROTECTED_BASE,
-                        iHex.kRef()
-                            .kRead()
-                            .kGetRovi(uHexData.TYPE)
-                            .kIsType<uBaseHex>()
-                            .kGetRovi(uBaseHex.OWNER)
-                            .kEquals(
-                            iUnit.kRef()
-                                .kRead()
-                                .kGetRovi(uUnitData.OWNER))
-                            .kNot()
-                            .kCatchNolla(() => true.kFixed()))
+                            .kGetRovi(uUnitData.EFFECTS)
+                            .kContains(Core.kCompose<u.Constructs.UnitEffects.uImmobileEffect>())
+                            .kNot())
         };
 }

@@ -6,6 +6,7 @@ using u.Identifier;
 using u.Data;
 using Core = Core.Syntax.Core;
 using u.Constructs.HexTypes;
+using Infinite = Syntax.Infinite;
 
 public static class IsBaseProtected
 {
@@ -15,14 +16,16 @@ public static class IsBaseProtected
             Du = Axoi.Korvedu("IsBaseProtected"),
             Definition =
                 (_, iPlayer) =>
-                    Core.kAllRovedanggiValues<uUnitIdentifier, IRoveggi<uUnitData>>()
+                    Infinite.AllUnits
                         .kAnyMatch(
-                        iUnitData =>
-                            iUnitData.kRef()
+                        iUnit =>
+                            iUnit.kRef()
+                                .kRead()
                                 .kGetRovi(uUnitData.OWNER)
                                 .kEquals(iPlayer.kRef())
                                 .ksLazyAnd(
-                                iUnitData.kRef()
+                                iUnit.kRef()
+                                    .kRead()
                                     .kGetRovi(uUnitData.POSITION)
                                     .kRead()
                                     .kGetRovi(uHexData.TYPE)

@@ -91,6 +91,14 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.Filter<R>.Construct(source, Core.kMetaFunction([], predicate));
 
+    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, R> kFirstMatch<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Bool>> predicate)
+        where R : class, Rog =>
+        Korvessas.FirstMatch<R>.Construct(source, predicate);
+
+    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, R> kFirstMatch<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Bool> predicate)
+        where R : class, Rog =>
+        Korvessas.FirstMatch<R>.Construct(source, Core.kMetaFunction([], predicate));
+
     public static Korvessa<R, MetaFunction<R, Number, R>, Multi<R>> kSequence<R>(this IKorssa<R> initialValue, MetaDefinition<R, Number, R> generator)
         where R : class, Rog =>
         Korvessas.Sequence<R>.Construct(initialValue, Core.kMetaFunction([], generator));
