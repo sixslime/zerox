@@ -40,22 +40,53 @@ public static class ResolveNumericalMove
                                             A = iUnit.kRef()
                                         }))
                                 .kAsVariable(out var iValidSubjects),
-
                             iMove.kRef()
                                 .kGetRovi(uNumericalMove.DISTANCE)
-                                .kAsVariable(out var iMoveRange)
+                                .kAsVariable(out var iMoveRange),
+                            iMove.kRef()
+                                .kGetRovi(uNumericalMove.MAX_SUBJECTS)
+                                .kCatchNolla(() => iValidSubjects.kRef().kCount())
+                                .kAsVariable(out var iMaxSubjects),
+                            iMove.kRef()
+                                .kGetRovi(uNumericalMove.MAX_DISTANCE_PER_SUBJECT)
+                                .kCatchNolla(() => iMoveRange.kRef().kEnd())
+                                .kAsVariable(out var iMaxPerUnit)
                         ],
                         Value =
-                            Core.kMetaFunctionRecursive<IMulti<IRoveggi<uUnitIdentifier>>, Number, Multi<ResolvedObj>>(
-                                (iRecurse, iAvailableSubjects, iMovedDistance) =>
-                                    )
-                                .kExecuteWith(
-                                new()
+                            // nolla if impossible move:
+                            // (moveRange.Min < (maxPerUnit * maxUnits))
+                            iMoveRange.kRef()
+                                .kStart()
+                                .kIsGreaterThan(
+                                iMaxSubjects.kRef().kMultiply(iMaxPerUnit.kRef()))
+                                .kIfTrue<Multi<ResolvedObj>>(new()
                                 {
-                                    A = iValidSubjects.kRef(),
-                                    B = 0.kFixed()
-                                })
+                                    Then = Core.kNollaFor<Multi<ResolvedObj>>(),
+                                    Else = Core.kMetaFunctionRecursive<IMulti<IRoveggi<uUnitIdentifier>>, Number, Multi<ResolvedObj>>(
+                                        [], (iRecurse, iAvailableSubjects, iMovedDistance) =>
+                                            iAvailableSubjects.kRef()
+                                                .kCount()
+                                                .kIsGreaterThan(0.kFixed())
+                                                .kIfTrue<Multi<ResolvedObj>>(new()
+                                                {
+                                                    Then = Core.kSubEnvironment<Multi<ResolvedObj>>(new()
+                                                    {
+                                                        Environment =
+                                                        [
 
+                                                        ],
+                                                        Value =
+                                                    }),
+                                                    Else = Core.kMulti<ResolvedObj>([])
+                                                })
+                                            )
+                                        .kExecuteWith(
+                                        new()
+                                        {
+                                            A = iValidSubjects.kRef(),
+                                            B = 0.kFixed()
+                                        })
+                                })
                     })
         };
 }
