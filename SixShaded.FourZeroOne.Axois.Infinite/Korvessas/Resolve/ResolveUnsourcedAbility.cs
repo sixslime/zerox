@@ -1,7 +1,7 @@
-﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas;
+﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas.Resolve;
 
-using u.Constructs.Ability;
-using u.Constructs.Resolved;
+using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Ability;
+using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Resolved;
 using Core = Core.Syntax.Core;
 
 public static class ResolveUnsourcedAbility

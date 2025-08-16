@@ -1,13 +1,11 @@
-﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas;
+﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas.Resolve;
 
-using u.Constructs.Ability;
-using u.Constructs.Ability.Types;
-using u.Constructs.Resolved;
-using u.Identifier;
-using u.Data;
+using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Ability;
+using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Resolved;
+using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Data;
 using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
-using ResolvedObj = IRoveggi<u.Constructs.Resolved.uResolvedSourcedAbility>;
+using ResolvedObj = IRoveggi<Rovetus.Constructs.Resolved.uResolvedSourcedAbility>;
 public static class ResolveSourcedAbility
 {
     public static Korvessa<IRoveggi<uSourcedAbility>, ResolvedObj> Construct(IKorssa<IRoveggi<uSourcedAbility>> ability) =>
