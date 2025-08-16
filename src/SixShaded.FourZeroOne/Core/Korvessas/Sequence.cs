@@ -4,6 +4,7 @@ using Roggis;
 using Korvessa.Defined;
 using Syntax;
 
+// be careful, can generate infinite sequences, yada yada.
 public static class Sequence<R>
     where R : class, Rog
 {
