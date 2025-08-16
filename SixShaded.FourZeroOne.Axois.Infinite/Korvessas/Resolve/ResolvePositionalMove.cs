@@ -9,13 +9,13 @@ using Core = Core.Syntax.Core;
 
 public static class ResolvePositionalMove
 {
-    public static Korvessa<IRoveggi<uPositionalMove>, Multi<ResolvedObj>> Construct(IKorssa<IRoveggi<uPositionalMove>> move) =>
+    public static Korvessa<IRoveggi<uPositionalMove>, ResolvedObj> Construct(IKorssa<IRoveggi<uPositionalMove>> move) =>
         new(move)
         {
             Du = Axoi.Korvedu("ResolvePositionalMove"),
             Definition =
                 (_, iMove) =>
-                    Core.kSubEnvironment<Multi<ResolvedObj>>(
+                    Core.kSubEnvironment<ResolvedObj>(
                     new()
                     {
                         Environment =
@@ -44,8 +44,9 @@ public static class ResolvePositionalMove
                         ],
                         Value =
                             iSubjectUnit.kRef()
-                                .kKeepNolla(() =>
-                                    Core.kSubEnvironment<Multi<ResolvedObj>>(
+                                .kKeepNolla(
+                                () =>
+                                    Core.kSubEnvironment<ResolvedObj>(
                                     new()
                                     {
                                         Environment =
@@ -104,9 +105,8 @@ public static class ResolvePositionalMove
                                                             .kSafeUpdate(
                                                             iUnit =>
                                                                 iUnit.kRef()
-                                                                    .kWithRovi(uUnitData.POSITION, iDestinationPosition.kRef())))
-                                                        .kYield())
-                                    })
+                                                                    .kWithRovi(uUnitData.POSITION, iDestinationPosition.kRef()))))
+                                    }))
 
                     })
         };

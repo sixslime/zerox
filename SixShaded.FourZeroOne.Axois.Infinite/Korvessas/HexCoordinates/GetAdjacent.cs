@@ -15,7 +15,7 @@ public static class GetAdjacent
             Definition =
                 (_, iCoords) =>
                     (1, -1, 0).kAsHex()
-                    .kSequence(
+                    .kGenerateSequence(
                     (iPrevHex, iIndex) =>
                         iIndex.kRef()
                             .kIsGreaterThan(6.kFixed())

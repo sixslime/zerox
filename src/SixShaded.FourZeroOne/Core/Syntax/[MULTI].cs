@@ -99,11 +99,11 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.FirstMatch<R>.Construct(source, Core.kMetaFunction([], predicate));
 
-    public static Korvessa<R, MetaFunction<R, Number, R>, Multi<R>> kSequence<R>(this IKorssa<R> initialValue, MetaDefinition<R, Number, R> generator)
+    public static Korvessa<R, MetaFunction<R, Number, R>, Multi<R>> kGenerateSequence<R>(this IKorssa<R> initialValue, MetaDefinition<R, Number, R> generator)
         where R : class, Rog =>
         Korvessas.Sequence<R>.Construct(initialValue, Core.kMetaFunction([], generator));
 
-    public static Korvessa<R, MetaFunction<R, Number, R>, Multi<R>> kSequence<R>(this IKorssa<R> initialValue, IKorssa<MetaFunction<R, Number, R>> generator)
+    public static Korvessa<R, MetaFunction<R, Number, R>, Multi<R>> kGenerateSequence<R>(this IKorssa<R> initialValue, IKorssa<MetaFunction<R, Number, R>> generator)
         where R : class, Rog =>
         Korvessas.Sequence<R>.Construct(initialValue, generator);
 

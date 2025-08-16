@@ -6,11 +6,12 @@ public interface uNumericalMove : uMove, IConcreteRovetu
     /// <summary>
     /// may be nolla ~ no max.
     /// </summary>
-    public static readonly Rovu<uNumericalMove, NumRange> MAX_PER_UNIT = new(Axoi.Du, "max_per_unit");
+    public static readonly Rovu<uNumericalMove, NumRange> MAX_DISTANCE_PER_SUBJECT = new(Axoi.Du, "max_distance_per_subject");
     /// <summary>
-    /// may be nolla ~ not shared, equiv to 1.
+    /// max amount of subjects this move can be shared between, out of the available subjects. <br></br>
+    /// may be nolla ~ equiv to infinity.
     /// </summary>
-    public static readonly Rovu<uNumericalMove, Number> SHARED_UNITS = new(Axoi.Du, "shared_units");
+    public static readonly Rovu<uNumericalMove, Number> MAX_SUBJECTS = new(Axoi.Du, "max_subjects");
     /// <summary>
     /// (spaceChecks) -> (prevSpaace, thisSpace) -> isValidStep <br></br>
     /// runs for each pathing step. <br></br>
