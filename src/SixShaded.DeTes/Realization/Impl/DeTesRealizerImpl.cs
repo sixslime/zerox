@@ -322,12 +322,12 @@ internal class DeTesRealizerImpl
     {
         private Data? _data = data;
 
-        Task<int[]> IInputFZO.GetSelection(Rog[] pool, int count)
+        Task<int[]> IInputFZO.GetSelection(Rog[] pool, int minCount, int maxCount)
         {
             if (_data is null) throw new RequiresDomainSplit();
             var data = _data;
             _data = null;
-            if (data.Selection.Length != count || data.Selection.Any(i => i >= pool.Length))
+            if (data.Selection.Length > maxCount || data.Selection.Length < minCount || data.Selection.Any(i => i >= pool.Length))
             {
                 throw new DeTesInvalidTestException
                 {
@@ -335,7 +335,7 @@ internal class DeTesRealizerImpl
                         new EDeTesInvalidTest.InvalidDomainSelection
                         {
                             InvalidSelection = data.Selection,
-                            ExpectedSelectionSize = count,
+                            ExpectedSelectionSize = (minCount, maxCount),
                             ExpectedMaxIndex = pool.Length - 1,
                             SelectionKorssa = data.SelectionKorssa,
                             NearKorssa = data.Domain.LinkedKorssa,

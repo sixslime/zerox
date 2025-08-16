@@ -33,7 +33,7 @@ public abstract record EDeTesInvalidTest
         public required Kor SelectionKorssa { get; init; }
         public required int[][] Domain { get; init; }
         public required int[] InvalidSelection { get; init; }
-        public required int ExpectedSelectionSize { get; init; }
+        public required (int Min, int Max) ExpectedSelectionSize { get; init; }
         public required int ExpectedMaxIndex { get; init; }
     }
 }

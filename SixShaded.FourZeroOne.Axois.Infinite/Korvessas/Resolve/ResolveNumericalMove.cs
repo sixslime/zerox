@@ -15,7 +15,7 @@ public static class ResolveNumericalMove
             Du = Axoi.Korvedu("ResolveNumericalMove"),
             Definition =
                 (_, iMove) =>
-                    Core.kSubEnvironment<ResolvedObj>(
+                    Core.kSubEnvironment<Multi<ResolvedObj>>(
                     new()
                     {
                         Environment =
@@ -69,6 +69,7 @@ public static class ResolveNumericalMove
                                                 .kIsGreaterThan(0.kFixed())
                                                 .kIfTrue<Multi<ResolvedObj>>(new()
                                                 {
+                                                    // TODO LEFTOFF:
                                                     Then = Core.kSubEnvironment<Multi<ResolvedObj>>(new()
                                                     {
                                                         Environment =
@@ -82,9 +83,8 @@ public static class ResolveNumericalMove
                                                                     .kMultiply(iMaxPerUnit.kRef()))
                                                                 .kClampMin(1.kFixed())
                                                                 .kAsVariable(out var iMinMove),
-                                                            iMoved
                                                         ],
-                                                        Value =
+                                                        Value = Core.kNollaFor<Multi<ResolvedObj>>()
                                                     }),
                                                     Else = Core.kMulti<ResolvedObj>([])
                                                 })

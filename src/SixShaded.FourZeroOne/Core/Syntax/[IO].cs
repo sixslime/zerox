@@ -8,7 +8,11 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(source);
 
-    public static Korssas.IO.Select.Multiple<R> kIOSelectMultiple<R>(this IKorssa<IMulti<R>> source, IKorssa<Number> count)
+    public static Korssas.IO.Select.Multiple<R> kIOSelectMultiple<R>(this IKorssa<IMulti<R>> source, IKorssa<NumRange> count)
         where R : class, Rog =>
         new(source, count);
+
+    public static Korssas.IO.Select.Multiple<R> kIOSelectMultiple<R>(this IKorssa<IMulti<R>> source, IKorssa<Number> count)
+        where R : class, Rog =>
+        new(source, count.kSingleRange());
 }

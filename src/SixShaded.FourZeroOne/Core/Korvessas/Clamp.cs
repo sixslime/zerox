@@ -12,7 +12,7 @@ public static class Clamp
             Definition =
                 (_, iVal, iRange) =>
                     iVal.kRef()
-                        .kMin(iRange.kRef().kEnd())
-                        .kMax(iRange.kRef().kStart())
+                        .kClampMax(iRange.kRef().kEnd())
+                        .kClampMin(iRange.kRef().kStart())
         };
 }

@@ -65,10 +65,10 @@ public record Glancer
                 if (v.Description is not null) Write($"\"{v.Description}\" ", CCol.DarkCyan);
                 WriteLn(FormatLinkedKorssa(v.NearKorssa), nearKorssaColor);
                 Write(v.InvalidSelection.ICEE(), CCol.DarkYellow);
-                if (v.InvalidSelection.Length != v.ExpectedSelectionSize)
+                if (v.InvalidSelection.Length > v.ExpectedSelectionSize.Max || v.InvalidSelection.Length < v.ExpectedSelectionSize.Min)
                 {
                     Write(" expects ");
-                    Write(v.ExpectedSelectionSize.ToString(), CCol.DarkGreen);
+                    Write($"{v.ExpectedSelectionSize.Min}..{v.ExpectedSelectionSize.Max}", CCol.DarkGreen);
                     Write(" elements got ");
                     Write(v.InvalidSelection.Length.ToString(), CCol.Red);
                 }

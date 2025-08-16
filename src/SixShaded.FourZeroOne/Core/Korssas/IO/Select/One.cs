@@ -16,7 +16,7 @@ public sealed record One<R> : Korssa.Defined.Function<IMulti<R>, R>
                         (from.Count > 0)
                         .ToOptionLazy(
                         async () =>
-                            (await runtime.Input.ReadSelection(from, 1))[0]
+                            (await runtime.Input.ReadSelection(from, 1, 1))[0]
                             .ExprAs(i => from.At(i).Expect($"Got invalid index '{i}', expected 0..{from.Count - 1}"))
                             .AsSome())))
             .Press()
