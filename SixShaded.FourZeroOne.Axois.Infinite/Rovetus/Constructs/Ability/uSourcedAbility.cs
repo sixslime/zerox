@@ -6,11 +6,13 @@ public interface uSourcedAbility : IConcreteRovetu, uAbility
 {
     public static new readonly Rovu<uSourcedAbility, IRoveggi<Types.uSourcedType>> TYPE = new(Axoi.Du, "type");
     /// <summary>
-    /// (targetChecks) -> ((source, target) -> isValidTarget)
+    /// (targetChecks) -> ((source, target) -> isValidTarget) <br></br>
+    /// default should be (targetChecks) => ((_, _) => targetChecks.AllTrue)
     /// </summary>
     public static readonly Rovu<uSourcedAbility, MetaFunction<IRoveggi<uTargetChecks>, MetaFunction<IRoveggi<uUnitIdentifier>, IRoveggi<uUnitIdentifier>, Bool>>> TARGET_SELECTOR = new(Axoi.Du, "target_selector");
     /// <summary>
-    /// (sourceChecks) -> ((unit) -> isValidSource)
+    /// (sourceChecks) -> ((unit) -> isValidSource) <br></br>
+    /// default should be (sourceChecks) => ((_) => sourceChecks.AllTrue)
     /// </summary>
     public static readonly Rovu<uSourcedAbility, MetaFunction<IRoveggi<uSourceChecks>, MetaFunction<IRoveggi<uUnitIdentifier>, Bool>>> SOURCE_SELECTOR = new(Axoi.Du, "source_selector");
     public static readonly Rovu<uSourcedAbility, IMulti<IRoveggi<uHexOffset>>> HIT_AREA = new(Axoi.Du, "hit_area");
