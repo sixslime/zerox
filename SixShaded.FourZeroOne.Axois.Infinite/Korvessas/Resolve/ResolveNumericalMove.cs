@@ -47,7 +47,8 @@ public static class ResolveNumericalMove
                         ],
                         Value =
                             Core.kMetaFunctionRecursive<IMulti<IRoveggi<uUnitIdentifier>>, Number, Multi<ResolvedObj>>(
-                                (iRecurse, iAvailableSubjects, iRemainingMoves))
+                                (iRecurse, iAvailableSubjects, iMovedDistance) =>
+                                    )
                                 .kExecuteWith(
                                 new()
                                 {

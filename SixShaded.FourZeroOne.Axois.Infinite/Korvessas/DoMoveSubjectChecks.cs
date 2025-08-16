@@ -19,7 +19,7 @@ public static class DoMoveSubjectChecks
                         iUnit.kRef()
                             .kRead()
                             .kGetRovi(uUnitData.EFFECTS)
-                            .kContains(Core.kCompose<u.Constructs.UnitEffects.uImmobileEffect>())
+                            .kAnyMatch(iEffect => iEffect.kRef().kIsType<u.Constructs.UnitEffects.uImmobileEffect>().kExists())
                             .kNot())
         };
 }

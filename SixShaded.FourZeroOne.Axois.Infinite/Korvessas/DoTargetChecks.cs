@@ -141,7 +141,7 @@ public static class DoTargetChecks
                                     iUnit.kRef()
                                         .kRead()
                                         .kGetRovi(uUnitData.EFFECTS)
-                                        .kContains(Core.kCompose<u.Constructs.UnitEffects.uShockEffect>())
+                                        .kAnyMatch(iEffect => iEffect.kRef().kIsType<u.Constructs.UnitEffects.uShockEffect>().kExists())
                                         .kNot(),
                                 Else = true.kFixed()
                             }))
