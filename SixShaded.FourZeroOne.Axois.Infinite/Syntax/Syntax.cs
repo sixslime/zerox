@@ -3,6 +3,7 @@ namespace SixShaded.FourZeroOne.Axois.Infinite.Syntax;
 using u.Anchors;
 using u.Identifier;
 using u.Data;
+using u.Constructs.Move;
 using Core = Core.Syntax.Core;
 using u.Constructs;
 using u.Constructs.Ability;
@@ -17,5 +18,6 @@ public static partial class Infinite
 public static partial class KorssaSyntax
 {
     public static Korvessa<IRoveggi<uSourcedAbility>, IRoveggi<uUnitIdentifier>, IRoveggi<uSourceChecks>> kSourceChecks(this IKorssa<IRoveggi<uSourcedAbility>> ability, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.DoSourceChecks.Construct(ability, unit);
+    public static Korvessa<IRoveggi<uMove>, IRoveggi<uUnitIdentifier>, IRoveggi<uSubjectChecks>> kSubjectChecks(this IKorssa<IRoveggi<uMove>> move, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.DoMoveSubjectChecks.Construct(move, unit);
     public static Korvessa<IRoveggi<uSourcedAbility>, IRoveggi<uUnitIdentifier>, IRoveggi<uUnitIdentifier>, IRoveggi<uTargetChecks>> kTargetChecks(this IKorssa<IRoveggi<uSourcedAbility>> ability, IKorssa<IRoveggi<uUnitIdentifier>> unit, IKorssa<IRoveggi<uUnitIdentifier>> source) => Korvessas.DoTargetChecks.Construct(ability, unit, source);
 }
