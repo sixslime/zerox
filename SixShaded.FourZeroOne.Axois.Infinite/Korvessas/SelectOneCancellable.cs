@@ -28,23 +28,25 @@ where ROut : class, Rog
                                 ])
                                 .kFlatten()
                                 .kIOSelectOne()
-                                .kIsType<RIn>()
                                 .kAsVariable(out var iSelection)
                         ],
                         Value =
                             iSelection.kRef()
+                                .kIsType<IRoveggi<u.uCancelMarker>>()
                                 .kExists()
                                 .kIfTrue<ROut>(
                                 new()
                                 {
-                                    Then =
+                                    Then = iCancelPath.kRef().kExecute(),
+                                    Else =
                                         iSelectPath.kRef()
                                             .kExecuteWith(
                                             new()
                                             {
-                                                A = iSelection.kRef()
+                                                A =
+                                                    iSelection.kRef()
+                                                        .kIsType<RIn>()
                                             }),
-                                    Else = iCancelPath.kRef().kExecute()
                                 })
                     })
 
