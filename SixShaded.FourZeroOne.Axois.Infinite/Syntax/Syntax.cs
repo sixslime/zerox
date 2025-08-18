@@ -23,5 +23,24 @@ public static partial class KorssaSyntax
     public static Korvessa<IRoveggi<uMove>, IRoveggi<uUnitIdentifier>, IRoveggi<uSubjectChecks>> kSubjectChecks(this IKorssa<IRoveggi<uMove>> move, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.DoMoveSubjectChecks.Construct(move, unit);
     public static Korvessa<IRoveggi<uSourcedAbility>, IRoveggi<uUnitIdentifier>, IRoveggi<uUnitIdentifier>, IRoveggi<uTargetChecks>> kTargetChecks(this IKorssa<IRoveggi<uSourcedAbility>> ability, IKorssa<IRoveggi<uUnitIdentifier>> unit, IKorssa<IRoveggi<uUnitIdentifier>> source) => Korvessas.DoTargetChecks.Construct(ability, unit, source);
 
-    public static Korvessa
+    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, MetaFunction<ROut>, ROut> kIOSelectOneCancellable<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, Structure.SelectCancellable<RIn, ROut> block)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        Korvessas.SelectOneCancellable<RIn, ROut>.Construct(pool, Core.kMetaFunction([], block.Select), Core.kMetaFunction([], block.Cancel));
+    public static IKorssa<ROut> kIOSelectMultipleCancellable<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, IKorssa<NumRange> count, Structure.SelectCancellable<IMulti<RIn>, ROut> block)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        Korvessas.SelectMultipleCancellable<RIn, ROut>.Construct(pool, Core.kMetaFunction([], block.Select), Core.kMetaFunction([], block.Cancel))
+            .kExecuteWith(new()
+            {
+                A = count
+            });
+    public static IKorssa<ROut> kIOSelectMultipleCancellable<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, IKorssa<Number> count, Structure.SelectCancellable<IMulti<RIn>, ROut> block)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        Korvessas.SelectMultipleCancellable<RIn, ROut>.Construct(pool, Core.kMetaFunction([], block.Select), Core.kMetaFunction([], block.Cancel))
+            .kExecuteWith(new()
+            {
+                A = count.kSingleRange()
+            });
 }

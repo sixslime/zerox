@@ -10,7 +10,7 @@ public static class SelectOneCancellable<RIn, ROut>
 where RIn : class, Rog
 where ROut : class, Rog
 {
-    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, MetaFunction<ROut>, ROut> Construct(IKorssa<Multi<RIn>> pool, IKorssa<MetaFunction<RIn, ROut>> selectPath, IKorssa<MetaFunction<ROut>> cancelPath) =>
+    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, MetaFunction<ROut>, ROut> Construct(IKorssa<IMulti<RIn>> pool, IKorssa<MetaFunction<RIn, ROut>> selectPath, IKorssa<MetaFunction<ROut>> cancelPath) =>
         new(pool, selectPath, cancelPath)
         {
             Du = Axoi.Korvedu("SelectOneCancellable"),
