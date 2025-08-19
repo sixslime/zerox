@@ -1,5 +1,5 @@
 # Project Zerox
-> A language to make games, a game made in said language, a server to host said game, and a client to connect to said server.
+> A language to make games, a game made in said language, a server to host said game, and a client to connect to said server--all in pure C#.
 
 Project Zerox is a loose designation for the following:
 * A **DSL** that defines game logic. **[FourZeroOne](/src/SixShaded.FourZeroOne)**
