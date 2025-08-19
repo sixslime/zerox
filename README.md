@@ -2,7 +2,7 @@
 > A language to make games, a game made in said language, a server to host said game, and a client to connect to said server--all in pure C#.
 
 Project Zerox is a loose designation for the following:
-* A **DSL**, *FourFeroOne*, specialized for defining turn-based game logic. **[FourZeroOne](/src/SixShaded.FourZeroOne)**
+* A **DSL**, *FourZeroOne*, specialized for defining turn-based game logic. **[FourZeroOne](/src/SixShaded.FourZeroOne)**
 * An **API** that provides an abstract interface layer for--but does not implement--the *FourZeroOne* runtime. **[FZO](/src/SixShaded.FourZeroOne/FZOSpec)**
 * A minimal/default **implementation** of the *FourZeroOne* runtime. **[MinimaFZO](/src/SixShaded.MinimaFZO)**
 * A **testing framework** for programs written in *FourZeroOne*. **[DeTes](/src/SixShaded.DeTes)**
