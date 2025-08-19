@@ -15,4 +15,4 @@ Completion of all of these components should result in a fully playable digital 
 
 This repository serves as a monorepo/workspace for all things related to project Zerox while it is still in early development. Eventually, each part of project Zerox will be given it's own repository and project designation.
 
-*Many names are temporary, better names will be chosen later in development!*
+*Many names are temporary, better names will be chosen later in development.*
