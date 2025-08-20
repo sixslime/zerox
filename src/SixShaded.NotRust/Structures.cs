@@ -296,12 +296,8 @@ public class PSequence<T>() : IPSequence<T>
 
     IEntryRemovable<int> IEntryRemovable<int>._WithoutEntries(IEnumerable<int> entries)
     {
-        (T, bool)[] optList = [.._list.Map(x => (x, true))];
-        foreach (var i in entries)
-        {
-            optList[i] = (optList[i].Item1, false);
-        }
-        return new PSequence<T>(optList.Where(x => x.Item2 == true).Map(x => x.Item1));
+        HashSet<int> exclusions = new(entries.Where(x => x >= 0));
+        return new PSequence<T>(_list.WhereIndex(x => !exclusions.Contains(x)));
     }
 
     IPSequence<T> IPSequence<T>._WithInsertionAt(int index, IEnumerable<T> items)

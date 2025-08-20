@@ -12,5 +12,5 @@ where R : class, Rog
     public IEfficientMulti<R> Slice(Range range);
     public IEfficientMulti<R> Union(IEfficientMulti<R> other);
     public IEfficientMulti<R> Intersect(IEfficientMulti<R> other);
-    public IEfficientMulti<R> Inversect(IEfficientMulti<R> other);
+    public IEfficientMulti<R> Except(IEfficientMulti<R> other);
 }

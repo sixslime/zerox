@@ -20,6 +20,13 @@ public static class Iter
                 yield return some;
     }
 
+    public static IEnumerable<T> Filtered<T>(this IEnumerable<IOption<T>> enumerable)
+    {
+        foreach (var e in enumerable)
+            if (e.Check(out var v))
+                yield return v;
+    }
+
     public static IEnumerable<TCast> FilterCast<TCast>(this IEnumerable<object> enumerable)
     {
         foreach (object? e in enumerable)
@@ -38,6 +45,15 @@ public static class Iter
     {
         int i = 0;
         foreach (var v in enumerable) yield return (i++, v);
+    }
+
+    public static IEnumerable<T> WhereIndex<T>(this IEnumerable<T> enumerable, Func<int, bool> indexPredicate)
+    {
+        int i = 0;
+        foreach (var v in enumerable)
+        {
+            if (indexPredicate(i++)) yield return v;
+        }
     }
 
     /// <summary>

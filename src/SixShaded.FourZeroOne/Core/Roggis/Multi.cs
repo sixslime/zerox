@@ -15,7 +15,7 @@ public sealed record Multi<R> : Roggi.Defined.Roggi, IEfficientMulti<R>
         {
             if (opt.CheckNone(out var v))
                 continue;
-            if (!dict.TryAdd(v, new PSequence<int>([i])))
+            if (!dict.TryAdd(v, i.Yield().ToPSequence()))
                 dict[v] = dict[v].WithEntries(i);
         }
         _indexMap = new PMap<R, IPSequence<int>>(dict);
@@ -29,37 +29,47 @@ public sealed record Multi<R> : Roggi.Defined.Roggi, IEfficientMulti<R>
     IPSequence<IOption<R>> IEfficientMulti<R>.Values => _sequence;
     IPMap<R, IPSequence<int>> IEfficientMulti<R>.IndexMap => _indexMap;
 
-    IEfficientMulti<R> IEfficientMulti<R>.Distinct() => throw new NotImplementedException();
+    IEfficientMulti<R> IEfficientMulti<R>.Distinct()
+    {
+        var sequence =
+            _sequence.Elements
+                .Enumerate()
+                .Where(x => x.value.Check(out var v) && _indexMap.At(v).Unwrap().At(0).Unwrap() == x.index)
+                .Map(x => x.value)
+                .ToPSequence();
+        var indexMap =
+            _indexMap.WithEntries(
+            _indexMap.Elements
+                .Where(x => x.B.Count > 1)
+                .Map(x => (x.A, x.B.At(0).Unwrap().Yield().ToPSequence()).Tiple()));
+        return new Multi<R>(sequence, indexMap);
+    }
 
     IEfficientMulti<R> IEfficientMulti<R>.Concat(IEfficientMulti<R> other)
     {
         var sequence = _sequence.WithEntries(other.Values.Elements);
         var indexMap =
-            other.Values.Elements
-                .Enumerate()
-                .AccumulateInto(
-                _indexMap,
-                (map, ipair) =>
-                    ipair.value.RemapAs(
-                        element =>
-                        {
-                            int nIndex = ipair.index + _sequence.Count;
-                            return map.WithEntryOrUpdate(element, () => new PSequence<int>([nIndex]), list => list.WithEntries(nIndex));
-                        })
-                        .Or(map));
+            _indexMap.WithEntries(
+            other.IndexMap.Elements
+                .Map(
+                pair =>
+                    (_indexMap.At(pair.A).Check(out var existing)
+                        ? existing.WithEntries(pair.B.Elements.Map(i => i += _sequence.Count))
+                        : pair.B)
+                    .ExprAs(val => (pair.A, val).Tiple())));
         return new Multi<R>(sequence, indexMap);
     }
 
-    IEfficientMulti<R> IEfficientMulti<R>.Slice(Range range) => throw new NotImplementedException();
+    IEfficientMulti<R> IEfficientMulti<R>.Slice(Range range) => new Multi<R>(_sequence.Elements.WhereIndex(x => x >= range.Start.Value && x < range.End.Value));
 
-    IEfficientMulti<R> IEfficientMulti<R>.Union(IEfficientMulti<R> other) => throw new NotImplementedException();
+    IEfficientMulti<R> IEfficientMulti<R>.Union(IEfficientMulti<R> other) => new Multi<R>(_sequence.Elements.Filtered().Union(other.Values.Elements.Filtered()).Map(x => x.AsSome()));
 
-    IEfficientMulti<R> IEfficientMulti<R>.Intersect(IEfficientMulti<R> other) => throw new NotImplementedException();
+    IEfficientMulti<R> IEfficientMulti<R>.Intersect(IEfficientMulti<R> other) => new Multi<R>(_sequence.Elements.Filtered().Intersect(other.Values.Elements.Filtered()).Map(x => x.AsSome()));
 
-    IEfficientMulti<R> IEfficientMulti<R>.Inversect(IEfficientMulti<R> other) => throw new NotImplementedException();
+    IEfficientMulti<R> IEfficientMulti<R>.Except(IEfficientMulti<R> other) => new Multi<R>(_sequence.Elements.Filtered().Except(other.Values.Elements.Filtered()).Map(x => x.AsSome()));
 
-    IOption<IOption<R>> IIndexReadable<int, IOption<R>>.At(int index) => throw new NotImplementedException();
-    public override int GetHashCode() => Values.GetHashCode();
+    IOption<IOption<R>> IIndexReadable<int, IOption<R>>.At(int index) => _sequence.At(index);
+    public override int GetHashCode() => _sequence.GetHashCode();
     public override string ToString() => $"[{string.Join(", ", _sequence.Elements.Map(x => x.Check(out var val) ? val.ToString() : "\u2205"))}]";
     public bool Equals(Multi<R>? other) => other is not null && _sequence.Elements.SequenceEqual(other._sequence.Elements);
     public override IEnumerable<IInstruction> Instructions => _sequence.Elements.FilterMap(x => x.RemapAs(y => y.Instructions)).Flatten();
