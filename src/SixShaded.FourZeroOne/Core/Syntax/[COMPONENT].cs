@@ -1,5 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Syntax;
 
+using Korssas.Rovi;
+using Korssas.Rovi.Varovi;
 using Roggis;
 using Korvessa.Defined;
 using Roveggi.Unsafe;
@@ -8,13 +10,13 @@ using Roveggi;
 public static partial class Core
 {
     public static Korvessa<IRoveggi<C>> kCompose<C>()
-        where C : IRovetu =>
+        where C : IConcreteRovetu =>
         Korvessas.Compose<C>.Construct();
 }
 
 public static partial class KorssaSyntax
 {
-    public static Korssas.Component.Get<C, R> kGetRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu)
+    public static Get<C, R> kGetRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IGetRovu<C, R> rovu)
         where C : IRovetu
         where R : class, Rog =>
         new(holder)
@@ -22,10 +24,34 @@ public static partial class KorssaSyntax
             Rovu = rovu,
         };
 
-    public static Korssas.Component.With<C, R> kWithRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, IKorssa<R> component)
+    public static With<C, R> kWithRovi<C, R>(this IKorssa<IRoveggi<C>> holder, ISetRovu<C, R> rovu, IKorssa<R> data)
         where C : IRovetu
         where R : class, Rog =>
-        new(holder, component)
+        new(holder, data)
+        {
+            Rovu = rovu,
+        };
+
+    public static With<C, R> kWithRovi<C, R>(this IKorssa<IRoveggi<C>> holder, Structure.Hint<C> hint, ISetRovu<C, R> rovu, IKorssa<R> data)
+        where C : IRovetu
+        where R : class, Rog =>
+        new(holder, data)
+        {
+            Rovu = rovu,
+        };
+
+    public static With<C, R> kWithoutRovi<C, R>(this IKorssa<IRoveggi<C>> holder, ISetRovu<C, R> rovu)
+        where C : IRovetu
+        where R : class, Rog =>
+        new(holder, Core.kNollaFor<R>())
+        {
+            Rovu = rovu,
+        };
+
+    public static With<C, R> kWithoutRovi<C, R>(this IKorssa<IRoveggi<C>> holder, Structure.Hint<C> hint, ISetRovu<C, R> rovu)
+        where C : IRovetu
+        where R : class, Rog =>
+        new(holder, Core.kNollaFor<R>())
         {
             Rovu = rovu,
         };
@@ -33,43 +59,83 @@ public static partial class KorssaSyntax
     public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> kUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, IKorssa<MetaFunction<R, R>> changeFunc)
         where C : IRovetu
         where R : class, Rog =>
-        Korvessas.UpdateComponent<C, R>.Construct(holder, changeFunc, rovu);
+        Korvessas.UpdateRovi<C, R>.Construct(holder, changeFunc, rovu);
 
-    public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> kUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, IEnumerable<Addr> captures, Func<DynamicRoda<R>, IKorssa<R>> changeFunc)
+    public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> kUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, MetaDefinition<R, R> changeFunc)
         where C : IRovetu
         where R : class, Rog =>
-        Korvessas.UpdateComponent<C, R>.Construct(holder, Core.kMetaFunction(captures, changeFunc), rovu);
+        Korvessas.UpdateRovi<C, R>.Construct(holder, Core.kMetaFunction([], changeFunc), rovu);
 
-    public static Korssas.Component.Without<H> kWithoutRovi<H>(this IKorssa<IRoveggi<H>> holder, IRovu<H> rovu)
-        where H : IRovetu =>
-        new(holder)
-        {
-            Rovu = rovu,
-        };
+    public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> kSafeUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, IKorssa<MetaFunction<R, R>> changeFunc)
+        where C : IRovetu
+        where R : class, Rog =>
+        Korvessas.SafeUpdateRovi<C, R>.Construct(holder, changeFunc, rovu);
 
+    public static Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>> kSafeUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, MetaDefinition<R, R> changeFunc)
+        where C : IRovetu
+        where R : class, Rog =>
+        Korvessas.SafeUpdateRovi<C, R>.Construct(holder, Core.kMetaFunction([], changeFunc), rovu);
 
-    public static Korssas.Component.Attachment.With<C, RKey, RVal> kWithVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, IKorssa<RVal> value)
+    public static With<C, RKey, RVal> kWithVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, IKorssa<RVal> value)
         where C : IRovetu
         where RKey : class, Rog
         where RVal : class, Rog =>
         new(subject, key, value)
         {
-            Varovu = varovu
+            Varovu = varovu,
         };
-    public static Korssas.Component.Attachment.Without<C, RKey, RVal> kWithoutVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key)
+
+    public static With<C, RKey, RVal> kWithoutVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key)
+        where C : IRovetu
+        where RKey : class, Rog
+        where RVal : class, Rog =>
+        new(subject, key, Core.kNollaFor<RVal>())
+        {
+            Varovu = varovu,
+        };
+
+    public static Korvessa<IRoveggi<C>, RKey, MetaFunction<RVal, RVal>, IRoveggi<C>> kUpdateVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> holder, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, IKorssa<MetaFunction<RVal, RVal>> changeFunc)
+        where C : IRovetu
+        where RKey : class, Rog
+        where RVal : class, Rog =>
+        Korvessas.UpdateVarovi<C, RKey, RVal>.Construct(holder, key, changeFunc, varovu);
+
+    public static Korvessa<IRoveggi<C>, RKey, MetaFunction<RVal, RVal>, IRoveggi<C>> kSafeUpdateVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> holder, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, MetaDefinition<RVal, RVal> changeFunc)
+        where C : IRovetu
+        where RKey : class, Rog
+        where RVal : class, Rog =>
+        Korvessas.SafeUpdateVarovi<C, RKey, RVal>.Construct(holder, key, Core.kMetaFunction([], changeFunc), varovu);
+
+    public static Korvessa<IRoveggi<C>, RKey, MetaFunction<RVal, RVal>, IRoveggi<C>> kSafeUpdateVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> holder, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, IKorssa<MetaFunction<RVal, RVal>> changeFunc)
+        where C : IRovetu
+        where RKey : class, Rog
+        where RVal : class, Rog =>
+        Korvessas.SafeUpdateVarovi<C, RKey, RVal>.Construct(holder, key, changeFunc, varovu);
+
+    public static Get<C, RKey, RVal> kGetVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key)
         where C : IRovetu
         where RKey : class, Rog
         where RVal : class, Rog =>
         new(subject, key)
         {
-            Varovu = varovu
+            Varovu = varovu,
         };
-    public static Korssas.Component.Attachment.Get<C, RKey, RVal> kGetVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key)
+
+    public static GetKeys<C, RKey, RVal> kGetVarovaKeys<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu)
         where C : IRovetu
         where RKey : class, Rog
         where RVal : class, Rog =>
-        new(subject, key)
+        new(subject)
         {
-            Varovu = varovu
+            Varovu = varovu,
+        };
+
+    public static GetValues<C, RKey, RVal> kGetVarovaValues<C, RKey, RVal>(this IKorssa<IRoveggi<C>> subject, IVarovu<C, RKey, RVal> varovu)
+        where C : IRovetu
+        where RKey : class, Rog
+        where RVal : class, Rog =>
+        new(subject)
+        {
+            Varovu = varovu,
         };
 }

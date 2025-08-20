@@ -9,7 +9,7 @@ public record Execute<ROut> : Korssa.Defined.StateImplementedKorssa<MetaFunction
     { }
 
     protected override IOption<FZOSpec.EStateImplemented> MakeData(IKorssaContext _, IOption<MetaFunction<ROut>> funcOpt) => funcOpt.RemapAs(x => x.ConstructMetaExecute());
-    protected override IOption<string> CustomToString() => $"!<>:{Arg1}".AsSome();
+    protected override IOption<string> CustomToString() => $"{Arg1}$<>".AsSome();
 }
 
 public record Execute<RArg1, ROut> : Korssa.Defined.StateImplementedKorssa<MetaFunction<RArg1, ROut>, MetaArgs<RArg1>, ROut>
@@ -23,7 +23,7 @@ public record Execute<RArg1, ROut> : Korssa.Defined.StateImplementedKorssa<MetaF
         (funcOpt.Check(out var func) && argsOpt.Check(out var args))
             ? func.ConstructMetaExecute(args.Arg1).AsSome()
             : new None<FZOSpec.EStateImplemented>();
-    protected override IOption<string> CustomToString() => $"!{Arg2}:{Arg1}".AsSome();
+    protected override IOption<string> CustomToString() => $"{Arg1}${Arg2}".AsSome();
 }
 
 public record Execute<RArg1, RArg2, ROut> : Korssa.Defined.StateImplementedKorssa<MetaFunction<RArg1, RArg2, ROut>, MetaArgs<RArg1, RArg2>, ROut>
@@ -38,7 +38,7 @@ public record Execute<RArg1, RArg2, ROut> : Korssa.Defined.StateImplementedKorss
         (funcOpt.Check(out var func) && argsOpt.Check(out var args))
             ? func.ConstructMetaExecute(args.Arg1, args.Arg2).AsSome()
             : new None<FZOSpec.EStateImplemented>();
-    protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2}".AsSome();
+    protected override IOption<string> CustomToString() => $"{Arg1}${Arg2}".AsSome();
 }
 
 public record Execute<RArg1, RArg2, RArg3, ROut> : Korssa.Defined.StateImplementedKorssa<MetaFunction<RArg1, RArg2, RArg3, ROut>, MetaArgs<RArg1, RArg2, RArg3>, ROut>
@@ -54,5 +54,5 @@ public record Execute<RArg1, RArg2, RArg3, ROut> : Korssa.Defined.StateImplement
         (funcOpt.Check(out var func) && argsOpt.Check(out var args))
             ? func.ConstructMetaExecute(args.Arg1, args.Arg2, args.Arg3).AsSome()
             : new None<FZOSpec.EStateImplemented>();
-    protected override IOption<string> CustomToString() => $"!{Arg1}:{Arg2}".AsSome();
+    protected override IOption<string> CustomToString() => $"{Arg1}${Arg2}".AsSome();
 }

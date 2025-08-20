@@ -6,7 +6,7 @@ using Unsafe;
 // this is mega stupid.
 // update from HQ, its a regular amount of stupid.
 public record Roveggi<C> : Roggi.Defined.NoOp, IRoveggi<C>
-    where C : IRovetu
+    where C : IConcreteRovetu
 {
     public Roveggi()
     {

@@ -2,6 +2,7 @@ namespace SixShaded.MinimaFZO;
 
 using FourZeroOne.Mellsano;
 using FourZeroOne.Roggi;
+using FourZeroOne.Roveggi;
 
 public record MinimaMemoryFZO : IMemoryFZO
 {
@@ -20,6 +21,19 @@ public record MinimaMemoryFZO : IMemoryFZO
     IEnumerable<Mel> IMemoryFZO.Mellsanos => _mellsanos.Elements;
     IEnumerable<ITiple<MellsanoID, int>> IMemoryFZO.MellsanoMutes => _mellsanoMutes.Elements;
     IOption<R> IMemoryFZO.GetObject<R>(IRoda<R> address) => _objects.At(address).RemapAs(x => (R)x);
+
+    public IEnumerable<ITiple<IRoveggi<D>, R>> GetRovedanggiAssignmentsOfType<D, R>()
+        where D : Rovedantu<R>
+        where R : class, Rog =>
+        _objects.Elements.FilterMap(
+        x =>
+            x.A is RovedanggiWrapper<R>
+            {
+                Roveggi: IRoveggi<D> roveggi
+            }
+                ? (roveggi, (R)x.B).Tiple().AsSome()
+                : new None<ITiple<IRoveggi<D>, R>>());
+
     int IMemoryFZO.GetMellsanoMuteCount(MellsanoID mellsanoId) => _mellsanoMutes.At(mellsanoId).Or(0);
 
     IMemoryFZO IMemoryFZO.WithMellsanos(IEnumerable<Mel> mellsanos) =>

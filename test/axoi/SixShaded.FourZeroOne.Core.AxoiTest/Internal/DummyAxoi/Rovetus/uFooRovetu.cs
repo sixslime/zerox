@@ -6,7 +6,7 @@ using Roggis;
 using Roveggi;
 using Roveggi.Defined;
 
-internal interface uFooRovetu : IRovetu
+internal interface uFooRovetu : IConcreteRovetu
 {
     public static readonly Rovu<uFooRovetu, Number> NUM = new(TestAxoi.Du, "num");
     public static readonly Rovu<uFooRovetu, IMulti<Bool>> MULTI_BOOL = new(TestAxoi.Du, "multi_bool");

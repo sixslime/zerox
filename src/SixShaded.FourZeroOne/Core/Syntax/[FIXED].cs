@@ -17,20 +17,20 @@ public static partial class KorssaSyntax
         new(
         new()
         {
-            Values = values.ToPSequence(),
+            Values = values.Map(x => x.AsSome()).ToPSequence(),
         });
 
     public static Korssas.Fixed<Multi<Number>> kFixed(this IEnumerable<int> values) =>
         new(
         new()
         {
-            Values = values.Map(x => (Number)x).ToPSequence(),
+            Values = values.Map(x => ((Number)x).AsSome()).ToPSequence(),
         });
 
     public static Korssas.Fixed<Multi<Bool>> kFixed(this IEnumerable<bool> values) =>
         new(
         new()
         {
-            Values = values.Map(x => (Bool)x).ToPSequence(),
+            Values = values.Map(x => ((Bool)x).AsSome()).ToPSequence(),
         });
 }

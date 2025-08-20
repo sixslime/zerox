@@ -1,6 +1,10 @@
 namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Config;
 
-public interface uGameConfiguration : IRovetu
+using Identifier;
+
+public interface uGameConfiguration : IConcreteRovetu
 {
-    public static readonly Rovu<uGameConfiguration, IMulti<IRoveggi<uPlayerDeclaration>>> PLAYER_ROTATION = new(Axoi.Du, "player_rotation");
+    public static readonly Rovu<uGameConfiguration, IMulti<IRoveggi<uPlayerDeclaration>>> PLAYERS = new(Axoi.Du, "players");
+    public static readonly Varovu<uGameConfiguration, IRoveggi<uHexIdentifier>, IRoveggi<Constructs.HexTypes.uHexType>> MAP = new(Axoi.Du, "map");
+    public static readonly Rovu<uGameConfiguration, IMulti<MetaFunction<Rog>>> MODIFIERS = new(Axoi.Du, "modifiers");
 }

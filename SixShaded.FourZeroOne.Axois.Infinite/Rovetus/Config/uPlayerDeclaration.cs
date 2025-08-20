@@ -1,6 +1,11 @@
 namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Config;
 
-public interface uPlayerDeclaration : uPlayerLinked
-{
+using Constructs.Ability;
 
+public interface uPlayerDeclaration : IConcreteRovetu
+{
+    public static readonly Rovu<uPlayerDeclaration, IMulti<IRoveggi<uAbility>>> DECK = new(Axoi.Du, "deck");
+    public static readonly Rovu<uPlayerDeclaration, Number> HAND_SIZE = new(Axoi.Du, "hand_size");
+    public static readonly Rovu<uPlayerDeclaration, IMulti<MetaFunction<IRoveggi<Identifier.uPlayerIdentifier>, Rog>>> MODIFIERS = new(Axoi.Du, "modifiers");
+    public static readonly Rovu<uPlayerDeclaration, Number> PERSPECTIVE_ROTATION = new(Axoi.Du, "perspective_rotation");
 }

@@ -6,8 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-internal static class TestAxoi
+internal class TestAxoi : IsAxoi
 {
+    private TestAxoi()
+    { }
+
     public static Axodu Du =>
         new()
         {

@@ -1,10 +1,14 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Roggis.Instructions;
 
-public sealed record Assign<D> : Roggi.Defined.Instruction
-    where D : class, Rog
+public sealed record Assign<R> : Roggi.Defined.Instruction
+    where R : class, Rog
 {
-    public required IRoda<D> Address { get; init; }
-    public required D Subject { get; init; }
-    public override IMemory TransformMemory(IMemory previousState) => previousState.WithObjects([(Address, Subject).Tiple()]);
-    public override string ToString() => $"{Address}<-{Subject}";
+    public required IRoda<R> Address { get; init; }
+    public required IOption<R> Data { get; init; }
+
+    public override IMemory TransformMemory(IMemory previousState) =>
+        Data.Check(out var dataValue)
+            ? previousState.WithObjects([(Address, dataValue).Tiple()])
+            : previousState.WithClearedAddresses([Address]);
+    public override string ToString() => $"{Address}<-{Data}";
 }

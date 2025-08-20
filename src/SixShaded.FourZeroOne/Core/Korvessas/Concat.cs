@@ -10,14 +10,15 @@ public static class Concat<R>
     public static Korvessa<IMulti<R>, IMulti<R>, Multi<R>> Construct(IKorssa<IMulti<R>> a, IKorssa<IMulti<R>> b) =>
         new(a, b)
         {
-            Du = Axoi.Korvedu("concat"),
+            Du = Axoi.Korvedu("Concat"),
             Definition =
-                Core.kMetaFunction<IMulti<R>, IMulti<R>, Multi<R>>(
-                [],
-                (iA, iB) =>
+                (_, iA, iB) =>
                     Core.kMulti<IMulti<R>>(
-                        iA.kRef(),
-                        iB.kRef())
-                        .kFlatten()),
+                        new()
+                        {
+                            iA.kRef(),
+                            iB.kRef()
+                        })
+                        .kFlatten(),
         };
 }

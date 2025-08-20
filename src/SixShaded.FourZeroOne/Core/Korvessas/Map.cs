@@ -11,11 +11,9 @@ public static class Map<RIn, ROut>
     public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> Construct(IKorssa<IMulti<RIn>> multi, IKorssa<MetaFunction<RIn, ROut>> mapFunction) =>
         new(multi, mapFunction)
         {
-            Du = Axoi.Korvedu("map"),
+            Du = Axoi.Korvedu("Map"),
             Definition =
-                Core.kMetaFunction<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>>(
-                [],
-                (iMulti, iMapFunction) =>
+                (_, iMulti, iMapFunction) =>
                     Core.kMetaFunctionRecursive<Number, Multi<ROut>>(
                         [],
                         (iRecurse, iIndex) =>
@@ -24,7 +22,7 @@ public static class Map<RIn, ROut>
                                 .kIfTrue<Multi<ROut>>(
                                 new()
                                 {
-                                    Then = Core.kNollaFor<Multi<ROut>>(),
+                                    Then = Core.kMulti<ROut>([]),
                                     Else =
                                         iMapFunction.kRef()
                                             .kExecuteWith(
@@ -40,12 +38,11 @@ public static class Map<RIn, ROut>
                                                 {
                                                     A = iIndex.kRef().kAdd(1.kFixed()),
                                                 }))
-
                                 }))
                         .kExecuteWith(
                         new()
                         {
                             A = 1.kFixed(),
-                        })),
+                        }),
         };
 }

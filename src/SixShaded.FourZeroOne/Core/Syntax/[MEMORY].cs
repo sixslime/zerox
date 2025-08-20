@@ -2,7 +2,7 @@
 
 using Roggis;
 using Korssas.Memory;
-using SixShaded.FourZeroOne.Core.Korssas.Memory.Object;
+using Korssas.Memory.Rovedanggi;
 using Korvessa.Defined;
 using Roveggi;
 
@@ -22,18 +22,46 @@ public static partial class KorssaSyntax
     public static Insert<R> kWrite<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<R> data)
         where R : class, Rog =>
         new(address, data);
+    public static Insert<R> kRedact<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address)
+        where R : class, Rog =>
+        new(address, Core.kNollaFor<R>());
 
-    public static Get<R> kGet<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address)
+    public static Get<R> kRead<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address)
         where R : class, Rog =>
         new(address);
 
-    public static Remove kRedact(this IKorssa<IRoveggi<Rovedantu<Rog>>> address) => new(address);
-
     public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<MetaFunction<R, R>> updateFunction)
         where R : class, Rog =>
-        Korvessas.UpdateMemory<R>.Construct(address, updateFunction);
+        Korvessas.UpdateRovedanggi<R>.Construct(address, updateFunction);
 
-    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IEnumerable<Addr> captures, Func<DynamicRoda<R>, IKorssa<R>> updateFunction)
+    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, MetaDefinition<R, R> updateFunction)
         where R : class, Rog =>
-        Korvessas.UpdateMemory<R>.Construct(address, Core.kMetaFunction(captures, updateFunction));
+        Korvessas.UpdateRovedanggi<R>.Construct(address, Core.kMetaFunction([], updateFunction));
+    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kSafeUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<MetaFunction<R, R>> updateFunction)
+        where R : class, Rog =>
+        Korvessas.SafeUpdateRovedanggi<R>.Construct(address, updateFunction);
+
+    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kSafeUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, MetaDefinition<R, R> updateFunction)
+        where R : class, Rog =>
+        Korvessas.SafeUpdateRovedanggi<R>.Construct(address, Core.kMetaFunction([], updateFunction));
+}
+
+partial class Core
+{
+    public static AllKeys<C, R> kAllRovedanggiKeys<C, R>()
+        where C : Rovedantu<R>
+        where R : class, Rog =>
+        new();
+    public static AllKeys<C, R> kAllRovedanggiKeys<C, R>(Structure.Hint<C> _)
+        where C : Rovedantu<R>
+        where R : class, Rog =>
+        new();
+    public static AllValues<C, R> kAllRovedanggiValues<C, R>()
+        where C : Rovedantu<R>
+        where R : class, Rog =>
+        new();
+    public static AllValues<C, R> kAllRovedanggiValues<C, R>(Structure.Hint<C> _)
+        where C : Rovedantu<R>
+        where R : class, Rog =>
+        new();
 }

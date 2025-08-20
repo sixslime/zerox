@@ -1,11 +1,13 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Korssas;
 
 using Roggis;
+using Syntax;
 
-public record DefineMetaFunction<ROut> : Korssa.Defined.MetaFunctionDefinition<ROut, MetaFunction<ROut>>
+public record DefineMetaFunction<ROut>
+    : Korssa.Defined.MetaFunctionDefinition<ROut, MetaFunction<ROut>>
     where ROut : class, Rog
 {
-    public DefineMetaFunction(Func<DynamicRoda<MetaFunction<ROut>>, IKorssa<ROut>> definition)
+    public DefineMetaFunction(RecursiveMetaDefinition<ROut> definition)
     {
         Korssa = definition(SelfRoda);
     }
@@ -22,11 +24,12 @@ public record DefineMetaFunction<ROut> : Korssa.Defined.MetaFunctionDefinition<R
         };
 }
 
-public record DefineMetaFunction<RArg1, ROut> : Korssa.Defined.MetaFunctionDefinition<ROut, MetaFunction<RArg1, ROut>>
+public record DefineMetaFunction<RArg1, ROut>
+    : Korssa.Defined.MetaFunctionDefinition<ROut, MetaFunction<RArg1, ROut>>
     where RArg1 : class, Rog
     where ROut : class, Rog
 {
-    public DefineMetaFunction(Func<DynamicRoda<MetaFunction<RArg1, ROut>>, DynamicRoda<RArg1>, IKorssa<ROut>> definition)
+    public DefineMetaFunction(RecursiveMetaDefinition<RArg1, ROut> definition)
         : base(new DynamicRoda<RArg1>())
     {
         Korssa = definition(SelfRoda, RodaA);
@@ -45,15 +48,16 @@ public record DefineMetaFunction<RArg1, ROut> : Korssa.Defined.MetaFunctionDefin
         };
 }
 
-public record DefineMetaFunction<RArg1, RArg2, ROut> : Korssa.Defined.MetaFunctionDefinition<ROut, MetaFunction<RArg1, RArg2, ROut>>
+public record DefineMetaFunction<RArg1, RArg2, ROut>
+    : Korssa.Defined.MetaFunctionDefinition<ROut, MetaFunction<RArg1, RArg2, ROut>>
     where RArg1 : class, Rog
     where RArg2 : class, Rog
     where ROut : class, Rog
 {
-    public DefineMetaFunction(Func<DynamicRoda<MetaFunction<RArg1, RArg2, ROut>>, DynamicRoda<RArg1>, DynamicRoda<RArg2>, IKorssa<ROut>> definition)
+    public DefineMetaFunction(RecursiveMetaDefinition<RArg1, RArg2, ROut> definition)
         : base(
-        new DynamicRoda<RArg1>(),
-        new DynamicRoda<RArg2>())
+            new DynamicRoda<RArg1>(),
+            new DynamicRoda<RArg2>())
     {
         Korssa = definition(SelfRoda, RodaA, RodaB);
     }
@@ -72,17 +76,18 @@ public record DefineMetaFunction<RArg1, RArg2, ROut> : Korssa.Defined.MetaFuncti
         };
 }
 
-public record DefineMetaFunction<RArg1, RArg2, RArg3, ROut> : Korssa.Defined.MetaFunctionDefinition<ROut, MetaFunction<RArg1, RArg2, RArg3, ROut>>
+public record DefineMetaFunction<RArg1, RArg2, RArg3, ROut>
+    : Korssa.Defined.MetaFunctionDefinition<ROut, MetaFunction<RArg1, RArg2, RArg3, ROut>>
     where RArg1 : class, Rog
     where RArg2 : class, Rog
     where RArg3 : class, Rog
     where ROut : class, Rog
 {
-    public DefineMetaFunction(Func<DynamicRoda<MetaFunction<RArg1, RArg2, RArg3, ROut>>, DynamicRoda<RArg1>, DynamicRoda<RArg2>, DynamicRoda<RArg3>, IKorssa<ROut>> definition)
+    public DefineMetaFunction(RecursiveMetaDefinition<RArg1, RArg2, RArg3, ROut> definition)
         : base(
-        new DynamicRoda<RArg1>(),
-        new DynamicRoda<RArg2>(),
-        new DynamicRoda<RArg3>())
+            new DynamicRoda<RArg1>(),
+            new DynamicRoda<RArg2>(),
+            new DynamicRoda<RArg3>())
     {
         Korssa = definition(SelfRoda, RodaA, RodaB, RodaC);
     }
@@ -102,7 +107,10 @@ public record DefineMetaFunction<RArg1, RArg2, RArg3, ROut> : Korssa.Defined.Met
         };
 }
 
-public record DefineMetaFunction<RArg1, RArg2, RArg3, RArg4, ROut> : Korssa.Defined.MetaFunctionDefinition<ROut, OverflowingMetaFunction<RArg1, RArg2, RArg3, RArg4, ROut>>
+// OverflowingMetaFunction likely can't use RecursiveMetaDefinition
+// because your delegate types stop at 3 args.
+public record DefineMetaFunction<RArg1, RArg2, RArg3, RArg4, ROut>
+    : Korssa.Defined.MetaFunctionDefinition<ROut, OverflowingMetaFunction<RArg1, RArg2, RArg3, RArg4, ROut>>
     where RArg1 : class, Rog
     where RArg2 : class, Rog
     where RArg3 : class, Rog
@@ -111,10 +119,10 @@ public record DefineMetaFunction<RArg1, RArg2, RArg3, RArg4, ROut> : Korssa.Defi
 {
     public DefineMetaFunction(Func<DynamicRoda<OverflowingMetaFunction<RArg1, RArg2, RArg3, RArg4, ROut>>, DynamicRoda<RArg1>, DynamicRoda<RArg2>, DynamicRoda<RArg3>, DynamicRoda<RArg4>, IKorssa<ROut>> definition)
         : base(
-        new DynamicRoda<RArg1>(),
-        new DynamicRoda<RArg2>(),
-        new DynamicRoda<RArg3>(),
-        new DynamicRoda<RArg4>())
+            new DynamicRoda<RArg1>(),
+            new DynamicRoda<RArg2>(),
+            new DynamicRoda<RArg3>(),
+            new DynamicRoda<RArg4>())
     {
         Korssa = definition(SelfRoda, RodaA, RodaB, RodaC, RodaD);
     }

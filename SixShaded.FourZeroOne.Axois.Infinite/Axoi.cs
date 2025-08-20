@@ -1,12 +1,16 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite;
 
-public static class Axoi
+public class Axoi : IsAxoi
 {
-    public static Axodu Du =
+    private Axoi()
+    { }
+
+    public static Axodu Du { get; } =
         new()
         {
             Name = "infinite",
         };
+
     internal static Korvedu Korvedu(string identifier) => new(Du, identifier);
 
     internal static Rovu<C, R> Rovu<C, R>(string identifier)

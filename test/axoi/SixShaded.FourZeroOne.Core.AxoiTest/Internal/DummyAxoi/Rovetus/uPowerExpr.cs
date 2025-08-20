@@ -7,7 +7,7 @@ using Roveggi;
 using Roveggi.Defined;
 using Core = Syntax.Core;
 
-internal interface uPowerExpr : IRovetu
+internal interface uPowerExpr : IConcreteRovetu
 {
     public static readonly Rovu<uPowerExpr, Number> NUM = new(TestAxoi.Du, "num");
     public static readonly Rovu<uPowerExpr, Number> POWER = new(TestAxoi.Du, "power");

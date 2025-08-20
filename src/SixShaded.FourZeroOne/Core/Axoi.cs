@@ -3,13 +3,16 @@
 using Roveggi;
 using Roveggi.Defined;
 
-public static class Axoi
+public class Axoi : IsAxoi
 {
     public static Axodu Du =
         new()
         {
             Name = "core",
         };
+    private Axoi()
+    { }
+
     internal static Korvessa.Defined.Korvedu Korvedu(string identifier) => new(Du, identifier);
 
     internal static Rovu<C, R> Rovu<C, R>(string identifier)

@@ -2,17 +2,21 @@
 
 using Roggis;
 
-public sealed record Create : Korssa.Defined.PureFunction<Number, Number, NumRange>
+public sealed record Create : Korssa.Defined.Function<Number, Number, NumRange>
 {
     public Create(IKorssa<Number> min, IKorssa<Number> max) : base(min, max)
     { }
 
-    protected override NumRange EvaluatePure(Number in1, Number in2) =>
-        new()
-        {
-            Start = in1,
-            End = in2,
-        };
-
+    protected override ITask<IOption<NumRange>> Evaluate(IKorssaContext runtime, IOption<Number> in1, IOption<Number> in2) =>
+        ((in1.Check(out var start) && in2.Check(out var end))
+            ? (start.Value <= end.Value)
+                ? new NumRange()
+                {
+                    Start = start,
+                    End = end
+                }.AsSome()
+                : new None<NumRange>()
+            : new None<NumRange>())
+        .ToCompletedITask();
     protected override IOption<string> CustomToString() => $"{Arg1}..{Arg2}".AsSome();
 }

@@ -9,6 +9,10 @@ using Roggis.Instructions;
 using Core = Syntax.Core;
 using k = Korssas;
 
+/*
+ * TODO
+ * - test AllValues & AllKeys
+ */
 [TestClass]
 public sealed class Basics
 {
@@ -47,7 +51,7 @@ public sealed class Basics
                 Core.kCompose<uPowerExpr>()
                     .kWithRovi(uPowerExpr.POWER, power.kFixed())
                     .kWithRovi(uPowerExpr.NUM, basePower.kFixed()))
-                .DeTesAssertRoggi(c, r => r.GetComponent(uFooRovetu.MULTI_BOOL).Unwrap().Elements.Map(x => x.IsTrue).SequenceEqual(bools), "MULTI_BOOL check")
+                .DeTesAssertRoggi(c, r => r.GetComponent(uFooRovetu.MULTI_BOOL).Unwrap().Elements.Map(x => x.Check(out var v) && v.IsTrue).SequenceEqual(bools), "MULTI_BOOL check")
                 .kGetRovi(uFooRovetu.POWER_OBJ)
                 .DeTesAssertRoggi(
                 c, r =>
@@ -74,7 +78,7 @@ public sealed class Basics
                         ? !r.IsSome()
                         : r.Check(out var multi) &&
                           multi.Count == firstSelection.Length &&
-                          firstSelection.Map(i => initialPool[i]).SequenceEqual(multi.Elements.Map(x => x.Value)))
+                          firstSelection.Map(i => initialPool[i]).SequenceEqual(multi.Elements.Map(x => x.Unwrap().Value)))
                 .DeTesReference(c, out var reducedPool)
                 .kIOSelectOne()
                 .DeTesDomain(c, [secondSelection], out var secondDomain, "second selection")
@@ -82,7 +86,7 @@ public sealed class Basics
                 c, r =>
                     secondSelection >= firstSelection.Length
                         ? !r.IsSome()
-                        : r.Check(out var sel) && reducedPool.Roggi.Elements.GetAt(secondSelection).Unwrap() == sel));
+                        : r.Check(out var sel) && reducedPool.Roggi.Elements.GetAt(secondSelection).Press().Unwrap() == sel));
 
     [TestMethod]
     public async Task IfElseBranching() =>
@@ -136,7 +140,7 @@ public sealed class Basics
                                         .kAsVariable(out var theNumber),
                                 ],
                                 Value =
-                                    Core.kMulti(theNumber.kRef(), theNumber.kRef().kMultiply(2.kFixed()))
+                                    Core.kMultiOld(theNumber.kRef(), theNumber.kRef().kMultiply(2.kFixed()))
                                         .DeTesAssertMemory(c, m => m.Objects.Count() == 1, "inner count check (1)")
                                         .DeTesAssertMemory(c, m => m.GetObject(theNumber).Check(out var v) && v.Value is 401, "reference check"),
                             })
@@ -161,7 +165,6 @@ public sealed class Basics
         c =>
             (1..5).kFixed()
             .kMap(
-            [],
             iX =>
                 Core.kMetaFunction<Number, MetaFunction<Number>>(
                 [iX],
@@ -188,7 +191,6 @@ public sealed class Basics
                             () => theValue.kRef().kMultiply(10.kFixed()).kAdd(iY.kRef())),
                     })))
             .kMap(
-            [],
             iFunc =>
                 iFunc.kRef()
                     .kExecuteWith(
@@ -198,7 +200,7 @@ public sealed class Basics
                     })
                     .kExecute())
             .DeTesAssertRoggi(c, r => r.Count is 5, "count check (5)")
-            .DeTesAssertRoggi(c, r => r.Elements.Map(x => x.Value).SequenceEqual([15, 25, 65, 85, 105]), "sequence check")
+            .DeTesAssertRoggi(c, r => r.Elements.Map(x => x.Unwrap().Value).SequenceEqual([15, 25, 65, 85, 105]), "sequence check")
             .DeTesAssertMemory(c, m => !m.Objects.Any(), "memory empty check"));
 
     [TestMethod]
@@ -212,7 +214,6 @@ public sealed class Basics
                     [
                         (1..5).kFixed()
                         .kMap(
-                        [],
                         iNum =>
                             Core.kSubEnvironment<Multi<Roveggi.IRoveggi<uFooRovedantu>>>(
                             new()
@@ -224,7 +225,7 @@ public sealed class Basics
                                         .kAsVariable(out var iComp),
                                 ],
                                 Value =
-                                    Core.kMulti(
+                                    Core.kMultiOld(
                                     iComp.kRef()
                                         .kWithRovi(uFooRovedantu.PART, false.kFixed()),
                                     iComp.kRef()
@@ -233,7 +234,6 @@ public sealed class Basics
                         .kFlatten()
                         .DeTesAssertRoggi(c, r => r.Count is 10, "pre memassign count check (10)")
                         .kMap(
-                        [],
                         iComp =>
                             Core.kSubEnvironment<Rog>(
                             new()
@@ -282,7 +282,7 @@ public sealed class Basics
                                     Core.kCompose<uFooRovedantu>()
                                         .kWithRovi(uFooRovedantu.ID, iSelectedId.kRef())
                                         .kWithRovi(uFooRovedantu.PART, iSelectedPart.kRef())
-                                        .kGet()
+                                        .kRead()
                                         .DeTesAssertRoggiUnstable(c, r => r.IsSome(), "data exists check"),
                             })
                             .DeTesAssertMemory(c, m => m.Objects.Count() > 1, "memory some data exists check (>1)")
@@ -320,22 +320,23 @@ public sealed class Basics
                     iMutable.kRef()
                         .DeTesAssertRoggi(c, r => r.Value == 1, "init one")
                         .kAsVariable(out var iOne),
-                    Core.kMulti<Rog>(
+                    Core.kMultiOld<Rog>(
                     10.kFixed().kAsVariable(out var iTest),
                     iTest.kRef().kAdd(1.kFixed()).kAsVariable(out iTest),
-                    Core.kMulti<Rog>(
+                    Core.kMultiOld<Rog>(
                     iTest.kRef().kAdd(1.kFixed()).kAsVariable(out iTest),
                     iTest.kRef().kAdd(1.kFixed()).kAsVariable(out iTest)),
                     iTest.kRef().DeTesAssertRoggi(c, r => r.Value == 13)),
                 ],
                 Value =
-                    Core.kMulti<Number>(
+                    Core.kMultiOld<Number>(
                     iMutable.kRef().DeTesAssertRoggi(c, r => r.Value == 1, "value mutable"),
                     iTest.kRef().DeTesAssertRoggi(c, r => r.Value == 13),
                     iZero.kRef().DeTesAssertRoggi(c, r => r.Value == 0, "value zero"),
                     iOne.kRef().DeTesAssertRoggi(c, r => r.Value == 1, "value one")),
             }));
 
+    
     /*
     [TestMethod]
     public async Task MellsanoStressor() =>

@@ -6,7 +6,10 @@ public sealed record Create<R> : Korssa.Defined.PureCombiner<R, Roggis.Multi<R>>
     public Create(params IKorssa<R>[] elements) : base(elements)
     { }
 
-    protected override Roggis.Multi<R> EvaluatePure(IEnumerable<R> inputs) =>
+    public Create(IEnumerable<IKorssa<R>> elements) : base(elements)
+    { }
+
+    protected override Roggis.Multi<R> EvaluatePure(IEnumerable<IOption<R>> inputs) =>
         new()
         {
             Values = inputs.ToPSequence(),

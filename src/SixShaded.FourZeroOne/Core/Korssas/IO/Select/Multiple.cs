@@ -2,25 +2,38 @@
 
 using Roggis;
 
-public sealed record Multiple<R> : Korssa.Defined.Function<IMulti<R>, Number, Multi<R>>
+public sealed record Multiple<R> : Korssa.Defined.Function<IMulti<R>, NumRange, Multi<R>>
     where R : class, Rog
 {
-    public Multiple(IKorssa<IMulti<R>> from, IKorssa<Number> count) : base(from, count)
+    public Multiple(IKorssa<IMulti<R>> from, IKorssa<NumRange> count) : base(from, count)
     { }
 
-    protected override async ITask<IOption<Multi<R>>> Evaluate(IKorssaContext runtime, IOption<IMulti<R>> fromOpt, IOption<Number> countOpt) =>
-        fromOpt.Check(out var from) && countOpt.Check(out var count) && count.Value <= from.Count
-            ? (await runtime.Input.ReadSelection(from, count.Value))
-            .ExprAs(
-            selections =>
-                selections.Length == selections.Distinct().Count()
-                    ? new Multi<R>
-                    {
-                        Values =
-                            selections.Map(i => from.At(i).Expect(() => new InvalidOperationException($"Got invalid index '{i}', expected 0..{from.Count - 1}")))
-                                .ToPSequence(),
-                    }.AsSome()
-                    : throw new InvalidOperationException($"Duplicate(s) in selection [{string.Join(',', selections)}] (not allowed)"))
+    protected override async ITask<IOption<Multi<R>>> Evaluate(IKorssaContext runtime, IOption<IMulti<R>> fromOpt, IOption<NumRange> countOpt) =>
+        (fromOpt.Check(out var multi) & countOpt.Check(out var count))
+            ? await multi.Elements.FilterMap(x => x)
+                .ToPSequence()
+                .ExprAs(
+                async from =>
+                    (from.Count >= count.Start.Value && count.End.Value >= 0)
+                        ? (count.End.Value > 0)
+                            ? (await runtime.Input.ReadSelection(from, int.Max(count.Start.Value, 0), count.End.Value))
+                            .ExprAs(
+                            selections =>
+                                selections.Length == selections.Distinct().Count()
+                                    ? selections.Length >= count.Start.Value && selections.Length <= count.End.Value
+                                        ? new Multi<R>
+                                        {
+                                            Values =
+                                                selections.Map(i => from.At(i).Expect(() => new InvalidOperationException($"Got invalid index '{i}', expected 0..{from.Count - 1}")).AsSome())
+                                                    .ToPSequence(),
+                                        }.AsSome()
+                                        : throw new InvalidOperationException($"Invalid amount of elements in selection [{string.Join(',', selections)}], expected {count.Start.Value}..{count.End.Value}, got {selections.Length}.")
+                                    : throw new InvalidOperationException($"Duplicate(s) in selection [{string.Join(',', selections)}] (not allowed)"))
+                            : new Multi<R>
+                            {
+                                Values = new()
+                            }.AsSome()
+                        : new None<Multi<R>>())
             : new None<Multi<R>>();
 
     protected override IOption<string> CustomToString() => $"SelectMulti({Arg1}, {Arg2})".AsSome();

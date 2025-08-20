@@ -6,6 +6,7 @@ using Core = Syntax.Core;
 using Roggis;
 using Roggi;
 using k = Core.Korssas;
+using Roveggi;
 
 [TestClass]
 public class Sanity
@@ -23,7 +24,7 @@ public class Sanity
         await Run(
         c =>
             (1..5).kFixed()
-            .kMap([], x => x.kRef().kAdd(10.kFixed()))
+            .kMap(x => x.kRef().kAdd(10.kFixed()))
             .DeTesAssertRoggi(c, r => r.Count == 5));
 
     [TestMethod]
@@ -31,18 +32,28 @@ public class Sanity
         await Run(c =>
             (1..5).kFixed()
             .kConcat((6..10).kFixed())
-            .kConcat(Core.kNollaFor<NumRange>())
-            .DeTesAssertRoggi(c, r => r.Values.Elements.Map(x => x.Value).SequenceEqual((1..10).ToIter(true))));
+            .kConcat(Core.kMulti<Number>([]))
+            .DeTesAssertRoggi(c, r => r.Values.Elements.Map(x => x.Unwrap().Value).SequenceEqual((1..10).ToIter(true))));
 
     [TestMethod]
     public async Task FlattenNolla() =>
         await Run(
         c =>
-            Core.kMulti<IMulti<Number>>(
+            Core.kMultiOld<IMulti<Number>>(
                 (1..10).kFixed(),
                 Core.kNollaFor<IMulti<Number>>())
                 .kFlatten()
-                .DeTesAssertRoggi(c, _ => true));
+                .DeTesAssertRoggiUnstable(c, r => !r.IsSome()));
+
+    [TestMethod]
+    public async Task Flatten() =>
+        await Run(
+        c =>
+            (1..10).ToIter(true)
+            .Map(x => x.kFixed().kYield())
+            .kToMulti()
+            .kFlatten()
+            .DeTesAssertRoggi(c, r => r.Elements.Map(x => x.Unwrap().Value).SequenceEqual((1..10).ToIter(true))));
     [TestMethod]
     [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new[] { 5, 2, 0, 1 }, 0)]
     public async Task Selection(int[] initialPool, int[] firstSelection, int secondSelection) =>
@@ -57,7 +68,7 @@ public class Sanity
                         ? !r.IsSome()
                         : r.Check(out var multi) &&
                           multi.Count == firstSelection.Length &&
-                          firstSelection.Map(i => initialPool[i]).SequenceEqual(multi.Elements.Map(x => x.Value)))
+                          firstSelection.Map(i => initialPool[i]).SequenceEqual(multi.Elements.Map(x => x.Unwrap().Value)))
                 .DeTesReference(c, out var reducedPool)
                 .kIOSelectOne()
                 .DeTesDomain(c, [secondSelection], out var secondDomain, "second selection")
@@ -114,14 +125,14 @@ public class Sanity
                     iComp.kRef().kWrite(401.kFixed()),
                 ],
                 Value =
-                    Core.kMulti(
+                    Core.kMultiOld(
                     iComp.kRef()
-                        .kGet()
+                        .kRead()
                         .DeTesAssertRoggi(c, r => r.Value is 401, "direct reference"),
                     Core.kCompose<uFooRovedantu>()
                         .kWithRovi(uFooRovedantu.ID, 8.kFixed())
                         .kWithRovi(uFooRovedantu.PART, true.kFixed())
-                        .kGet()
+                        .kRead()
                         .DeTesAssertRoggi(c, r => r.Value is 401, "reconstructed")),
             }));
 
@@ -178,7 +189,7 @@ public class Sanity
                         .kAsVariable(out var iObj)
                 ],
                 Value =
-                    Core.kMulti<Rog>(
+                    Core.kMultiOld<Rog>(
                     Core.kCompose<uBarRovetu>()
                         .kWithRovi<uBarRovetu, Number>(uFooRovetu.NUM, 7575.kFixed())
                         .kGetVarovi(uBarRovetu.FOO_MAP, iFooKeyA.kRef())
@@ -194,10 +205,38 @@ public class Sanity
                         .DeTesAssertRoggi(c, r => r.Value == 200),
                     iObj.kRef()
                         .kGetVarovi(uBarRovetu.NUM_MAP, iNumKeyA.kRef())
-                        .DeTesAssertRoggi(c, r => r.Count == 3 && r.Elements.All(x => x.Value == 300)),
+                        .DeTesAssertRoggi(c, r => r.Count == 3 && r.Elements.All(x => x.Unwrap().Value == 300)),
                     iObj.kRef()
                         .kGetVarovi(uBarRovetu.NUM_MAP, 444.kFixed())
-                        .DeTesAssertRoggi(c, r => r.Count == 4 && r.Elements.All(x => x.Value == 400)))
+                        .DeTesAssertRoggi(c, r => r.Count == 4 && r.Elements.All(x => x.Unwrap().Value == 400)))
+            }));
+
+    [TestMethod]
+    public async Task AbstractRovis() =>
+        await Run(
+        c =>
+            Core.kSubEnvironment<Rog>(
+            new()
+            {
+                Environment =
+                [
+                    Core.kCompose<uImplement>()
+                        .kWithRovi(uImplement.RANGE, (5..10).kFixed())
+                        .kWithRovi(uAbstract.ABSTRACT_SET, 15.kFixed())
+                        .kIsType<IRoveggi<uImplement>>()
+                        .kAsVariable(out var iComp)
+                ],
+                Value =
+                    Core.kMultiOld<Rog>(
+                    iComp.kRef()
+                        .kGetRovi(uAbstract.ABSTRACT_GET)
+                        .DeTesAssertRoggi(c, r => r.Value == 5),
+                    iComp.kRef()
+                        .kGetRovi(uImplement.ABSTRACT_GET)
+                        .DeTesAssertRoggi(c, r => r.Value == 5),
+                    iComp.kRef()
+                        .kGetRovi(uImplement.RANGE)
+                        .DeTesAssertRoggi(c, r => r.Start.Value == 5 && r.End.Value == 15)),
             }));
 
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
