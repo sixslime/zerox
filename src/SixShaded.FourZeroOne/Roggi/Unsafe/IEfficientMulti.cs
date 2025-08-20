@@ -6,7 +6,7 @@ public interface IEfficientMulti<R> : IMulti<R>
 where R : class, Rog
 {
     public IPSequence<IOption<R>> Values { get; }
-    public IPMap<R, IEnumerable<int>> IndexMap { get; }
+    public IPMap<R, IPSequence<int>> IndexMap { get; }
     public IEfficientMulti<R> Distinct();
     public IEfficientMulti<R> Concat(IEfficientMulti<R> other);
     public IEfficientMulti<R> Slice(Range range);

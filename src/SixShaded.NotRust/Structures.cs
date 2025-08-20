@@ -52,7 +52,7 @@ public interface IPMap<K, T> : IHasElements<ITiple<K, T>>, IEntryAddable<ITiple<
 public interface IPSet<T> : IHasElements<T>, IEntryAddable<T>, IEntryRemovable<T>, IIndexReadableInfallible<T, bool>, IMergable<IPSet<T>>, IIntersectable<IPSet<T>>
 { }
 
-public interface IPSequence<T> : IHasElements<T>, IIndexReadable<int, T>, IEntryAddable<ITiple<int, T>>, IEntryAddable<T>, IMergable<IPSequence<T>>, IEntryRemovable<Range>
+public interface IPSequence<T> : IHasElements<T>, IIndexReadable<int, T>, IEntryAddable<ITiple<int, T>>, IEntryAddable<T>, IMergable<IPSequence<T>>, IEntryRemovable<int>
 {
     public IPSequence<T> _WithInsertionAt(int index, IEnumerable<T> items);
 }
@@ -125,6 +125,10 @@ public static class StructureExtensions
             ? v.AsSome()
             : new None<V>();
 
+    public static IPMap<K, T> WithEntryOrUpdate<K, T>(this IPMap<K, T> map, K key, Func<T> entry, Func<T, T> update) =>
+        (map.At(key).Check(out var v))
+            ? map.WithEntries((key, update(v)).Tiple())
+            : map.WithEntries((key, entry()).Tiple());
     public static PSequence<T> ToPSequence<T>(this IEnumerable<T> enumerable) => new PSequence<T>().WithEntries(enumerable);
     public static List<T> ToMutList<T>(this IEnumerable<T> enumerable) => new(enumerable);
 
@@ -290,17 +294,14 @@ public class PSequence<T>() : IPSequence<T>
 
     IEntryAddable<T> IEntryAddable<T>._WithEntries(IEnumerable<T> entries) => new PSequence<T>(_list.Also(entries));
 
-    IEntryRemovable<Range> IEntryRemovable<Range>._WithoutEntries(IEnumerable<Range> entries)
+    IEntryRemovable<int> IEntryRemovable<int>._WithoutEntries(IEnumerable<int> entries)
     {
-        var optList = new List<IOption<T>>(_list.Map(x => x.AsSome()));
-        foreach (var range in entries)
+        (T, bool)[] optList = [.._list.Map(x => (x, true))];
+        foreach (var i in entries)
         {
-            for (int i = Math.Max(0, range.Start.Value); i < optList.Count && i <= range.End.Value; i++)
-            {
-                optList[i] = new None<T>();
-            }
+            optList[i] = (optList[i].Item1, false);
         }
-        return new PSequence<T>(optList.FilterMap(x => x));
+        return new PSequence<T>(optList.Where(x => x.Item2 == true).Map(x => x.Item1));
     }
 
     IPSequence<T> IPSequence<T>._WithInsertionAt(int index, IEnumerable<T> items)
