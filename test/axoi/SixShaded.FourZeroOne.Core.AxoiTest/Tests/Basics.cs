@@ -314,8 +314,8 @@ public sealed class Basics
                     0.kFixed().kAsVariable(out var iMutable),
                     iMutable.kRef()
                         .DeTesAssertRoggi(c, r => r.Value == 0, "init zero")
-                        // BAD!
                         .kAsVariable(out var iZero),
+                    // BAD!
                     iMutable.kRef().kAdd(1.kFixed()).kAsVariable(out iMutable),
                     iMutable.kRef()
                         .DeTesAssertRoggi(c, r => r.Value == 1, "init one")
@@ -336,6 +336,7 @@ public sealed class Basics
                     iOne.kRef().DeTesAssertRoggi(c, r => r.Value == 1, "value one")),
             }));
 
+    // DEV: maybe test set operations on roveggis, its probably fine though.
     [TestMethod]
     public async Task SetOperationNumbers() =>
         await Run(
