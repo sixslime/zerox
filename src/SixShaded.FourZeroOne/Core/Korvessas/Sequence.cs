@@ -46,7 +46,7 @@ public static class Sequence<R>
                         new()
                         {
                             A = iInitialValue.kRef(),
-                            B = 2.kFixed()
+                            B = 1.kFixed()
                         })
         };
 }

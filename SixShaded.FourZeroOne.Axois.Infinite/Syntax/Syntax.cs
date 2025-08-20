@@ -27,6 +27,10 @@ public static partial class KorssaSyntax
         where RIn : class, Rog
         where ROut : class, Rog =>
         Korvessas.SelectOneCancellable<RIn, ROut>.Construct(pool, Core.kMetaFunction([], block.Select), Core.kMetaFunction([], block.Cancel));
+    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, MetaFunction<ROut>, ROut> kIOSelectOneCancellableDirect<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, Structure.SelectCancellableDirect<RIn, ROut> block)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        Korvessas.SelectOneCancellable<RIn, ROut>.Construct(pool, block.Select, block.Cancel));
     public static IKorssa<ROut> kIOSelectMultipleCancellable<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, IKorssa<NumRange> count, Structure.SelectCancellable<IMulti<RIn>, ROut> block)
         where RIn : class, Rog
         where ROut : class, Rog =>
@@ -42,5 +46,13 @@ public static partial class KorssaSyntax
             .kExecuteWith(new()
             {
                 A = count.kSingleRange()
+            });
+    public static IKorssa<ROut> kIOSelectMultipleCancellableDirect<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, IKorssa<NumRange> count, Structure.SelectCancellableDirect<IMulti<RIn>, ROut> block)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        Korvessas.SelectMultipleCancellable<RIn, ROut>.Construct(pool, block.Select, block.Cancel)
+            .kExecuteWith(new()
+            {
+                A = count
             });
 }

@@ -81,10 +81,39 @@ public static class ResolveNumericalMove
                                                                 iRemainingCount.kRef()
                                                                     .kSubtract(1.kFixed())
                                                                     .kMultiply(iMaxPerUnit.kRef()))
-                                                                .kClampMin(1.kFixed())
-                                                                .kAsVariable(out var iMinMove),
+                                                                .kAsVariable(out var iMinMoveUnclamped),
+
+                                                            Core.kMetaFunction<IRoveggi<uUnitIdentifier>, ResolvedObj>(
+                                                            [], iSelectedSubject =>
+                                                                Core.kSubEnvironment<ResolvedObj>(new()
+                                                                {
+                                                                    Environment =
+                                                                        [
+                                                                            iMoveRange.kRef()
+                                                                                .kEnd()
+                                                                                .kSubtract(iMovedDistance.kRef())
+                                                                                .kAsVariable(out var iMaxMove),
+
+                                                                            iSelectedSubject.kRef()
+                                                                                .kRead()
+                                                                                .kGetRovi(uUnitData.POSITION)
+                                                                                .kYield()
+                                                                                .kGenerateSequence(
+                                                                                // we need fucking set operations god dammit fuck
+                                                                                (iPathRoots, iDistance) =>
+                                                                                
+                                                                                    
+                                                                        ],
+                                                                    Value =
+                                                                })
+                                                            )
                                                         ],
-                                                        Value = Core.kNollaFor<Multi<ResolvedObj>>()
+                                                        Value = iMinMoveUnclamped.kRef()
+                                                            .kIsGreaterThan(0.kFixed())
+                                                            .kIfTrue(new()
+                                                            {
+
+                                                            })
                                                     }),
                                                     Else = Core.kMulti<ResolvedObj>([])
                                                 })

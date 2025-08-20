@@ -18,7 +18,7 @@ public static class GetAdjacent
                     .kGenerateSequence(
                     (iPrevHex, iIndex) =>
                         iIndex.kRef()
-                            .kIsGreaterThan(6.kFixed())
+                            .kIsGreaterThan(5.kFixed())
                             .kIfTrue<HexOffset>(new()
                             {
                                 Then = Core.kNollaFor<HexOffset>(),
