@@ -165,7 +165,7 @@ public class PMap<K, T>() : IPMap<K, T>
 {
     private readonly Dictionary<K, T> _dict = new(0);
 
-    private PMap(Dictionary<K, T> dict) : this()
+    public PMap(Dictionary<K, T> dict) : this()
     {
         _dict = dict;
     }
@@ -210,7 +210,7 @@ public class PSet<T>() : IPSet<T>
 {
     private readonly HashSet<T> _set = new(0);
 
-    private PSet(HashSet<T> set) : this()
+    public PSet(HashSet<T> set) : this()
     {
         _set = set;
     }
@@ -268,7 +268,7 @@ public class PSequence<T>() : IPSequence<T>
 {
     private readonly CachingEnumerable<T> _list = new([], 0);
 
-    private PSequence(IEnumerable<T> values) : this()
+    public PSequence(IEnumerable<T> values) : this()
     {
         _list = new(values);
     }
@@ -413,7 +413,13 @@ public class CachingEnumerable<T> : IEnumerable<T>, IIndexReadable<int, T>
     public override int GetHashCode()
     {
         CountAndCache();
-        return _list.GetHashCode();
+        var hash = new HashCode();
+        hash.Add(_list.Count);
+        for (int i = 0; i < _list.Count; i += 1 + (i - 1))
+        {
+            hash.Add(_list[i]);
+        }
+        return hash.ToHashCode();
     }
 
     public IEnumerator<T> GetEnumerator()
