@@ -6,8 +6,8 @@ using u.Data;
 using u.Constructs.Resolved;
 using ResolvedObj = IRoveggi<u.Constructs.Resolved.uResolvedNumericalMove>;
 using Core = Core.Syntax.Core;
+using u.Constructs.UnitEffects;
 
-/*
 public static class ResolveNumericalMove
 {
     public static Korvessa<IRoveggi<uNumericalMove>, Multi<ResolvedObj>> Construct(IKorssa<IRoveggi<uNumericalMove>> move) =>
@@ -51,7 +51,7 @@ public static class ResolveNumericalMove
                             iMove.kRef()
                                 .kGetRovi(uNumericalMove.MAX_DISTANCE_PER_SUBJECT)
                                 .kCatchNolla(() => iMoveRange.kRef().kEnd())
-                                .kAsVariable(out var iMaxPerUnit)
+                                .kAsVariable(out var iMaxPerUnit),
                         ],
                         Value =
                             // nolla if impossible move:
@@ -84,26 +84,19 @@ public static class ResolveNumericalMove
                                                                     .kMultiply(iMaxPerUnit.kRef()))
                                                                 .kAsVariable(out var iMinMoveUnclamped),
 
-                                                            Core.kMetaFunction<IRoveggi<uUnitIdentifier>, ResolvedObj>(
-                                                            [], iSelectedSubject =>
+                                                            Core.kMetaFunction<IRoveggi<uUnitIdentifier>, NumRange, ResolvedObj>(
+                                                            // 'iThisMoveRange' should be non-zero here.
+                                                            [], (iSelectedSubject, iThisMoveRange) =>
                                                                 Core.kSubEnvironment<ResolvedObj>(new()
                                                                 {
                                                                     Environment =
                                                                         [
-                                                                            iMoveRange.kRef()
-                                                                                .kEnd()
-                                                                                .kSubtract(iMovedDistance.kRef())
-                                                                                .kAsVariable(out var iMaxMove),
-
                                                                             iSelectedSubject.kRef()
                                                                                 .kRead()
                                                                                 .kGetRovi(uUnitData.POSITION)
                                                                                 .kYield()
                                                                                 .kGenerateSequence(
-                                                                                // we need fucking set operations god dammit fuck
                                                                                 (iPathRoots, iDistance) =>
-                                                                                
-                                                                                    
                                                                         ],
                                                                     Value =
                                                                 })
@@ -130,4 +123,3 @@ public static class ResolveNumericalMove
                     })
         };
 }
-*/

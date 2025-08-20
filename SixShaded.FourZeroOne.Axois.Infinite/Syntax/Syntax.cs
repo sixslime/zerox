@@ -55,4 +55,6 @@ public static partial class KorssaSyntax
             {
                 A = count
             });
+
+    public static Korvessa<IRoveggi<uUnitIdentifier>, NumRange, NumRange> kGetMoveRange(IKorssa<IRoveggi<uUnitIdentifier>> unit, IKorssa<NumRange> moveRange) => Korvessas.GetUnitNumericalMoveRange.Construct(unit, moveRange);
 }
