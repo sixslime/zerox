@@ -1,5 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Core.AxoiTest.Internal;
 
+using System.Runtime.ExceptionServices;
 using CatGlance;
 using DeTes.Analysis;
 using MinimaFZO;
@@ -72,6 +73,7 @@ internal static class Extensions
                 return;
             }
             Console.WriteLine(ex);
+            return;
         }
         foreach (var path in paths)
             PrintFinalRoggi(path, $"{prefix}->{path.Selection.ICEE()}");

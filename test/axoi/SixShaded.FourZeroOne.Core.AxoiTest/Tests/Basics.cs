@@ -336,7 +336,54 @@ public sealed class Basics
                     iOne.kRef().DeTesAssertRoggi(c, r => r.Value == 1, "value one")),
             }));
 
-    
+    [TestMethod]
+    public async Task SetOperationNumbers() =>
+        await Run(
+        c =>
+            Core.kSubEnvironment<Rog>(
+            new()
+            {
+                Environment =
+                [
+                    (1..100).kFixed()
+                    .kAsVariable(out var iToHundred),
+                    (1..50).kFixed()
+                    .kAsVariable(out var iToFifty),
+                    5.Sequence(x => x + 5)
+                        .TakeWhile(x => x <= 100)
+                        .kFixed()
+                        .kAsVariable(out var iFives),
+                    3.Sequence(x => x + 3)
+                        .TakeWhile(x => x <= 100)
+                        .kFixed()
+                        .kAsVariable(out var iThrees),
+                ],
+                Value =
+                    Core.kMulti<Rog>(
+                    new()
+                    {
+                        iToHundred.kRef()
+                            .kExcept(iToFifty.kRef())
+                            .DeTesAssertRoggi(c, r => r.Elements.Map(x => x.Unwrap().Value).SequenceEqual(Iter.Range(51, 100, true)), "except easy")
+                            .kCount(),
+                        iToHundred.kRef()
+                            .kIntersect(iFives.kRef())
+                            .kIntersect(iThrees.kRef())
+                            .DeTesAssertRoggi(c, r => r.Elements.All(x => x.Unwrap().Value.ExprAs(v => v % 5 == 0 && v % 3 == 0)), "intersect")
+                            .kCount(),
+                        iFives.kRef()
+                            .kUnion(iThrees.kRef())
+                            .DeTesAssertRoggi(c, r => r.Elements.All(x => x.Unwrap().Value.ExprAs(v => v % 5 == 0 || v % 3 == 0)), "union")
+                            .DeTesReference(c, out var tFizzBuzzSet)
+                            .kCount(),
+                        iToHundred.kRef()
+                            .kExcept(iFives.kRef())
+                            .kExcept(iThrees.kRef())
+                            .DeTesAssertRoggi(c, r => r.Count == 100 - tFizzBuzzSet.Roggi.Count, "except")
+                            .kCount(),
+
+                    })
+            }));
     /*
     [TestMethod]
     public async Task MellsanoStressor() =>

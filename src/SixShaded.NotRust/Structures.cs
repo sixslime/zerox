@@ -412,7 +412,7 @@ public class CachingEnumerable<T> : IEnumerable<T>, IIndexReadable<int, T>
         CountAndCache();
         var hash = new HashCode();
         hash.Add(_list.Count);
-        for (int i = 0; i < _list.Count; i += 1 + (i - 1))
+        for (int i = 0; i < _list.Count; i += 2 + (i - 1))
         {
             hash.Add(_list[i]);
         }

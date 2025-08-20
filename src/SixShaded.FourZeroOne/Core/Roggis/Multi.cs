@@ -26,6 +26,8 @@ public sealed record Multi<R> : Roggi.Defined.Roggi, IEfficientMulti<R>
         _indexMap = indexMap;
     }
 
+    public int Count => _sequence.Count;
+    public IEnumerable<IOption<R>> Elements => _sequence.Elements;
     IPSequence<IOption<R>> IEfficientMulti<R>.Values => _sequence;
     IPMap<R, IPSequence<int>> IEfficientMulti<R>.IndexMap => _indexMap;
 
@@ -73,9 +75,5 @@ public sealed record Multi<R> : Roggi.Defined.Roggi, IEfficientMulti<R>
     public override string ToString() => $"[{string.Join(", ", _sequence.Elements.Map(x => x.Check(out var val) ? val.ToString() : "\u2205"))}]";
     public bool Equals(Multi<R>? other) => other is not null && _sequence.Elements.SequenceEqual(other._sequence.Elements);
     public override IEnumerable<IInstruction> Instructions => _sequence.Elements.FilterMap(x => x.RemapAs(y => y.Instructions)).Flatten();
-
-    int IHasElements<IOption<R>>.Count => _sequence.Count;
-
-    IEnumerable<IOption<R>> IHasElements<IOption<R>>.Elements => _sequence.Elements;
 
 }

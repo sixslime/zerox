@@ -7,6 +7,7 @@ using u.Constructs.Resolved;
 using ResolvedObj = IRoveggi<u.Constructs.Resolved.uResolvedNumericalMove>;
 using Core = Core.Syntax.Core;
 
+/*
 public static class ResolveNumericalMove
 {
     public static Korvessa<IRoveggi<uNumericalMove>, Multi<ResolvedObj>> Construct(IKorssa<IRoveggi<uNumericalMove>> move) =>
@@ -129,3 +130,4 @@ public static class ResolveNumericalMove
                     })
         };
 }
+*/

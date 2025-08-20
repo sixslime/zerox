@@ -12,6 +12,11 @@ using Roveggi;
 public class Sanity
 {
     [TestMethod]
+    public async Task Multi() =>
+        await Run(c =>
+            Core.kMulti<Number>([..Iter.Over(1, 2, 3).Map(x => x.kFixed())]));
+
+    [TestMethod]
     public async Task Compose() =>
         await Run(
         c =>
@@ -33,15 +38,15 @@ public class Sanity
             (1..5).kFixed()
             .kConcat((6..10).kFixed())
             .kConcat(Core.kMulti<Number>([]))
-            .DeTesAssertRoggi(c, r => r.Values.Elements.Map(x => x.Unwrap().Value).SequenceEqual((1..10).ToIter(true))));
+            .DeTesAssertRoggi(c, r => r.Elements.Map(x => x.Unwrap().Value).SequenceEqual((1..10).ToIter(true))));
 
     [TestMethod]
     public async Task FlattenNolla() =>
         await Run(
         c =>
-            Core.kMultiOld<IMulti<Number>>(
+            Core.kMulti<IMulti<Number>>([
                 (1..10).kFixed(),
-                Core.kNollaFor<IMulti<Number>>())
+                Core.kNollaFor<IMulti<Number>>()])
                 .kFlatten()
                 .DeTesAssertRoggiUnstable(c, r => !r.IsSome()));
 

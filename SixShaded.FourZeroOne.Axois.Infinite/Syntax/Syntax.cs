@@ -30,7 +30,7 @@ public static partial class KorssaSyntax
     public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, MetaFunction<ROut>, ROut> kIOSelectOneCancellableDirect<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, Structure.SelectCancellableDirect<RIn, ROut> block)
         where RIn : class, Rog
         where ROut : class, Rog =>
-        Korvessas.SelectOneCancellable<RIn, ROut>.Construct(pool, block.Select, block.Cancel));
+        Korvessas.SelectOneCancellable<RIn, ROut>.Construct(pool, block.Select, block.Cancel);
     public static IKorssa<ROut> kIOSelectMultipleCancellable<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, IKorssa<NumRange> count, Structure.SelectCancellable<IMulti<RIn>, ROut> block)
         where RIn : class, Rog
         where ROut : class, Rog =>

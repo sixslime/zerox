@@ -107,16 +107,9 @@ public record LineIntersections(IKorssa<HexCoords> from, IKorssa<HexCoords> to) 
     }
 
     private ITask<IOption<Multi<Multi<HexOffset>>>> FormatResult(IEnumerable<IEnumerable<HexPos>> resultValue) =>
-        new Multi<Multi<HexOffset>>
-            {
-                Values =
-                    resultValue.Map(
-                        val =>
-                            new Multi<HexOffset>
-                            {
-                                Values = val.Map(x => x.GetRoveggi().AsSome()).ToPSequence(),
-                            }.AsSome())
-                        .ToPSequence(),
-            }.AsSome()
+        new Multi<Multi<HexOffset>>(
+            resultValue.Map(
+            val =>
+                new Multi<HexOffset>(val.Map(x => x.GetRoveggi().AsSome())).AsSome())).AsSome()
             .ToCompletedITask();
 }
