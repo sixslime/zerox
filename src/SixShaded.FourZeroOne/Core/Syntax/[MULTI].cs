@@ -50,6 +50,22 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(source);
 
+    public static Korssas.Multi.Distinct<R> kDistinct<R>(this IKorssa<IMulti<R>> source)
+        where R : class, Rog =>
+        new(source);
+
+    public static Korssas.Multi.Union<R> kUnion<R>(this IKorssa<IMulti<R>> a, IKorssa<IMulti<R>> b)
+        where R : class, Rog =>
+        new(a, b);
+
+    public static Korssas.Multi.Intersect<R> kIntersect<R>(this IKorssa<IMulti<R>> a, IKorssa<IMulti<R>> b)
+        where R : class, Rog =>
+        new(a, b);
+
+    public static Korssas.Multi.Except<R> kExcept<R>(this IKorssa<IMulti<R>> a, IKorssa<IMulti<R>> b)
+        where R : class, Rog =>
+        new(a, b);
+
     public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Bool> kAllMatch<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Bool>> predicate)
         where R : class, Rog =>
         Korvessas.AllMatch<R>.Construct(source, predicate);
@@ -65,10 +81,6 @@ public static partial class KorssaSyntax
     public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Bool> kAnyMatch<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Bool> predicate)
         where R : class, Rog =>
         Korvessas.AnyMatch<R>.Construct(source, Core.kMetaFunction([], predicate));
-
-    public static Korvessa<IMulti<R>, Multi<R>> kDistinct<R>(this IKorssa<IMulti<R>> source)
-        where R : class, Rog =>
-        Korvessas.Distinct<R>.Construct(source);
 
     public static Korvessa<IMulti<R>, MetaFunction<R, Rog>, Multi<R>> kDistinctBy<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Rog> keyFunction)
         where R : class, Rog =>
