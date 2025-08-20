@@ -9,10 +9,6 @@ public sealed record Yield<R> : Korssa.Defined.Function<R, Roggis.Multi<R>>
     { }
 
     protected override ITask<IOption<Multi<R>>> Evaluate(IKorssaContext _, IOption<R> in1) =>
-        new Multi<R>
-            {
-                Values = in1.Yield().ToPSequence()
-            }.AsSome()
-            .ToCompletedITask();
+        new Multi<R>(in1.Yield()).AsSome().ToCompletedITask();
     protected override IOption<string> CustomToString() => $"^{Arg1}".AsSome();
 }

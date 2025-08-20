@@ -8,14 +8,10 @@ public sealed record AllValues<D, R> : Korssa.Defined.Value<Multi<R>>
     where R : class, Rog
 {
     protected override ITask<IOption<Multi<R>>> Evaluate(IKorssaContext runtime) =>
-        new Multi<R>
-            {
-                Values =
-                    runtime.CurrentMemory
-                        .GetRovedanggiAssignmentsOfType<D, R>()
-                        .Map(x => x.B.AsSome())
-                        .ToPSequence(),
-            }.AsSome()
+        new Multi<R>(
+            runtime.CurrentMemory
+                .GetRovedanggiAssignmentsOfType<D, R>()
+                .Map(x => x.B.AsSome())).AsSome()
             .ToCompletedITask();
     protected override IOption<string> CustomToString() => $"${typeof(D).Name}(values)".AsSome();
 

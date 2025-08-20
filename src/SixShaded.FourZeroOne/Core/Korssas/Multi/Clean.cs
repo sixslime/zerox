@@ -6,8 +6,5 @@ public record Clean<R>(IKorssa<IMulti<R>> multi) : Korssa.Defined.PureFunction<I
     where R : class, Rog
 {
     protected override Multi<R> EvaluatePure(IMulti<R> in1) =>
-        new Multi<R>
-        {
-            Values = in1.Elements.Where(x => x.IsSome()).ToPSequence()
-        };
+        new Multi<R>(in1.Elements.Where(x => x.IsSome()));
 }

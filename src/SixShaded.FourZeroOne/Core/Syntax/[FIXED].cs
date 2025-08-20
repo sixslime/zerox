@@ -14,23 +14,11 @@ public static partial class KorssaSyntax
 
     public static Korssas.Fixed<Multi<R>> kFixed<R>(this IEnumerable<R> values)
         where R : class, Rog =>
-        new(
-        new()
-        {
-            Values = values.Map(x => x.AsSome()).ToPSequence(),
-        });
+        new(new(values.Map(x => x.AsSome())));
 
-    public static Korssas.Fixed<Multi<Number>> kFixed(this IEnumerable<int> values) =>
-        new(
-        new()
-        {
-            Values = values.Map(x => ((Number)x).AsSome()).ToPSequence(),
-        });
+    public static Korssas.Fixed<Multi<Number>> kFixed(this IEnumerable<int> values) => new(new(values.Map(x => ((Number)x).AsSome())));
 
     public static Korssas.Fixed<Multi<Bool>> kFixed(this IEnumerable<bool> values) =>
         new(
-        new()
-        {
-            Values = values.Map(x => ((Bool)x).AsSome()).ToPSequence(),
-        });
+        new(values.Map(x => ((Bool)x).AsSome())));
 }

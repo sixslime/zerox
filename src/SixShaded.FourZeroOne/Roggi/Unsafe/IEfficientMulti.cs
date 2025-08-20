@@ -13,4 +13,5 @@ where R : class, Rog
     public IEfficientMulti<R> Union(IEfficientMulti<R> other);
     public IEfficientMulti<R> Intersect(IEfficientMulti<R> other);
     public IEfficientMulti<R> Except(IEfficientMulti<R> other);
+    public Core.Roggis.Multi<R> ToMulti();
 }

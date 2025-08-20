@@ -9,11 +9,7 @@ public record Flatten<R>(IKorssa<IMulti<IMulti<R>>> multi) : Korssa.Defined.Func
         in1.RemapAs(
             arr =>
                 arr.Elements.All(x => x.IsSome())
-                    .ToOption(
-                    new Multi<R>
-                    {
-                        Values = arr.Elements.Map(x => x.Unwrap().Elements).Flatten().ToPSequence()
-                    }))
+                    .ToOption(new Multi<R>(arr.Elements.Map(x => x.Unwrap().Elements).Flatten())))
             .Press()
             .ToCompletedITask();
 

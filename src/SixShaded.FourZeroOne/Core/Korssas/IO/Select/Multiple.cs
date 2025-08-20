@@ -21,18 +21,10 @@ public sealed record Multiple<R> : Korssa.Defined.Function<IMulti<R>, NumRange, 
                             selections =>
                                 selections.Length == selections.Distinct().Count()
                                     ? selections.Length >= count.Start.Value && selections.Length <= count.End.Value
-                                        ? new Multi<R>
-                                        {
-                                            Values =
-                                                selections.Map(i => from.At(i).Expect(() => new InvalidOperationException($"Got invalid index '{i}', expected 0..{from.Count - 1}")).AsSome())
-                                                    .ToPSequence(),
-                                        }.AsSome()
+                                        ? new Multi<R>(selections.Map(i => from.At(i).Expect(() => new InvalidOperationException($"Got invalid index '{i}', expected 0..{from.Count - 1}")).AsSome())).AsSome()
                                         : throw new InvalidOperationException($"Invalid amount of elements in selection [{string.Join(',', selections)}], expected {count.Start.Value}..{count.End.Value}, got {selections.Length}.")
                                     : throw new InvalidOperationException($"Duplicate(s) in selection [{string.Join(',', selections)}] (not allowed)"))
-                            : new Multi<R>
-                            {
-                                Values = new()
-                            }.AsSome()
+                            : new Multi<R>([]).AsSome()
                         : new None<Multi<R>>())
             : new None<Multi<R>>();
 

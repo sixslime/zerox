@@ -15,18 +15,14 @@ public sealed record GetKeys<C, RKey, RVal> : Korssa.Defined.RegularKorssa<Multi
 
     protected override ITask<IOption<Multi<RKey>>> StandardResolve(IKorssaContext runtime, RogOpt[] args) =>
         (args[0].RemapAs(x => (IRoveggi<C>)x).Check(out var subject)
-            ? new Multi<RKey>
-            {
-                Values =
-                    subject.ComponentsUnsafe
-                        .FilterMap(
-                        x =>
-                            x.A.MaybeA<VarovaWrapper<C, RKey, RVal>>()
-                                .Retain(y => y.Varovu.Equals(Varovu))
-                                .RemapAs(y => y.KeyRoggi))
-                        .Map(x => x.AsSome())
-                        .ToPSequence()
-            }.AsSome()
+            ? new Multi<RKey>(
+            subject.ComponentsUnsafe
+                .FilterMap(
+                x =>
+                    x.A.MaybeA<VarovaWrapper<C, RKey, RVal>>()
+                        .Retain(y => y.Varovu.Equals(Varovu))
+                        .RemapAs(y => y.KeyRoggi))
+                .Map(x => x.AsSome())).AsSome()
             : new None<Multi<RKey>>())
         .ToCompletedITask();
     protected override IOption<string> CustomToString() => $"{ArgKorssas[0]}@{Varovu.Identifier}<keys>".AsSome();

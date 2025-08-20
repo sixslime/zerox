@@ -20,7 +20,7 @@ public sealed record Multi<R> : Roggi.Defined.Roggi, IEfficientMulti<R>
         }
         _indexMap = new PMap<R, IPSequence<int>>(dict);
     }
-    private Multi(IPSequence<IOption<R>> sequence, IPMap<R, IPSequence<int>> indexMap) : this()
+    private Multi(IPSequence<IOption<R>> sequence, IPMap<R, IPSequence<int>> indexMap)
     {
         _sequence = sequence;
         _indexMap = indexMap;
@@ -67,7 +67,7 @@ public sealed record Multi<R> : Roggi.Defined.Roggi, IEfficientMulti<R>
     IEfficientMulti<R> IEfficientMulti<R>.Intersect(IEfficientMulti<R> other) => new Multi<R>(_sequence.Elements.Filtered().Intersect(other.Values.Elements.Filtered()).Map(x => x.AsSome()));
 
     IEfficientMulti<R> IEfficientMulti<R>.Except(IEfficientMulti<R> other) => new Multi<R>(_sequence.Elements.Filtered().Except(other.Values.Elements.Filtered()).Map(x => x.AsSome()));
-
+    Multi<R> IEfficientMulti<R>.ToMulti() => this;
     IOption<IOption<R>> IIndexReadable<int, IOption<R>>.At(int index) => _sequence.At(index);
     public override int GetHashCode() => _sequence.GetHashCode();
     public override string ToString() => $"[{string.Join(", ", _sequence.Elements.Map(x => x.Check(out var val) ? val.ToString() : "\u2205"))}]";
