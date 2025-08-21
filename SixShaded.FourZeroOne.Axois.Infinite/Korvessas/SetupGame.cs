@@ -8,7 +8,8 @@ using u.Data;
 using u.Constructs;
 using u.Constructs.Resolved;
 using Infinite = Syntax.Infinite;
-
+using u.Constructs.ActionTypes;
+using u.Constructs.Move;
 public static class SetupGame
 {
     public static Korvessa<IRoveggi<uGameConfiguration>, Rog> Construct(IKorssa<IRoveggi<uGameConfiguration>> config) =>
@@ -41,25 +42,57 @@ public static class SetupGame
                             new Func<IKorssa<IMulti<IRoveggi<uPlayableAction>>>>(
                                 () =>
                                 {
-                                    IKorssa<IRoveggi<uPlayableAction>> kAction(IKorssa<Bool> condition, IKorssa<Rog> instructions,)
+                                    IKorssa<IRoveggi<uPlayableAction>> kAction<C>(IKorssa<Bool> condition, IKorssa<Rog> statement)
+                                        where C : uActionType, IConcreteRovetu
                                     {
                                         return Core.kCompose<uPlayableAction>()
-                                            .kWithRovi(uPlayableAction.STATEMENT, statement.kMetaBoxed([]));
+                                            .kWithRovi(uPlayableAction.CONDITION, condition.kMetaBoxed([]))
+                                            .kWithRovi(uPlayableAction.STATEMENT, statement.kMetaBoxed([]))
+                                            .kWithRovi(uPlayableAction.TYPE, Core.kCompose<C>().kIsType<IRoveggi<uActionType>>());
                                     }
                                     return
-                                        Core.kSubEnvironment<IMulti<IRoveggi<uPlayableAction>>>(
+                                        Core.kMulti<IRoveggi<uPlayableAction>>(
                                         new()
                                         {
-                                            Environment =
-                                            [
-                                                kAction()
-                                            ],
-                                            Value =
-                                                Core.kMulti<IRoveggi<uPlayableAction>>(
-                                                new()
-                                                {
-                                                    
-                                                }),
+                                            // ABILITY ACTION:
+                                            kAction<uAbilityAction>(
+                                            condition:
+                                            Infinite.CurrentPlayer
+                                                .kRead()
+                                                .kGetRovi(uPlayerData.ENERGY)
+                                                .kIsGreaterThan(0.kFixed()),
+                                            statement:
+                                            Infinite.CurrentPlayer
+                                                .kRead()
+                                                .kGetRovi(uPlayerData.HAND)
+                                                .kIOSelectOne()
+                                                .kAbstractResolve()
+                                                .kGetRovi(uResolved.INSTRUCTIONS)),
+
+                                            // MOVE ACTION:
+                                            kAction<uMoveAction>(
+                                            condition:
+                                            Infinite.CurrentPlayer
+                                                .kRead()
+                                                .kGetRovi(uPlayerData.ENERGY)
+                                                .kIsGreaterThan(0.kFixed()),
+                                            statement:
+                                            Core.kCompose<uNumericalMove>()
+                                                .kWithRovi(
+                                                Core.Hint<uNumericalMove>(),
+                                                uMove.SUBJECT_COLLECTOR,
+                                                Infinite.AllUnits
+                                                    .kWhere(
+                                                    iUnit =>
+                                                        iUnit.kRef()
+                                                            .kRead()
+                                                            .kGetRovi(uUnitData.OWNER)
+                                                            .kEquals(Infinite.CurrentPlayer))
+                                                    .kIsType<IMulti<IRoveggi<uUnitIdentifier>>>()
+                                                    .kMetaBoxed([])))
+                                                .kWithRovi(
+                                                Core.Hint<uNumericalMove>(),
+                                                uMove.
                                         });
                                 }).Invoke()
                                 .kAsVariable(out var iPlayableActions),

@@ -7,13 +7,13 @@ using u.Constructs.Move;
 using Core = Core.Syntax.Core;
 using u.Constructs;
 using u.Constructs.Ability;
-using CoreStructure = Core.Syntax.Structure;
 public static partial class Infinite
 {
     public static IKorssa<IRoveggi<uGameAnchor>> Game => Core.kCompose<uGameAnchor>();
     public static IKorssa<IRoveggi<uConfigAnchor>> Configuration => Core.kCompose<uConfigAnchor>();
     public static IKorssa<IRoveggi<uPlayerIdentifier>> CurrentPlayer => Game.kRead().kGetRovi(u.uGame.CURRENT_PLAYER);
     public static IKorssa<IMulti<IRoveggi<uUnitIdentifier>>> AllUnits => Core.kAllRovedanggiKeys<uUnitIdentifier, IRoveggi<uUnitData>>();
+    public static Structure.Templates Template { get; } = new();
 }
 
 public static partial class KorssaSyntax
