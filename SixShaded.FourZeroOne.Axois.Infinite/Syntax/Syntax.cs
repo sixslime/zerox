@@ -17,10 +17,11 @@ public static partial class Infinite
 
 public static partial class KorssaSyntax
 {
-    public static Korvessa<IRoveggi<uUnitIdentifier>, IRoveggi<uHexIdentifier>, IRoveggi<uSpaceChecks>> kMoveDestinationChecks(this IKorssa<IRoveggi<uUnitIdentifier>> unit, IKorssa<IRoveggi<uHexIdentifier>> hex) => Korvessas.DoMoveDestinationChecks.Construct(unit, hex);
+    public static Korvessa<IRoveggi<uHexIdentifier>, IRoveggi<uUnitIdentifier>, IRoveggi<uSpaceChecks>> kMovePathChecks(this IKorssa<IRoveggi<uHexIdentifier>> hex, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.DoMovePathChecks.Construct(hex, unit);
+    public static Korvessa<IRoveggi<uHexIdentifier>, IRoveggi<uUnitIdentifier>, IRoveggi<uSpaceChecks>> kMoveDestinationChecks(this IKorssa<IRoveggi<uHexIdentifier>> hex, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.DoMoveDestinationChecks.Construct(hex, unit);
     public static Korvessa<IRoveggi<uPlayerIdentifier>, Bool> kIsBaseProtected(this IKorssa<IRoveggi<uPlayerIdentifier>> player) => Korvessas.IsBaseProtected.Construct(player);
     public static Korvessa<IRoveggi<uSourcedAbility>, IRoveggi<uUnitIdentifier>, IRoveggi<uSourceChecks>> kSourceChecks(this IKorssa<IRoveggi<uSourcedAbility>> ability, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.DoSourceChecks.Construct(ability, unit);
-    public static Korvessa<IRoveggi<uMove>, IRoveggi<uUnitIdentifier>, IRoveggi<uSubjectChecks>> kSubjectChecks(this IKorssa<IRoveggi<uMove>> move, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.DoMoveSubjectChecks.Construct(move, unit);
+    public static Korvessa<IRoveggi<uMove>, IRoveggi<uUnitIdentifier>, IRoveggi<uSubjectChecks>> kMoveSubjectChecks(this IKorssa<IRoveggi<uMove>> move, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.DoMoveSubjectChecks.Construct(move, unit);
     public static Korvessa<IRoveggi<uSourcedAbility>, IRoveggi<uUnitIdentifier>, IRoveggi<uUnitIdentifier>, IRoveggi<uTargetChecks>> kTargetChecks(this IKorssa<IRoveggi<uSourcedAbility>> ability, IKorssa<IRoveggi<uUnitIdentifier>> unit, IKorssa<IRoveggi<uUnitIdentifier>> source) => Korvessas.DoTargetChecks.Construct(ability, unit, source);
 
     public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, MetaFunction<ROut>, ROut> kIOSelectOneCancellable<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, Structure.SelectCancellable<RIn, ROut> block)

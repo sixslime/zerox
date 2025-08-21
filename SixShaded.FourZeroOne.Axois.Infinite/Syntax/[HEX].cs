@@ -19,6 +19,7 @@ partial class KorssaSyntax
     public static Korvessa<HexCoords, HexIdentifier> kAsAbsolute(this IKorssa<HexCoords> coords) => Korvessas.HexCoordinates.AsAbsolute.Construct(coords);
     public static Korvessa<IMulti<HexOffset>, IRoveggi<uUnitIdentifier>, Multi<HexIdentifier>> kAffixToUnit(this IKorssa<IMulti<HexOffset>> hitArea, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.HexCoordinates.AffixHitArea.Construct(hitArea, unit);
     public static Korvessa<HexCoords, HexCoords, Number, HexOffset> kRotateAround(this IKorssa<HexCoords> coords, IKorssa<HexCoords> anchor, IKorssa<Number> rotation) => Korvessas.HexCoordinates.RotateAround.Construct(coords, anchor, rotation);
+    public static Korvessa<HexCoords, Multi<HexOffset>> kAdjacent(this IKorssa<HexCoords> hex) => Korvessas.HexCoordinates.GetAdjacent.Construct(hex);
     public static FourZeroOne.Core.Korssas.Fixed<HexOffset> kAsHex(this (int, int, int) coordinates) =>
         new(
         new Roveggi<uHexOffset>()

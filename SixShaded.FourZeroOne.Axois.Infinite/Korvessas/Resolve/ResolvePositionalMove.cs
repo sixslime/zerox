@@ -32,7 +32,7 @@ public static class ResolvePositionalMove
                                         {
                                             A =
                                                 iMove.kRef()
-                                                    .kSubjectChecks(iUnit.kRef())
+                                                    .kMoveSubjectChecks(iUnit.kRef())
                                         })
                                         .kExecuteWith(
                                         new()
@@ -70,8 +70,8 @@ public static class ResolvePositionalMove
                                                         new()
                                                         {
                                                             A =
-                                                                iSubjectUnit.kRef()
-                                                                    .kMoveDestinationChecks(iHex.kRef())
+                                                                iHex.kRef()
+                                                                    .kMoveDestinationChecks(iSubjectUnit.kRef())
                                                         })
                                                         .kExecuteWith(
                                                         new()

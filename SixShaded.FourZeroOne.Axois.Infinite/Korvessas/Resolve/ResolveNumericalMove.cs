@@ -5,6 +5,8 @@ using u.Identifier;
 using u.Data;
 using u.Constructs.Resolved;
 using ResolvedObj = IRoveggi<u.Constructs.Resolved.uResolvedNumericalMove>;
+using HexIdent = IRoveggi<u.Identifier.uHexIdentifier>;
+using UnitIdent = IRoveggi<u.Identifier.uUnitIdentifier>;
 using Core = Core.Syntax.Core;
 using u.Constructs.UnitEffects;
 
@@ -33,7 +35,7 @@ public static class ResolveNumericalMove
                                         {
                                             A =
                                                 iMove.kRef()
-                                                    .kSubjectChecks(iUnit.kRef())
+                                                    .kMoveSubjectChecks(iUnit.kRef())
                                         })
                                         .kExecuteWith(
                                         new()
@@ -54,71 +56,166 @@ public static class ResolveNumericalMove
                                 .kAsVariable(out var iMaxPerUnit),
                         ],
                         Value =
+
                             // nolla if impossible move:
+                            // DEV: honestly i think this should just force a max move from all units.
                             // (moveRange.Min < (maxPerUnit * maxUnits))
                             iMoveRange.kRef()
                                 .kStart()
-                                .kIsGreaterThan(
-                                iMaxSubjects.kRef().kMultiply(iMaxPerUnit.kRef()))
-                                .kIfTrue<Multi<ResolvedObj>>(new()
+                                .kIsGreaterThan(iMaxSubjects.kRef().kMultiply(iMaxPerUnit.kRef()))
+                                .kIfTrue<Multi<ResolvedObj>>(
+                                new()
                                 {
                                     Then = Core.kNollaFor<Multi<ResolvedObj>>(),
-                                    Else = Core.kMetaFunctionRecursive<IMulti<IRoveggi<uUnitIdentifier>>, Number, Number, Multi<ResolvedObj>>(
-                                        [], (iRecurse, iAvailableSubjects, iMovedDistance, iRemainingCount) =>
-                                            iAvailableSubjects.kRef()
-                                                .kCount()
-                                                .kIsGreaterThan(0.kFixed())
-                                                .kIfTrue<Multi<ResolvedObj>>(new()
-                                                {
-                                                    // TODO LEFTOFF:
-                                                    Then = Core.kSubEnvironment<Multi<ResolvedObj>>(new()
+                                    Else =
+                                        Core.kMetaFunctionRecursive<IMulti<UnitIdent>, Number, Number, Multi<ResolvedObj>>(
+                                            [], (iRecurseUnitSelection, iAvailableSubjects, iMovedDistance, iRemainingCount) =>
+                                                iAvailableSubjects.kRef()
+                                                    .kCount()
+                                                    .kIsGreaterThan(0.kFixed())
+                                                    .kIfTrue<Multi<ResolvedObj>>(
+                                                    new()
                                                     {
-                                                        Environment =
-                                                        [
-                                                            iMoveRange.kRef()
-                                                                .kStart()
-                                                                .kSubtract(iMovedDistance.kRef())
-                                                                .kSubtract(
-                                                                iRemainingCount.kRef()
-                                                                    .kSubtract(1.kFixed())
-                                                                    .kMultiply(iMaxPerUnit.kRef()))
-                                                                .kAsVariable(out var iMinMoveUnclamped),
-
-                                                            Core.kMetaFunction<IRoveggi<uUnitIdentifier>, NumRange, ResolvedObj>(
-                                                            // 'iThisMoveRange' should be non-zero here.
-                                                            [], (iSelectedSubject, iThisMoveRange) =>
-                                                                Core.kSubEnvironment<ResolvedObj>(new()
-                                                                {
-                                                                    Environment =
-                                                                        [
-                                                                            iSelectedSubject.kRef()
-                                                                                .kRead()
-                                                                                .kGetRovi(uUnitData.POSITION)
-                                                                                .kYield()
-                                                                                .kGenerateSequence(
-                                                                                (iPathRoots, iDistance) =>
-                                                                        ],
-                                                                    Value =
-                                                                })
-                                                            )
-                                                        ],
-                                                        Value = iMinMoveUnclamped.kRef()
-                                                            .kIsGreaterThan(0.kFixed())
-                                                            .kIfTrue(new()
+                                                        // TODO LEFTOFF:
+                                                        Then =
+                                                            Core.kSubEnvironment<Multi<ResolvedObj>>(
+                                                            new()
                                                             {
+                                                                Environment =
+                                                                [
+                                                                    iMoveRange.kRef()
+                                                                        .kStart()
+                                                                        .kSubtract(iMovedDistance.kRef())
+                                                                        .kSubtract(
+                                                                        iRemainingCount.kRef()
+                                                                            .kSubtract(1.kFixed())
+                                                                            .kMultiply(iMaxPerUnit.kRef()))
+                                                                        .kAsVariable(out var iMinMoveUnclamped),
+                                                                    Core.kMetaFunction<UnitIdent, NumRange, ResolvedObj>(
 
-                                                            })
-                                                    }),
-                                                    Else = Core.kMulti<ResolvedObj>([])
-                                                })
-                                            )
-                                        .kExecuteWith(
-                                        new()
-                                        {
-                                            A = iValidSubjects.kRef(),
-                                            B = 0.kFixed(),
-                                            C = iMaxSubjects.kRef()
-                                        })
+                                                                        // 'iThisMoveRange' should be non-zero here.
+                                                                        [], (iSelectedSubject, iThisMoveRange) =>
+                                                                            Core.kSubEnvironment<ResolvedObj>(
+                                                                            new()
+                                                                            {
+                                                                                Environment =
+                                                                                [
+                                                                                    iSelectedSubject.kRef()
+                                                                                        .kRead()
+                                                                                        .kGetRovi(uUnitData.POSITION)
+                                                                                        .kAsVariable(out var iSubjectPos),
+                                                                                    Core.kMetaFunctionRecursive<IMulti<HexIdent>, IMulti<HexIdent>, Number, Multi<HexIdent>>(
+                                                                                        [],
+                                                                                        (iRecursePathing, iRoots, iSeen, iDistance) =>
+                                                                                            iDistance.kRef()
+                                                                                                .kIsGreaterThan(iThisMoveRange.kRef().kEnd())
+                                                                                                .kOr(
+                                                                                                iRoots.kRef()
+                                                                                                    .kCount()
+                                                                                                    .kIsGreaterThan(0.kFixed())
+                                                                                                    .kNot())
+                                                                                                .kIfTrue<Multi<HexIdent>>(
+                                                                                                new()
+                                                                                                {
+                                                                                                    Then = Core.kMulti<HexIdent>([]),
+                                                                                                    Else =
+                                                                                                        Core.kSubEnvironment<Multi<HexIdent>>(
+                                                                                                        new()
+                                                                                                        {
+                                                                                                            Environment =
+                                                                                                            [
+                                                                                                                iRoots.kRef()
+                                                                                                                    .kMap(
+                                                                                                                    iRoot =>
+                                                                                                                        iRoot.kRef()
+                                                                                                                            .kAdjacent()
+                                                                                                                            .kWhere(
+                                                                                                                            iStep =>
+                                                                                                                                Core.kSubEnvironment<Bool>(
+                                                                                                                                new()
+                                                                                                                                {
+                                                                                                                                    Environment =
+                                                                                                                                    [
+                                                                                                                                        iStep.kRef()
+                                                                                                                                            .kAsAbsolute()
+                                                                                                                                            .kAsVariable(out var iStepAbsolute)
+                                                                                                                                    ],
+                                                                                                                                    Value =
+                                                                                                                                        iSeen.kRef()
+                                                                                                                                            .kContains(iStepAbsolute.kRef())
+                                                                                                                                            .kNot()
+                                                                                                                                            .ksLazyAnd(
+                                                                                                                                            iMove.kRef()
+                                                                                                                                                .kGetRovi(uNumericalMove.PATH_SELECTOR)
+                                                                                                                                                .kExecuteWith(
+                                                                                                                                                new()
+                                                                                                                                                {
+                                                                                                                                                    A =
+                                                                                                                                                        iStepAbsolute.kRef()
+                                                                                                                                                            .kMovePathChecks(iSelectedSubject.kRef())
+                                                                                                                                                })
+                                                                                                                                                .kExecuteWith(
+                                                                                                                                                new()
+                                                                                                                                                {
+                                                                                                                                                    A = iRoot.kRef(),
+                                                                                                                                                    B = iStepAbsolute.kRef().kAsAbsolute()
+                                                                                                                                                }))
+                                                                                                                                })))
+                                                                                                                    .kFlatten()
+                                                                                                                    .kMap(iHex => iHex.kRef().kAsAbsolute())
+                                                                                                                    .kDistinct()
+                                                                                                                    .kAsVariable(out var iSteps)
+                                                                                                            ],
+                                                                                                            Value =
+                                                                                                                iThisMoveRange.kRef()
+                                                                                                                    .kStart()
+                                                                                                                    .kIsGreaterThan(iDistance.kRef())
+                                                                                                                    .kIfTrue<Multi<HexIdent>>(
+                                                                                                                    new()
+                                                                                                                    {
+                                                                                                                        Then = Core.kMulti<HexIdent>([]),
+                                                                                                                        Else = iSteps.kRef()
+                                                                                                                    })
+                                                                                                                    .kUnion(
+                                                                                                                    iRecursePathing.kRef()
+                                                                                                                        .kExecuteWith(
+                                                                                                                        new()
+                                                                                                                        {
+                                                                                                                            A = iSteps.kRef(),
+                                                                                                                            B = iSeen.kRef().kUnion(iSteps.kRef()),
+                                                                                                                            C = iDistance.kRef().kAdd(1.kFixed())
+                                                                                                                        }))
+                                                                                                        })
+                                                                                                }))
+                                                                                        .kExecuteWith(
+                                                                                        new()
+                                                                                        {
+                                                                                            A = iSubjectPos.kRef().kYield(),
+                                                                                            B = iSubjectPos.kRef().kYield(),
+                                                                                            C = 1.kFixed()
+                                                                                        })
+                                                                                        .kAsVariable(out var iAvailableHexes)
+                                                                                ],
+                                                                                Value = 
+                                                                            }))
+                                                                        .kAsVariable(out var iUnitMoveFunction)
+                                                                ],
+                                                                Value =
+                                                                    iMinMoveUnclamped.kRef()
+                                                                        .kIsGreaterThan(0.kFixed())
+                                                                        .kIfTrue(
+                                                                        new()
+                                                                            { })
+                                                            }),
+                                                        Else = Core.kMulti<ResolvedObj>([])
+                                                    }))
+                                            .kExecuteWith(
+                                            new()
+                                            {
+                                                A = iValidSubjects.kRef(),
+                                                B = 0.kFixed(),
+                                                C = iMaxSubjects.kRef()
+                                            })
                                 })
                     })
         };

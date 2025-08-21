@@ -10,12 +10,12 @@ using Infinite = Syntax.Infinite;
 
 public static class DoMoveDestinationChecks
 {
-    public static Korvessa<IRoveggi<uUnitIdentifier>, IRoveggi<uHexIdentifier>, IRoveggi<uSpaceChecks>> Construct(IKorssa<IRoveggi<uUnitIdentifier>> subject, IKorssa<IRoveggi<uHexIdentifier>> hex) =>
-        new(subject, hex)
+    public static Korvessa<IRoveggi<uHexIdentifier>, IRoveggi<uUnitIdentifier>, IRoveggi<uSpaceChecks>> Construct(IKorssa<IRoveggi<uHexIdentifier>> hex, IKorssa<IRoveggi<uUnitIdentifier>> unit) =>
+        new(hex, unit)
         {
             Du = Axoi.Korvedu("DoMoveDestinationChecks"),
             Definition =
-                (_, iSubject, iHex) =>
+                (_, iHex, iSubject) =>
                     Core.kCompose<uSpaceChecks>()
                         .kWithRovi(
                         uSpaceChecks.WALL,
