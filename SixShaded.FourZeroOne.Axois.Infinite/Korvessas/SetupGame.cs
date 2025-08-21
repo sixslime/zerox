@@ -41,10 +41,10 @@ public static class SetupGame
                             new Func<IKorssa<IMulti<IRoveggi<uPlayableAction>>>>(
                                 () =>
                                 {
-                                    IKorssa<IRoveggi<uPlayableAction>> kAction(IKorssa<IRoveggi<uResolvedAction>> statement)
+                                    IKorssa<IRoveggi<uPlayableAction>> kAction(IKorssa<Bool> condition, IKorssa<Rog> instructions,)
                                     {
                                         return Core.kCompose<uPlayableAction>()
-                                            .kWithRovi(uPlayableAction.ACTION_STATEMENT, statement.kMetaBoxed([]));
+                                            .kWithRovi(uPlayableAction.STATEMENT, statement.kMetaBoxed([]));
                                     }
                                     return
                                         Core.kSubEnvironment<IMulti<IRoveggi<uPlayableAction>>>(
@@ -52,16 +52,13 @@ public static class SetupGame
                                         {
                                             Environment =
                                             [
-                                                Core.kCompose<uPlayableAction>()
-                                                    .kAsVariable(out var iActionEndTurn),
-
-                                                // TODO: define rest of actions
+                                                kAction()
                                             ],
                                             Value =
                                                 Core.kMulti<IRoveggi<uPlayableAction>>(
                                                 new()
                                                 {
-                                                    iActionEndTurn.kRef(),
+                                                    
                                                 }),
                                         });
                                 }).Invoke()

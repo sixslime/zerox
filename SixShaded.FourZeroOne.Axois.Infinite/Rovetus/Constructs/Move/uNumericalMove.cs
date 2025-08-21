@@ -13,7 +13,7 @@ public interface uNumericalMove : uMove, IConcreteRovetu
     /// </summary>
     public static readonly Rovu<uNumericalMove, Number> MAX_SUBJECTS = new(Axoi.Du, "max_subjects");
     /// <summary>
-    /// (spaceChecks) -> (prevSpaace, thisSpace) -> isValidStep <br></br>
+    /// (spaceChecks) -> (prevSpace, thisSpace) -> isValidStep <br></br>
     /// runs for each pathing step. <br></br>
     /// default should be (spaceChecks) => ((_, _) => subjectChecks.AllTrue)
     /// </summary>
