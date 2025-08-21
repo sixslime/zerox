@@ -59,6 +59,10 @@ public static class TemplateNumericalMove
                                     .kGetRovi(uCheckable.PASSED))))
                         .kWithRovi(
                         HINT,
+                        uMove.SUBJECT_COLLECTOR,
+                        Core.kNollaFor<MetaFunction<IMulti<IRoveggi<uUnitIdentifier>>>>())
+                        .kWithRovi(
+                        HINT,
                         Type.DISTANCE,
                         Core.kNollaFor<NumRange>())
         };

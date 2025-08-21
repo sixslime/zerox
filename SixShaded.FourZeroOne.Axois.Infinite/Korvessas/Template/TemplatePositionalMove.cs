@@ -48,6 +48,10 @@ public static class TemplatePositionalMove
                                     .kGetRovi(uCheckable.PASSED))))
                         .kWithRovi(
                         HINT,
+                        uMove.SUBJECT_COLLECTOR,
+                        Core.kNollaFor<MetaFunction<IMulti<IRoveggi<uUnitIdentifier>>>>())
+                        .kWithRovi(
+                        HINT,
                         Type.MOVE_FUNCTION,
                         Core.kNollaFor<MetaFunction<IRoveggi<uUnitIdentifier>, IMulti<IRoveggi<uHexIdentifier>>>>())
         };

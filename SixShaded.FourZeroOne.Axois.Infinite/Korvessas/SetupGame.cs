@@ -77,22 +77,17 @@ public static class SetupGame
                                                 .kGetRovi(uPlayerData.ENERGY)
                                                 .kIsGreaterThan(0.kFixed()),
                                             statement:
-                                            Core.kCompose<uNumericalMove>()
+                                            Infinite.Template.NumericalMove
+                                                .kWithRovi(uNumericalMove.DISTANCE, 1.kFixed().kRangeTo(4.kFixed()))
                                                 .kWithRovi(
                                                 Core.Hint<uNumericalMove>(),
-                                                uMove.SUBJECT_COLLECTOR,
-                                                Infinite.AllUnits
-                                                    .kWhere(
-                                                    iUnit =>
-                                                        iUnit.kRef()
-                                                            .kRead()
-                                                            .kGetRovi(uUnitData.OWNER)
-                                                            .kEquals(Infinite.CurrentPlayer))
-                                                    .kIsType<IMulti<IRoveggi<uUnitIdentifier>>>()
-                                                    .kMetaBoxed([])))
-                                                .kWithRovi(
-                                                Core.Hint<uNumericalMove>(),
-                                                uMove.
+                                                uMove.SUBJECT_COLLECTOR, 
+                                                Infinite.AllUnits.kWhere(
+                                                iUnit => iUnit.kRef()
+                                                    .kRead()
+                                                    .kGetRovi(uUnitData.OWNER)
+                                                    .kEquals(Infinite.CurrentPlayer))
+                                                .kMetaBoxed<IMulti<IRoveggi<uUnitIdentifier>>>([])))
                                         });
                                 }).Invoke()
                                 .kAsVariable(out var iPlayableActions),

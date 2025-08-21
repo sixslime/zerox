@@ -63,5 +63,5 @@ internal class Program
  */
 
 /* TODO
- * - player rotations :/
+ * - consider forcing all references to 'Multi<T>' to be 'IMulti<T>' (even in outputs), similar to how its always 'IRoveggi<C>', not 'Roveggi<C>'
  */
