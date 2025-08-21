@@ -50,6 +50,10 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(source);
 
+    public static Korssas.Multi.IndiciesOf<R> kIndiciesOf<R>(this IKorssa<IMulti<R>> source, IKorssa<R> element)
+        where R : class, Rog =>
+        new(source, element);
+
     public static Korssas.Multi.Distinct<R> kDistinct<R>(this IKorssa<IMulti<R>> source)
         where R : class, Rog =>
         new(source);

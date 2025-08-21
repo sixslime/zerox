@@ -24,8 +24,6 @@ public static class GetUnitNumericalMoveRange
                             iUnit.kRef()
                                 .kRead()
                                 .kGetRovi(uUnitData.EFFECTS)
-                                .kAsVariable(out var iEffects),
-                            iEffects.kRef()
                                 .kAnyMatch(iEffect => iEffect.kRef().kIsType<uSlowEffect>().kExists())
                                 .kIfTrue<Number>(
                                 new()
@@ -36,22 +34,14 @@ public static class GetUnitNumericalMoveRange
                                 .kAsVariable(out var iThisSlowFactor),
                         ],
                         Value =
-                            iEffects.kRef()
-                                .kAnyMatch(iEffect => iEffect.kRef().kIsType<uImmobileEffect>().kExists())
-                                .kIfTrue<NumRange>(
-                                new()
-                                {
-                                    Then = 0.kFixed().kSingleRange(),
-                                    Else =
-                                        iMoveRange.kRef()
-                                            .kStart()
-                                            .kAtLeast(0.kFixed())
-                                            .kDivide(iThisSlowFactor.kRef())
-                                            .kRangeTo(
-                                            iMoveRange.kRef()
-                                                .kEnd()
-                                                .kDivide(iThisSlowFactor.kRef()))
-                                })
+                            iMoveRange.kRef()
+                                .kStart()
+                                .kAtLeast(0.kFixed())
+                                .kDivide(iThisSlowFactor.kRef())
+                                .kRangeTo(
+                                iMoveRange.kRef()
+                                    .kEnd()
+                                    .kDivide(iThisSlowFactor.kRef()))
                     })
         };
 }

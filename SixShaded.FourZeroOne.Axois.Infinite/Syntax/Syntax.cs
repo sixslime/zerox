@@ -7,6 +7,7 @@ using u.Constructs.Move;
 using Core = Core.Syntax.Core;
 using u.Constructs;
 using u.Constructs.Ability;
+using CoreStructure = Core.Syntax.Structure;
 public static partial class Infinite
 {
     public static IKorssa<IRoveggi<uGameAnchor>> Game => Core.kCompose<uGameAnchor>();
@@ -28,10 +29,20 @@ public static partial class KorssaSyntax
         where RIn : class, Rog
         where ROut : class, Rog =>
         Korvessas.SelectOneCancellable<RIn, ROut>.Construct(pool, Core.kMetaFunction([], block.Select), Core.kMetaFunction([], block.Cancel));
+
+    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, MetaFunction<ROut>, ROut> kIOSelectOneCancellable<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, CoreStructure.Hint<ROut> hint, Structure.SelectCancellable<RIn, ROut> block)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        kIOSelectOneCancellable(pool, block);
     public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, MetaFunction<ROut>, ROut> kIOSelectOneCancellableDirect<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, Structure.SelectCancellableDirect<RIn, ROut> block)
         where RIn : class, Rog
         where ROut : class, Rog =>
         Korvessas.SelectOneCancellable<RIn, ROut>.Construct(pool, block.Select, block.Cancel);
+
+    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, MetaFunction<ROut>, ROut> kIOSelectOneCancellableDirect<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, CoreStructure.Hint<ROut> hint, Structure.SelectCancellableDirect<RIn, ROut> block)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        kIOSelectOneCancellableDirect(pool, block);
     public static IKorssa<ROut> kIOSelectMultipleCancellable<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, IKorssa<NumRange> count, Structure.SelectCancellable<IMulti<RIn>, ROut> block)
         where RIn : class, Rog
         where ROut : class, Rog =>
@@ -40,6 +51,11 @@ public static partial class KorssaSyntax
             {
                 A = count
             });
+
+    public static IKorssa<ROut> kIOSelectMultipleCancellable<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, CoreStructure.Hint<ROut> hint, IKorssa<NumRange> count, Structure.SelectCancellable<IMulti<RIn>, ROut> block)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        kIOSelectMultipleCancellable(pool, count, block);
     public static IKorssa<ROut> kIOSelectMultipleCancellable<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, IKorssa<Number> count, Structure.SelectCancellable<IMulti<RIn>, ROut> block)
         where RIn : class, Rog
         where ROut : class, Rog =>
@@ -48,6 +64,11 @@ public static partial class KorssaSyntax
             {
                 A = count.kSingleRange()
             });
+
+    public static IKorssa<ROut> kIOSelectMultipleCancellable<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, CoreStructure.Hint<ROut> hint, IKorssa<Number> count, Structure.SelectCancellable<IMulti<RIn>, ROut> block)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        kIOSelectMultipleCancellable(pool, count, block);
     public static IKorssa<ROut> kIOSelectMultipleCancellableDirect<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, IKorssa<NumRange> count, Structure.SelectCancellableDirect<IMulti<RIn>, ROut> block)
         where RIn : class, Rog
         where ROut : class, Rog =>
@@ -57,5 +78,10 @@ public static partial class KorssaSyntax
                 A = count
             });
 
-    public static Korvessa<IRoveggi<uUnitIdentifier>, NumRange, NumRange> kGetMoveRange(IKorssa<IRoveggi<uUnitIdentifier>> unit, IKorssa<NumRange> moveRange) => Korvessas.GetUnitNumericalMoveRange.Construct(unit, moveRange);
+    public static IKorssa<ROut> kIOSelectMultipleCancellableDirect<RIn, ROut>(this IKorssa<IMulti<RIn>> pool, CoreStructure.Hint<ROut> hint, IKorssa<NumRange> count, Structure.SelectCancellableDirect<IMulti<RIn>, ROut> block)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        kIOSelectMultipleCancellableDirect(pool, count, block);
+
+    public static Korvessa<IRoveggi<uUnitIdentifier>, NumRange, NumRange> kGetMoveRange(this IKorssa<IRoveggi<uUnitIdentifier>> unit, IKorssa<NumRange> moveRange) => Korvessas.GetUnitNumericalMoveRange.Construct(unit, moveRange);
 }
