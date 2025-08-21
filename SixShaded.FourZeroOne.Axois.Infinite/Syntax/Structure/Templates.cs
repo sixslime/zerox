@@ -9,4 +9,5 @@ using u.Constructs.Ability;
 public class Templates
 {
     public IKorssa<IRoveggi<uNumericalMove>> NumericalMove => Korvessas.Template.TemplateNumericalMove.Construct();
+    public IKorssa<IRoveggi<uPositionalMove>> PositionalMove => Korvessas.Template.TemplatePositionalMove.Construct();
 }
