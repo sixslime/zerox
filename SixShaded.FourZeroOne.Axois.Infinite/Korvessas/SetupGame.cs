@@ -10,8 +10,201 @@ using u.Constructs.Resolved;
 using Infinite = Syntax.Infinite;
 using u.Constructs.ActionTypes;
 using u.Constructs.Move;
+using u.Constructs.HexTypes;
 public static class SetupGame
 {
+    private static IKorssa<IRoveggi<uPlayableAction>> CreateAction<C>(IKorssa<Bool> condition, IKorssa<Rog> statement)
+        where C : uActionType, IConcreteRovetu =>
+        Core.kCompose<uPlayableAction>()
+            .kWithRovi(uPlayableAction.CONDITION, condition.kMetaBoxed([]))
+            .kWithRovi(uPlayableAction.STATEMENT, statement.kMetaBoxed([]))
+            .kWithRovi(uPlayableAction.TYPE, Core.kCompose<C>().kIsType<IRoveggi<uActionType>>());
+    private static IKorssa<IMulti<IRoveggi<uPlayableAction>>> CreatePlayableActions() =>
+    Core.kMulti<IRoveggi<uPlayableAction>>(
+            new()
+            {
+                // ABILITY ACTION:
+                CreateAction<uAbilityAction>(
+                condition:
+                Infinite.CurrentPlayer
+                    .kRead()
+                    .kGetRovi(uPlayerData.ENERGY)
+                    .kIsGreaterThan(0.kFixed())
+                    .kAnd(
+                    Infinite.CurrentPlayer
+                        .kRead()
+                        .kGetRovi(uPlayerData.HAND)
+                        .kCount()
+                        .kIsGreaterThan(0.kFixed())),
+                statement:
+                Core.kSubEnvironment<Rog>(
+                new()
+                {
+                    Environment =
+                    [
+                        Infinite.CurrentPlayer
+                            .kRead()
+                            .kGetRovi(uPlayerData.HAND)
+                            .kIOSelectOne()
+                            .kAsVariable(out var iSelectedAbility)
+                    ],
+                    Value =
+                        Core.kMulti<Rog>(
+                        new()
+                        {
+                            Infinite.CurrentPlayer
+                                .kUpdate(
+                                iPlayerData =>
+                                    iPlayerData.kRef()
+                                        .kSafeUpdateRovi(
+                                        uPlayerData.HAND,
+                                        iHand =>
+                                            iHand.kRef()
+                                                .kExcept(iSelectedAbility.kRef().kYield()))
+                                        .kSafeUpdateRovi(
+                                        uPlayerData.STACK,
+                                        iStack =>
+                                            iStack.kRef()
+                                                .kConcat(iSelectedAbility.kRef().kYield()))),
+                            iSelectedAbility.kRef()
+                                .kAbstractResolve()
+                                .kGetRovi(uResolved.INSTRUCTIONS)
+                        })
+                })),
+
+                // MOVE ACTION:
+                CreateAction<uMoveAction>(
+                condition:
+                Infinite.CurrentPlayer
+                    .kRead()
+                    .kGetRovi(uPlayerData.ENERGY)
+                    .kIsGreaterThan(0.kFixed()),
+                statement:
+                Infinite.Template.NumericalMove
+                    .kWithRovi(uNumericalMove.DISTANCE, 1.kFixed().kRangeTo(4.kFixed()))
+                    .kWithRovi(
+                    Core.Hint<uNumericalMove>(),
+                    uMove.SUBJECT_COLLECTOR,
+                    Infinite.AllUnits.kWhere(
+                        iUnit =>
+                            iUnit.kRef()
+                                .kRead()
+                                .kGetRovi(uUnitData.OWNER)
+                                .kEquals(Infinite.CurrentPlayer))
+                        .kMetaBoxed<IMulti<IRoveggi<uUnitIdentifier>>>([]))
+                    .kResolve()
+                    .kMap(iResolvedMove => iResolvedMove.kRef().kGetRovi(uResolved.INSTRUCTIONS))),
+
+                // DISCARD ACTION:
+                CreateAction<uDiscardAction>(
+                condition:
+                Infinite.CurrentPlayer
+                    .kRead()
+                    .kGetRovi(uPlayerData.ENERGY)
+                    .kIsGreaterThan(0.kFixed())
+                    .kAnd(
+                    Infinite.CurrentPlayer
+                        .kRead()
+                        .kGetRovi(uPlayerData.HAND)
+                        .kCount()
+                        .kIsGreaterThan(0.kFixed())),
+                statement:
+                Core.kSubEnvironment<Rog>(
+                new()
+                {
+                    Environment =
+                    [
+                        Infinite.CurrentPlayer
+                            .kRead()
+                            .kGetRovi(uPlayerData.HAND)
+                            .kIOSelectMultiple(1.kFixed().kRangeTo(2.kFixed()))
+                            .kAsVariable(out var iSelectedDiscards)
+                    ],
+                    Value =
+                        Infinite.CurrentPlayer
+                            .kUpdate(
+                            iPlayerData =>
+                                iPlayerData.kRef()
+                                    .kSafeUpdateRovi(
+                                    uPlayerData.HAND,
+                                    iHand =>
+                                        iHand.kRef()
+                                            .kExcept(iSelectedDiscards.kRef()))
+                                    .kSafeUpdateRovi(
+                                    uPlayerData.STACK,
+                                    iStack =>
+                                        iStack.kRef()
+                                            .kConcat(iSelectedDiscards.kRef())))
+                })),
+
+                // DOMINATE ACTION:
+                CreateAction<uDominateAction>(
+                condition:
+                Infinite.CurrentPlayer
+                    .kRead()
+                    .kGetRovi(uPlayerData.ENERGY)
+                    .kIsGreaterThan(1.kFixed())
+                    .ksLazyAnd(
+                    Core.kSubEnvironment<Bool>(
+                    new()
+                    {
+                        Environment =
+                        [
+                            Core.kMetaFunction<IRoveggi<uUnitIdentifier>, Bool>(
+                                [],
+                                iUnit =>
+                                    iUnit.kRef()
+                                        .kRead()
+                                        .kGetRovi(uUnitData.POSITION)
+                                        .kRead()
+                                        .kGetRovi(uHexData.TYPE)
+                                        .kIsType<uControlHex>()
+                                        .kExists())
+                                .kAsVariable(out var iOnControlHex)
+                        ],
+                        Value =
+                            Infinite.AllUnits
+                                .kAnyMatch(
+                                iUnit =>
+                                    iUnit.kRef()
+                                        .kRead()
+                                        .kGetRovi(uUnitData.OWNER)
+                                        .kEquals(Infinite.CurrentPlayer)
+                                        .ksLazyAnd(
+                                        iOnControlHex.kRef()
+                                            .kExecuteWith(
+                                            new()
+                                            {
+                                                A = iUnit.kRef()
+                                            })))
+                                .ksLazyAnd(
+                                Infinite.AllUnits
+                                    .kAnyMatch(
+                                    iUnit =>
+                                        iUnit.kRef()
+                                            .kRead()
+                                            .kGetRovi(uUnitData.OWNER)
+                                            .kEquals(Infinite.CurrentPlayer)
+                                            .kNot()
+                                            .ksLazyAnd(
+                                            iOnControlHex.kRef()
+                                                .kExecuteWith(
+                                                new()
+                                                {
+                                                    A = iUnit.kRef()
+                                                })))
+                                    .kNot())
+                    })),
+                statement:
+                Infinite.CurrentPlayer
+                    .kUpdate(
+                    iPlayerData =>
+                        iPlayerData.kRef()
+                            .kUpdateRovi(
+                            uPlayerData.CONTROL,
+                            iControl =>
+                                iControl.kRef().kAdd(1.kFixed())))),
+            });
     public static Korvessa<IRoveggi<uGameConfiguration>, Rog> Construct(IKorssa<IRoveggi<uGameConfiguration>> config) =>
         new(config)
         {
@@ -37,59 +230,7 @@ public static class SetupGame
                                         .kWithRovi(uPlayerIdentifier.NUMBER, iIndex.kRef()))
                                 .kAsVariable(out var iPlayerIdentifiers),
 
-                            // playable actions:
-                            // silly syntax hack(s) to avoid writing a shitton of generics
-                            new Func<IKorssa<IMulti<IRoveggi<uPlayableAction>>>>(
-                                () =>
-                                {
-                                    IKorssa<IRoveggi<uPlayableAction>> kAction<C>(IKorssa<Bool> condition, IKorssa<Rog> statement)
-                                        where C : uActionType, IConcreteRovetu
-                                    {
-                                        return Core.kCompose<uPlayableAction>()
-                                            .kWithRovi(uPlayableAction.CONDITION, condition.kMetaBoxed([]))
-                                            .kWithRovi(uPlayableAction.STATEMENT, statement.kMetaBoxed([]))
-                                            .kWithRovi(uPlayableAction.TYPE, Core.kCompose<C>().kIsType<IRoveggi<uActionType>>());
-                                    }
-                                    return
-                                        Core.kMulti<IRoveggi<uPlayableAction>>(
-                                        new()
-                                        {
-                                            // ABILITY ACTION:
-                                            kAction<uAbilityAction>(
-                                            condition:
-                                            Infinite.CurrentPlayer
-                                                .kRead()
-                                                .kGetRovi(uPlayerData.ENERGY)
-                                                .kIsGreaterThan(0.kFixed()),
-                                            statement:
-                                            Infinite.CurrentPlayer
-                                                .kRead()
-                                                .kGetRovi(uPlayerData.HAND)
-                                                .kIOSelectOne()
-                                                .kAbstractResolve()
-                                                .kGetRovi(uResolved.INSTRUCTIONS)),
-
-                                            // MOVE ACTION:
-                                            kAction<uMoveAction>(
-                                            condition:
-                                            Infinite.CurrentPlayer
-                                                .kRead()
-                                                .kGetRovi(uPlayerData.ENERGY)
-                                                .kIsGreaterThan(0.kFixed()),
-                                            statement:
-                                            Infinite.Template.NumericalMove
-                                                .kWithRovi(uNumericalMove.DISTANCE, 1.kFixed().kRangeTo(4.kFixed()))
-                                                .kWithRovi(
-                                                Core.Hint<uNumericalMove>(),
-                                                uMove.SUBJECT_COLLECTOR, 
-                                                Infinite.AllUnits.kWhere(
-                                                iUnit => iUnit.kRef()
-                                                    .kRead()
-                                                    .kGetRovi(uUnitData.OWNER)
-                                                    .kEquals(Infinite.CurrentPlayer))
-                                                .kMetaBoxed<IMulti<IRoveggi<uUnitIdentifier>>>([])))
-                                        });
-                                }).Invoke()
+                            CreatePlayableActions()
                                 .kAsVariable(out var iPlayableActions),
 
                             // player objects:
@@ -150,11 +291,7 @@ public static class SetupGame
                                     .kWithRovi(uGame.TURN_INDEX, 1.kFixed())
                                     .kWithRovi(uGame.TURN_ORDER, iPlayerIdentifiers.kRef())
                                     .kWithRovi(uGame.PLAYABLE_ACTIONS, iPlayableActions.kRef()))
-                                .kMetaBoxed(
-                                [
-                                    iPlayerIdentifiers,
-                                    iPlayableActions,
-                                ])
+                                .kMetaBoxed([])
                                 .kAsVariable(out var iMakeGame),
 
                             // MAKE players:
@@ -163,11 +300,7 @@ public static class SetupGame
                                 iPlayerIdentifier =>
                                     iPlayerIdentifier.kRef()
                                         .kWrite(iPlayerObjects.kRef().kGetIndex(iPlayerIdentifier.kRef().kGetRovi(uPlayerIdentifier.NUMBER))))
-                                .kMetaBoxed(
-                                [
-                                    iPlayerIdentifiers,
-                                    iPlayerObjects,
-                                ])
+                                .kMetaBoxed([])
                                 .kAsVariable(out var iMakePlayers),
 
                             // MAKE map:
