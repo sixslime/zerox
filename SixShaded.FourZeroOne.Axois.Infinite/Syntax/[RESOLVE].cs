@@ -14,4 +14,5 @@ partial class KorssaSyntax
     public static Korvessa<IRoveggi<uSourcedAbility>, IRoveggi<uResolvedSourcedAbility>> kResolve(this IKorssa<IRoveggi<uSourcedAbility>> ability) => ResolveSourcedAbility.Construct(ability);
     public static Korvessa<IRoveggi<uUnsourcedAbility>, IRoveggi<uResolvedUnsourcedAbility>> kResolve(this IKorssa<IRoveggi<uUnsourcedAbility>> ability) => ResolveUnsourcedAbility.Construct(ability);
     public static Korvessa<IRoveggi<uPositionalMove>, IRoveggi<uResolvedPositionalMove>> kResolve(this IKorssa<IRoveggi<uPositionalMove>> move) => ResolvePositionalMove.Construct(move);
+    public static Korvessa<IRoveggi<uNumericalMove>, Multi<IRoveggi<uResolvedNumericalMove>>> kResolve(this IKorssa<IRoveggi<uNumericalMove>> move) => ResolveNumericalMove.Construct(move);
 }

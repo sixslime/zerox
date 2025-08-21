@@ -3,6 +3,7 @@
 using u.Identifier;
 public interface uMove : IRovetu
 {
+    public static readonly Rovu<uMove, MetaFunction<Rog>> ENVIRONMENT_PREMOD = new(Axoi.Du, "environment_premod");
     public static readonly Rovu<uMove, MetaFunction<IMulti<IRoveggi<uUnitIdentifier>>>> SUBJECT_COLLECTOR = new(Axoi.Du, "subject_collector");
     /// <summary>
     /// (subjectChecks) -> (unit) -> isValidSubject <br></br>
