@@ -5,7 +5,6 @@ using Korssas.Memory;
 using Korssas.Memory.Rovedanggi;
 using Korvessa.Defined;
 using Roveggi;
-
 public static partial class KorssaSyntax
 {
     public static Assign<R> kAsVariable<R>(this IKorssa<R> korssa, out DynamicRoda<R> ident)
@@ -30,6 +29,7 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(address);
 
+    public static Korssas.Memory.ProgramState.Load kLoad(this IKorssa<ProgramState> state) => new(state);
     public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<MetaFunction<R, R>> updateFunction)
         where R : class, Rog =>
         Korvessas.UpdateRovedanggi<R>.Construct(address, updateFunction);
@@ -44,10 +44,12 @@ public static partial class KorssaSyntax
     public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kSafeUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, MetaDefinition<R, R> updateFunction)
         where R : class, Rog =>
         Korvessas.SafeUpdateRovedanggi<R>.Construct(address, Core.kMetaFunction([], updateFunction));
+
 }
 
 partial class Core
 {
+    public static Korssas.Memory.ProgramState.Get kGetProgramState() => new();
     public static AllKeys<C, R> kAllRovedanggiKeys<C, R>()
         where C : Rovedantu<R>
         where R : class, Rog =>
