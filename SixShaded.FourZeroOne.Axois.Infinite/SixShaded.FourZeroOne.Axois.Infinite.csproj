@@ -12,8 +12,4 @@
     <ProjectReference Include="..\src\SixShaded.NotRust\SixShaded.NotRust.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Korvessas\Game\" />
-  </ItemGroup>
-
 </Project>
