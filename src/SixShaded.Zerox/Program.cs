@@ -64,4 +64,5 @@ internal class Program
 
 /* TODO
  * - consider forcing all references to 'Multi<T>' to be 'IMulti<T>' (even in outputs), similar to how its always 'IRoveggi<C>', not 'Roveggi<C>'
+ * - test ProgramState getting/loading (particularly with retaining dynamic rodas).
  */
