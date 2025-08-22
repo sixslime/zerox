@@ -8,7 +8,7 @@ using u.Constructs.Ability.Types;
 using u.Identifier;
 using u.Data;
 using Infinite = Syntax.Infinite;
-
+using u.Constructs;
 public static class GetUnitNumericalMoveRange
 {
     public static Korvessa<IRoveggi<uUnitIdentifier>, NumRange, NumRange> Construct(IKorssa<IRoveggi<uUnitIdentifier>> unit, IKorssa<NumRange> moveRange) =>
@@ -25,7 +25,7 @@ public static class GetUnitNumericalMoveRange
                             iUnit.kRef()
                                 .kRead()
                                 .kGetRovi(uUnitData.EFFECTS)
-                                .kAnyMatch(iEffect => iEffect.kRef().kIsType<uSlowEffect>().kExists())
+                                .kAnyMatch(iEffect => iEffect.kRef().kGetRovi(uUnitEffect.TYPE).kIsType<uSlowEffect>().kExists())
                                 .kIfTrue<Number>(
                                 new()
                                 {

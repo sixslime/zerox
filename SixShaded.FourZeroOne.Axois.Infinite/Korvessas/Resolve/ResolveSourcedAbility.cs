@@ -6,6 +6,7 @@ using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Data;
 using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
 using ResolvedObj = IRoveggi<Rovetus.Constructs.Resolved.uResolvedSourcedAbility>;
+using u.Constructs;
 public static class ResolveSourcedAbility
 {
     public static Korvessa<IRoveggi<uSourcedAbility>, ResolvedObj> Construct(IKorssa<IRoveggi<uSourcedAbility>> ability) =>
@@ -101,7 +102,12 @@ public static class ResolveSourcedAbility
                                                                             iExistingEffects.kRef()
                                                                                 .kConcat(
                                                                                 iAbility.kRef()
-                                                                                    .kGetRovi(uSourcedAbility.EFFECTS)))),
+                                                                                    .kGetRovi(uSourcedAbility.EFFECTS)
+                                                                                    .kMap(
+                                                                                    iEffectType =>
+                                                                                        Core.kCompose<uUnitEffect>()
+                                                                                            .kWithRovi(uUnitEffect.INFLICTED_BY, Infinite.CurrentPlayer)
+                                                                                            .kWithRovi(uUnitEffect.TYPE, iEffectType.kRef()))))),
                                                             iAbility.kRef()
                                                                 .kGetRovi(uSourcedAbility.FOLLOWUP)
                                                                 .kExecuteWith(

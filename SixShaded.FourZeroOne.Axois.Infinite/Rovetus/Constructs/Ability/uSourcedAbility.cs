@@ -16,7 +16,7 @@ public interface uSourcedAbility : IConcreteRovetu, uAbility
     /// </summary>
     public static readonly Rovu<uSourcedAbility, MetaFunction<IRoveggi<uSourceChecks>, MetaFunction<IRoveggi<uUnitIdentifier>, Bool>>> SOURCE_SELECTOR = new(Axoi.Du, "source_selector");
     public static readonly Rovu<uSourcedAbility, IMulti<IRoveggi<uHexOffset>>> HIT_AREA = new(Axoi.Du, "hit_area");
-    public static readonly Rovu<uSourcedAbility, IMulti<IRoveggi<UnitEffects.uUnitEffect>>> EFFECTS = new(Axoi.Du, "effects");
+    public static readonly Rovu<uSourcedAbility, IMulti<IRoveggi<EffectTypes.uUnitEffectType>>> EFFECTS = new(Axoi.Du, "effects");
     /// <summary>
     /// (source, target) -> action
     /// </summary>

@@ -8,7 +8,7 @@ using u.Constructs.Ability.Types;
 using u.Identifier;
 using u.Data;
 using Infinite = Syntax.Infinite;
-
+using u.Constructs;
 public static class DoSourceChecks
 {
     public static Korvessa<IRoveggi<uSourcedAbility>, IRoveggi<uUnitIdentifier>, IRoveggi<uSourceChecks>> Construct(IKorssa<IRoveggi<uSourcedAbility>> ability, IKorssa<IRoveggi<uUnitIdentifier>> unit) =>
@@ -36,7 +36,7 @@ public static class DoSourceChecks
                                 uSourceChecks.EFFECT_CHECK,
                                 iData.kRef()
                                     .kGetRovi(uUnitData.EFFECTS)
-                                    .kAnyMatch(iEffect => iEffect.kRef().kIsType<uShockEffect>().kExists())
+                                    .kAnyMatch(iEffect => iEffect.kRef().kGetRovi(uUnitEffect.TYPE).kIsType<uShockEffect>().kExists())
                                     .kNot())
                     })
         };

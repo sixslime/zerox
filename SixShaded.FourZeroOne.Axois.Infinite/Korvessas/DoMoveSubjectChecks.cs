@@ -6,7 +6,7 @@ using u.Constructs.Resolved;
 using u.Identifier;
 using u.Data;
 using Core = Core.Syntax.Core;
-
+using u.Constructs;
 public static class DoMoveSubjectChecks
 {
     public static Korvessa<IRoveggi<uMove>, IRoveggi<uUnitIdentifier>, IRoveggi<uSubjectChecks>> Construct(IKorssa<IRoveggi<uMove>> move, IKorssa<IRoveggi<uUnitIdentifier>> unit) =>
@@ -28,7 +28,7 @@ public static class DoMoveSubjectChecks
                                 .kWithRovi(uSubjectChecks.EFFECT_CHECK,
                                 iData.kRef()
                                     .kGetRovi(uUnitData.EFFECTS)
-                                    .kAnyMatch(iEffect => iEffect.kRef().kIsType<uImmobileEffect>().kExists())
+                                    .kAnyMatch(iEffect => iEffect.kRef().kGetRovi(uUnitEffect.TYPE).kIsType<uImmobileEffect>().kExists())
                                     .kNot())
                     })
         };
