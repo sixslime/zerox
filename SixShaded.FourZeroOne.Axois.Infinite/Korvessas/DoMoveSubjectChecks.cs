@@ -1,5 +1,6 @@
 namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas;
 
+using Rovetus.Constructs.EffectTypes;
 using u.Constructs.Move;
 using u.Constructs.Resolved;
 using u.Identifier;
@@ -27,7 +28,7 @@ public static class DoMoveSubjectChecks
                                 .kWithRovi(uSubjectChecks.EFFECT_CHECK,
                                 iData.kRef()
                                     .kGetRovi(uUnitData.EFFECTS)
-                                    .kAnyMatch(iEffect => iEffect.kRef().kIsType<u.Constructs.UnitEffects.uImmobileEffect>().kExists())
+                                    .kAnyMatch(iEffect => iEffect.kRef().kIsType<uImmobileEffect>().kExists())
                                     .kNot())
                     })
         };

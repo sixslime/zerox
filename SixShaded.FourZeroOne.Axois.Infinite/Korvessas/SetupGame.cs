@@ -10,7 +10,6 @@ using u.Constructs.Resolved;
 using Infinite = Syntax.Infinite;
 using u.Constructs.ActionTypes;
 using u.Constructs.Move;
-using u.Constructs.UnitEffects;
 using u.Constructs.HexTypes;
 public static class SetupGame
 {

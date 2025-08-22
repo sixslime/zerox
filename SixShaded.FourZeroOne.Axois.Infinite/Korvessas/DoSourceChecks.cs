@@ -1,5 +1,6 @@
 namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas;
 
+using Rovetus.Constructs.EffectTypes;
 using u.Constructs.Ability;
 using u.Constructs.Resolved;
 using Core = Core.Syntax.Core;
@@ -35,7 +36,7 @@ public static class DoSourceChecks
                                 uSourceChecks.EFFECT_CHECK,
                                 iData.kRef()
                                     .kGetRovi(uUnitData.EFFECTS)
-                                    .kAnyMatch(iEffect => iEffect.kRef().kIsType<u.Constructs.UnitEffects.uShockEffect>().kExists())
+                                    .kAnyMatch(iEffect => iEffect.kRef().kIsType<uShockEffect>().kExists())
                                     .kNot())
                     })
         };

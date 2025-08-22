@@ -9,7 +9,6 @@ using HexIdent = IRoveggi<u.Identifier.uHexIdentifier>;
 using UnitIdent = IRoveggi<u.Identifier.uUnitIdentifier>;
 using ResolvedType = u.Constructs.Resolved.uResolvedNumericalMove;
 using Core = Core.Syntax.Core;
-using u.Constructs.UnitEffects;
 
 public static class ResolveNumericalMove
 {

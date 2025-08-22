@@ -1,5 +1,6 @@
 namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas;
 
+using Rovetus.Constructs.EffectTypes;
 using u.Constructs.Ability;
 using u.Constructs.Resolved;
 using Core = Core.Syntax.Core;
@@ -7,7 +8,7 @@ using u.Constructs.Ability.Types;
 using u.Identifier;
 using u.Data;
 using Infinite = Syntax.Infinite;
-using u.Constructs.UnitEffects;
+
 public static class GetUnitNumericalMoveRange
 {
     public static Korvessa<IRoveggi<uUnitIdentifier>, NumRange, NumRange> Construct(IKorssa<IRoveggi<uUnitIdentifier>> unit, IKorssa<NumRange> moveRange) =>
