@@ -10,6 +10,7 @@ using u.Constructs.Resolved;
 using Infinite = Syntax.Infinite;
 using u.Constructs.ActionTypes;
 using u.Constructs.Move;
+using u.Constructs.UnitEffects;
 using u.Constructs.HexTypes;
 public static class SetupGame
 {
@@ -205,6 +206,7 @@ public static class SetupGame
                             iControl =>
                                 iControl.kRef().kAdd(1.kFixed())))),
             });
+
     public static Korvessa<IRoveggi<uGameConfiguration>, Rog> Construct(IKorssa<IRoveggi<uGameConfiguration>> config) =>
         new(config)
         {
@@ -229,9 +231,13 @@ public static class SetupGame
                                     Core.kCompose<uPlayerIdentifier>()
                                         .kWithRovi(uPlayerIdentifier.NUMBER, iIndex.kRef()))
                                 .kAsVariable(out var iPlayerIdentifiers),
-
                             CreatePlayableActions()
                                 .kAsVariable(out var iPlayableActions),
+
+                            // map:
+                            iConfig.kRef()
+                                .kGetRovi(uGameConfiguration.MAP)
+                                .kAsVariable(out var iMap),
 
                             // player objects:
                             iPlayerDeclarations.kRef()
@@ -302,18 +308,39 @@ public static class SetupGame
                                         .kWrite(iPlayerObjects.kRef().kGetIndex(iPlayerIdentifier.kRef().kGetRovi(uPlayerIdentifier.NUMBER))))
                                 .kMetaBoxed([])
                                 .kAsVariable(out var iMakePlayers),
+                            
 
                             // MAKE map:
-                            iConfig.kRef()
-                                .kGetVarovaKeys(uGameConfiguration.MAP)
+                            iMap.kRef()
+                                .kGetVarovaKeys(uMapDeclaration.HEXES)
                                 .kMap(
-                                iCoordinate =>
-                                    iCoordinate.kRef()
+                                iPos =>
+                                    iPos.kRef()
                                         .kWrite(
                                         Core.kCompose<uHexData>()
-                                            .kWithRovi(uHexData.TYPE, iConfig.kRef().kGetVarovi(uGameConfiguration.MAP, iCoordinate.kRef()))))
+                                            .kWithRovi(uHexData.TYPE, iMap.kRef().kGetVarovi(uMapDeclaration.HEXES, iPos.kRef()))))
                                 .kMetaBoxed([])
                                 .kAsVariable(out var iMakeMap),
+
+                            // MAKE units:
+                            iMap.kRef()
+                                .kGetVarovaKeys(uMapDeclaration.UNIT_SPAWNS)
+                                .kMapWithIndex(
+                                (iSpawnPos, iIndex) =>
+                                    Core.kCompose<uUnitIdentifier>()
+                                        .kWithRovi(uUnitIdentifier.NUMBER, iIndex.kRef())
+                                        .kWrite(
+                                        Core.kCompose<uUnitData>()
+                                            .kWithRovi(
+                                            uUnitData.OWNER,
+                                            iPlayerIdentifiers.kRef()
+                                                .kGetIndex(
+                                                iMap.kRef()
+                                                    .kGetVarovi(uMapDeclaration.UNIT_SPAWNS, iSpawnPos.kRef())))
+                                            .kWithRovi(uUnitData.POSITION, iSpawnPos.kRef())
+                                            .kWithRovi(uUnitData.EFFECTS, Core.kMulti<IRoveggi<uUnitEffect>>([]))))
+                                .kMetaBoxed([])
+                                .kAsVariable(out var iMakeUnits),
 
                             // MAKE game modifiers:
                             iConfig.kRef()
@@ -350,6 +377,7 @@ public static class SetupGame
                                 iMakeGame.kRef().kExecute(),
                                 iMakePlayers.kRef().kExecute(),
                                 iMakeMap.kRef().kExecute(),
+                                iMakeUnits.kRef().kExecute(),
                                 iMakeGameModifiers.kRef().kExecute(),
                                 iMakePlayerModifiers.kRef().kExecute()
                             }),
