@@ -9,12 +9,12 @@ using u.Identifier;
 using u.Data;
 using Infinite = Syntax.Infinite;
 using u.Constructs;
-public static class DoTargetChecks
+public static class CheckAbilityTarget
 {
     public static Korvessa<IRoveggi<uSourcedAbility>, IRoveggi<uUnitIdentifier>, IRoveggi<uUnitIdentifier>, IRoveggi<uTargetChecks>> Construct(IKorssa<IRoveggi<uSourcedAbility>> ability, IKorssa<IRoveggi<uUnitIdentifier>> unit, IKorssa<IRoveggi<uUnitIdentifier>> source) =>
         new(ability, unit, source)
         {
-            Du = Axoi.Korvedu("DoTargetChecks"),
+            Du = Axoi.Korvedu("CheckAbilityTarget"),
             Definition =
                 (_, iAbility, iUnit, iSource) =>
                     Core.kSubEnvironment<IRoveggi<uTargetChecks>>(

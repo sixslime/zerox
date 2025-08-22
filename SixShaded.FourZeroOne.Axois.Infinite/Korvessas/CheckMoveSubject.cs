@@ -7,12 +7,12 @@ using u.Identifier;
 using u.Data;
 using Core = Core.Syntax.Core;
 using u.Constructs;
-public static class DoMoveSubjectChecks
+public static class CheckMoveSubject
 {
     public static Korvessa<IRoveggi<uMove>, IRoveggi<uUnitIdentifier>, IRoveggi<uSubjectChecks>> Construct(IKorssa<IRoveggi<uMove>> move, IKorssa<IRoveggi<uUnitIdentifier>> unit) =>
         new(move, unit)
         {
-            Du = Axoi.Korvedu("DoMoveSubjectChecks"),
+            Du = Axoi.Korvedu("CheckMoveSubject"),
             Definition =
                 (_, iMove, iUnit) =>
                     Core.kSubEnvironment<IRoveggi<uSubjectChecks>>(new()

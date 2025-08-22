@@ -8,12 +8,12 @@ using u.Data;
 using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
 
-public static class DoMoveDestinationChecks
+public static class CheckMoveDestination
 {
     public static Korvessa<IRoveggi<uHexIdentifier>, IRoveggi<uUnitIdentifier>, IRoveggi<uSpaceChecks>> Construct(IKorssa<IRoveggi<uHexIdentifier>> hex, IKorssa<IRoveggi<uUnitIdentifier>> unit) =>
         new(hex, unit)
         {
-            Du = Axoi.Korvedu("DoMoveDestinationChecks"),
+            Du = Axoi.Korvedu("CheckMoveDestination"),
             Definition =
                 (_, iHex, iSubject) =>
                     Core.kSubEnvironment<IRoveggi<uSpaceChecks>>(new()

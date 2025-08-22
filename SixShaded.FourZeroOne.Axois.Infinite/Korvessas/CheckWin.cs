@@ -8,12 +8,12 @@ using Core = Core.Syntax.Core;
 using u.Constructs;
 using Infinite = Syntax.Infinite;
 
-public static class DoWinChecks
+public static class CheckWin
 {
     public static Korvessa<IRoveggi<uPlayerIdentifier>, IRoveggi<uWinChecks>> Construct(IKorssa<IRoveggi<uPlayerIdentifier>> player) =>
         new(player)
         {
-            Du = Axoi.Korvedu("DoWinChecks"),
+            Du = Axoi.Korvedu("CheckWin"),
             Definition =
                 (_, iPlayer) =>
                     Core.kSubEnvironment<IRoveggi<uWinChecks>>(new()
