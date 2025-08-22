@@ -11,12 +11,12 @@ using PlayerIdent = IRoveggi<u.Identifier.uPlayerIdentifier>;
 using UnitIdent = IRoveggi<u.Identifier.uUnitIdentifier>;
 using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
-public static class StandardTurn
+public static class DoStandardTurn
 {
     public static Korvessa<PlayerIdent, Rog> Construct(IKorssa<PlayerIdent> player) =>
         new(player)
         {
-            Du = Axoi.Korvedu("StandardTurn"),
+            Du = Axoi.Korvedu("DoStandardTurn"),
             Definition =
                 (_, iPlayer) =>
                     Core.kMulti<Rog>(

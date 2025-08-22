@@ -17,13 +17,14 @@ public static partial class Infinite
     public static IKorssa<IMulti<IRoveggi<uPlayerIdentifier>>> AllPlayers => Core.kAllRovedanggiKeys<uPlayerIdentifier, IRoveggi<uPlayerData>>();
     public static Structure.Templates Template { get; } = new();
 
-    public static Korvessa<Rog> CycleTurnOrder() => Korvessas.Game.CycleTurnOrder.Construct();
+    public static Korvessa<Rog> CycleTurnOrder() => Korvessas.Game.DoTurnCycle.Construct();
 }
 
 public static partial class KorssaSyntax
 {
-    public static Korvessa<IRoveggi<uUnitIdentifier>, Rog> kDoEliminate(this IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.Game.EliminateUnit.Construct(unit);
-    public static Korvessa<IRoveggi<uPlayerIdentifier>, Rog> kDoUnitEffectCycle(this IKorssa<IRoveggi<uPlayerIdentifier>> player) => Korvessas.Game.UnitEffectCycle.Construct(player);
+    public static Korvessa<ProgramState, Bool> kHasGameProgressedSince(this IKorssa<ProgramState> state) => Korvessas.Game.GameProgressionCheck.Construct(state);
+    public static Korvessa<IRoveggi<uUnitIdentifier>, Rog> kDoEliminate(this IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.Game.DoEliminateUnit.Construct(unit);
+    public static Korvessa<IRoveggi<uPlayerIdentifier>, Rog> kDoUnitEffectCycle(this IKorssa<IRoveggi<uPlayerIdentifier>> player) => Korvessas.Game.DoUnitEffectCycle.Construct(player);
     public static Korvessa<IRoveggi<uPlayerIdentifier>, IMulti<IRoveggi<uResolvedAction>>> kAllowPlay(this IKorssa<IRoveggi<uPlayerIdentifier>> player) => Korvessas.Game.AllowPlay.Construct(player);
     public static Korvessa<IRoveggi<uPlayerData>, IRoveggi<uPlayerData>> kWithRestockedHand(this IKorssa<IRoveggi<uPlayerData>> playerData) => Korvessas.Game.RestockPlayerHand.Construct(playerData);
     public static Korvessa<IRoveggi<uPlayerData>, IRoveggi<uPlayerData>> kWithRefreshedEnergy(this IKorssa<IRoveggi<uPlayerData>> playerData) => Korvessas.Game.RefreshPlayerEnergy.Construct(playerData);

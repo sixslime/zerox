@@ -12,12 +12,12 @@ using UnitIdent = IRoveggi<u.Identifier.uUnitIdentifier>;
 using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
 using u.Constructs.EffectTypes;
-public static class UnitEffectCycle
+public static class DoUnitEffectCycle
 {
     public static Korvessa<PlayerIdent, Rog> Construct(IKorssa<PlayerIdent> player) =>
         new(player)
         {
-            Du = Axoi.Korvedu("UnitEffectCycle"),
+            Du = Axoi.Korvedu("DoUnitEffectCycle"),
             Definition =
                 (_, iPlayer) =>
                     Infinite.AllUnits

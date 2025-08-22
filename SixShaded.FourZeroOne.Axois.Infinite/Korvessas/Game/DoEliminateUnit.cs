@@ -12,12 +12,12 @@ using UnitIdent = IRoveggi<u.Identifier.uUnitIdentifier>;
 using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
 
-public static class EliminateUnit
+public static class DoEliminateUnit
 {
     public static Korvessa<UnitIdent, Rog> Construct(IKorssa<UnitIdent> unit) =>
         new(unit)
         {
-            Du = Axoi.Korvedu("EliminateUnit"),
+            Du = Axoi.Korvedu("DoEliminateUnit"),
             Definition =
                 (_, iUnit) =>
                     iUnit.kRef()
