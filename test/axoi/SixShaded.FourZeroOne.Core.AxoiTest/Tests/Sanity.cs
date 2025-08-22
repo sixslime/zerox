@@ -244,5 +244,56 @@ public class Sanity
                         .DeTesAssertRoggi(c, r => r.Start.Value == 5 && r.End.Value == 15)),
             }));
 
+    [TestMethod]
+    public async Task LoadProgramState() =>
+        await Run(
+        c =>
+            Core.kSubEnvironment<Rog>(
+            new()
+            {
+                Environment =
+                [
+                    Core.kCompose<uFooRovedantu>()
+                        .kWithRovi(uFooRovedantu.ID, 10.kFixed())
+                        .kAsVariable(out var iA),
+                    Core.kCompose<uFooRovedantu>()
+                        .kWithRovi(uFooRovedantu.ID, 20.kFixed())
+                        .kAsVariable(out var iB),
+                    iA.kRef()
+                        .kWrite(100.kFixed()),
+                    Core.kGetProgramState()
+                        .kAsVariable(out var iState),
+                    Core.kCompose<uFooRovedantu>()
+                        .kWithRovi(uFooRovedantu.ID, 10.kFixed())
+                        .kAsVariable(out var iAClone),
+                    iB.kRef()
+                        .kWrite(200.kFixed())
+                ],
+                Value =
+                    Core.kMulti<Rog>(
+                    new()
+                    {
+                        iA.kRef()
+                            .kRead()
+                            .DeTesAssertRoggi(c, r => r.Value == 100),
+                        iB.kRef()
+                            .kRead()
+                            .DeTesAssertRoggi(c, r => r.Value == 200),
+                        iAClone.kRef()
+                            .kRead()
+                            .DeTesAssertRoggi(c, r => r.Value == 100),
+                        iState.kRef().kLoad(),
+                        iA.kRef()
+                            .kRead()
+                            .DeTesAssertRoggi(c, r => r.Value == 100),
+                        iB.kRef()
+                            .kRead()
+                            .DeTesAssertRoggiUnstable(c, r => !r.IsSome()),
+                        iAClone.kRef()
+                            .kRead()
+                            .DeTesAssertRoggi(c, r => r.Value == 100),
+
+                    })
+            }));
     private static Task Run(DeTesDeclaration declaration) => Assert.That.DeclarationHolds(declaration);
 }

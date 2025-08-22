@@ -75,4 +75,6 @@ public record MinimaMemoryFZO : IMemoryFZO
                 set.WithEntries((x, set.At(x).Or(0) - 1).Tiple())
                     .WithoutEntries<PMap<MellsanoID, int>, MellsanoID>(set.At(x).Or(0) > 0 ? [] : [x])),
         };
+
+    public override int GetHashCode() => HashCode.Combine(_objects, _mellsanoMutes, _mellsanos);
 }
