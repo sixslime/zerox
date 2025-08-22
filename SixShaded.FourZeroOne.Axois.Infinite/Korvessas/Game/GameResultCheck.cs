@@ -81,7 +81,20 @@ public static class GameResultCheck
                                         Core.kCompose<uNoProgression>(),
                                     Else =
                                         Core.kNollaFor<IRoveggi<uGameResult>>()
-                                })
+                                }),
+                        () =>
+                            Infinite.Game
+                                .kRead()
+                                .kGetRovi(uGame.ROTATION_COUNT)
+                                .kIsGreaterThan(80.kFixed())
+                                .kIfTrue<IRoveggi<uGameResult>>(
+                                new()
+                                {
+                                    Then =
+                                        Core.kCompose<uTooLong>(),
+                                    Else =
+                                        Core.kNollaFor<IRoveggi<uGameResult>>()
+                                }),
                     })
 
         };
