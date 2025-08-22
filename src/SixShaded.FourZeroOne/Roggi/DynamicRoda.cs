@@ -1,6 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Roggi;
 
-public sealed record DynamicRoda<R> : ILoadOverwritingRoda<R>
+public sealed record DynamicRoda<R> : ILoadOverridingRoda<R>
     where R : class, Rog
 {
     private static ulong _idAssigner = 0;

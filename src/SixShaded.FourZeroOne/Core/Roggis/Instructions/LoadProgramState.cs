@@ -9,7 +9,7 @@ public sealed record LoadProgramState : Roggi.Defined.Instruction
 
     public override IMemory TransformMemory(IMemory previousState) => 
         State.Memory
-            .WithClearedAddresses(State.Memory.Objects.FilterMap(x => x.A.MaybeA<ILoadOverwritingRoda<Rog>>()))
-            .WithObjectsUnsafe(previousState.Objects.Where(x => x.A is ILoadOverwritingRoda<Rog>));
+            .WithClearedAddresses(State.Memory.Objects.FilterMap(x => x.A.MaybeA<ILoadOverridingRoda<Rog>>()))
+            .WithObjectsUnsafe(previousState.Objects.Where(x => x.A is ILoadOverridingRoda<Rog>));
     public override string ToString() => $"LOAD({State})";
 }
