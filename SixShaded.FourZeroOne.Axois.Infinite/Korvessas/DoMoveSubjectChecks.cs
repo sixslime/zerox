@@ -14,12 +14,21 @@ public static class DoMoveSubjectChecks
             Du = Axoi.Korvedu("DoMoveSubjectChecks"),
             Definition =
                 (_, iMove, iUnit) =>
-                    Core.kCompose<uSubjectChecks>()
-                        .kWithRovi(uSubjectChecks.EFFECT_CHECK,
-                        iUnit.kRef()
-                            .kRead()
-                            .kGetRovi(uUnitData.EFFECTS)
-                            .kAnyMatch(iEffect => iEffect.kRef().kIsType<u.Constructs.UnitEffects.uImmobileEffect>().kExists())
-                            .kNot())
+                    Core.kSubEnvironment<IRoveggi<uSubjectChecks>>(new()
+                    {
+                        Environment =
+                            [
+                                iUnit.kRef()
+                                    .kRead()
+                                    .kAsVariable(out var iData)
+                            ],
+                        Value =
+                            Core.kCompose<uSubjectChecks>()
+                                .kWithRovi(uSubjectChecks.EFFECT_CHECK,
+                                iData.kRef()
+                                    .kGetRovi(uUnitData.EFFECTS)
+                                    .kAnyMatch(iEffect => iEffect.kRef().kIsType<u.Constructs.UnitEffects.uImmobileEffect>().kExists())
+                                    .kNot())
+                    })
         };
 }

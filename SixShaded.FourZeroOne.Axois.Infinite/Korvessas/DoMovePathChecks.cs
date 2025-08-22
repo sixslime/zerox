@@ -16,24 +16,33 @@ public static class DoMovePathChecks
             Du = Axoi.Korvedu("DoMovePathChecks"),
             Definition =
                 (_, iHex, iSubject) =>
-                    iHex.kRef()
-                        .kMoveDestinationChecks(iSubject.kRef())
-                        .kWithRovi(
-                        uSpaceChecks.UNIT,
-                        Infinite.AllUnits.kFirstMatch(
-                        iUnit =>
-                            iUnit.kRef()
-                                .kRead()
-                                .kGetRovi(uUnitData.POSITION)
-                                .kEquals(iHex.kRef())
-                                .ksLazyAnd(
-                                iUnit.kRef()
+                    Core.kSubEnvironment<IRoveggi<uSpaceChecks>>(new()
+                    {
+                        Environment =
+                            [
+                                iSubject.kRef()
                                     .kRead()
-                                    .kGetRovi(uUnitData.OWNER)
-                                    .kEquals(
-                                    iSubject.kRef()
+                                    .kAsVariable(out var iSubjectData)
+                            ],
+                        Value =
+                            iHex.kRef()
+                                .kMoveDestinationChecks(iSubject.kRef())
+                                .kWithRovi(
+                                uSpaceChecks.UNIT,
+                                Infinite.AllUnits.kFirstMatch(
+                                iUnit =>
+                                    iUnit.kRef()
                                         .kRead()
-                                        .kGetRovi(uUnitData.OWNER))
-                                    .kNot())))
+                                        .kGetRovi(uUnitData.POSITION)
+                                        .kEquals(iHex.kRef())
+                                        .ksLazyAnd(
+                                        iUnit.kRef()
+                                            .kRead()
+                                            .kGetRovi(uUnitData.OWNER)
+                                            .kEquals(
+                                            iSubjectData.kRef()
+                                                .kGetRovi(uUnitData.OWNER))
+                                            .kNot())))
+                    })
         };
 }

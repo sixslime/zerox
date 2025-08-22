@@ -16,19 +16,27 @@ public static class DoSourceChecks
             Du = Axoi.Korvedu("DoTargetChecks"),
             Definition =
                 (_, iAbility, iUnit) =>
-                    Core.kCompose<uSourceChecks>()
-                        .kWithRovi(
-                        uSourceChecks.CORRECT_TEAM,
-                        iUnit.kRef()
-                            .kRead()
-                            .kGetRovi(uUnitData.OWNER)
-                            .kEquals(Infinite.CurrentPlayer))
-                        .kWithRovi(
-                        uSourceChecks.EFFECT_CHECK,
-                        iUnit.kRef()
-                            .kRead()
-                            .kGetRovi(uUnitData.EFFECTS)
-                            .kAnyMatch(iEffect => iEffect.kRef().kIsType<u.Constructs.UnitEffects.uShockEffect>().kExists())
-                            .kNot())
+                    Core.kSubEnvironment<IRoveggi<uSourceChecks>>(new()
+                    {
+                        Environment =
+                            [
+                                iUnit.kRef()
+                                    .kRead()
+                                    .kAsVariable(out var iData)
+                            ],
+                        Value =
+                            Core.kCompose<uSourceChecks>()
+                                .kWithRovi(
+                                uSourceChecks.CORRECT_TEAM,
+                                iData.kRef()
+                                    .kGetRovi(uUnitData.OWNER)
+                                    .kEquals(Infinite.CurrentPlayer))
+                                .kWithRovi(
+                                uSourceChecks.EFFECT_CHECK,
+                                iData.kRef()
+                                    .kGetRovi(uUnitData.EFFECTS)
+                                    .kAnyMatch(iEffect => iEffect.kRef().kIsType<u.Constructs.UnitEffects.uShockEffect>().kExists())
+                                    .kNot())
+                    })
         };
 }

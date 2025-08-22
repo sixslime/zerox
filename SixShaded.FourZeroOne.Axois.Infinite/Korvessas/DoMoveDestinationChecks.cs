@@ -16,47 +16,57 @@ public static class DoMoveDestinationChecks
             Du = Axoi.Korvedu("DoMoveDestinationChecks"),
             Definition =
                 (_, iHex, iSubject) =>
-                    Core.kCompose<uSpaceChecks>()
-                        .kWithRovi(
-                        uSpaceChecks.WALL,
-                        iHex.kRef()
-                            .kRead()
-                            .kGetRovi(uHexData.TYPE)
-                            .kIsType<uWallHex>()
-                            .kExists())
-                        .kWithRovi(
-                        uSpaceChecks.PROTECTED_BASE,
-                        Core.kSubEnvironment<Bool>(
-                        new()
-                        {
-                            Environment =
+                    Core.kSubEnvironment<IRoveggi<uSpaceChecks>>(new()
+                    {
+                        Environment =
                             [
+                                iSubject.kRef()
+                                    .kRead()
+                                    .kAsVariable(out var iSubjectData),
                                 iHex.kRef()
                                     .kRead()
-                                    .kGetRovi(uHexData.TYPE)
-                                    .kIsType<uBaseHex>()
-                                    .kGetRovi(uBaseHex.OWNER)
-                                    .kAsVariable(out var iBaseOwner),
+                                    .kAsVariable(out var iHexData)
                             ],
-                            Value =
-                                iBaseOwner.kRef()
-                                    .kEquals(
-                                    iSubject.kRef()
+                        Value =
+                            Core.kCompose<uSpaceChecks>()
+                                .kWithRovi(
+                                uSpaceChecks.WALL,
+                                iHexData.kRef()
+                                    .kGetRovi(uHexData.TYPE)
+                                    .kIsType<uWallHex>()
+                                    .kExists())
+                                .kWithRovi(
+                                uSpaceChecks.PROTECTED_BASE,
+                                Core.kSubEnvironment<Bool>(
+                                new()
+                                {
+                                    Environment =
+                                    [
+                                        iHexData.kRef()
+                                            .kGetRovi(uHexData.TYPE)
+                                            .kIsType<uBaseHex>()
+                                            .kGetRovi(uBaseHex.OWNER)
+                                            .kAsVariable(out var iBaseOwner),
+                                    ],
+                                    Value =
+                                        iBaseOwner.kRef()
+                                            .kEquals(
+                                            iSubjectData.kRef()
+                                                .kGetRovi(uUnitData.OWNER))
+                                            .ksLazyOr(
+                                            iBaseOwner.kRef()
+                                                .kIsBaseProtected()
+                                                .kNot())
+                                            .kCatchNolla(() => true.kFixed())
+                                }))
+                                .kWithRovi(
+                                uSpaceChecks.UNIT,
+                                Infinite.AllUnits.kFirstMatch(
+                                iUnit =>
+                                    iUnit.kRef()
                                         .kRead()
-                                        .kGetRovi(uUnitData.OWNER))
-                                    .ksLazyOr(
-                                    iBaseOwner.kRef()
-                                        .kIsBaseProtected()
-                                        .kNot())
-                                    .kCatchNolla(() => true.kFixed())
-                        }))
-                        .kWithRovi(
-                        uSpaceChecks.UNIT,
-                        Infinite.AllUnits.kFirstMatch(
-                        iUnit =>
-                            iUnit.kRef()
-                                .kRead()
-                                .kGetRovi(uUnitData.POSITION)
-                                .kEquals(iHex.kRef())))
+                                        .kGetRovi(uUnitData.POSITION)
+                                        .kEquals(iHex.kRef())))
+                    })
         };
 }
