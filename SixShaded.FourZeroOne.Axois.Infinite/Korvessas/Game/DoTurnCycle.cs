@@ -17,12 +17,12 @@ using Infinite = Syntax.Infinite;
 /// </summary>
 public static class DoTurnCycle
 {
-    public static Korvessa<ProgramState, Rog> Construct(IKorssa<ProgramState> lastTurnState) =>
-        new(lastTurnState)
+    public static Korvessa<Rog> Construct() =>
+        new()
         {
             Du = Axoi.Korvedu("DoTurnCycle"),
             Definition =
-                (_, iLastTurnState) =>
+                (_) =>
                     Core.kMulti<Rog>(
                     new()
                     {
@@ -42,22 +42,25 @@ public static class DoTurnCycle
                                         Then =
                                             iGame.kRef()
                                                 .kUpdateRovi(uGame.ROTATION_COUNT, iCount => iCount.kRef().kAdd(1.kFixed()))
-                                                .kWithRovi(uGame.TURN_INDEX, 1.kFixed()),
+                                                .kWithRovi(uGame.TURN_INDEX, 1.kFixed())
+                                                .kUpdateRovi(
+                                                uGame.DEAD_ROTATIONS,
+                                                iCount =>
+                                                    iGame.kRef()
+                                                        .kGetRovi(uGame.LAST_ROTATION_STATE)
+                                                        .kHasGameProgressedSince()
+                                                        .kIfTrue<Number>(
+                                                        new()
+                                                        {
+                                                            Then = 0.kFixed(),
+                                                            Else = iCount.kRef().kAdd(1.kFixed())
+                                                        }))
+                                                .kWithRovi(uGame.LAST_ROTATION_STATE, Core.kGetProgramState()),
+
                                         Else =
                                             iGame.kRef()
                                                 .kUpdateRovi(uGame.TURN_INDEX, iIndex => iIndex.kRef().kAdd(1.kFixed()))
-                                    })
-                                    .kUpdateRovi(
-                                    uGame.TURNS_WITHOUT_PROGRESSION,
-                                    iCount =>
-                                        iLastTurnState.kRef()
-                                            .kHasGameProgressedSince()
-                                            .kIfTrue<Number>(
-                                            new()
-                                            {
-                                                Then = 0.kFixed(),
-                                                Else = iCount.kRef().kAdd(1.kFixed())
-                                            }))),
+                                    }))
                     })
         };
 }

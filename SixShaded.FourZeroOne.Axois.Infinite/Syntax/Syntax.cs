@@ -17,7 +17,7 @@ public static partial class Infinite
     public static IKorssa<IMulti<IRoveggi<uPlayerIdentifier>>> AllPlayers => Core.kAllRovedanggiKeys<uPlayerIdentifier, IRoveggi<uPlayerData>>();
     public static Structure.Templates Template { get; } = new();
 
-    public static Korvessa<ProgramState, Rog> CycleTurnOrder(IKorssa<ProgramState> lastTurnState) => Korvessas.Game.DoTurnCycle.Construct(lastTurnState);
+    public static Korvessa<Rog> kDoCycleTurnOrder() => Korvessas.Game.DoTurnCycle.Construct();
 }
 
 public static partial class KorssaSyntax
@@ -29,6 +29,7 @@ public static partial class KorssaSyntax
     public static Korvessa<IRoveggi<uPlayerData>, IRoveggi<uPlayerData>> kWithRestockedHand(this IKorssa<IRoveggi<uPlayerData>> playerData) => Korvessas.Game.RestockPlayerHand.Construct(playerData);
     public static Korvessa<IRoveggi<uPlayerData>, IRoveggi<uPlayerData>> kWithRefreshedEnergy(this IKorssa<IRoveggi<uPlayerData>> playerData) => Korvessas.Game.RefreshPlayerEnergy.Construct(playerData);
 
+    public static Korvessa<IRoveggi<uPlayerIdentifier>, IRoveggi<uWinChecks>> kWinChecks(this IKorssa<IRoveggi<uPlayerIdentifier>> player) => Korvessas.CheckWin.Construct(player);
     public static Korvessa<IRoveggi<uHexIdentifier>, IRoveggi<uUnitIdentifier>, IRoveggi<uSpaceChecks>> kMovePathChecks(this IKorssa<IRoveggi<uHexIdentifier>> hex, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.CheckMovePath.Construct(hex, unit);
     public static Korvessa<IRoveggi<uHexIdentifier>, IRoveggi<uUnitIdentifier>, IRoveggi<uSpaceChecks>> kMoveDestinationChecks(this IKorssa<IRoveggi<uHexIdentifier>> hex, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.CheckMoveDestination.Construct(hex, unit);
     public static Korvessa<IRoveggi<uPlayerIdentifier>, Bool> kIsBaseProtected(this IKorssa<IRoveggi<uPlayerIdentifier>> player) => Korvessas.IsBaseProtected.Construct(player);

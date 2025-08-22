@@ -293,9 +293,10 @@ public static class SetupGame
                             Infinite.Game.kWrite(
                                 Core.kCompose<uGame>()
                                     .kWithRovi(uGame.ROTATION_COUNT, 0.kFixed())
-                                    .kWithRovi(uGame.TURNS_WITHOUT_PROGRESSION, (-1).kFixed())
+                                    .kWithRovi(uGame.DEAD_ROTATIONS, (-1).kFixed())
                                     .kWithRovi(uGame.TURN_INDEX, 0.kFixed())
-                                    .kWithRovi(uGame.TURN_ORDER, iPlayerIdentifiers.kRef()))
+                                    .kWithRovi(uGame.TURN_ORDER, iPlayerIdentifiers.kRef())
+                                    .kWithRovi(uGame.LAST_ROTATION_STATE, Core.kGetProgramState()))
                                 .kMetaBoxed([])
                                 .kAsVariable(out var iMakeGame),
 

@@ -78,6 +78,16 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         Korvessas.AllMatch<R>.Construct(source, Core.kMetaFunction([], predicate));
 
+    public static Korvessa<IMulti<RIn>, ROut, MetaFunction<ROut, RIn, ROut>, ROut> kAccumulateInto<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IKorssa<ROut> initialValue, IKorssa<MetaFunction<ROut, RIn, ROut>> function)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        Korvessas.Accumulate<RIn, ROut>.Construct(source, initialValue, function);
+
+    public static Korvessa<IMulti<RIn>, ROut, MetaFunction<ROut, RIn, ROut>, ROut> kAccumulateInto<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IKorssa<ROut> initialValue, MetaDefinition<ROut, RIn, ROut> function)
+        where RIn : class, Rog
+        where ROut : class, Rog =>
+        Korvessas.Accumulate<RIn, ROut>.Construct(source, initialValue, Core.kMetaFunction([], function));
+
     public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Bool> kAnyMatch<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Bool>> predicate)
         where R : class, Rog =>
         Korvessas.AnyMatch<R>.Construct(source, predicate);
