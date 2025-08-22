@@ -22,7 +22,7 @@ public static class ResolveTurn
                     [
                         Infinite.CurrentPlayer
                             .kRead()
-                            .kGetRovi(uPlayerData.AVAILABLE_ACTIONS)
+                            .kGetRovi(uPlayerData.PLAYABLE_ACTIONS)
                             .kWhere(
                             iAction =>
                                 iAction.kRef()

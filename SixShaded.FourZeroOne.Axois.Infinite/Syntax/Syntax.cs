@@ -7,6 +7,7 @@ using u.Constructs.Move;
 using Core = Core.Syntax.Core;
 using u.Constructs;
 using u.Constructs.Ability;
+using u.Constructs.Resolved;
 public static partial class Infinite
 {
     public static IKorssa<IRoveggi<uGameAnchor>> Game => Core.kCompose<uGameAnchor>();
@@ -15,10 +16,17 @@ public static partial class Infinite
     public static IKorssa<IMulti<IRoveggi<uUnitIdentifier>>> AllUnits => Core.kAllRovedanggiKeys<uUnitIdentifier, IRoveggi<uUnitData>>();
     public static IKorssa<IMulti<IRoveggi<uPlayerIdentifier>>> AllPlayers => Core.kAllRovedanggiKeys<uPlayerIdentifier, IRoveggi<uPlayerData>>();
     public static Structure.Templates Template { get; } = new();
+
+    public static Korvessa<Rog> CycleTurnOrder() => Korvessas.Game.CycleTurnOrder.Construct();
 }
 
 public static partial class KorssaSyntax
 {
+    public static Korvessa<IRoveggi<uUnitIdentifier>, Rog> kDoEliminate(this IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.Game.EliminateUnit.Construct(unit);
+    public static Korvessa<IRoveggi<uPlayerIdentifier>, Rog> kDoUnitEffectCycle(this IKorssa<IRoveggi<uPlayerIdentifier>> player) => Korvessas.Game.UnitEffectCycle.Construct(player);
+    public static Korvessa<IRoveggi<uPlayerIdentifier>, IMulti<IRoveggi<uResolvedAction>>> kAllowPlay(this IKorssa<IRoveggi<uPlayerIdentifier>> player) => Korvessas.Game.AllowPlay.Construct(player);
+    public static Korvessa<IRoveggi<uPlayerData>, IRoveggi<uPlayerData>> kWithRestockedHand(this IKorssa<IRoveggi<uPlayerData>> playerData) => Korvessas.Game.RestockPlayerHand.Construct(playerData);
+
     public static Korvessa<IRoveggi<uHexIdentifier>, IRoveggi<uUnitIdentifier>, IRoveggi<uSpaceChecks>> kMovePathChecks(this IKorssa<IRoveggi<uHexIdentifier>> hex, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.DoMovePathChecks.Construct(hex, unit);
     public static Korvessa<IRoveggi<uHexIdentifier>, IRoveggi<uUnitIdentifier>, IRoveggi<uSpaceChecks>> kMoveDestinationChecks(this IKorssa<IRoveggi<uHexIdentifier>> hex, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.DoMoveDestinationChecks.Construct(hex, unit);
     public static Korvessa<IRoveggi<uPlayerIdentifier>, Bool> kIsBaseProtected(this IKorssa<IRoveggi<uPlayerIdentifier>> player) => Korvessas.IsBaseProtected.Construct(player);
