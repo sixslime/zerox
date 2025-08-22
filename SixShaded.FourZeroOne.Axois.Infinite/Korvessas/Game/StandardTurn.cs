@@ -11,27 +11,23 @@ using PlayerIdent = IRoveggi<u.Identifier.uPlayerIdentifier>;
 using UnitIdent = IRoveggi<u.Identifier.uUnitIdentifier>;
 using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
-public static class StandardTurn
+public static class GetProgressionPredicate
 {
-    public static Korvessa<PlayerIdent, Rog> Construct(IKorssa<PlayerIdent> player) =>
-        new(player)
+    public static Korvessa<MetaFunction<Bool>> Construct() =>
+        new()
         {
-            Du = Axoi.Korvedu("StandardTurn"),
+            Du = Axoi.Korvedu("GetProgressionPredicate"),
             Definition =
-                (_, iPlayer) =>
-                    Core.kMulti<Rog>(
-                    new()
+                (_) =>
+                    Core.kSubEnvironment<MetaFunction<Bool>>(new()
                     {
-                        iPlayer.kRef()
-                            .kDoUnitEffectCycle(),
-                        iPlayer.kRef()
-                            .kSafeUpdate(iPlayerData => 
-                                iPlayerData.kRef()
-                                    .kWithRefreshedEnergy()
-                                    .kWithRestockedHand()),
-                        iPlayer.kRef()
-                            .kAllowPlay()
-                            .kMap(iAction => iAction.kRef().kGetRovi(uResolved.INSTRUCTIONS))
+                        Environment =
+                            [
+                                Core.kAllRovedanggiValues<uPlayerIdentifier, IRoveggi<uPlayerData>>()
+                                    .kAsVariable(out var iPlayerDatas)
+                            ],
+                        Value =
+                            iUnitDatas.kR
                     })
         };
 }
