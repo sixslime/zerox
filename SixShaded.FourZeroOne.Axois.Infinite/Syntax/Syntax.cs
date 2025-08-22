@@ -17,7 +17,7 @@ public static partial class Infinite
     public static IKorssa<IMulti<IRoveggi<uPlayerIdentifier>>> AllPlayers => Core.kAllRovedanggiKeys<uPlayerIdentifier, IRoveggi<uPlayerData>>();
     public static Structure.Templates Template { get; } = new();
 
-    public static Korvessa<Rog> CycleTurnOrder() => Korvessas.Game.DoTurnCycle.Construct();
+    public static Korvessa<ProgramState, Rog> CycleTurnOrder(IKorssa<ProgramState> lastTurnState) => Korvessas.Game.DoTurnCycle.Construct(lastTurnState);
 }
 
 public static partial class KorssaSyntax
