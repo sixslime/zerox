@@ -23,12 +23,16 @@ public static class UnitEffectCycle
                     Infinite.AllUnits
                         .kMap(
                         iUnit =>
-                            iUnit.kRef()
-                                .kSafeUpdate(
-                                iUnitData =>
-                                    Core.kSubEnvironment<IRoveggi<uUnitData>>(new()
-                                    {
-                                        Environment =
+                            Core.kMulti<Rog>(
+                            new()
+                            {
+                                iUnit.kRef()
+                                    .kSafeUpdate(
+                                    iUnitData =>
+                                        Core.kSubEnvironment<IRoveggi<uUnitData>>(
+                                        new()
+                                        {
+                                            Environment =
                                             [
                                                 iUnitData.kRef()
                                                     .kGetRovi(uUnitData.EFFECTS)
@@ -39,29 +43,43 @@ public static class UnitEffectCycle
                                                             .kEquals(iPlayer.kRef()))
                                                     .kAsVariable(out var iInflictedEffects),
                                             ],
-                                        Value =
-                                            iUnitData.kRef()
-                                                .kSafeUpdateRovi(
-                                                uUnitData.HP, 
-                                                iHp =>
-                                                    iHp.kRef()
-                                                        .kSubtract(iInflictedEffects.kRef()
+                                            Value =
+                                                iUnitData.kRef()
+                                                    .kSafeUpdateRovi(
+                                                    uUnitData.HP,
+                                                    iHp =>
+                                                        iHp.kRef()
+                                                            .kSubtract(
+                                                            iInflictedEffects.kRef()
+                                                                .kWhere(
+                                                                iEffect =>
+                                                                    iEffect.kRef()
+                                                                        .kGetRovi(uUnitEffect.TYPE)
+                                                                        .kIsType<uDamageEffect>()
+                                                                        .kExists())
+                                                                .kCount()))
+                                                    .kSafeUpdateRovi(
+                                                    uUnitData.EFFECTS,
+                                                    iEffects =>
+                                                        iEffects.kRef()
                                                             .kWhere(
                                                             iEffect =>
-                                                                iEffect.kRef()
-                                                                    .kGetRovi(uUnitEffect.TYPE)
-                                                                    .kIsType<uDamageEffect>()
-                                                                    .kExists())
-                                                            .kCount()))
-                                                .kSafeUpdateRovi(
-                                                uUnitData.EFFECTS,
-                                                iEffects =>
-                                                    iEffects.kRef()
-                                                        .kWhere(
-                                                        iEffect =>
-                                                            iEffects.kRef()
-                                                                .kContains(iEffect.kRef())
-                                                                .kNot()))
-                                    })))
+                                                                iEffects.kRef()
+                                                                    .kContains(iEffect.kRef())
+                                                                    .kNot()))
+                                        })),
+                                iUnit.kRef()
+                                    .kRead()
+                                    .kGetRovi(uUnitData.HP)
+                                    .kIsGreaterThan(0.kFixed())
+                                    .kNot()
+                                    .kIfTrue<Rog>(
+                                    new()
+                                    {
+                                        Then = iUnit.kRef().kDoEliminate(),
+                                        Else = Core.kNollaFor<Rog>()
+                                    })
+                            }))
+
         };
 }

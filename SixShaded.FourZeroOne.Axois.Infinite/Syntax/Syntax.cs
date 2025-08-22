@@ -26,6 +26,7 @@ public static partial class KorssaSyntax
     public static Korvessa<IRoveggi<uPlayerIdentifier>, Rog> kDoUnitEffectCycle(this IKorssa<IRoveggi<uPlayerIdentifier>> player) => Korvessas.Game.UnitEffectCycle.Construct(player);
     public static Korvessa<IRoveggi<uPlayerIdentifier>, IMulti<IRoveggi<uResolvedAction>>> kAllowPlay(this IKorssa<IRoveggi<uPlayerIdentifier>> player) => Korvessas.Game.AllowPlay.Construct(player);
     public static Korvessa<IRoveggi<uPlayerData>, IRoveggi<uPlayerData>> kWithRestockedHand(this IKorssa<IRoveggi<uPlayerData>> playerData) => Korvessas.Game.RestockPlayerHand.Construct(playerData);
+    public static Korvessa<IRoveggi<uPlayerData>, IRoveggi<uPlayerData>> kWithRefreshedEnergy(this IKorssa<IRoveggi<uPlayerData>> playerData) => Korvessas.Game.RefreshPlayerEnergy.Construct(playerData);
 
     public static Korvessa<IRoveggi<uHexIdentifier>, IRoveggi<uUnitIdentifier>, IRoveggi<uSpaceChecks>> kMovePathChecks(this IKorssa<IRoveggi<uHexIdentifier>> hex, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.DoMovePathChecks.Construct(hex, unit);
     public static Korvessa<IRoveggi<uHexIdentifier>, IRoveggi<uUnitIdentifier>, IRoveggi<uSpaceChecks>> kMoveDestinationChecks(this IKorssa<IRoveggi<uHexIdentifier>> hex, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.DoMoveDestinationChecks.Construct(hex, unit);
