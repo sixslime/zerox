@@ -1,16 +1,17 @@
-namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas;
+namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas.Game;
 
+using SixShaded.FourZeroOne.Axois.Infinite.Rovetus;
+using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Config;
+using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs;
+using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.ActionTypes;
+using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.HexTypes;
+using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Move;
+using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Resolved;
+using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Data;
+using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Identifier;
 using Core = Core.Syntax.Core;
-using u.Config;
-using u;
-using u.Identifier;
-using u.Data;
-using u.Constructs;
-using u.Constructs.Resolved;
 using Infinite = Syntax.Infinite;
-using u.Constructs.ActionTypes;
-using u.Constructs.Move;
-using u.Constructs.HexTypes;
+
 public static class SetupGame
 {
     private static IKorssa<IRoveggi<uPlayableAction>> CreateAction<C>(IKorssa<Bool> condition, IKorssa<Rog> statement)

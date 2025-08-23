@@ -1,5 +1,6 @@
 namespace SixShaded.FourZeroOne.Axois.Infinite.Syntax;
 
+using Korvessas.Game;
 using u.Anchors;
 using u.Identifier;
 using u.Data;
@@ -8,6 +9,7 @@ using Core = Core.Syntax.Core;
 using u.Constructs;
 using u.Constructs.Ability;
 using u.Constructs.Resolved;
+using u.Config;
 public static partial class Infinite
 {
     public static IKorssa<IRoveggi<uGameAnchor>> Game => Core.kCompose<uGameAnchor>();
@@ -18,6 +20,7 @@ public static partial class Infinite
     public static Structure.Templates Template { get; } = new();
 
     public static Korvessa<Rog> kDoCycleTurnOrder() => Korvessas.Game.DoTurnCycle.Construct();
+    public static Korvessa<IRoveggi<uGameConfiguration>, Rog> kDoSetupGame(IKorssa<IRoveggi<uGameConfiguration>> config) => SetupGame.Construct(config);
 }
 
 public static partial class KorssaSyntax
