@@ -9,6 +9,7 @@ using HexType = u.Constructs.uHexCoordinates;
 public static class RotateAround
 {
     private static IKorssa<HexOffset> _zero => (0, 0, 0).kAsHex();
+
     // clockwise
     public static Korvessa<HexCoords, HexCoords, Number, HexOffset> Construct(IKorssa<HexCoords> coordinate, IKorssa<HexCoords> anchor, IKorssa<Number> rotation) =>
         new(coordinate, anchor, rotation)
@@ -46,9 +47,9 @@ public static class RotateAround
                                                         HexType.D,
                                                         iHex.kRef()
                                                             .kGetRovi(HexType.R))),
-                                                B = iRotationsLeft.kRef().kSubtract(1.kFixed())
+                                                B = iRotationsLeft.kRef().kSubtract(1.kFixed()),
                                             }),
-                                    Else = iHex.kRef()
+                                    Else = iHex.kRef(),
                                 }))
                         .kExecuteWith(
                         new()
@@ -58,8 +59,8 @@ public static class RotateAround
                                     .kSubtract(iAnchor.kRef()),
                             B =
                                 iRotation.kRef()
-                                    .kModulo(6.kFixed())
+                                    .kModulo(6.kFixed()),
                         })
-                        .kAdd(iAnchor.kRef())
+                        .kAdd(iAnchor.kRef()),
         };
 }

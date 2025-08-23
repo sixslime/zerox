@@ -13,7 +13,7 @@ using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
 
 /// <summary>
-/// Intended to be executed before resolving each turn.
+///     Intended to be executed before resolving each turn.
 /// </summary>
 public static class DoTurnCycle
 {
@@ -22,7 +22,7 @@ public static class DoTurnCycle
         {
             Du = Axoi.Korvedu("DoTurnCycle"),
             Definition =
-                (_) =>
+                _ =>
                     Core.kMulti<Rog>(
                     new()
                     {
@@ -53,14 +53,13 @@ public static class DoTurnCycle
                                                         new()
                                                         {
                                                             Then = 0.kFixed(),
-                                                            Else = iCount.kRef().kAdd(1.kFixed())
+                                                            Else = iCount.kRef().kAdd(1.kFixed()),
                                                         }))
                                                 .kWithRovi(uGame.LAST_ROTATION_STATE, Core.kGetProgramState()),
-
                                         Else =
                                             iGame.kRef()
-                                                .kUpdateRovi(uGame.TURN_INDEX, iIndex => iIndex.kRef().kAdd(1.kFixed()))
-                                    }))
-                    })
+                                                .kUpdateRovi(uGame.TURN_INDEX, iIndex => iIndex.kRef().kAdd(1.kFixed())),
+                                    })),
+                    }),
         };
 }

@@ -8,6 +8,7 @@ using u.Constructs.Ability;
 using u.Constructs;
 using u.Constructs.Resolved;
 using u.Constructs.Move;
+
 partial class KorssaSyntax
 {
     public static Korvessa<IRoveggi<uAbility>, IRoveggi<uResolvedAbility>> kAbstractResolve(this IKorssa<IRoveggi<uAbility>> ability) => ResolveAbility.Construct(ability);

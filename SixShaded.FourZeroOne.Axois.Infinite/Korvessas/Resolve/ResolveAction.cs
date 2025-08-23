@@ -1,7 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas.Resolve;
 
-using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Move;
-using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Resolved;
+using Rovetus.Constructs.Move;
+using Rovetus.Constructs.Resolved;
 using ResolvedObj = IRoveggi<u.Constructs.Resolved.uResolvedAction>;
 using Core = Core.Syntax.Core;
 using u.Constructs;
@@ -23,6 +23,6 @@ public static class ResolveAction
                         uResolved.INSTRUCTIONS,
                         iAction.kRef()
                             .kGetRovi(uPlayableAction.STATEMENT)
-                            .kExecute())
+                            .kExecute()),
         };
 }

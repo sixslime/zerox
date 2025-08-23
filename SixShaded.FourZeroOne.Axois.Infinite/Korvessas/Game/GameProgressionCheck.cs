@@ -11,6 +11,7 @@ using PlayerIdent = IRoveggi<u.Identifier.uPlayerIdentifier>;
 using UnitIdent = IRoveggi<u.Identifier.uUnitIdentifier>;
 using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
+
 public static class GameProgressionCheck
 {
     public static Korvessa<ProgramState, Bool> Construct(IKorssa<ProgramState> since) =>
@@ -31,17 +32,17 @@ public static class GameProgressionCheck
                                         new()
                                         {
                                             Environment = [iSince.kRef().kLoad()],
-                                            Value = iPlayer.kRef().kRead()
+                                            Value = iPlayer.kRef().kRead(),
                                         })
                                         .kAsVariable(out var iOldData),
                                     iPlayer.kRef()
                                         .kRead()
-                                        .kAsVariable(out var iCurrentData)
+                                        .kAsVariable(out var iCurrentData),
                                 ],
                                 Value =
                                     iCurrentData.kRef()
                                         .kGetRovi(uPlayerData.CONTROL)
-                                        .kIsGreaterThan(iOldData.kRef().kGetRovi(uPlayerData.CONTROL))
+                                        .kIsGreaterThan(iOldData.kRef().kGetRovi(uPlayerData.CONTROL)),
                             }))
                         .ksLazyOr(
                         Infinite.AllUnits
@@ -56,17 +57,17 @@ public static class GameProgressionCheck
                                             new()
                                             {
                                                 Environment = [iSince.kRef().kLoad()],
-                                                Value = iUnit.kRef().kRead()
+                                                Value = iUnit.kRef().kRead(),
                                             })
                                             .kAsVariable(out var iOldData),
                                         iUnit.kRef()
                                             .kRead()
-                                            .kAsVariable(out var iCurrentData)
+                                            .kAsVariable(out var iCurrentData),
                                     ],
                                     Value =
                                         iOldData.kRef()
                                             .kGetRovi(uUnitData.HP)
-                                            .kIsGreaterThan(iCurrentData.kRef().kGetRovi(uUnitData.HP))
-                                })))
+                                            .kIsGreaterThan(iCurrentData.kRef().kGetRovi(uUnitData.HP)),
+                                }))),
         };
 }

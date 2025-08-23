@@ -1,15 +1,15 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas.Game;
 
-using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Resolved;
+using Rovetus.Constructs.Resolved;
 using Actions = IMulti<IRoveggi<u.Constructs.Resolved.uResolvedAction>>;
 using Core = Core.Syntax.Core;
 using u.Constructs;
 using Infinite = Syntax.Infinite;
 using u.Data;
 using u.Identifier;
+
 public static class AllowPlay
 {
-
     public static Korvessa<IRoveggi<uPlayerIdentifier>, Actions> Construct(IKorssa<IRoveggi<uPlayerIdentifier>> player) =>
         new(player)
         {
@@ -32,7 +32,7 @@ public static class AllowPlay
                         Value =
                             Core.kMetaFunctionRecursive<Actions>(
                                 [],
-                                (iContinuedTurn) =>
+                                iContinuedTurn =>
                                     Core.kSubEnvironment<Actions>(
                                     new()
                                     {
@@ -46,7 +46,7 @@ public static class AllowPlay
                                                     iAction.kRef()
                                                         .kGetRovi(uPlayableAction.CONDITION)
                                                         .kExecute())
-                                                .kAsVariable(out var iValidActions)
+                                                .kAsVariable(out var iValidActions),
                                         ],
                                         Value =
                                             iValidActions.kRef()
@@ -65,21 +65,19 @@ public static class AllowPlay
                                                                         .kResolve()
                                                                         .kAsVariable(out var iResolvedAction),
                                                                     iResolvedAction.kRef()
-                                                                        .kGetRovi(uResolved.INSTRUCTIONS)
+                                                                        .kGetRovi(uResolved.INSTRUCTIONS),
                                                                 ],
                                                                 Value =
                                                                     iResolvedAction.kRef()
                                                                         .kYield()
                                                                         .kConcat(
                                                                         iContinuedTurn.kRef()
-                                                                            .kExecute())
+                                                                            .kExecute()),
                                                             }),
-                                                    Cancel = () => Core.kMulti<IRoveggi<uResolvedAction>>([])
-                                                })
+                                                    Cancel = () => Core.kMulti<IRoveggi<uResolvedAction>>([]),
+                                                }),
                                     }))
-                                .kExecute()
-                    })
-
-
+                                .kExecute(),
+                    }),
         };
 }

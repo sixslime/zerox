@@ -48,7 +48,7 @@ public static class RestockPlayerHand
                                                 iPlayerData.kRef()
                                                     .kGetRovi(uPlayerData.STACK)
                                                     .kGetSlice(1.kFixed().kRangeTo(iDrawAmount.kRef()))
-                                                    .kAsVariable(out var iDrawnAbilities)
+                                                    .kAsVariable(out var iDrawnAbilities),
                                             ],
                                             Value =
                                                 iPlayerData.kRef()
@@ -63,10 +63,10 @@ public static class RestockPlayerHand
                                                     .kSafeUpdateRovi(
                                                     uPlayerData.HAND,
                                                     iHand =>
-                                                        iHand.kRef().kConcat(iDrawnAbilities.kRef()))
+                                                        iHand.kRef().kConcat(iDrawnAbilities.kRef())),
                                         }),
-                                    Else = iPlayerData.kRef()
-                                })
-                    })
+                                    Else = iPlayerData.kRef(),
+                                }),
+                    }),
         };
 }

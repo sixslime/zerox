@@ -16,14 +16,15 @@ public static class CheckWin
             Du = Axoi.Korvedu("CheckWin"),
             Definition =
                 (_, iPlayer) =>
-                    Core.kSubEnvironment<IRoveggi<uWinChecks>>(new()
+                    Core.kSubEnvironment<IRoveggi<uWinChecks>>(
+                    new()
                     {
                         Environment =
-                            [
-                                iPlayer.kRef()
-                                    .kRead()
-                                    .kAsVariable(out var iData)
-                            ],
+                        [
+                            iPlayer.kRef()
+                                .kRead()
+                                .kAsVariable(out var iData),
+                        ],
                         Value =
                             Core.kCompose<uWinChecks>()
                                 .kWithRovi(
@@ -39,7 +40,7 @@ public static class CheckWin
                                         iUnit.kRef()
                                             .kRead()
                                             .kGetRovi(uUnitData.OWNER)
-                                            .kEquals(iPlayer.kRef())))
-                    })
+                                            .kEquals(iPlayer.kRef()))),
+                    }),
         };
 }

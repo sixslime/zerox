@@ -19,17 +19,17 @@ public static class GetAdjacent
                     (iPrevHex, iIndex) =>
                         iIndex.kRef()
                             .kIsGreaterThan(5.kFixed())
-                            .kIfTrue<HexOffset>(new()
+                            .kIfTrue<HexOffset>(
+                            new()
                             {
                                 Then = Core.kNollaFor<HexOffset>(),
                                 Else =
                                     iPrevHex.kRef()
-                                        .kRotateAround((0, 0, 0).kAsHex(), 1.kFixed())
+                                        .kRotateAround((0, 0, 0).kAsHex(), 1.kFixed()),
                             }))
                     .kMap(
                     iHex =>
                         iHex.kRef()
-                            .kAdd(iCoords.kRef()))
-
+                            .kAdd(iCoords.kRef())),
         };
 }

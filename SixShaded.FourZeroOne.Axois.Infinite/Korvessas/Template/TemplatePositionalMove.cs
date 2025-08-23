@@ -10,6 +10,7 @@ using u.Constructs.HexTypes;
 using Infinite = Syntax.Infinite;
 using Obj = IRoveggi<u.Constructs.Move.uPositionalMove>;
 using Type = u.Constructs.Move.uPositionalMove;
+
 public static class TemplatePositionalMove
 {
     private static readonly CoreStructure.Hint<Type> HINT = new();
@@ -19,7 +20,7 @@ public static class TemplatePositionalMove
         {
             Du = Axoi.Korvedu("TemplatePositionalMove"),
             Definition =
-                (_) =>
+                _ =>
                     Core.kCompose<Type>()
                         .kWithRovi(
                         HINT,
@@ -53,6 +54,6 @@ public static class TemplatePositionalMove
                         .kWithRovi(
                         HINT,
                         Type.MOVE_FUNCTION,
-                        Core.kNollaFor<MetaFunction<IRoveggi<uUnitIdentifier>, IMulti<IRoveggi<uHexIdentifier>>>>())
+                        Core.kNollaFor<MetaFunction<IRoveggi<uUnitIdentifier>, IMulti<IRoveggi<uHexIdentifier>>>>()),
         };
 }

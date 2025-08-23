@@ -1,12 +1,13 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas.Resolve;
 
-using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Ability;
-using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Resolved;
-using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Data;
+using Rovetus.Constructs.Ability;
+using Rovetus.Constructs.Resolved;
+using Rovetus.Data;
 using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
 using ResolvedObj = IRoveggi<Rovetus.Constructs.Resolved.uResolvedSourcedAbility>;
 using u.Constructs;
+
 public static class ResolveSourcedAbility
 {
     public static Korvessa<IRoveggi<uSourcedAbility>, ResolvedObj> Construct(IKorssa<IRoveggi<uSourcedAbility>> ability) =>
@@ -30,15 +31,15 @@ public static class ResolveSourcedAbility
                                         {
                                             A =
                                                 iAbility.kRef()
-                                                    .kSourceChecks(iPotentialSource.kRef())
+                                                    .kSourceChecks(iPotentialSource.kRef()),
                                         })
                                         .kExecuteWith(
                                         new()
                                         {
-                                            A = iPotentialSource.kRef()
+                                            A = iPotentialSource.kRef(),
                                         }))
                                 .kIOSelectOne()
-                                .kAsVariable(out var iSourceUnit)
+                                .kAsVariable(out var iSourceUnit),
                         ],
                         Value =
                             iSourceUnit.kRef()
@@ -67,16 +68,16 @@ public static class ResolveSourcedAbility
                                                         {
                                                             A =
                                                                 iAbility.kRef()
-                                                                    .kTargetChecks(iPotentialTarget.kRef(), iSourceUnit.kRef())
+                                                                    .kTargetChecks(iPotentialTarget.kRef(), iSourceUnit.kRef()),
                                                         })
                                                         .kExecuteWith(
                                                         new()
                                                         {
                                                             A = iSourceUnit.kRef(),
-                                                            B = iPotentialTarget.kRef()
+                                                            B = iPotentialTarget.kRef(),
                                                         }))
                                                 .kIOSelectOne()
-                                                .kAsVariable(out var iTargetUnit)
+                                                .kAsVariable(out var iTargetUnit),
                                         ],
 
                                         // create resolved object:
@@ -90,7 +91,7 @@ public static class ResolveSourcedAbility
                                                         .kWithRovi(uResolvedSourcedAbility.TARGET, iTargetUnit.kRef())
                                                         .kWithRovi(
                                                         Core.Hint<uResolvedSourcedAbility>(),
-                                                        uResolved.INSTRUCTIONS, Core.kMulti<Rog>(
+                                                        uResolved.INSTRUCTIONS, Core.kMulti(
                                                         [
                                                             iTargetUnit.kRef()
                                                                 .kSafeUpdate(
@@ -114,10 +115,10 @@ public static class ResolveSourcedAbility
                                                                 new()
                                                                 {
                                                                     A = iSourceUnit.kRef(),
-                                                                    B = iTargetUnit.kRef()
-                                                                })
-                                                        ])))
-                                    }))
-                    })
+                                                                    B = iTargetUnit.kRef(),
+                                                                }),
+                                                        ]))),
+                                    })),
+                    }),
         };
 }

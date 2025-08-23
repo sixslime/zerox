@@ -1,10 +1,10 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Move;
 
-using u.Identifier;
+using Identifier;
+
 public interface uSubjectChecks : IConcreteRovetu, uCheckable
 {
     public static readonly Rovu<uSubjectChecks, Bool> EFFECT_CHECK = new(Axoi.Du, "effect_check");
-
     public static readonly ImplementationStatement<uSubjectChecks> __IMPLEMENTS =
         c =>
             c.ImplementGet(
@@ -12,5 +12,4 @@ public interface uSubjectChecks : IConcreteRovetu, uCheckable
             iThis =>
                 iThis.kRef()
                     .kGetRovi(EFFECT_CHECK));
-
 }

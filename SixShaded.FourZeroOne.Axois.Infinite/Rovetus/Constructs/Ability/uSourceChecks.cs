@@ -4,7 +4,6 @@ public interface uSourceChecks : IConcreteRovetu, uCheckable
 {
     public static readonly Rovu<uSourceChecks, Bool> CORRECT_TEAM = new(Axoi.Du, "correct_team");
     public static readonly Rovu<uSourceChecks, Bool> EFFECT_CHECK = new(Axoi.Du, "effect_check");
-
     public static readonly ImplementationStatement<uSourceChecks> __IMPLEMENTS =
         c =>
             c.ImplementGet(

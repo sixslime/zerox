@@ -20,6 +20,6 @@ public static class RefreshPlayerEnergy
             Du = Axoi.Korvedu("RefreshPlayerEnergy"),
             Definition =
                 (_, iPlayerData) =>
-                    iPlayerData.kRef().kWithRovi(uPlayerData.ENERGY, 2.kFixed())
+                    iPlayerData.kRef().kWithRovi(uPlayerData.ENERGY, 2.kFixed()),
         };
 }

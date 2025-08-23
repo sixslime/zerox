@@ -16,17 +16,18 @@ public static class CheckMoveDestination
             Du = Axoi.Korvedu("CheckMoveDestination"),
             Definition =
                 (_, iHex, iSubject) =>
-                    Core.kSubEnvironment<IRoveggi<uSpaceChecks>>(new()
+                    Core.kSubEnvironment<IRoveggi<uSpaceChecks>>(
+                    new()
                     {
                         Environment =
-                            [
-                                iSubject.kRef()
-                                    .kRead()
-                                    .kAsVariable(out var iSubjectData),
-                                iHex.kRef()
-                                    .kRead()
-                                    .kAsVariable(out var iHexData)
-                            ],
+                        [
+                            iSubject.kRef()
+                                .kRead()
+                                .kAsVariable(out var iSubjectData),
+                            iHex.kRef()
+                                .kRead()
+                                .kAsVariable(out var iHexData),
+                        ],
                         Value =
                             Core.kCompose<uSpaceChecks>()
                                 .kWithRovi(
@@ -57,7 +58,7 @@ public static class CheckMoveDestination
                                             iBaseOwner.kRef()
                                                 .kIsBaseProtected()
                                                 .kNot())
-                                            .kCatchNolla(() => true.kFixed())
+                                            .kCatchNolla(() => true.kFixed()),
                                 }))
                                 .kWithRovi(
                                 uSpaceChecks.UNIT,
@@ -66,7 +67,7 @@ public static class CheckMoveDestination
                                     iUnit.kRef()
                                         .kRead()
                                         .kGetRovi(uUnitData.POSITION)
-                                        .kEquals(iHex.kRef())))
-                    })
+                                        .kEquals(iHex.kRef()))),
+                    }),
         };
 }

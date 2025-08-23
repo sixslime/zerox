@@ -7,8 +7,8 @@ using u.Data;
 using Core = Core.Syntax.Core;
 
 public static class SelectOneCancellable<RIn, ROut>
-where RIn : class, Rog
-where ROut : class, Rog
+    where RIn : class, Rog
+    where ROut : class, Rog
 {
     public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, MetaFunction<ROut>, ROut> Construct(IKorssa<IMulti<RIn>> pool, IKorssa<MetaFunction<RIn, ROut>> selectPath, IKorssa<MetaFunction<ROut>> cancelPath) =>
         new(pool, selectPath, cancelPath)
@@ -24,11 +24,11 @@ where ROut : class, Rog
                             Core.kMulti<IMulti<Rog>>(
                                 [
                                     iPool.kRef(),
-                                    Core.kCompose<u.uCancelMarker>().kYield()
+                                    Core.kCompose<u.uCancelMarker>().kYield(),
                                 ])
                                 .kFlatten()
                                 .kIOSelectOne()
-                                .kAsVariable(out var iSelection)
+                                .kAsVariable(out var iSelection),
                         ],
                         Value =
                             iSelection.kRef()
@@ -45,10 +45,9 @@ where ROut : class, Rog
                                             {
                                                 A =
                                                     iSelection.kRef()
-                                                        .kIsType<RIn>()
+                                                        .kIsType<RIn>(),
                                             }),
-                                })
-                    })
-
+                                }),
+                    }),
         };
 }

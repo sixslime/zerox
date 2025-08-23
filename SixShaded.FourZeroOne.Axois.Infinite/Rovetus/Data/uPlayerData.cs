@@ -12,7 +12,7 @@ public interface uPlayerData : IConcreteRovetu
     public static readonly Rovu<uPlayerData, Number> HAND_SIZE = new(Axoi.Du, "hand_size");
     public static readonly Rovu<uPlayerData, Number> CONTROL = new(Axoi.Du, "control");
     /// <summary>
-    /// clockwise rotations.
+    ///     clockwise rotations.
     /// </summary>
     public static readonly Rovu<uPlayerData, Number> PERSPECTIVE_ROTATION = new(Axoi.Du, "perspective_rotation");
 }

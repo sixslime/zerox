@@ -15,20 +15,23 @@ public static class Subtract
             Definition =
                 (_, iA, iB) =>
                     Core.kCompose<HexOffsetType>()
-                        .kWithRovi(Core.Hint<HexOffsetType>(),
+                        .kWithRovi(
+                        Core.Hint<HexOffsetType>(),
                         HexType.R,
                         iA.kRef()
                             .kGetRovi(HexType.R)
                             .kSubtract(iB.kRef().kGetRovi(HexType.R)))
-                        .kWithRovi(Core.Hint<HexOffsetType>(),
+                        .kWithRovi(
+                        Core.Hint<HexOffsetType>(),
                         HexType.U,
                         iA.kRef()
                             .kGetRovi(HexType.U)
                             .kSubtract(iB.kRef().kGetRovi(HexType.U)))
-                        .kWithRovi(Core.Hint<HexOffsetType>(),
+                        .kWithRovi(
+                        Core.Hint<HexOffsetType>(),
                         HexType.D,
                         iA.kRef()
                             .kGetRovi(HexType.D)
-                            .kSubtract(iB.kRef().kGetRovi(HexType.D)))
+                            .kSubtract(iB.kRef().kGetRovi(HexType.D))),
         };
 }

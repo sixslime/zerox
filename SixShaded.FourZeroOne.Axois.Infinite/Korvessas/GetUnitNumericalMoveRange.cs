@@ -9,6 +9,7 @@ using u.Identifier;
 using u.Data;
 using Infinite = Syntax.Infinite;
 using u.Constructs;
+
 public static class GetUnitNumericalMoveRange
 {
     public static Korvessa<IRoveggi<uUnitIdentifier>, NumRange, NumRange> Construct(IKorssa<IRoveggi<uUnitIdentifier>> unit, IKorssa<NumRange> moveRange) =>
@@ -30,7 +31,7 @@ public static class GetUnitNumericalMoveRange
                                 new()
                                 {
                                     Then = 2.kFixed(),
-                                    Else = 1.kFixed()
+                                    Else = 1.kFixed(),
                                 })
                                 .kAsVariable(out var iThisSlowFactor),
                         ],
@@ -42,7 +43,7 @@ public static class GetUnitNumericalMoveRange
                                 .kRangeTo(
                                 iMoveRange.kRef()
                                     .kEnd()
-                                    .kDivide(iThisSlowFactor.kRef()))
-                    })
+                                    .kDivide(iThisSlowFactor.kRef())),
+                    }),
         };
 }

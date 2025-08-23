@@ -10,6 +10,7 @@ using u.Constructs.HexTypes;
 using Infinite = Syntax.Infinite;
 using Obj = IRoveggi<u.Constructs.Move.uNumericalMove>;
 using Type = u.Constructs.Move.uNumericalMove;
+
 public static class TemplateNumericalMove
 {
     private static readonly CoreStructure.Hint<Type> HINT = new();
@@ -19,7 +20,7 @@ public static class TemplateNumericalMove
         {
             Du = Axoi.Korvedu("TemplateNumericalMove"),
             Definition =
-                (_) =>
+                _ =>
                     Core.kCompose<Type>()
                         .kWithRovi(
                         HINT,
@@ -64,6 +65,6 @@ public static class TemplateNumericalMove
                         .kWithRovi(
                         HINT,
                         Type.DISTANCE,
-                        Core.kNollaFor<NumRange>())
+                        Core.kNollaFor<NumRange>()),
         };
 }

@@ -16,14 +16,15 @@ public static class CheckMovePath
             Du = Axoi.Korvedu("CheckMovePath"),
             Definition =
                 (_, iHex, iSubject) =>
-                    Core.kSubEnvironment<IRoveggi<uSpaceChecks>>(new()
+                    Core.kSubEnvironment<IRoveggi<uSpaceChecks>>(
+                    new()
                     {
                         Environment =
-                            [
-                                iSubject.kRef()
-                                    .kRead()
-                                    .kAsVariable(out var iSubjectData)
-                            ],
+                        [
+                            iSubject.kRef()
+                                .kRead()
+                                .kAsVariable(out var iSubjectData),
+                        ],
                         Value =
                             iHex.kRef()
                                 .kMoveDestinationChecks(iSubject.kRef())
@@ -42,7 +43,7 @@ public static class CheckMovePath
                                             .kEquals(
                                             iSubjectData.kRef()
                                                 .kGetRovi(uUnitData.OWNER))
-                                            .kNot())))
-                    })
+                                            .kNot()))),
+                    }),
         };
 }

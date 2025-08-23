@@ -5,5 +5,5 @@ public record SelectCancellable<RIn, ROut>
     where ROut : class, Rog
 {
     public required MetaDefinition<RIn, ROut> Select { get; init; }
-    public required MetaDefinition< ROut> Cancel { get; init; }
+    public required MetaDefinition<ROut> Cancel { get; init; }
 }

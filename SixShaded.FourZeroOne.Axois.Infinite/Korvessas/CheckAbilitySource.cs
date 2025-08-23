@@ -9,6 +9,7 @@ using u.Identifier;
 using u.Data;
 using Infinite = Syntax.Infinite;
 using u.Constructs;
+
 public static class CheckAbilitySource
 {
     public static Korvessa<IRoveggi<uSourcedAbility>, IRoveggi<uUnitIdentifier>, IRoveggi<uSourceChecks>> Construct(IKorssa<IRoveggi<uSourcedAbility>> ability, IKorssa<IRoveggi<uUnitIdentifier>> unit) =>
@@ -17,14 +18,15 @@ public static class CheckAbilitySource
             Du = Axoi.Korvedu("CheckAbilityTarget"),
             Definition =
                 (_, iAbility, iUnit) =>
-                    Core.kSubEnvironment<IRoveggi<uSourceChecks>>(new()
+                    Core.kSubEnvironment<IRoveggi<uSourceChecks>>(
+                    new()
                     {
                         Environment =
-                            [
-                                iUnit.kRef()
-                                    .kRead()
-                                    .kAsVariable(out var iData)
-                            ],
+                        [
+                            iUnit.kRef()
+                                .kRead()
+                                .kAsVariable(out var iData),
+                        ],
                         Value =
                             Core.kCompose<uSourceChecks>()
                                 .kWithRovi(
@@ -37,7 +39,7 @@ public static class CheckAbilitySource
                                 iData.kRef()
                                     .kGetRovi(uUnitData.EFFECTS)
                                     .kAnyMatch(iEffect => iEffect.kRef().kGetRovi(uUnitEffect.TYPE).kIsType<uShockEffect>().kExists())
-                                    .kNot())
-                    })
+                                    .kNot()),
+                    }),
         };
 }

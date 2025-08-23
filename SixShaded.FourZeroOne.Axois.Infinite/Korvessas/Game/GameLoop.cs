@@ -12,6 +12,7 @@ using UnitIdent = IRoveggi<u.Identifier.uUnitIdentifier>;
 using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
 using u.Constructs.GameResults;
+
 public static class GameLoop
 {
     public static Korvessa<IRoveggi<uGameResult>> Construct() =>
@@ -19,7 +20,7 @@ public static class GameLoop
         {
             Du = Axoi.Korvedu("GameLoop"),
             Definition =
-                (iNextLoop) =>
+                iNextLoop =>
                     Core.kSubEnvironment<IRoveggi<uGameResult>>(
                     new()
                     {
@@ -33,9 +34,9 @@ public static class GameLoop
                                 new()
                                 {
                                     Then = Infinite.kCheckGameResult(),
-                                    Else = Core.kNollaFor<IRoveggi<uGameResult>>()
+                                    Else = Core.kNollaFor<IRoveggi<uGameResult>>(),
                                 })
-                                .kAsVariable(out var iResult)
+                                .kAsVariable(out var iResult),
                         ],
                         Value =
                             iResult.kRef()
@@ -57,9 +58,9 @@ public static class GameLoop
                                                     .kGetIndex(Infinite.Game.kRead().kGetRovi(uGame.TURN_INDEX))),
                                                 Infinite.kDoCycleTurnOrder(),
                                             ],
-                                            Value = iNextLoop.kRef().kExecute()
-                                        })
-                                })
-                    })
+                                            Value = iNextLoop.kRef().kExecute(),
+                                        }),
+                                }),
+                    }),
         };
 }

@@ -1,7 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas.Resolve;
 
-using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Move;
-using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Resolved;
+using Rovetus.Constructs.Move;
+using Rovetus.Constructs.Resolved;
 using ResolvedObj = IRoveggi<u.Constructs.Resolved.uResolvedMove>;
 using Core = Core.Syntax.Core;
 
@@ -20,7 +20,7 @@ public static class ResolveMove
                         [
                             iMove.kRef()
                                 .kGetRovi(uMove.ENVIRONMENT_PREMOD)
-                                .kExecute()
+                                .kExecute(),
                         ],
                         Value =
                             Core.kSelector<IMulti<ResolvedObj>>(
@@ -37,8 +37,7 @@ public static class ResolveMove
                                         .kIsType<IRoveggi<uPositionalMove>>()
                                         .kResolve()
                                         .kYield(),
-                            ])
-                    })
-
+                            ]),
+                    }),
         };
 }

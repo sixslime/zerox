@@ -7,6 +7,7 @@ using u.Identifier;
 using u.Data;
 using Core = Core.Syntax.Core;
 using u.Constructs;
+
 public static class CheckMoveSubject
 {
     public static Korvessa<IRoveggi<uMove>, IRoveggi<uUnitIdentifier>, IRoveggi<uSubjectChecks>> Construct(IKorssa<IRoveggi<uMove>> move, IKorssa<IRoveggi<uUnitIdentifier>> unit) =>
@@ -15,21 +16,23 @@ public static class CheckMoveSubject
             Du = Axoi.Korvedu("CheckMoveSubject"),
             Definition =
                 (_, iMove, iUnit) =>
-                    Core.kSubEnvironment<IRoveggi<uSubjectChecks>>(new()
+                    Core.kSubEnvironment<IRoveggi<uSubjectChecks>>(
+                    new()
                     {
                         Environment =
-                            [
-                                iUnit.kRef()
-                                    .kRead()
-                                    .kAsVariable(out var iData)
-                            ],
+                        [
+                            iUnit.kRef()
+                                .kRead()
+                                .kAsVariable(out var iData),
+                        ],
                         Value =
                             Core.kCompose<uSubjectChecks>()
-                                .kWithRovi(uSubjectChecks.EFFECT_CHECK,
+                                .kWithRovi(
+                                uSubjectChecks.EFFECT_CHECK,
                                 iData.kRef()
                                     .kGetRovi(uUnitData.EFFECTS)
                                     .kAnyMatch(iEffect => iEffect.kRef().kGetRovi(uUnitEffect.TYPE).kIsType<uImmobileEffect>().kExists())
-                                    .kNot())
-                    })
+                                    .kNot()),
+                    }),
         };
 }

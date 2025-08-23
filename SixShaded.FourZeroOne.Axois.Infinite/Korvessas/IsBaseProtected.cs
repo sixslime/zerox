@@ -34,6 +34,6 @@ public static class IsBaseProtected
                                     .kEquals(iPlayer.kRef())
                                     .kCatchNolla(
                                     () =>
-                                        false.kFixed())))
+                                        false.kFixed()))),
         };
 }

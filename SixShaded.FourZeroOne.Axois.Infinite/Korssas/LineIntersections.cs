@@ -73,7 +73,6 @@ public record LineIntersections(IKorssa<HexCoords> from, IKorssa<HexCoords> to) 
     // sad that i didnt think of this algorithm; i should kill myself
     private List<HexPos> GeneralAlgorithm(HexPos start, HexPos end)
     {
-        
         var results = new List<HexPos>();
         int n = start.DistanceTo(end);
         for (int i = 1; i < n; i++) // skip start (0) and end (n)
@@ -82,7 +81,6 @@ public record LineIntersections(IKorssa<HexCoords> from, IKorssa<HexCoords> to) 
             results.Add(__Round(__Lerp(start, end, t)));
         }
         return results;
-
         (double R, double U, double D) __Lerp(HexPos a, HexPos b, double t)
         {
             return (

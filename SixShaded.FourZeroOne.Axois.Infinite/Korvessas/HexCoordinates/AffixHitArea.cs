@@ -15,21 +15,22 @@ public static class AffixHitArea
             Du = Axoi.Korvedu("HexCoordinates.AffixHitArea"),
             Definition =
                 (_, iHitArea, iUnit) =>
-                    Core.kSubEnvironment<Multi<HexIdentifier>>(new()
+                    Core.kSubEnvironment<Multi<HexIdentifier>>(
+                    new()
                     {
                         Environment =
-                            [
-                                iUnit.kRef()
-                                    .kRead()
-                                    .kGetRovi(u.Data.uUnitData.OWNER)
-                                    .kRead()
-                                    .kGetRovi(u.Data.uPlayerData.PERSPECTIVE_ROTATION)
-                                    .kAsVariable(out var iPerspective),
-                                iUnit.kRef()
-                                    .kRead()
-                                    .kGetRovi(u.Data.uUnitData.POSITION)
-                                    .kAsVariable(out var iPosition)
-                            ],
+                        [
+                            iUnit.kRef()
+                                .kRead()
+                                .kGetRovi(u.Data.uUnitData.OWNER)
+                                .kRead()
+                                .kGetRovi(u.Data.uPlayerData.PERSPECTIVE_ROTATION)
+                                .kAsVariable(out var iPerspective),
+                            iUnit.kRef()
+                                .kRead()
+                                .kGetRovi(u.Data.uUnitData.POSITION)
+                                .kAsVariable(out var iPosition),
+                        ],
                         Value =
                             iHitArea.kRef()
                                 .kMap(
@@ -39,7 +40,7 @@ public static class AffixHitArea
                                         (0, 0, 0).kAsHex(),
                                         iPerspective.kRef())
                                         .kAdd(iPosition.kRef())
-                                        .kAsAbsolute())
-                    })
+                                        .kAsAbsolute()),
+                    }),
         };
 }

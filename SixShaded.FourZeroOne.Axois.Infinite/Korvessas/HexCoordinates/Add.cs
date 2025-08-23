@@ -15,20 +15,23 @@ public static class Add
             Definition =
                 (_, iA, iB) =>
                     Core.kCompose<HexOffsetType>()
-                        .kWithRovi(Core.Hint<HexOffsetType>(),
+                        .kWithRovi(
+                        Core.Hint<HexOffsetType>(),
                         HexType.R,
                         iA.kRef()
                             .kGetRovi(HexType.R)
                             .kAdd(iB.kRef().kGetRovi(HexType.R)))
-                        .kWithRovi(Core.Hint<HexOffsetType>(),
+                        .kWithRovi(
+                        Core.Hint<HexOffsetType>(),
                         HexType.U,
                         iA.kRef()
                             .kGetRovi(HexType.U)
                             .kAdd(iB.kRef().kGetRovi(HexType.U)))
-                        .kWithRovi(Core.Hint<HexOffsetType>(),
+                        .kWithRovi(
+                        Core.Hint<HexOffsetType>(),
                         HexType.D,
                         iA.kRef()
                             .kGetRovi(HexType.D)
-                            .kAdd(iB.kRef().kGetRovi(HexType.D)))
+                            .kAdd(iB.kRef().kGetRovi(HexType.D))),
         };
 }

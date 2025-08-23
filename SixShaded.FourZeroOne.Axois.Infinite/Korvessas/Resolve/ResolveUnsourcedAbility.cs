@@ -1,7 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas.Resolve;
 
-using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Ability;
-using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Resolved;
+using Rovetus.Constructs.Ability;
+using Rovetus.Constructs.Resolved;
 using Core = Core.Syntax.Core;
 
 public static class ResolveUnsourcedAbility
@@ -20,7 +20,7 @@ public static class ResolveUnsourcedAbility
                             iAbility.kRef()
                                 .kGetRovi(uUnsourcedAbility.ACTION)
                                 .kExecute()
-                                .kAsVariable(out var iInstructions)
+                                .kAsVariable(out var iInstructions),
                         ],
                         Value =
                             iInstructions.kRef()
@@ -28,8 +28,7 @@ public static class ResolveUnsourcedAbility
                                 () =>
                                     Core.kCompose<uResolvedUnsourcedAbility>()
                                         .kWithRovi(uResolvedUnsourcedAbility.ABILITY, iAbility.kRef())
-                                        .kWithRovi(Core.Hint<uResolvedUnsourcedAbility>(), uResolved.INSTRUCTIONS, iInstructions.kRef()))
-
-                    })
+                                        .kWithRovi(Core.Hint<uResolvedUnsourcedAbility>(), uResolved.INSTRUCTIONS, iInstructions.kRef())),
+                    }),
         };
 }

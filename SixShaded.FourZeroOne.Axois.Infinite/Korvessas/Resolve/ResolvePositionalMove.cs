@@ -32,15 +32,15 @@ public static class ResolvePositionalMove
                                         {
                                             A =
                                                 iMove.kRef()
-                                                    .kMoveSubjectChecks(iUnit.kRef())
+                                                    .kMoveSubjectChecks(iUnit.kRef()),
                                         })
                                         .kExecuteWith(
                                         new()
                                         {
-                                            A = iUnit.kRef()
+                                            A = iUnit.kRef(),
                                         }))
                                 .kIOSelectOne()
-                                .kAsVariable(out var iSubjectUnit)
+                                .kAsVariable(out var iSubjectUnit),
                         ],
                         Value =
                             iSubjectUnit.kRef()
@@ -60,7 +60,7 @@ public static class ResolvePositionalMove
                                                 .kExecuteWith(
                                                 new()
                                                 {
-                                                    A = iSubjectUnit.kRef()
+                                                    A = iSubjectUnit.kRef(),
                                                 })
                                                 .kWhere(
                                                 iHex =>
@@ -71,15 +71,15 @@ public static class ResolvePositionalMove
                                                         {
                                                             A =
                                                                 iHex.kRef()
-                                                                    .kMoveDestinationChecks(iSubjectUnit.kRef())
+                                                                    .kMoveDestinationChecks(iSubjectUnit.kRef()),
                                                         })
                                                         .kExecuteWith(
                                                         new()
                                                         {
-                                                            A = iHex.kRef()
+                                                            A = iHex.kRef(),
                                                         }))
                                                 .kIOSelectOne()
-                                                .kAsVariable(out var iDestinationPosition)
+                                                .kAsVariable(out var iDestinationPosition),
                                         ],
                                         Value =
                                             iDestinationPosition.kRef()
@@ -105,9 +105,8 @@ public static class ResolvePositionalMove
                                                             .kSafeUpdate(
                                                             iUnit =>
                                                                 iUnit.kRef()
-                                                                    .kWithRovi(uUnitData.POSITION, iDestinationPosition.kRef()))))
-                                    }))
-
-                    })
+                                                                    .kWithRovi(uUnitData.POSITION, iDestinationPosition.kRef())))),
+                                    })),
+                    }),
         };
 }

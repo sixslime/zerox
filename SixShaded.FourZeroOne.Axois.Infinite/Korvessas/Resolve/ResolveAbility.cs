@@ -1,7 +1,7 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite.Korvessas.Resolve;
 
-using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Ability;
-using SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs.Resolved;
+using Rovetus.Constructs.Ability;
+using Rovetus.Constructs.Resolved;
 using Core = Core.Syntax.Core;
 
 public static class ResolveAbility
@@ -19,7 +19,7 @@ public static class ResolveAbility
                         [
                             iAbility.kRef()
                                 .kGetRovi(uAbility.ENVIRONMENT_PREMOD)
-                                .kExecute()
+                                .kExecute(),
                         ],
                         Value =
                             Core.kSelector<IRoveggi<uResolvedAbility>>(
@@ -35,8 +35,7 @@ public static class ResolveAbility
                                     iAbility.kRef()
                                         .kIsType<IRoveggi<uUnsourcedAbility>>()
                                         .kResolve(),
-                            ])
-                    })
-
+                            ]),
+                    }),
         };
 }

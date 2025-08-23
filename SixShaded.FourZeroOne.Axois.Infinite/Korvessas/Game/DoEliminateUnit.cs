@@ -21,6 +21,6 @@ public static class DoEliminateUnit
             Definition =
                 (_, iUnit) =>
                     iUnit.kRef()
-                        .kRedact()
+                        .kRedact(),
         };
 }

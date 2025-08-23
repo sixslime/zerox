@@ -7,8 +7,8 @@ using u.Data;
 using Core = Core.Syntax.Core;
 
 public static class SelectMultipleCancellable<RIn, ROut>
-where RIn : class, Rog
-where ROut : class, Rog
+    where RIn : class, Rog
+    where ROut : class, Rog
 {
     public static Korvessa<IMulti<RIn>, MetaFunction<IMulti<RIn>, ROut>, MetaFunction<ROut>, MetaFunction<NumRange, ROut>> Construct(IKorssa<IMulti<RIn>> pool, IKorssa<MetaFunction<IMulti<RIn>, ROut>> selectPath, IKorssa<MetaFunction<ROut>> cancelPath) =>
         new(pool, selectPath, cancelPath)
@@ -24,10 +24,10 @@ where ROut : class, Rog
                             Core.kMulti<IMulti<Rog>>(
                                 [
                                     iPool.kRef(),
-                                    Core.kCompose<u.uCancelMarker>().kYield()
+                                    Core.kCompose<u.uCancelMarker>().kYield(),
                                 ])
                                 .kIOSelectOne()
-                                .kAsVariable(out var iInitialSelection)
+                                .kAsVariable(out var iInitialSelection),
                         ],
                         Value =
                             iInitialSelection.kRef()
@@ -41,7 +41,7 @@ where ROut : class, Rog
                                         Core.kMetaFunction<NumRange, ROut>(
                                         [
                                             iSelectPath,
-                                            iPool
+                                            iPool,
                                         ],
                                         iSelectCount =>
                                             iSelectPath.kRef()
@@ -50,10 +50,9 @@ where ROut : class, Rog
                                                 {
                                                     A =
                                                         iPool.kRef()
-                                                            .kIOSelectMultiple(iSelectCount.kRef())
-                                                }))
-                                })
-                    })
-
+                                                            .kIOSelectMultiple(iSelectCount.kRef()),
+                                                })),
+                                }),
+                    }),
         };
 }

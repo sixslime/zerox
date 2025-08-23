@@ -1,4 +1,3 @@
-
 namespace SixShaded.FourZeroOne.Axois.Infinite.Rovetus.Constructs;
 
 using Identifier;

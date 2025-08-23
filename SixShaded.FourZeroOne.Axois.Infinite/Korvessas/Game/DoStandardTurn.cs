@@ -11,6 +11,7 @@ using PlayerIdent = IRoveggi<u.Identifier.uPlayerIdentifier>;
 using UnitIdent = IRoveggi<u.Identifier.uUnitIdentifier>;
 using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
+
 public static class DoStandardTurn
 {
     public static Korvessa<PlayerIdent, Rog> Construct(IKorssa<PlayerIdent> player) =>
@@ -25,13 +26,14 @@ public static class DoStandardTurn
                         iPlayer.kRef()
                             .kDoUnitEffectCycle(),
                         iPlayer.kRef()
-                            .kSafeUpdate(iPlayerData =>
+                            .kSafeUpdate(
+                            iPlayerData =>
                                 iPlayerData.kRef()
                                     .kWithRefreshedEnergy()
                                     .kWithRestockedHand()),
                         iPlayer.kRef()
                             .kAllowPlay()
-                            .kMap(iAction => iAction.kRef().kGetRovi(uResolved.INSTRUCTIONS))
-                    })
+                            .kMap(iAction => iAction.kRef().kGetRovi(uResolved.INSTRUCTIONS)),
+                    }),
         };
 }

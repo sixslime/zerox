@@ -17,5 +17,4 @@ public class Axoi : IsAxoi
         where C : IRovetu
         where R : class, Rog =>
         new(Du, identifier);
-
 }

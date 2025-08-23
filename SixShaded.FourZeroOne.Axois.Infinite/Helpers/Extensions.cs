@@ -17,11 +17,12 @@ internal static class Extensions
             .WithComponent(uHexCoordinates.R, pos.R)
             .WithComponent(uHexCoordinates.U, pos.U)
             .WithComponent(uHexCoordinates.D, pos.D);
+
     public static Vector2 GetCartesian(this HexPos hexPos)
     {
         var rv = new Vector2(hexPos.R, 0);
-        var uv = new Vector2(MathF.Cos((2 * MathF.PI) / 3) * hexPos.U, MathF.Sin((2 * MathF.PI) / 3) * hexPos.U);
-        var dv = new Vector2(MathF.Cos((4 * MathF.PI) / 3) * hexPos.U, MathF.Sin((4 * MathF.PI) / 3) * hexPos.U);
+        var uv = new Vector2(MathF.Cos(2 * MathF.PI / 3) * hexPos.U, MathF.Sin(2 * MathF.PI / 3) * hexPos.U);
+        var dv = new Vector2(MathF.Cos(4 * MathF.PI / 3) * hexPos.U, MathF.Sin(4 * MathF.PI / 3) * hexPos.U);
         return rv + uv + dv;
     }
 
@@ -29,8 +30,8 @@ internal static class Extensions
         (times % 3) switch
         {
             0 => pos,
-            1 => new HexPos(pos.D, pos.R, pos.U),
-            2 => new HexPos(pos.U, pos.D, pos.R),
+            1 => new(pos.D, pos.R, pos.U),
+            2 => new(pos.U, pos.D, pos.R),
             _ => throw new UnreachableException(),
         };
 

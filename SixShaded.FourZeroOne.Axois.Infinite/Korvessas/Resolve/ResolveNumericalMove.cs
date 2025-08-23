@@ -35,12 +35,12 @@ public static class ResolveNumericalMove
                                         {
                                             A =
                                                 iMove.kRef()
-                                                    .kMoveSubjectChecks(iUnit.kRef())
+                                                    .kMoveSubjectChecks(iUnit.kRef()),
                                         })
                                         .kExecuteWith(
                                         new()
                                         {
-                                            A = iUnit.kRef()
+                                            A = iUnit.kRef(),
                                         }))
                                 .kAsVariable(out var iValidSubjects),
                             iMove.kRef()
@@ -88,7 +88,7 @@ public static class ResolveNumericalMove
                                                             .kAsVariable(out var iAbsoluteMoveRange),
                                                         Core.kMetaFunction<UnitIdent, Multi<ResolvedObj>>(
                                                             [],
-                                                            (iSelectedSubject) =>
+                                                            iSelectedSubject =>
                                                                 Core.kSubEnvironment<Multi<ResolvedObj>>(
                                                                 new()
                                                                 {
@@ -146,7 +146,7 @@ public static class ResolveNumericalMove
                                                                                                                                     [
                                                                                                                                         iStep.kRef()
                                                                                                                                             .kAsAbsolute()
-                                                                                                                                            .kAsVariable(out var iStepAbsolute)
+                                                                                                                                            .kAsVariable(out var iStepAbsolute),
                                                                                                                                     ],
                                                                                                                                     Value =
                                                                                                                                         iSeen.kRef()
@@ -160,19 +160,19 @@ public static class ResolveNumericalMove
                                                                                                                                                 {
                                                                                                                                                     A =
                                                                                                                                                         iStepAbsolute.kRef()
-                                                                                                                                                            .kMovePathChecks(iSelectedSubject.kRef())
+                                                                                                                                                            .kMovePathChecks(iSelectedSubject.kRef()),
                                                                                                                                                 })
                                                                                                                                                 .kExecuteWith(
                                                                                                                                                 new()
                                                                                                                                                 {
                                                                                                                                                     A = iRoot.kRef(),
-                                                                                                                                                    B = iStepAbsolute.kRef().kAsAbsolute()
-                                                                                                                                                }))
+                                                                                                                                                    B = iStepAbsolute.kRef().kAsAbsolute(),
+                                                                                                                                                })),
                                                                                                                                 })))
                                                                                                                     .kFlatten()
                                                                                                                     .kMap(iHex => iHex.kRef().kAsAbsolute())
                                                                                                                     .kDistinct()
-                                                                                                                    .kAsVariable(out var iSteps)
+                                                                                                                    .kAsVariable(out var iSteps),
                                                                                                             ],
                                                                                                             Value =
                                                                                                                 Core.kMulti<Rog>(
@@ -186,8 +186,8 @@ public static class ResolveNumericalMove
                                                                                                                             new()
                                                                                                                             {
                                                                                                                                 Then = Core.kMulti<HexIdent>([]),
-                                                                                                                                Else = iSteps.kRef()
-                                                                                                                            })
+                                                                                                                                Else = iSteps.kRef(),
+                                                                                                                            }),
                                                                                                                     })
                                                                                                                     .kYield()
                                                                                                                     .kConcat(
@@ -197,18 +197,18 @@ public static class ResolveNumericalMove
                                                                                                                         {
                                                                                                                             A = iSteps.kRef(),
                                                                                                                             B = iSeen.kRef().kUnion(iSteps.kRef()),
-                                                                                                                            C = iDistance.kRef().kAdd(1.kFixed())
-                                                                                                                        }))
-                                                                                                        })
+                                                                                                                            C = iDistance.kRef().kAdd(1.kFixed()),
+                                                                                                                        })),
+                                                                                                        }),
                                                                                                 }))
                                                                                         .kExecuteWith(
                                                                                         new()
                                                                                         {
                                                                                             A = iSubjectPos.kRef().kYield(),
                                                                                             B = iSubjectPos.kRef().kYield(),
-                                                                                            C = 1.kFixed()
+                                                                                            C = 1.kFixed(),
                                                                                         })
-                                                                                        .kAsVariable(out var iIndexedAvailableMoves)
+                                                                                        .kAsVariable(out var iIndexedAvailableMoves),
                                                                                 ],
                                                                                 Value =
                                                                                     Core.kSubEnvironment<ResolvedObj>(
@@ -221,7 +221,7 @@ public static class ResolveNumericalMove
                                                                                                 .kMap(iObj => iObj.kRef().kIsType<HexIdent>())
                                                                                                 .kClean()
                                                                                                 .kIOSelectOne()
-                                                                                                .kAsVariable(out var iSelectedHex)
+                                                                                                .kAsVariable(out var iSelectedHex),
                                                                                         ],
                                                                                         Value =
                                                                                             iSelectedHex.kRef()
@@ -263,10 +263,10 @@ public static class ResolveNumericalMove
                                                                                                             .kSafeUpdate(
                                                                                                             iSubjectData =>
                                                                                                                 iSubjectData.kRef()
-                                                                                                                    .kWithRovi(uUnitData.POSITION, iSelectedHex.kRef()))))
-                                                                                    })
+                                                                                                                    .kWithRovi(uUnitData.POSITION, iSelectedHex.kRef())))),
+                                                                                    }),
                                                                             })
-                                                                            .kAsVariable(out var iResolved)
+                                                                            .kAsVariable(out var iResolved),
                                                                     ],
                                                                     Value =
                                                                         Core.kSubEnvironment<Multi<ResolvedObj>>(
@@ -291,9 +291,9 @@ public static class ResolveNumericalMove
                                                                                                         iThisMoveRange.kRef()
                                                                                                             .kEnd())
                                                                                                         .kAtLeast(1.kFixed()))),
-                                                                                        Else = iMovedDistance.kRef()
+                                                                                        Else = iMovedDistance.kRef(),
                                                                                     })
-                                                                                    .kAsVariable(out var iRemainingDistance)
+                                                                                    .kAsVariable(out var iRemainingDistance),
                                                                             ],
                                                                             Value =
                                                                                 iResolved.kRef()
@@ -308,9 +308,9 @@ public static class ResolveNumericalMove
                                                                                                 iAvailableSubjects.kRef()
                                                                                                     .kExcept(iSelectedSubject.kRef().kYield()),
                                                                                             B = iRemainingDistance.kRef(),
-                                                                                            C = iRemainingCount.kRef().kSubtract(1.kFixed())
-                                                                                        }))
-                                                                        })
+                                                                                            C = iRemainingCount.kRef().kSubtract(1.kFixed()),
+                                                                                        })),
+                                                                        }),
                                                                 }))
                                                             .kAsVariable(out var iUnitMoveFunction),
                                                     ],
@@ -327,7 +327,7 @@ public static class ResolveNumericalMove
                                                                         .kExecuteWith(
                                                                         new()
                                                                         {
-                                                                            A = iAvailableSubjects.kRef().kIOSelectOne()
+                                                                            A = iAvailableSubjects.kRef().kIOSelectOne(),
                                                                         }),
                                                                 Else =
                                                                     iAvailableSubjects.kRef()
@@ -336,19 +336,19 @@ public static class ResolveNumericalMove
                                                                         new()
                                                                         {
                                                                             Select = iUnitMoveFunction.kRef(),
-                                                                            Cancel = Core.kMulti<ResolvedObj>([]).kMetaBoxed([])
-                                                                        })
-                                                            })
+                                                                            Cancel = Core.kMulti<ResolvedObj>([]).kMetaBoxed([]),
+                                                                        }),
+                                                            }),
                                                 }),
-                                            Else = Core.kMulti<ResolvedObj>([])
+                                            Else = Core.kMulti<ResolvedObj>([]),
                                         }))
                                 .kExecuteWith(
                                 new()
                                 {
                                     A = iValidSubjects.kRef(),
                                     B = 0.kFixed(),
-                                    C = iMaxSubjects.kRef()
-                                })
-                    })
+                                    C = iMaxSubjects.kRef(),
+                                }),
+                    }),
         };
 }

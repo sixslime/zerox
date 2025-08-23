@@ -12,6 +12,7 @@ using UnitIdent = IRoveggi<u.Identifier.uUnitIdentifier>;
 using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
 using u.Constructs.EffectTypes;
+
 public static class DoUnitEffectCycle
 {
     public static Korvessa<PlayerIdent, Rog> Construct(IKorssa<PlayerIdent> player) =>
@@ -66,7 +67,7 @@ public static class DoUnitEffectCycle
                                                             iEffect =>
                                                                 iEffects.kRef()
                                                                     .kContains(iEffect.kRef())
-                                                                    .kNot()))
+                                                                    .kNot())),
                                         })),
                                 iUnit.kRef()
                                     .kRead()
@@ -77,9 +78,8 @@ public static class DoUnitEffectCycle
                                     new()
                                     {
                                         Then = iUnit.kRef().kDoEliminate(),
-                                        Else = Core.kNollaFor<Rog>()
-                                    })
-                            }))
-
+                                        Else = Core.kNollaFor<Rog>(),
+                                    }),
+                            })),
         };
 }

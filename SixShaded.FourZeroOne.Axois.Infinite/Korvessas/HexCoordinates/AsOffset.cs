@@ -33,7 +33,6 @@ public static class AsOffset
                                 Core.Hint<HexOffsetType>(),
                                 HexType.D,
                                 iCoords.kRef()
-                                    .kGetRovi(HexType.D)))
-
+                                    .kGetRovi(HexType.D))),
         };
 }
