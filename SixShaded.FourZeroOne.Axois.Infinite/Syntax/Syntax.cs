@@ -13,6 +13,13 @@ using u.Config;
 using u.Constructs.GameResults;
 public static partial class Infinite
 {
+    public static IKorssa<IRoveggi<uGameResult>> Main() =>
+        Core.kSubEnvironment<IRoveggi<uGameResult>>(
+        new()
+        {
+            Environment = [kDoSetupGame(Core.kCompose<uConfigAnchor>().kRead())],
+            Value = kGameLoop()
+        });
     public static IKorssa<IRoveggi<uGameAnchor>> Game => Core.kCompose<uGameAnchor>();
     public static IKorssa<IRoveggi<uConfigAnchor>> Configuration => Core.kCompose<uConfigAnchor>();
     public static IKorssa<IRoveggi<uPlayerIdentifier>> CurrentPlayer => Game.kRead().kGetRovi(u.uGame.CURRENT_PLAYER);
@@ -20,6 +27,7 @@ public static partial class Infinite
     public static IKorssa<IMulti<IRoveggi<uPlayerIdentifier>>> AllPlayers => Core.kAllRovedanggiKeys<uPlayerIdentifier, IRoveggi<uPlayerData>>();
     public static Structure.Templates Template { get; } = new();
 
+    public static Korvessa<IRoveggi<uGameResult>> kGameLoop() => GameLoop.Construct();
     public static Korvessa<Rog> kDoCycleTurnOrder() => DoTurnCycle.Construct();
     public static Korvessa<IRoveggi<uGameResult>> kCheckGameResult() => GameResultCheck.Construct();
     public static Korvessa<IRoveggi<uGameConfiguration>, Rog> kDoSetupGame(IKorssa<IRoveggi<uGameConfiguration>> config) => SetupGame.Construct(config);
