@@ -96,6 +96,7 @@ public static class GameResultCheck
                                         Core.kNollaFor<IRoveggi<uGameResult>>()
                                 }),
                     })
+                        .kWithRovi(uGameResult.FINAL_STATE, Core.kGetProgramState())
 
         };
 }

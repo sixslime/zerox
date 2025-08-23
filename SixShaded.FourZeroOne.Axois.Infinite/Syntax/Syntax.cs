@@ -10,6 +10,7 @@ using u.Constructs;
 using u.Constructs.Ability;
 using u.Constructs.Resolved;
 using u.Config;
+using u.Constructs.GameResults;
 public static partial class Infinite
 {
     public static IKorssa<IRoveggi<uGameAnchor>> Game => Core.kCompose<uGameAnchor>();
@@ -19,8 +20,10 @@ public static partial class Infinite
     public static IKorssa<IMulti<IRoveggi<uPlayerIdentifier>>> AllPlayers => Core.kAllRovedanggiKeys<uPlayerIdentifier, IRoveggi<uPlayerData>>();
     public static Structure.Templates Template { get; } = new();
 
-    public static Korvessa<Rog> kDoCycleTurnOrder() => Korvessas.Game.DoTurnCycle.Construct();
+    public static Korvessa<Rog> kDoCycleTurnOrder() => DoTurnCycle.Construct();
+    public static Korvessa<IRoveggi<uGameResult>> kCheckGameResult() => GameResultCheck.Construct();
     public static Korvessa<IRoveggi<uGameConfiguration>, Rog> kDoSetupGame(IKorssa<IRoveggi<uGameConfiguration>> config) => SetupGame.Construct(config);
+    public static Korvessa<IRoveggi<uPlayerIdentifier>, Rog> kDoStandardTurn(IKorssa<IRoveggi<uPlayerIdentifier>> player) => DoStandardTurn.Construct(player);
 }
 
 public static partial class KorssaSyntax
