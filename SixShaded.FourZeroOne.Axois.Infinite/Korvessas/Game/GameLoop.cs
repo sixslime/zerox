@@ -25,15 +25,17 @@ public static class GameLoop
                     {
                         Environment =
                         [
-                            Infinite.kDoCycleTurnOrder(),
                             Infinite.Game
                                 .kRead()
-                                .kGetRovi(uGame.TURN_ORDER)
-                                .kGetIndex(Infinite.Game.kRead().kGetRovi(uGame.TURN_INDEX))
-                                .kAsVariable(out var iCurrentPlayer),
-                            Infinite.kDoStandardTurn(iCurrentPlayer.kRef()),
-                            Infinite.kCheckGameResult()
+                                .kGetRovi(uGame.TURN_INDEX)
+                                .kEquals(1.kFixed())
+                                .kIfTrue<IRoveggi<uGameResult>>(new()
+                                {
+                                    Then = Infinite.kCheckGameResult(),
+                                    Else = Core.kNollaFor<IRoveggi<uGameResult>>()
+                                })
                                 .kAsVariable(out var iResult)
+                            
                         ],
                         Value =
                             iResult.kRef()
@@ -42,7 +44,21 @@ public static class GameLoop
                                 new()
                                 {
                                     Then = iResult.kRef(),
-                                    Else = iNextLoop.kRef().kExecute()
+                                    Else = 
+                                        Core.kSubEnvironment<IRoveggi<uGameResult>>(new()
+                                        {
+                                            Environment =
+                                                [
+                                                Infinite.Game
+                                                    .kRead()
+                                                    .kGetRovi(uGame.TURN_ORDER)
+                                                    .kGetIndex(Infinite.Game.kRead().kGetRovi(uGame.TURN_INDEX))
+                                                    .kAsVariable(out var iCurrentPlayer),
+                                                Infinite.kDoStandardTurn(iCurrentPlayer.kRef()),
+                                                Infinite.kDoCycleTurnOrder(),
+                                                ],
+                                            Value = iNextLoop.kRef().kExecute()
+                                        })
                                 })
                     })
         };
