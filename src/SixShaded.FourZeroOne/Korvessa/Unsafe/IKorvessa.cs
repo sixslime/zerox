@@ -1,4 +1,4 @@
-namespace SixShaded.FourZeroOne.Korvessa;
+namespace SixShaded.FourZeroOne.Korvessa.Unsafe;
 
 using Defined;
 

@@ -1,5 +1,7 @@
 namespace SixShaded.FourZeroOne.Korvessa;
 
+using Unsafe;
+
 public interface IKorvessaSignature<RVal> : IKorvessa<RVal>, IHasNoArgs<RVal>
     where RVal : class, Rog;
 
