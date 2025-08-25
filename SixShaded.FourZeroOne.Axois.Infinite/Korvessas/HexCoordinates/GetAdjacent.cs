@@ -6,30 +6,25 @@ using HexOffset = IRoveggi<u.Constructs.uHexOffset>;
 using HexOffsetType = u.Constructs.uHexOffset;
 using HexType = u.Constructs.uHexCoordinates;
 
-public static class GetAdjacent
+public record GetAdjacent(IKorssa<HexCoords> coords) : Korvessa<HexCoords, Multi<HexOffset>>(coords)
 {
-    public static Korvessa<HexCoords, Multi<HexOffset>> Construct(IKorssa<HexCoords> coords) =>
-        new(coords)
-        {
-            Du = Axoi.Korvedu("HexCoordinates.GetAdjacent"),
-            Definition =
-                (_, iCoords) =>
-                    (1, -1, 0).kAsHex()
-                    .kGenerateSequence(
-                    (iPrevHex, iIndex) =>
-                        iIndex.kRef()
-                            .kIsGreaterThan(5.kFixed())
-                            .kIfTrue<HexOffset>(
-                            new()
-                            {
-                                Then = Core.kNollaFor<HexOffset>(),
-                                Else =
-                                    iPrevHex.kRef()
-                                        .kRotateAround((0, 0, 0).kAsHex(), 1.kFixed()),
-                            }))
-                    .kMap(
-                    iHex =>
-                        iHex.kRef()
-                            .kAdd(iCoords.kRef())),
-        };
+    protected override RecursiveMetaDefinition<HexCoords, Multi<HexOffset>> InternalDefinition() =>
+        (_, iCoords) =>
+            (1, -1, 0).kAsHex()
+            .kGenerateSequence(
+            (iPrevHex, iIndex) =>
+                iIndex.kRef()
+                    .kIsGreaterThan(5.kFixed())
+                    .kIfTrue<HexOffset>(
+                    new()
+                    {
+                        Then = Core.kNollaFor<HexOffset>(),
+                        Else =
+                            iPrevHex.kRef()
+                                .kRotateAround((0, 0, 0).kAsHex(), 1.kFixed()),
+                    }))
+            .kMap(
+            iHex =>
+                iHex.kRef()
+                    .kAdd(iCoords.kRef()));
 }

@@ -13,54 +13,49 @@ using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
 using u.Constructs.GameResults;
 
-public static class GameLoop
+public record GameLoop() : Korvessa<IRoveggi<uGameResult>>()
 {
-    public static Korvessa<IRoveggi<uGameResult>> Construct() =>
-        new()
-        {
-            Du = Axoi.Korvedu("GameLoop"),
-            Definition =
-                iNextLoop =>
-                    Core.kSubEnvironment<IRoveggi<uGameResult>>(
-                    new()
-                    {
-                        Environment =
-                        [
-                            Infinite.Game
-                                .kRead()
-                                .kGetRovi(uGame.TURN_INDEX)
-                                .kEquals(1.kFixed())
-                                .kIfTrue<IRoveggi<uGameResult>>(
+    protected override RecursiveMetaDefinition<IRoveggi<uGameResult>> InternalDefinition() =>
+        iNextLoop =>
+            Core.kSubEnvironment<IRoveggi<uGameResult>>(
+            new()
+            {
+                Environment =
+                [
+                    Infinite.Game
+                        .kRead()
+                        .kGetRovi(uGame.TURN_INDEX)
+                        .kEquals(1.kFixed())
+                        .kIfTrue<IRoveggi<uGameResult>>(
+                        new()
+                        {
+                            Then = Infinite.kCheckGameResult(),
+                            Else = Core.kNollaFor<IRoveggi<uGameResult>>(),
+                        })
+                        .kAsVariable(out var iResult),
+                ],
+                Value =
+                    iResult.kRef()
+                        .kExists()
+                        .kIfTrue<IRoveggi<uGameResult>>(
+                        new()
+                        {
+                            Then = iResult.kRef(),
+                            Else =
+                                Core.kSubEnvironment<IRoveggi<uGameResult>>(
                                 new()
                                 {
-                                    Then = Infinite.kCheckGameResult(),
-                                    Else = Core.kNollaFor<IRoveggi<uGameResult>>(),
-                                })
-                                .kAsVariable(out var iResult),
-                        ],
-                        Value =
-                            iResult.kRef()
-                                .kExists()
-                                .kIfTrue<IRoveggi<uGameResult>>(
-                                new()
-                                {
-                                    Then = iResult.kRef(),
-                                    Else =
-                                        Core.kSubEnvironment<IRoveggi<uGameResult>>(
-                                        new()
-                                        {
-                                            Environment =
-                                            [
-                                                Infinite.kDoStandardTurn(
-                                                Infinite.Game
-                                                    .kRead()
-                                                    .kGetRovi(uGame.TURN_ORDER)
-                                                    .kGetIndex(Infinite.Game.kRead().kGetRovi(uGame.TURN_INDEX))),
-                                                Infinite.kDoCycleTurnOrder(),
-                                            ],
-                                            Value = iNextLoop.kRef().kExecute(),
-                                        }),
+                                    Environment =
+                                    [
+                                        Infinite.kDoStandardTurn(
+                                        Infinite.Game
+                                            .kRead()
+                                            .kGetRovi(uGame.TURN_ORDER)
+                                            .kGetIndex(Infinite.Game.kRead().kGetRovi(uGame.TURN_INDEX))),
+                                        Infinite.kDoCycleTurnOrder(),
+                                    ],
+                                    Value = iNextLoop.kRef().kExecute(),
                                 }),
-                    }),
-        };
+                        }),
+            });
 }

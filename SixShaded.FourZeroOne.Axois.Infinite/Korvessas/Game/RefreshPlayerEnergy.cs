@@ -12,14 +12,9 @@ using UnitIdent = IRoveggi<u.Identifier.uUnitIdentifier>;
 using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
 
-public static class RefreshPlayerEnergy
+public record RefreshPlayerEnergy(IKorssa<IRoveggi<uPlayerData>> playerData) : Korvessa<IRoveggi<uPlayerData>, IRoveggi<uPlayerData>>(playerData)
 {
-    public static Korvessa<IRoveggi<uPlayerData>, IRoveggi<uPlayerData>> Construct(IKorssa<IRoveggi<uPlayerData>> playerData) =>
-        new(playerData)
-        {
-            Du = Axoi.Korvedu("RefreshPlayerEnergy"),
-            Definition =
-                (_, iPlayerData) =>
-                    iPlayerData.kRef().kWithRovi(uPlayerData.ENERGY, 2.kFixed()),
-        };
+    protected override RecursiveMetaDefinition<IRoveggi<uPlayerData>, IRoveggi<uPlayerData>> InternalDefinition() =>
+        (_, iPlayerData) =>
+            iPlayerData.kRef().kWithRovi(uPlayerData.ENERGY, 2.kFixed());
 }

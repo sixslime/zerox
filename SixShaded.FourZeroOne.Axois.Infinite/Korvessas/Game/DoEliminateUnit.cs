@@ -12,15 +12,10 @@ using UnitIdent = IRoveggi<u.Identifier.uUnitIdentifier>;
 using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
 
-public static class DoEliminateUnit
+public record DoEliminateUnit(IKorssa<UnitIdent> unit) : Korvessa<UnitIdent, Rog>(unit)
 {
-    public static Korvessa<UnitIdent, Rog> Construct(IKorssa<UnitIdent> unit) =>
-        new(unit)
-        {
-            Du = Axoi.Korvedu("DoEliminateUnit"),
-            Definition =
-                (_, iUnit) =>
-                    iUnit.kRef()
-                        .kRedact(),
-        };
+    protected override RecursiveMetaDefinition<UnitIdent, Rog> InternalDefinition() =>
+        (_, iUnit) =>
+            iUnit.kRef()
+                .kRedact();
 }

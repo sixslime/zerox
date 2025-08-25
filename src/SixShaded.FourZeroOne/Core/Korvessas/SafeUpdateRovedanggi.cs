@@ -5,33 +5,28 @@ using Korvessa.Defined;
 using Syntax;
 using Roveggi;
 
-public static class SafeUpdateRovedanggi<R>
+public record SafeUpdateRovedanggi<R>(IKorssa<IRoveggi<Rovedantu<R>>> rovedanggi, IKorssa<MetaFunction<R, R>> updateFunction) : Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>>(rovedanggi, updateFunction)
     where R : class, Rog
 {
-    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> Construct(IKorssa<IRoveggi<Rovedantu<R>>> rovedanggi, IKorssa<MetaFunction<R, R>> updateFunction) =>
-        new(rovedanggi, updateFunction)
-        {
-            Du = Axoi.Korvedu("SafeUpdateRovedanggi"),
-            Definition =
-                (_, iDan, iUpdateFunction) =>
-                    Core.kSubEnvironment<Roggis.Instructions.Assign<R>>(
-                    new()
-                    {
-                        Environment =
-                        [
-                            iUpdateFunction.kRef()
-                                .kExecuteWith(
-                                new()
-                                {
-                                    A = iDan.kRef().kRead(),
-                                })
-                                .kAsVariable(out var iValue)
-                        ],
-                        Value =
-                            iValue.kRef()
-                                .kKeepNolla(
-                                () => iDan.kRef()
-                                    .kWrite(iValue.kRef()))
-                    })
-        };
+    protected override RecursiveMetaDefinition<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> InternalDefinition() =>
+        (_, iDan, iUpdateFunction) =>
+            Core.kSubEnvironment<Roggis.Instructions.Assign<R>>(
+            new()
+            {
+                Environment =
+                [
+                    iUpdateFunction.kRef()
+                        .kExecuteWith(
+                        new()
+                        {
+                            A = iDan.kRef().kRead(),
+                        })
+                        .kAsVariable(out var iValue)
+                ],
+                Value =
+                    iValue.kRef()
+                        .kKeepNolla(
+                        () => iDan.kRef()
+                            .kWrite(iValue.kRef()))
+            });
 }

@@ -3,6 +3,7 @@ namespace SixShaded.FourZeroOne.Korvessa.Defined;
 using Core.Roggis;
 using Core.Korssas;
 using Core.Syntax;
+using Roggi.Unsafe;
 
 public abstract record Korvessa<RVal> : KorvessaBehavior<RVal>
     where RVal : class, Rog
@@ -23,9 +24,11 @@ public abstract record Korvessa<RVal> : KorvessaBehavior<RVal>
             return _defCache;
         }
     }
+    public override IMetaFunction<RVal> DefinitionUnsafe => Definition;
+
 }
 
-public abstract record Korvessa<RArg1, ROut> : KorvessaBehavior<ROut>
+public abstract record Korvessa<RArg1, ROut>(IKorssa<RArg1> in1) : KorvessaBehavior<ROut>(in1)
     where RArg1 : class, Rog
     where ROut : class, Rog
 {
@@ -47,9 +50,11 @@ public abstract record Korvessa<RArg1, ROut> : KorvessaBehavior<ROut>
             return _defCache;
         }
     }
+    public override IMetaFunction<ROut> DefinitionUnsafe => Definition;
+
 }
 
-public abstract record Korvessa<RArg1, RArg2, ROut> : KorvessaBehavior<ROut>
+public abstract record Korvessa<RArg1, RArg2, ROut>(IKorssa<RArg1> in1, IKorssa<RArg2> in2) : KorvessaBehavior<ROut>(in1, in2)
     where RArg1 : class, Rog
     where RArg2 : class, Rog
     where ROut : class, Rog
@@ -72,10 +77,12 @@ public abstract record Korvessa<RArg1, RArg2, ROut> : KorvessaBehavior<ROut>
             return _defCache;
         }
     }
+    public override IMetaFunction<ROut> DefinitionUnsafe => Definition;
+
 }
 
 
-public abstract record Korvessa<RArg1, RArg2, RArg3, ROut> : KorvessaBehavior<ROut>
+public abstract record Korvessa<RArg1, RArg2, RArg3, ROut>(IKorssa<RArg1> in1, IKorssa<RArg2> in2, IKorssa<RArg3> in3) : KorvessaBehavior<ROut>(in1, in2, in3)
     where RArg1 : class, Rog
     where RArg2 : class, Rog
     where RArg3 : class, Rog
@@ -99,4 +106,6 @@ public abstract record Korvessa<RArg1, RArg2, RArg3, ROut> : KorvessaBehavior<RO
             return _defCache;
         }
     }
+    public override IMetaFunction<ROut> DefinitionUnsafe => Definition;
+
 }

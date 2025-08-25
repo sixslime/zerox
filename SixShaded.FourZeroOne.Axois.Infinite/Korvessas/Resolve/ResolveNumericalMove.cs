@@ -10,14 +10,10 @@ using UnitIdent = IRoveggi<u.Identifier.uUnitIdentifier>;
 using ResolvedType = u.Constructs.Resolved.uResolvedNumericalMove;
 using Core = Core.Syntax.Core;
 
-public static class ResolveNumericalMove
+public record ResolveNumericalMove(IKorssa<IRoveggi<uNumericalMove>> move) : Korvessa<IRoveggi<uNumericalMove>, Multi<ResolvedObj>>(move)
 {
-    public static Korvessa<IRoveggi<uNumericalMove>, Multi<ResolvedObj>> Construct(IKorssa<IRoveggi<uNumericalMove>> move) =>
-        new(move)
-        {
-            Du = Axoi.Korvedu("ResolveNumericalMove"),
-            Definition =
-                (_, iMove) =>
+    protected override RecursiveMetaDefinition<IRoveggi<uNumericalMove>, Multi<ResolvedObj>> InternalDefinition() =>
+        (_, iMove) =>
                     Core.kSubEnvironment<Multi<ResolvedObj>>(
                     new()
                     {
@@ -349,6 +345,5 @@ public static class ResolveNumericalMove
                                     B = 0.kFixed(),
                                     C = iMaxSubjects.kRef(),
                                 }),
-                    }),
-        };
+                    })
 }

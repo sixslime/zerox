@@ -3,16 +3,11 @@
 using Korvessa.Defined;
 using Syntax;
 using Roggis;
-public static class Clamp
+public record Clamp(IKorssa<Number> val, IKorssa<NumRange> range) : Korvessa<Number, NumRange, Number>(val, range)
 {
-    public static Korvessa<Number, NumRange, Number> Construct(IKorssa<Number> val, IKorssa<NumRange> range) =>
-        new(val, range)
-        {
-            Du = Axoi.Korvedu("Clamp"),
-            Definition =
-                (_, iVal, iRange) =>
-                    iVal.kRef()
-                        .kAtMost(iRange.kRef().kEnd())
-                        .kAtLeast(iRange.kRef().kStart())
-        };
+    protected override RecursiveMetaDefinition<Number, NumRange, Number> InternalDefinition() =>
+        (_, iVal, iRange) =>
+            iVal.kRef()
+                .kAtMost(iRange.kRef().kEnd())
+                .kAtLeast(iRange.kRef().kStart());
 }

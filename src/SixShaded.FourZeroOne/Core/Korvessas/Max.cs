@@ -3,22 +3,15 @@
 using Korvessa.Defined;
 using Syntax;
 using Roggis;
-public static class Max
+public record Max(IKorssa<Number> a, IKorssa<Number> b) : Korvessa<Number, Number, Number>(a, b)
 {
-    public static Korvessa<Number, Number, Number> Construct(IKorssa<Number> a, IKorssa<Number> b) =>
-        new(a, b)
-        {
-            Du = Axoi.Korvedu("Max"),
-            Definition =
-                (_, iA, iB) =>
-                    iA.kRef()
-                        .kIsGreaterThan(iB.kRef())
-                        .kIfTrue<Number>(
-                        new()
-                        {
-                            Then = iA.kRef(),
-                            Else = iB.kRef()
-                        })
-
-        };
+    protected override RecursiveMetaDefinition<Number, Number, Number> InternalDefinition() =>
+        (_, iA, iB) =>
+            iA.kRef()
+                .kIsGreaterThan(iB.kRef())
+                .kIfTrue<Number>(new()
+                {
+                    Then = iA.kRef(),
+                    Else = iB.kRef()
+                });
 }

@@ -4,21 +4,16 @@ using Roggis;
 using Korvessa.Defined;
 using Syntax;
 
-public static class Concat<R>
+public record Concat<R>(IKorssa<IMulti<R>> a, IKorssa<IMulti<R>> b) : Korvessa<IMulti<R>, IMulti<R>, Multi<R>>(a, b)
     where R : class, Rog
 {
-    public static Korvessa<IMulti<R>, IMulti<R>, Multi<R>> Construct(IKorssa<IMulti<R>> a, IKorssa<IMulti<R>> b) =>
-        new(a, b)
-        {
-            Du = Axoi.Korvedu("Concat"),
-            Definition =
-                (_, iA, iB) =>
-                    Core.kMulti<IMulti<R>>(
-                        new()
-                        {
-                            iA.kRef(),
-                            iB.kRef()
-                        })
-                        .kFlatten(),
-        };
+    protected override RecursiveMetaDefinition<IMulti<R>, IMulti<R>, Multi<R>> InternalDefinition() =>
+        (_, iA, iB) =>
+            Core.kMulti<IMulti<R>>(
+                new()
+                {
+                    iA.kRef(),
+                    iB.kRef()
+                })
+                .kFlatten();
 }

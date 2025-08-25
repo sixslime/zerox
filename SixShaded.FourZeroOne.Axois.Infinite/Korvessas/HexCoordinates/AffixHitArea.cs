@@ -6,41 +6,35 @@ using HexOffset = IRoveggi<u.Constructs.uHexOffset>;
 using HexIdentifier = IRoveggi<u.Identifier.uHexIdentifier>;
 using HexType = u.Constructs.uHexCoordinates;
 
-public static class AffixHitArea
+public record AffixHitArea(IKorssa<IMulti<HexOffset>> hitArea, IKorssa<IRoveggi<u.Identifier.uUnitIdentifier>> unit) : Korvessa<IMulti<HexOffset>, IRoveggi<u.Identifier.uUnitIdentifier>, Multi<HexIdentifier>>(hitArea, unit)
 {
-    // clockwise
-    public static Korvessa<IMulti<HexOffset>, IRoveggi<u.Identifier.uUnitIdentifier>, Multi<HexIdentifier>> Construct(IKorssa<IMulti<HexOffset>> hitArea, IKorssa<IRoveggi<u.Identifier.uUnitIdentifier>> unit) =>
-        new(hitArea, unit)
-        {
-            Du = Axoi.Korvedu("HexCoordinates.AffixHitArea"),
-            Definition =
-                (_, iHitArea, iUnit) =>
-                    Core.kSubEnvironment<Multi<HexIdentifier>>(
-                    new()
-                    {
-                        Environment =
-                        [
-                            iUnit.kRef()
-                                .kRead()
-                                .kGetRovi(u.Data.uUnitData.OWNER)
-                                .kRead()
-                                .kGetRovi(u.Data.uPlayerData.PERSPECTIVE_ROTATION)
-                                .kAsVariable(out var iPerspective),
-                            iUnit.kRef()
-                                .kRead()
-                                .kGetRovi(u.Data.uUnitData.POSITION)
-                                .kAsVariable(out var iPosition),
-                        ],
-                        Value =
-                            iHitArea.kRef()
-                                .kMap(
-                                iHex =>
-                                    iHex.kRef()
-                                        .kRotateAround(
-                                        (0, 0, 0).kAsHex(),
-                                        iPerspective.kRef())
-                                        .kAdd(iPosition.kRef())
-                                        .kAsAbsolute()),
-                    }),
-        };
+    protected override RecursiveMetaDefinition<IMulti<HexOffset>, IRoveggi<u.Identifier.uUnitIdentifier>, Multi<HexIdentifier>> InternalDefinition() =>
+        (_, iHitArea, iUnit) =>
+            Core.kSubEnvironment<Multi<HexIdentifier>>(
+            new()
+            {
+                Environment =
+                [
+                    iUnit.kRef()
+                        .kRead()
+                        .kGetRovi(u.Data.uUnitData.OWNER)
+                        .kRead()
+                        .kGetRovi(u.Data.uPlayerData.PERSPECTIVE_ROTATION)
+                        .kAsVariable(out var iPerspective),
+                    iUnit.kRef()
+                        .kRead()
+                        .kGetRovi(u.Data.uUnitData.POSITION)
+                        .kAsVariable(out var iPosition),
+                ],
+                Value =
+                    iHitArea.kRef()
+                        .kMap(
+                        iHex =>
+                            iHex.kRef()
+                                .kRotateAround(
+                                (0, 0, 0).kAsHex(),
+                                iPerspective.kRef())
+                                .kAdd(iPosition.kRef())
+                                .kAsAbsolute()),
+            });
 }

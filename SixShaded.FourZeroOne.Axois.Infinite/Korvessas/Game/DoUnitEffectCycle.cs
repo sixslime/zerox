@@ -13,73 +13,68 @@ using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
 using u.Constructs.EffectTypes;
 
-public static class DoUnitEffectCycle
+public record DoUnitEffectCycle(IKorssa<PlayerIdent> player) : Korvessa<PlayerIdent, Rog>(player)
 {
-    public static Korvessa<PlayerIdent, Rog> Construct(IKorssa<PlayerIdent> player) =>
-        new(player)
-        {
-            Du = Axoi.Korvedu("DoUnitEffectCycle"),
-            Definition =
-                (_, iPlayer) =>
-                    Infinite.AllUnits
-                        .kMap(
-                        iUnit =>
-                            Core.kMulti<Rog>(
-                            new()
-                            {
-                                iUnit.kRef()
-                                    .kSafeUpdate(
-                                    iUnitData =>
-                                        Core.kSubEnvironment<IRoveggi<uUnitData>>(
-                                        new()
-                                        {
-                                            Environment =
-                                            [
-                                                iUnitData.kRef()
-                                                    .kGetRovi(uUnitData.EFFECTS)
+    protected override RecursiveMetaDefinition<PlayerIdent, Rog> InternalDefinition() =>
+        (_, iPlayer) =>
+            Infinite.AllUnits
+                .kMap(
+                iUnit =>
+                    Core.kMulti<Rog>(
+                    new()
+                    {
+                        iUnit.kRef()
+                            .kSafeUpdate(
+                            iUnitData =>
+                                Core.kSubEnvironment<IRoveggi<uUnitData>>(
+                                new()
+                                {
+                                    Environment =
+                                    [
+                                        iUnitData.kRef()
+                                            .kGetRovi(uUnitData.EFFECTS)
+                                            .kWhere(
+                                            iEffect =>
+                                                iEffect.kRef()
+                                                    .kGetRovi(uUnitEffect.INFLICTED_BY)
+                                                    .kEquals(iPlayer.kRef()))
+                                            .kAsVariable(out var iInflictedEffects),
+                                    ],
+                                    Value =
+                                        iUnitData.kRef()
+                                            .kSafeUpdateRovi(
+                                            uUnitData.HP,
+                                            iHp =>
+                                                iHp.kRef()
+                                                    .kSubtract(
+                                                    iInflictedEffects.kRef()
+                                                        .kWhere(
+                                                        iEffect =>
+                                                            iEffect.kRef()
+                                                                .kGetRovi(uUnitEffect.TYPE)
+                                                                .kIsType<uDamageEffect>()
+                                                                .kExists())
+                                                        .kCount()))
+                                            .kSafeUpdateRovi(
+                                            uUnitData.EFFECTS,
+                                            iEffects =>
+                                                iEffects.kRef()
                                                     .kWhere(
                                                     iEffect =>
-                                                        iEffect.kRef()
-                                                            .kGetRovi(uUnitEffect.INFLICTED_BY)
-                                                            .kEquals(iPlayer.kRef()))
-                                                    .kAsVariable(out var iInflictedEffects),
-                                            ],
-                                            Value =
-                                                iUnitData.kRef()
-                                                    .kSafeUpdateRovi(
-                                                    uUnitData.HP,
-                                                    iHp =>
-                                                        iHp.kRef()
-                                                            .kSubtract(
-                                                            iInflictedEffects.kRef()
-                                                                .kWhere(
-                                                                iEffect =>
-                                                                    iEffect.kRef()
-                                                                        .kGetRovi(uUnitEffect.TYPE)
-                                                                        .kIsType<uDamageEffect>()
-                                                                        .kExists())
-                                                                .kCount()))
-                                                    .kSafeUpdateRovi(
-                                                    uUnitData.EFFECTS,
-                                                    iEffects =>
                                                         iEffects.kRef()
-                                                            .kWhere(
-                                                            iEffect =>
-                                                                iEffects.kRef()
-                                                                    .kContains(iEffect.kRef())
-                                                                    .kNot())),
-                                        })),
-                                iUnit.kRef()
-                                    .kRead()
-                                    .kGetRovi(uUnitData.HP)
-                                    .kIsGreaterThan(0.kFixed())
-                                    .kNot()
-                                    .kIfTrue<Rog>(
-                                    new()
-                                    {
-                                        Then = iUnit.kRef().kDoEliminate(),
-                                        Else = Core.kNollaFor<Rog>(),
-                                    }),
-                            })),
-        };
+                                                            .kContains(iEffect.kRef())
+                                                            .kNot())),
+                                })),
+                        iUnit.kRef()
+                            .kRead()
+                            .kGetRovi(uUnitData.HP)
+                            .kIsGreaterThan(0.kFixed())
+                            .kNot()
+                            .kIfTrue<Rog>(
+                            new()
+                            {
+                                Then = iUnit.kRef().kDoEliminate(),
+                                Else = Core.kNollaFor<Rog>(),
+                            }),
+                    }));
 }
