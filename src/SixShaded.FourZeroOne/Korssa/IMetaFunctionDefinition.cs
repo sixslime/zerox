@@ -8,5 +8,5 @@ public interface IMetaFunctionDefinition<out R, out M> : IKorssa<M>
     public Addr[] Captures { get; }
     public Addr[] ArgAddresses { get; }
     public IRoda<M> SelfAddress { get; }
-    public Roggi.Unsafe.IMetaFunction<R> ConstructConcreteMetaFunction(IMemory memory);
+    public M ConstructConcreteMetaFunction(IMemory memory);
 }
