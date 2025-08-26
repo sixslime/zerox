@@ -13,7 +13,6 @@ public class Axoi : IsAxoi
     private Axoi()
     { }
 
-    internal static Korvessa.Defined.Korvedu Korvedu(string identifier) => new(Du, identifier);
 
     internal static Rovu<C, R> Rovu<C, R>(string identifier)
         where C : IRovetu

@@ -11,7 +11,6 @@ public class Axoi : IsAxoi
             Name = "infinite",
         };
 
-    internal static Korvedu Korvedu(string identifier) => new(Du, identifier);
 
     internal static Rovu<C, R> Rovu<C, R>(string identifier)
         where C : IRovetu

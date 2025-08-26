@@ -11,4 +11,6 @@ public abstract record KorvessaBehavior<R>(params Kor[] args) : Korssa.Defined.K
 {
     protected override IResult<ITask<IOption<R>>, EStateImplemented> Resolve(IKorssaContext runtime, RogOpt[] args) => DefinitionUnsafe.ConstructMetaExecute(args).AsErr(Hint<ITask<IOption<R>>>.HINT);
     public abstract IMetaFunction<R> DefinitionUnsafe { get; }
+    public virtual bool Equals(KorvessaBehavior<R>? other) => other is not null && DefinitionUnsafe.Korssa.Equals(other.DefinitionUnsafe.Korssa);
+    public override int GetHashCode() => DefinitionUnsafe.Korssa.GetHashCode();
 }
