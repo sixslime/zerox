@@ -3,7 +3,7 @@
 using Roveggi;
 using Roveggi.Defined;
 
-public class Axoi : IsAxoi
+public class Axoi : FourZeroOne.Axoi
 {
     public static Axodu Du =
         new()

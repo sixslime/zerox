@@ -1,6 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite;
 
-public class Axoi : IsAxoi
+public class Axoi : FourZeroOne.Axoi
 {
     private Axoi()
     { }

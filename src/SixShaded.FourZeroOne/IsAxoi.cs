@@ -1,14 +1,25 @@
 namespace SixShaded.FourZeroOne;
 
 
-/// <summary>
-/// Axoi classes must be functionally static and never be constructed (and have no public constructor). <br></br>
-/// Ok, I think I've outdone myself; this is officially the most retarded system I've ever designed.
-/// </summary>
 public abstract class IsAxoi
 {
+    protected abstract string Name { get; }
+
     protected IsAxoi()
     {
-        throw new InvalidOperationException("Instantiating an Axoi class is not allowed (Axoi classes must be functionally static).");
+        throw new Exception("Axois should not be directly instantiated; only by the FourZeroOne assembly process.");
+    }
+
+    // accessed via reflection in assembler.
+    private IsAxoi(AxoiCreationKey assemblerKey)
+    {
+
+    }
+
+    // accessed via reflection in assembler.
+    internal class AxoiCreationKey
+    {
+        private AxoiCreationKey()
+        { }
     }
 }

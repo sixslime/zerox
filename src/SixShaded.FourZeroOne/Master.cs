@@ -22,7 +22,7 @@ public class Master
     /// </summary>
     /// <typeparam name="X"></typeparam>
     public static void RegisterAxoi<X>()
-        where X : IsAxoi
+        where X : Axoi
     {
         // TODO
         // - make better exception messages.
