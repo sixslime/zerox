@@ -4,12 +4,12 @@ using Identifier;
 
 public interface uSpaceChecks : IConcreteRovetu, uCheckable
 {
-    public static readonly Rovu<uSpaceChecks, Bool> WALL = new(Axoi.Du, "wall");
-    public static readonly Rovu<uSpaceChecks, Bool> PROTECTED_BASE = new(Axoi.Du, "protected_base");
+    public static readonly Rovu<uSpaceChecks, Bool> WALL = new("wall");
+    public static readonly Rovu<uSpaceChecks, Bool> PROTECTED_BASE = new("protected_base");
     /// <summary>
     ///     nolla = true, if contains unit that unit is blocking (false).
     /// </summary>
-    public static readonly Rovu<uSpaceChecks, IRoveggi<uUnitIdentifier>> UNIT = new(Axoi.Du, "unit");
+    public static readonly Rovu<uSpaceChecks, IRoveggi<uUnitIdentifier>> UNIT = new("unit");
     public static readonly ImplementationStatement<uSpaceChecks> __IMPLEMENTS =
         c =>
             c.ImplementGet(

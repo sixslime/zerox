@@ -2,10 +2,10 @@
 
 using Roveggi;
 
-public sealed class Rovu<C, R>(Axodu axodu, string identifier) : Axovendu(axodu, identifier), IRovu<C, R>
+public sealed class Rovu<C, R>(string identifier) : IRovu<C, R>
     where C : IRovetu
     where R : class, Rog
 {
-    protected override string TypeExpression => $"Rovu<{typeof(C).Name}>";
+    public string Identifier { get; } = identifier;
     public override string ToString() => $"{Identifier}";
 }

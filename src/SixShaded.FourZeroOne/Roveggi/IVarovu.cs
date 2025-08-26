@@ -3,7 +3,7 @@
 /// <summary>
 ///     o
 /// </summary>
-public interface IVarovu<in C, RKey, RVal> : IAxovendu
+public interface IVarovu<in C, RKey, RVal>
     where C : IRovetu
     where RKey : class, Rog
     where RVal : class, Rog

@@ -2,5 +2,5 @@
 
 public interface uResolved : IRovetu
 {
-    public static readonly Rovu<uResolved, Rog> INSTRUCTIONS = new(Axoi.Du, "instructions");
+    public static readonly Rovu<uResolved, Rog> INSTRUCTIONS = new("instructions");
 }

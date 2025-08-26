@@ -25,5 +25,5 @@ public sealed record GetKeys<C, RKey, RVal> : Korssa.Defined.RegularKorssa<Multi
                 .Map(x => x.AsSome())).AsSome()
             : new None<Multi<RKey>>())
         .ToCompletedITask();
-    protected override IOption<string> CustomToString() => $"{ArgKorssas[0]}@{Varovu.Identifier}<keys>".AsSome();
+    protected override IOption<string> CustomToString() => $"{ArgKorssas[0]}@{Varovu}<keys>".AsSome();
 }

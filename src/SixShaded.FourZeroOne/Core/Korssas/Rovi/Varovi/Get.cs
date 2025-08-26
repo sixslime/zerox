@@ -18,5 +18,5 @@ public sealed record Get<C, RKey, RVal> : Korssa.Defined.RegularKorssa<RVal>
             ? subject.GetComponent(Varovu.GenerateRovu(key))
             : new None<RVal>())
         .ToCompletedITask();
-    protected override IOption<string> CustomToString() => $"{ArgKorssas[0]}@{Varovu.Identifier}->{ArgKorssas[1]}".AsSome();
+    protected override IOption<string> CustomToString() => $"{ArgKorssas[0]}@{Varovu}->{ArgKorssas[1]}".AsSome();
 }

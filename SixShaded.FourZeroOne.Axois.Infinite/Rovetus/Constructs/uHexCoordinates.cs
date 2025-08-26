@@ -2,7 +2,7 @@
 
 public interface uHexCoordinates : IRovetu
 {
-    public static readonly Rovu<uHexCoordinates, Number> R = new(Axoi.Du, "r");
-    public static readonly Rovu<uHexCoordinates, Number> U = new(Axoi.Du, "u");
-    public static readonly Rovu<uHexCoordinates, Number> D = new(Axoi.Du, "d");
+    public static readonly Rovu<uHexCoordinates, Number> R = new("r");
+    public static readonly Rovu<uHexCoordinates, Number> U = new("u");
+    public static readonly Rovu<uHexCoordinates, Number> D = new("d");
 }

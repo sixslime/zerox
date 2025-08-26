@@ -1,10 +1,6 @@
 ﻿namespace SixShaded.Zerox._scratchpad;
 
-public static class Axoi
+public class Axoi(FourZeroOne.Master.AxoiCreationKey key) : FourZeroOne.IsAxoi(key)
 {
-    public static FourZeroOne.Axodu Du { get; } =
-        new()
-        {
-            Name = "_scratchpad",
-        };
+    public override string Name => "_scratchpad";
 }

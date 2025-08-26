@@ -5,16 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Axoi = FourZeroOne.Axoi;
 
-internal class TestAxoi : Axoi
+internal class TestAxoi(Master.AxoiCreationKey key) : IsAxoi(key)
 {
-    private TestAxoi()
-    { }
-
-    public static Axodu Du =>
-        new()
-        {
-            Name = "coretest",
-        };
+    public override string Name => "test";
 }
