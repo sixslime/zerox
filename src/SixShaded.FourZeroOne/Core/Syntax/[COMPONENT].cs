@@ -9,9 +9,9 @@ using Roveggi;
 
 public static partial class Core
 {
-    public static Korvessa<IRoveggi<C>> kCompose<C>()
+    public static Korvessas.Compose<C> kCompose<C>()
         where C : IConcreteRovetu =>
-        Korvessas.Compose<C>.Construct();
+        new();
 }
 
 public static partial class KorssaSyntax

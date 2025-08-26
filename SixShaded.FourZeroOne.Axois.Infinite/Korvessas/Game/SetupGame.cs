@@ -310,7 +310,6 @@ public record SetupGame(IKorssa<IRoveggi<uGameConfiguration>> config) : Korvessa
                 .kIsGreaterThan(1.kFixed())
                 .ksLazyAnd(
                 Core.kSubEnvironment<Bool>(
-
                 new()
                 {
                     Environment =
@@ -369,3 +368,4 @@ public record SetupGame(IKorssa<IRoveggi<uGameConfiguration>> config) : Korvessa
                         iControl =>
                             iControl.kRef().kAdd(1.kFixed())))),
         });
+}

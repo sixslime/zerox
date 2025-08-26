@@ -21,7 +21,7 @@ public record SafeUpdateRovi<C, R>(IKorssa<IRoveggi<C>> roveggi, IKorssa<MetaFun
                         .kExecuteWith(
                         new()
                         {
-                            A = iHolder.kRef().kGetRovi(rovu),
+                            A = iHolder.kRef().kGetRovi(Rovu),
                         })
                         .kAsVariable(out var iValue)
                 ],
@@ -29,6 +29,6 @@ public record SafeUpdateRovi<C, R>(IKorssa<IRoveggi<C>> roveggi, IKorssa<MetaFun
                     iValue.kRef()
                         .kKeepNolla(
                         () => iHolder.kRef()
-                            .kWithRovi(rovu, iValue.kRef()))
+                            .kWithRovi(Rovu, iValue.kRef()))
             });
 }

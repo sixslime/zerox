@@ -112,7 +112,7 @@ public record ResolveSourcedAbility(IKorssa<IRoveggi<uSourcedAbility>> ability) 
                                                             A = iSourceUnit.kRef(),
                                                             B = iTargetUnit.kRef(),
                                                         }),
-                                                ])))),
+                                                ]))),
                             })),
             });
 }
