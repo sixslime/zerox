@@ -70,89 +70,89 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(a, b);
 
-    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Bool> kAllMatch<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Bool>> predicate)
+    public static Korvessas.AllMatch<R> kAllMatch<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Bool>> predicate)
         where R : class, Rog =>
-        Korvessas.AllMatch<R>.Construct(source, predicate);
+        new(source, predicate);
 
-    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Bool> kAllMatch<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Bool> predicate)
+    public static Korvessas.AllMatch<R> kAllMatch<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Bool> predicate)
         where R : class, Rog =>
-        Korvessas.AllMatch<R>.Construct(source, Core.kMetaFunction([], predicate));
+        new(source, Core.kMetaFunction([], predicate));
 
-    public static Korvessa<IMulti<RIn>, ROut, MetaFunction<ROut, RIn, ROut>, ROut> kAccumulateInto<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IKorssa<ROut> initialValue, IKorssa<MetaFunction<ROut, RIn, ROut>> function)
+    public static Korvessas.Accumulate<RIn, ROut> kAccumulateInto<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IKorssa<ROut> initialValue, IKorssa<MetaFunction<ROut, RIn, ROut>> function)
         where RIn : class, Rog
         where ROut : class, Rog =>
-        Korvessas.Accumulate<RIn, ROut>.Construct(source, initialValue, function);
+        new(source, initialValue, function);
 
-    public static Korvessa<IMulti<RIn>, ROut, MetaFunction<ROut, RIn, ROut>, ROut> kAccumulateInto<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IKorssa<ROut> initialValue, MetaDefinition<ROut, RIn, ROut> function)
+    public static Korvessas.Accumulate<RIn, ROut> kAccumulateInto<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IKorssa<ROut> initialValue, MetaDefinition<ROut, RIn, ROut> function)
         where RIn : class, Rog
         where ROut : class, Rog =>
-        Korvessas.Accumulate<RIn, ROut>.Construct(source, initialValue, Core.kMetaFunction([], function));
+        new(source, initialValue, Core.kMetaFunction([], function));
 
-    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Bool> kAnyMatch<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Bool>> predicate)
+    public static Korvessas.AnyMatch<R> kAnyMatch<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Bool>> predicate)
         where R : class, Rog =>
-        Korvessas.AnyMatch<R>.Construct(source, predicate);
+        new(source, predicate);
 
-    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Bool> kAnyMatch<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Bool> predicate)
+    public static Korvessas.AnyMatch<R> kAnyMatch<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Bool> predicate)
         where R : class, Rog =>
-        Korvessas.AnyMatch<R>.Construct(source, Core.kMetaFunction([], predicate));
+        new(source, Core.kMetaFunction([], predicate));
 
-    public static Korvessa<IMulti<R>, MetaFunction<R, Rog>, Multi<R>> kDistinctBy<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Rog> keyFunction)
+    public static Korvessas.DistinctBy<R> kDistinctBy<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Rog> keyFunction)
         where R : class, Rog =>
-        Korvessas.DistinctBy<R>.Construct(source, Core.kMetaFunction([], keyFunction));
+        new(source, Core.kMetaFunction([], keyFunction));
 
-    public static Korvessa<IMulti<R>, MetaFunction<R, Rog>, Multi<R>> kDistinctBy<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Rog>> keyFunction)
+    public static Korvessas.DistinctBy<R> kDistinctBy<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Rog>> keyFunction)
         where R : class, Rog =>
-        Korvessas.DistinctBy<R>.Construct(source, keyFunction);
+        new(source, keyFunction);
 
-    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, MetaDefinition<RIn, ROut> mapFunction)
+    public static Korvessas.Map<RIn, ROut> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, MetaDefinition<RIn, ROut> mapFunction)
         where RIn : class, Rog
         where ROut : class, Rog =>
-        Korvessas.Map<RIn, ROut>.Construct(source, Core.kMetaFunction([], mapFunction));
+        new(source, Core.kMetaFunction([], mapFunction));
 
-    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Multi<R>> kWhere<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Bool>> predicate)
+    public static Korvessas.Filter<R> kWhere<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Bool>> predicate)
         where R : class, Rog =>
-        Korvessas.Filter<R>.Construct(source, predicate);
+        new(source, predicate);
 
-    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, Multi<R>> kWhere<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Bool> predicate)
+    public static Korvessas.Filter<R> kWhere<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Bool> predicate)
         where R : class, Rog =>
-        Korvessas.Filter<R>.Construct(source, Core.kMetaFunction([], predicate));
+        new(source, Core.kMetaFunction([], predicate));
 
-    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, R> kFirstMatch<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Bool>> predicate)
+    public static Korvessas.FirstMatch<R> kFirstMatch<R>(this IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Bool>> predicate)
         where R : class, Rog =>
-        Korvessas.FirstMatch<R>.Construct(source, predicate);
+        new(source, predicate);
 
-    public static Korvessa<IMulti<R>, MetaFunction<R, Bool>, R> kFirstMatch<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Bool> predicate)
+    public static Korvessas.FirstMatch<R> kFirstMatch<R>(this IKorssa<IMulti<R>> source, MetaDefinition<R, Bool> predicate)
         where R : class, Rog =>
-        Korvessas.FirstMatch<R>.Construct(source, Core.kMetaFunction([], predicate));
+        new(source, Core.kMetaFunction([], predicate));
 
-    public static Korvessa<R, MetaFunction<R, Number, R>, Multi<R>> kGenerateSequence<R>(this IKorssa<R> initialValue, MetaDefinition<R, Number, R> generator)
+    public static Korvessas.Sequence<R> kGenerateSequence<R>(this IKorssa<R> initialValue, MetaDefinition<R, Number, R> generator)
         where R : class, Rog =>
-        Korvessas.Sequence<R>.Construct(initialValue, Core.kMetaFunction([], generator));
+        new(initialValue, Core.kMetaFunction([], generator));
 
-    public static Korvessa<R, MetaFunction<R, Number, R>, Multi<R>> kGenerateSequence<R>(this IKorssa<R> initialValue, IKorssa<MetaFunction<R, Number, R>> generator)
+    public static Korvessas.Sequence<R> kGenerateSequence<R>(this IKorssa<R> initialValue, IKorssa<MetaFunction<R, Number, R>> generator)
         where R : class, Rog =>
-        Korvessas.Sequence<R>.Construct(initialValue, generator);
+        new(initialValue, generator);
 
-    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, ROut>, Multi<ROut>> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IKorssa<MetaFunction<RIn, ROut>> mapFunction)
+    public static Korvessas.Map<RIn, ROut> kMap<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IKorssa<MetaFunction<RIn, ROut>> mapFunction)
         where RIn : class, Rog
         where ROut : class, Rog =>
-        Korvessas.Map<RIn, ROut>.Construct(source, mapFunction);
+        new(source, mapFunction);
 
-    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, Number, ROut>, Multi<ROut>> kMapWithIndex<RIn, ROut>(this IKorssa<IMulti<RIn>> source, MetaDefinition<RIn, Number, ROut> mapFunction)
+    public static Korvessas.MapWithIndex<RIn, ROut> kMapWithIndex<RIn, ROut>(this IKorssa<IMulti<RIn>> source, MetaDefinition<RIn, Number, ROut> mapFunction)
         where RIn : class, Rog
         where ROut : class, Rog =>
-        Korvessas.MapWithIndex<RIn, ROut>.Construct(source, Core.kMetaFunction([], mapFunction));
+        new(source, Core.kMetaFunction([], mapFunction));
 
-    public static Korvessa<IMulti<RIn>, MetaFunction<RIn, Number, ROut>, Multi<ROut>> kMapWithIndex<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IKorssa<MetaFunction<RIn, Number, ROut>> mapFunction)
+    public static Korvessas.MapWithIndex<RIn, ROut> kMapWithIndex<RIn, ROut>(this IKorssa<IMulti<RIn>> source, IKorssa<MetaFunction<RIn, Number, ROut>> mapFunction)
         where RIn : class, Rog
         where ROut : class, Rog =>
-        Korvessas.MapWithIndex<RIn, ROut>.Construct(source, mapFunction);
+        new(source, mapFunction);
 
-    public static Korvessa<IMulti<R>, IMulti<R>, Multi<R>> kConcat<R>(this IKorssa<IMulti<R>> a, IKorssa<IMulti<R>> b)
+    public static Korvessas.Concat<R> kConcat<R>(this IKorssa<IMulti<R>> a, IKorssa<IMulti<R>> b)
         where R : class, Rog =>
-        Korvessas.Concat<R>.Construct(a, b);
+        new(a, b);
 
-    public static Korvessa<R, Number, Multi<R>> kDuplicate<R>(this IKorssa<R> value, IKorssa<Number> count)
+    public static Korvessas.Duplicate<R> kDuplicate<R>(this IKorssa<R> value, IKorssa<Number> count)
         where R : class, Rog =>
-        Korvessas.Duplicate<R>.Construct(value, count);
+        new(value, count);
 }

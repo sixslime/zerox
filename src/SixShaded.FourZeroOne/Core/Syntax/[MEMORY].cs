@@ -30,20 +30,20 @@ public static partial class KorssaSyntax
         new(address);
 
     public static Korssas.Memory.ProgramState.Load kLoad(this IKorssa<ProgramState> state) => new(state);
-    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<MetaFunction<R, R>> updateFunction)
+    public static Korvessas.UpdateRovedanggi<R> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<MetaFunction<R, R>> updateFunction)
         where R : class, Rog =>
-        Korvessas.UpdateRovedanggi<R>.Construct(address, updateFunction);
+        new(address, updateFunction);
 
-    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, MetaDefinition<R, R> updateFunction)
+    public static Korvessas.UpdateRovedanggi<R> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, MetaDefinition<R, R> updateFunction)
         where R : class, Rog =>
-        Korvessas.UpdateRovedanggi<R>.Construct(address, Core.kMetaFunction([], updateFunction));
-    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kSafeUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<MetaFunction<R, R>> updateFunction)
+        new(address, Core.kMetaFunction([], updateFunction));
+    public static Korvessas.SafeUpdateRovedanggi<R> kSafeUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<MetaFunction<R, R>> updateFunction)
         where R : class, Rog =>
-        Korvessas.SafeUpdateRovedanggi<R>.Construct(address, updateFunction);
+        new(address, updateFunction);
 
-    public static Korvessa<IRoveggi<Rovedantu<R>>, MetaFunction<R, R>, Roggis.Instructions.Assign<R>> kSafeUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, MetaDefinition<R, R> updateFunction)
+    public static Korvessas.SafeUpdateRovedanggi<R> kSafeUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, MetaDefinition<R, R> updateFunction)
         where R : class, Rog =>
-        Korvessas.SafeUpdateRovedanggi<R>.Construct(address, Core.kMetaFunction([], updateFunction));
+        new(address, Core.kMetaFunction([], updateFunction));
 
 }
 
