@@ -1,19 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Axois.Infinite;
 
-public class Axoi : FourZeroOne.Axoi
+public class Axoi(Master.AxoiCreationKey key) : IsAxoi(key)
 {
-    private Axoi()
-    { }
-
-    public static Axodu Du { get; } =
-        new()
-        {
-            Name = "infinite",
-        };
-
-
-    internal static Rovu<C, R> Rovu<C, R>(string identifier)
-        where C : IRovetu
-        where R : class, Rog =>
-        new(Du, identifier);
+    public override string Name => "infinite";
 }

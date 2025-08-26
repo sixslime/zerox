@@ -3,19 +3,7 @@
 using Roveggi;
 using Roveggi.Defined;
 
-public class Axoi : FourZeroOne.Axoi
+public class Axoi(Master.AxoiCreationKey key) : IsAxoi(key)
 {
-    public static Axodu Du =
-        new()
-        {
-            Name = "core",
-        };
-    private Axoi()
-    { }
-
-
-    internal static Rovu<C, R> Rovu<C, R>(string identifier)
-        where C : IRovetu
-        where R : class, Rog =>
-        new(Du, identifier);
+    public override string Name => "core";
 }

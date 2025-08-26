@@ -22,10 +22,11 @@ public class Master
     /// </summary>
     /// <typeparam name="X"></typeparam>
     public static void RegisterAxoi<X>()
-        where X : Axoi
+        where X : IsAxoi
     {
         // TODO
         // - make better exception messages.
+        // - split into functions
 
         var axoi = typeof(X);
         if (!ASSEMBLY.RegisteredAxois.Add(axoi)) return;
@@ -91,7 +92,6 @@ public class Master
                     implementedAbstractRovus[rovetuType] = [..getMap.Keys, ..setMap.Keys];
                     continue;
                 }
-
                 // validate rovu type:
                 if (!(fieldType.IsGenericType && validFieldTypes.Any(x => fieldType.GetGenericTypeDefinition() == x.genericType && fieldType.GenericTypeArguments[x.genericIndex] == rovetuType)))
                 {
@@ -124,6 +124,11 @@ public class Master
         }
     }
 
+    public class AxoiCreationKey
+    {
+        internal static readonly AxoiCreationKey KEY = new();
+        private AxoiCreationKey() { }
+    }
     public class MetaAssemblyException(Type axoi, string message) : Exception($"FourZeroOne Assembly Error\n Axoi: {axoi.Namespace!.Split(".")[^1]}\n{message}");
 
     internal class PleaseFixException(string message) : Exception($"[Master] PLZ FIX: {message}");
