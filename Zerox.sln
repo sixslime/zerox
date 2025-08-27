@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.VeiledOhOne", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.FourZeroOne.Axois.Infinite", "SixShaded.FourZeroOne.Axois.Infinite\SixShaded.FourZeroOne.Axois.Infinite.csproj", "{3B75C1D0-EEE9-4D7E-885C-560999D60071}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.FZOTypeMatch", "src\SixShaded.FZOTypeMatch\SixShaded.FZOTypeMatch.csproj", "{338CBDB4-2FE8-4BA3-AEF6-3E8BAC9188EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +111,10 @@ Global
 		{3B75C1D0-EEE9-4D7E-885C-560999D60071}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B75C1D0-EEE9-4D7E-885C-560999D60071}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B75C1D0-EEE9-4D7E-885C-560999D60071}.Release|Any CPU.Build.0 = Release|Any CPU
+		{338CBDB4-2FE8-4BA3-AEF6-3E8BAC9188EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{338CBDB4-2FE8-4BA3-AEF6-3E8BAC9188EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{338CBDB4-2FE8-4BA3-AEF6-3E8BAC9188EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{338CBDB4-2FE8-4BA3-AEF6-3E8BAC9188EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -129,6 +135,7 @@ Global
 		{11456EC1-29AE-4E16-9C88-B55CD021A293} = {1C7B3712-2E33-46F6-BB08-3F36D3BFAE1C}
 		{1C7B3712-2E33-46F6-BB08-3F36D3BFAE1C} = {715F1525-5AB6-4F44-B2BC-A928B73AA373}
 		{3B75C1D0-EEE9-4D7E-885C-560999D60071} = {7EF4BA3A-6F38-418A-A7AF-0BC612C8E5A9}
+		{338CBDB4-2FE8-4BA3-AEF6-3E8BAC9188EC} = {6E053241-4627-4E92-9A95-A356AF73AB06}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C6A2B243-BFE2-4013-999A-0063037A133B}
