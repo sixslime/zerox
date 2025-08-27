@@ -86,7 +86,7 @@ public class Sanity
             Core.kSubEnvironment<MetaFunction<Number, Number>>(
                 new()
                 {
-                    Environment = [400.kFixed().kAsVariable(out var theNumber)],
+                    Environment = [400.kFixed().kAsVariable(out var iNumber)],
                     Value =
                         (..1).kFixed()
                         .kIOSelectOne()
@@ -97,14 +97,14 @@ public class Sanity
                         {
                             Then =
                                 Core.kMetaFunction<Number, Number>(
-                                [theNumber],
+                                [iNumber],
                                 x =>
-                                    theNumber.kRef().kAdd(x.kRef())),
+                                    iNumber.kRef().kAdd(x.kRef())),
                             Else =
                                 Core.kMetaFunction<Number, Number>(
                                 [],
                                 x =>
-                                    theNumber.kRef().kAdd(x.kRef())),
+                                    iNumber.kRef().kAdd(x.kRef())),
                         }),
                 })
                 .kExecuteWith(

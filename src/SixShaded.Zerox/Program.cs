@@ -21,7 +21,6 @@ internal class Program
                 }
             }
         }
-
     }
 }
 
@@ -59,7 +58,7 @@ internal class Program
  */
 
 /* DEV
- * 
+ * mabye change "Axoi" to "Axxoc"
  */
 
 /* TODO
