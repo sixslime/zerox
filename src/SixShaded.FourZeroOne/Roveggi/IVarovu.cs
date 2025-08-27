@@ -1,9 +1,6 @@
 ﻿namespace SixShaded.FourZeroOne.Roveggi;
 
-/// <summary>
-///     o
-/// </summary>
-public interface IVarovu<in C, RKey, RVal>
+public interface IVarovu<in C, RKey, RVal> : Unsafe.IVarovu
     where C : IRovetu
     where RKey : class, Rog
     where RVal : class, Rog

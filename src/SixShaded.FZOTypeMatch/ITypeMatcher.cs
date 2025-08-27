@@ -1,8 +1,10 @@
 ﻿namespace SixShaded.FZOTypeMatch;
 
+using FourZeroOne.Roveggi.Unsafe;
 public interface ITypeMatcher
 {
-    public IKorssaType GetType(Kor korssa);
-    public IRoggiType GetType(Rog roggi);
-    public 
+    public IKorssaType GetKorssaType(Kor korssa);
+    public IRoggiType GetRoggiType(Rog roggi);
+    public IRovetuType GetRovetuType<C>()
+        where C : IRovetu;
 }
