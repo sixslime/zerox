@@ -1,10 +1,17 @@
 namespace SixShaded.FZOTypeMatch;
 
+using System.Reflection;
 using FourZeroOne.Roveggi.Unsafe;
 public class FZOTypeMatch
 {
     private readonly List<ITypeMatcher> _matchers = new();
     private readonly Dictionary<Type, IFZOTypeInfo<IFZOType>> _typeMap = new();
+    private readonly object[] _getMethodCallArgs;
+
+    public FZOTypeMatch()
+    {
+        _getMethodCallArgs = [this];
+    }
     public IEnumerable<ITypeMatcher> Matchers => _matchers;
     public void AddMatcher(ITypeMatcher matcher)
     {
@@ -17,8 +24,8 @@ public class FZOTypeMatch
             return cachedValue.AsSome();
 
         var o = CalculateDynamicType(systemType);
-        if (o.Check(out var success))
-            _typeMap[systemType] = success;
+        if (o.Check(out var typeInfo))
+            _typeMap[systemType] = typeInfo;
         return o;
     }
     public KorssaTypeInfo GetKorssaTypeInfo(Kor korssa)
@@ -64,14 +71,44 @@ public class FZOTypeMatch
     }
     private KorssaTypeInfo CalculateKorssaInfo(Type systemType)
     {
-        throw new NotImplementedException();
+        
+        return new()
+        {
+            Origin = systemType,
+            MatchedType = _matchers.Map(x => CallMatcherMethod<IKorssaType>(x, _unclosedKorssaMethod, systemType, _getMethodCallArgs)).Filtered().GetAt(0)
+        };
     }
+
+    
     private RoggiTypeInfo CalculateRoggiInfo(Type systemType)
     {
-        throw new NotImplementedException();
+        return new()
+        {
+            Origin = systemType,
+            MatchedType = _matchers.Map(x => CallMatcherMethod<IRoggiType>(x, _unclosedRoggiMethod, systemType, _getMethodCallArgs)).Filtered().GetAt(0)
+        };
     }
     private RovetuTypeInfo CalculateRovetuInfo(Type systemType)
     {
-        throw new NotImplementedException();
+        return new()
+        {
+            Origin = systemType,
+            MatchedType = _matchers.Map(x => CallMatcherMethod<IRovetuType>(x, _unclosedRovetuMethod, systemType, _getMethodCallArgs)).Filtered().GetAt(0)
+        };
+    }
+
+    private static MethodInfo _unclosedKorssaMethod = typeof(ITypeMatcher).GetMethod("GetKorssaType")!;
+    private static MethodInfo _unclosedRoggiMethod = typeof(ITypeMatcher).GetMethod("GetRoggiType")!;
+    private static MethodInfo _unclosedRovetuMethod = typeof(ITypeMatcher).GetMethod("GetRovetuType")!;
+
+    // this is scary bro.
+    private static IOption<T> CallMatcherMethod<T>(ITypeMatcher matcher, MethodInfo interfaceMethod, Type type, object[] callArgs)
+        where T : IFZOType
+    {
+        var interfaceMap = matcher.GetType().GetInterfaceMap(typeof(ITypeMatcher));
+        int methodIndex = Array.FindIndex(interfaceMap.InterfaceMethods, method => method == interfaceMethod);
+        if (methodIndex == -1)
+            throw new Exception($"cannot find unclosed {interfaceMethod.Name} method in interface map.");
+        return (IOption<T>)(interfaceMap.TargetMethods[methodIndex].MakeGenericMethod(type).Invoke(matcher, callArgs)!);
     }
 }
