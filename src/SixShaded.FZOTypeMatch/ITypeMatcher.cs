@@ -3,8 +3,12 @@
 using FourZeroOne.Roveggi.Unsafe;
 public interface ITypeMatcher
 {
-    public IKorssaType GetKorssaType(Kor korssa);
-    public IRoggiType GetRoggiType(Rog roggi);
-    public IRovetuType GetRovetuType<C>()
+    public IKorssaType GetKorssaType<K>(FZOTypeMatch caller)
+        where K : Kor;
+
+    public IRoggiType GetRoggiType<R>(FZOTypeMatch caller)
+        where R : Rog;
+
+    public IRovetuType GetRovetuType<C>(FZOTypeMatch caller)
         where C : IRovetu;
 }
