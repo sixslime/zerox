@@ -1,13 +1,7 @@
 namespace SixShaded.FZOTypeMatch;
 
-public class RovetuTypeInfo : IFZOTypeInfo<IRovetuType>
+public record RovetuTypeInfo : IFZOTypeInfo<IRovetuType>
 {
-    internal RovetuTypeInfo(Type origin, IOption<IRovetuType> match)
-    {
-        Origin = origin;
-        MatchedType = match;
-    }
-
-    public Type Origin { get; }
-    public IOption<IRovetuType> MatchedType { get; }
+    public required Type Origin { get; init; }
+    public required IOption<IRovetuType> MatchedType { get; init; }
 }
