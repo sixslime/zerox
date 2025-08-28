@@ -1,22 +1,10 @@
 ﻿namespace SixShaded.FZOTypeMatch;
 using FourZeroOne.Roveggi.Unsafe;
 
-public class VarovuInfo
+public record VarovuInfo
 {
-    internal VarovuInfo(IVarovu varovu)
-    {
-        Varovu = varovu;
-        // TODO
-    }
-
-    public enum EInteractionType
-    {
-        Get,
-        Set
-    }
-
-    public IVarovu Varovu { get; }
-    public IRoggiType KeyType { get; }
-    public IRoggiType DataType { get; }
-    public IRovetuType RovetuType { get; }
+    public required IVarovu Varovu { get; init; }
+    public required RoggiTypeInfo DataType { get; init; }
+    public required RoggiTypeInfo KeyType { get; init; }
+    public required RovetuTypeInfo RovetuType { get; init; }
 }

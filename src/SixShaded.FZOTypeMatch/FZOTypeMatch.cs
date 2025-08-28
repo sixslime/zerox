@@ -2,6 +2,8 @@ namespace SixShaded.FZOTypeMatch;
 
 using System.Reflection;
 using FourZeroOne.Roveggi.Unsafe;
+
+// really really shitty code design bro.
 public class FZOTypeMatch
 {
     private readonly List<ITypeMatcher> _matchers = new();
@@ -30,17 +32,17 @@ public class FZOTypeMatch
     }
     public KorssaTypeInfo GetKorssaTypeInfo(Kor korssa)
     {
-        throw new NotImplementedException();
+        return (KorssaTypeInfo)(GetFZOTypeInfoDynamic(korssa.GetType()).Unwrap());
     }
 
     public RoggiTypeInfo GetRoggiTypeInfo(Rog roggi)
     {
-        throw new NotImplementedException();
+        return (RoggiTypeInfo)(GetFZOTypeInfoDynamic(roggi.GetType()).Unwrap());
     }
 
     public RovetuTypeInfo GetRovetuTypeInfo(IRoveggi<IRovetu> roveggi)
     {
-        throw new NotImplementedException();
+        return (RovetuTypeInfo)(GetFZOTypeInfoDynamic(roveggi.GetType()).Unwrap());
     }
 
     public RovuInfo GetRovuInfo(IRovu rovu)
@@ -71,11 +73,10 @@ public class FZOTypeMatch
     }
     private KorssaTypeInfo CalculateKorssaInfo(Type systemType)
     {
-        
         return new()
         {
             Origin = systemType,
-            MatchedType = _matchers.Map(x => CallMatcherMethod<IKorssaType>(x, _unclosedKorssaMethod, systemType, _getMethodCallArgs)).Filtered().GetAt(0)
+            MatchedType = _matchers.Map(x => CallMatcherMethod<IKorssaType>(x, INTERFACE_KORSSA_METHOD, systemType, _getMethodCallArgs)).Filtered().GetAt(0)
         };
     }
 
@@ -85,7 +86,7 @@ public class FZOTypeMatch
         return new()
         {
             Origin = systemType,
-            MatchedType = _matchers.Map(x => CallMatcherMethod<IRoggiType>(x, _unclosedRoggiMethod, systemType, _getMethodCallArgs)).Filtered().GetAt(0)
+            MatchedType = _matchers.Map(x => CallMatcherMethod<IRoggiType>(x, INTERFACE_ROGGI_METHOD, systemType, _getMethodCallArgs)).Filtered().GetAt(0)
         };
     }
     private RovetuTypeInfo CalculateRovetuInfo(Type systemType)
@@ -93,13 +94,13 @@ public class FZOTypeMatch
         return new()
         {
             Origin = systemType,
-            MatchedType = _matchers.Map(x => CallMatcherMethod<IRovetuType>(x, _unclosedRovetuMethod, systemType, _getMethodCallArgs)).Filtered().GetAt(0)
+            MatchedType = _matchers.Map(x => CallMatcherMethod<IRovetuType>(x, INTERFACE_ROVETU_METHOD, systemType, _getMethodCallArgs)).Filtered().GetAt(0)
         };
     }
 
-    private static MethodInfo _unclosedKorssaMethod = typeof(ITypeMatcher).GetMethod("GetKorssaType")!;
-    private static MethodInfo _unclosedRoggiMethod = typeof(ITypeMatcher).GetMethod("GetRoggiType")!;
-    private static MethodInfo _unclosedRovetuMethod = typeof(ITypeMatcher).GetMethod("GetRovetuType")!;
+    private static readonly MethodInfo INTERFACE_KORSSA_METHOD = typeof(ITypeMatcher).GetMethod("GetKorssaType")!;
+    private static readonly MethodInfo INTERFACE_ROGGI_METHOD = typeof(ITypeMatcher).GetMethod("GetRoggiType")!;
+    private static readonly MethodInfo INTERFACE_ROVETU_METHOD = typeof(ITypeMatcher).GetMethod("GetRovetuType")!;
 
     // this is scary bro.
     private static IOption<T> CallMatcherMethod<T>(ITypeMatcher matcher, MethodInfo interfaceMethod, Type type, object[] callArgs)
