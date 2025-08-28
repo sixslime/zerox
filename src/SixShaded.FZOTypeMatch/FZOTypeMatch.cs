@@ -47,11 +47,35 @@ public class FZOTypeMatch
 
     public RovuInfo GetRovuInfo(IRovu rovu)
     {
-        throw new NotImplementedException();
+        var compType = typeof(IRovu<,>);
+        var rovuGenerics =
+            rovu.GetType()
+                .GetInterfaces()
+                .FirstMatch(x => x.IsGenericType && x.GetGenericTypeDefinition() == compType)
+                .Expect($"{rovu} implements Unsafe.IRovu but not Rovu<C, R>?")
+                .GenericTypeArguments;
+        return new()
+        {
+            Rovu = rovu,
+            RovetuType = (RovetuTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[0]).Unwrap(),
+            DataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[1]).Unwrap()
+        };
     }
     public AbstractRovuInfo GetRovuInfo(IAbstractRovu abstractRovu)
     {
-        throw new NotImplementedException();
+        var compTypeSet = typeof(ISetRovu<,>);
+        var compTypeGet = typeof(ISetRovu<,>);
+        var rovuGenerics =
+            abstractRovu.GetType()
+                .GetInterfaces()
+                .FirstMatch(x => x.IsGenericType && x.GetGenericTypeDefinition() == compType)
+                .GenericTypeArguments;
+        return new()
+        {
+            Rovu = rovu,
+            RovetuType = (RovetuTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[0]).Unwrap(),
+            DataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[1]).Unwrap()
+        };
     }
     public VarovuInfo GetVarovuInfo(IVarovu varovu)
     {
