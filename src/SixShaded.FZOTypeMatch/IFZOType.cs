@@ -2,5 +2,5 @@
 
 public interface IFZOType
 {
-    public Type Origin { get; }
+
 }
