@@ -12,10 +12,105 @@ public class CoreTypeMatcher : ITypeMatcher
         new()
         {
             {
+                typeof(Kt.Exists), SimpleKorssa(new Km.Exists())
+            },
+            {
+                typeof(Kt.IsEqual), SimpleKorssa(new Km.IsEqual())
+            },
+            {
+                typeof(Kt.AddMellsano), SimpleKorssa(new Km.AddMellsano())
+            },
+            {
                 typeof(Kt.Fixed<>), (t, c) =>
                     new Km.Fixed
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.IfElse<>), (t, c) =>
+                    new Km.IfElse
+                    {
+                        OutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.MetaExecuted<>), (t, c) =>
+                    new Km.MetaExecuted
+                    {
+                        OutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.DefineMetaFunction<>), (t, c) =>
+                    new Km.DefineMetaFunction
+                    {
+                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        MetaArgTypes = []
+                    }
+            },
+            {
+                typeof(Kt.DefineMetaFunction<,>), (t, c) =>
+                    new Km.DefineMetaFunction
+                    {
+                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        MetaArgTypes = t.GenericTypeArguments[..1].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+            {
+                typeof(Kt.DefineMetaFunction<,,>), (t, c) =>
+                    new Km.DefineMetaFunction
+                    {
+                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        MetaArgTypes = t.GenericTypeArguments[..2].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+            {
+                typeof(Kt.DefineMetaFunction<,,,>), (t, c) =>
+                    new Km.DefineMetaFunction
+                    {
+                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        MetaArgTypes = t.GenericTypeArguments[..3].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+            {
+                typeof(Kt.DefineMetaFunction<,,,,>), (t, c) =>
+                    new Km.DefineMetaFunction
+                    {
+                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        MetaArgTypes = t.GenericTypeArguments[..4].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+            {
+                typeof(Kt.Execute<>), (t, c) =>
+                    new Km.Execute
+                    {
+                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        MetaArgTypes = []
+                    }
+            },
+            {
+                typeof(Kt.Execute<,>), (t, c) =>
+                    new Km.Execute
+                    {
+                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
+                        MetaArgTypes = t.GenericTypeArguments[..1].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+            {
+                typeof(Kt.Execute<,,>), (t, c) =>
+                    new Km.Execute
+                    {
+                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
+                        MetaArgTypes = t.GenericTypeArguments[..2].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+            {
+                typeof(Kt.Execute<,,,>), (t, c) =>
+                    new Km.Execute
+                    {
+                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[3].TryGetFZOTypeInfo(c).Unwrap(),
+                        MetaArgTypes = t.GenericTypeArguments[..3].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
                     }
             },
             {
