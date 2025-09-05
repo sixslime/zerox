@@ -30,6 +30,7 @@ internal class Program
 
         Log(testKorssa);
         Log(testKorssa.FZOTypeInfo(typeMatch));
+        Log(1.kFixed().FZOTypeInfo(typeMatch));
     }
 
     private static void Log(object obj)
