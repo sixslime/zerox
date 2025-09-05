@@ -1,6 +1,6 @@
 namespace SixShaded.CoreTypeMatcher.Types.Korssa;
 
-public class Fixed : IKorssaType
+public record Fixed : IKorssaType
 {
     public required RoggiTypeInfo RoggiType { get; init; }
 }

@@ -2,6 +2,10 @@
 
 using System.Reflection;
 using SixShaded.FourZeroOne;
+using SixShaded.FourZeroOne.Core.Syntax;
+using FZOTypeMatch;
+using FZOTypeMatch.Syntax;
+using CoreTypeMatcher;
 internal class Program
 {
     public static async Task Main(string[] args)
@@ -21,6 +25,18 @@ internal class Program
                 }
             }
         }
+        var matcher = new FZOTypeMatch();
+        matcher.AddMatcher(CoreTypeMatcher.Matcher);
+        var testKorssa = 1.kFixed().kAdd(2.kFixed());
+
+        Log(testKorssa);
+        Log(testKorssa.FZOTypeInfo(matcher));
+    }
+
+    private static void Log(object obj)
+    {
+        Console.WriteLine("LOG:");
+        Console.WriteLine(obj);
     }
 }
 
