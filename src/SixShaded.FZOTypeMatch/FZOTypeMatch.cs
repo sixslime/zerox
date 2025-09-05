@@ -6,19 +6,16 @@ using FourZeroOne.Roveggi.Unsafe;
 // really really shitty code design bro.
 public class FZOTypeMatch
 {
-    private readonly List<ITypeMatcher> _matchers = new();
+    private readonly ITypeMatcher[] _matchers;
     private readonly Dictionary<Type, IFZOTypeInfo<IFZOType>> _typeMap = new();
     private readonly object[] _getMethodCallArgs;
 
-    public FZOTypeMatch()
+    public FZOTypeMatch(ITypeMatcher[] matchers)
     {
         _getMethodCallArgs = [this];
+        _matchers = matchers;
     }
     public IEnumerable<ITypeMatcher> Matchers => _matchers;
-    public void AddMatcher(ITypeMatcher matcher)
-    {
-        _matchers.Add(matcher);
-    }
 
     public IOption<IFZOTypeInfo<IFZOType>> GetFZOTypeInfoDynamic(Type systemType)
     {

@@ -25,12 +25,11 @@ internal class Program
                 }
             }
         }
-        var matcher = new FZOTypeMatch();
-        matcher.AddMatcher(CoreTypeMatcher.Matcher);
+        var typeMatch = new FZOTypeMatch([new CoreTypeMatcher()]);
         var testKorssa = 1.kFixed().kAdd(2.kFixed());
 
         Log(testKorssa);
-        Log(testKorssa.FZOTypeInfo(matcher));
+        Log(testKorssa.FZOTypeInfo(typeMatch));
     }
 
     private static void Log(object obj)
