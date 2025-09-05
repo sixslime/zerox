@@ -28,8 +28,29 @@ public class CoreTypeMatcher : ITypeMatcher
                     }
             },
             {
+                typeof(Kt.Nolla<>), (t, c) =>
+                    new Km.Nolla
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.TryCast<>), (t, c) =>
+                    new Km.TryCast
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
                 typeof(Kt.IfElse<>), (t, c) =>
                     new Km.IfElse
+                    {
+                        OutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.SubEnvironment<>), (t, c) =>
+                    new Km.SubEnvironment
                     {
                         OutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
@@ -111,6 +132,27 @@ public class CoreTypeMatcher : ITypeMatcher
                     {
                         MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[3].TryGetFZOTypeInfo(c).Unwrap(),
                         MetaArgTypes = t.GenericTypeArguments[..3].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+            {
+                typeof(Kt.ToBoxedArgs<>), (t, c) =>
+                    new Km.ToBoxedArgs
+                    {
+                        ArgTypes = t.GenericTypeArguments.Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+            {
+                typeof(Kt.ToBoxedArgs<,>), (t, c) =>
+                    new Km.ToBoxedArgs
+                    {
+                        ArgTypes = t.GenericTypeArguments.Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+            {
+                typeof(Kt.ToBoxedArgs<,,>), (t, c) =>
+                    new Km.ToBoxedArgs
+                    {
+                        ArgTypes = t.GenericTypeArguments.Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
                     }
             },
             {
