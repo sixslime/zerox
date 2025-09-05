@@ -1,6 +1,8 @@
 ﻿global using SixShaded.NotRust;
 global using SixShaded.SixLib.GFunc;
 global using SixShaded.FourZeroOne.Roggi;
+global using SixShaded.FZOTypeMatch;
+global using SixShaded.FZOTypeMatch.Syntax;
 global using SixShaded.FourZeroOne.Korssa;
 global using SixShaded.FourZeroOne.Mellsano;
 global using SixShaded.FourZeroOne.Korvessa;

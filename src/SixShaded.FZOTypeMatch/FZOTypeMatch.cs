@@ -116,10 +116,32 @@ public class FZOTypeMatch
     }
     private KorssaTypeInfo CalculateKorssaInfo(Type systemType)
     {
+        // this is so fucking retarded guys.
+        RoggiTypeInfo?[] argTypes =
+        [
+            null,
+            null,
+            null
+        ];
+        RoggiTypeInfo? outType = null;
+        foreach (var t in systemType.GetInterfaces())
+        {
+            if (!t.IsGenericType) continue;
+            var openDef = t.GetGenericTypeDefinition();
+            var generics = t.GenericTypeArguments;
+            // DEV: assumes that all IHasArgs<...> implements previous IHasArgs.
+            // does not use IHasNoArgs.
+            if (openDef == typeof(IKorssa<>)) outType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(generics[0]).Expect("???");
+            else if (openDef == typeof(IHasArgs<,>)) argTypes[0] = (RoggiTypeInfo)GetFZOTypeInfoDynamic(generics[0]).Expect("???");
+            else if (openDef == typeof(IHasArgs<,,>)) argTypes[1] = (RoggiTypeInfo)GetFZOTypeInfoDynamic(generics[1]).Expect("???");
+            else if (openDef == typeof(IHasArgs<,,,>)) argTypes[2] = (RoggiTypeInfo)GetFZOTypeInfoDynamic(generics[2]).Expect("???");
+        }
         return new()
         {
             Origin = systemType,
-            MatchedType = _matchers.Map(x => CallMatcherMethod<IKorssaType>(x, INTERFACE_KORSSA_METHOD, systemType, _getMethodCallArgs)).Filtered().GetAt(0)
+            MatchedType = _matchers.Map(x => CallMatcherMethod<IKorssaType>(x, INTERFACE_KORSSA_METHOD, systemType, _getMethodCallArgs)).Filtered().GetAt(0),
+            OutputType = outType!,
+            ArgTypes = argTypes.FilterMap(x => x.NullToNone()).ToArray(),
         };
     }
 
