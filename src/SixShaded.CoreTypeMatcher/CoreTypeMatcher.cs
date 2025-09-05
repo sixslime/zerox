@@ -173,6 +173,15 @@ public class CoreTypeMatcher : ITypeMatcher
             {
                 typeof(Kt.Number.Divide), SimpleKorssa(new Km.Number.Divide())
             },
+            {
+                typeof(Kt.Bool.And), SimpleKorssa(new Km.Bool.And())
+            },
+            {
+                typeof(Kt.Bool.Or), SimpleKorssa(new Km.Bool.Or())
+            },
+            {
+                typeof(Kt.Bool.Not), SimpleKorssa(new Km.Bool.Not())
+            },
         };
     private static Func<Type, FZOTypeMatch, IKorssaType> SimpleKorssa(IKorssaType typeObj) => (_, _) => typeObj;
 
