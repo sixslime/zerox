@@ -64,22 +64,41 @@ public class FZOTypeMatch
     public AbstractRovuInfo GetRovuInfo(IAbstractRovu abstractRovu)
     {
         var compTypeSet = typeof(ISetRovu<,>);
-        var compTypeGet = typeof(ISetRovu<,>);
-        var rovuGenerics =
+        var compTypeGet = typeof(IGetRovu<,>);
+        // bs but whatever
+        var (isGet, rovuGenerics) =
             abstractRovu.GetType()
                 .GetInterfaces()
-                .FirstMatch(x => x.IsGenericType && x.GetGenericTypeDefinition() == compType)
-                .GenericTypeArguments;
+                .FilterMap(x => x.IsGenericType.ToOptionLazy(x.GetGenericTypeDefinition))
+                .FirstMatch(x => x == compTypeGet || x == compTypeSet)
+                .Expect($"{abstractRovu} implements Unsafe.IAbstractRovu but not IGetRovu<C, R> or ISetRovu<C, R>?")
+                .ExprAs(
+                type =>
+                    (type == compTypeGet, type.GenericTypeArguments));
         return new()
         {
-            Rovu = rovu,
+            Rovu = abstractRovu,
             RovetuType = (RovetuTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[0]).Unwrap(),
-            DataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[1]).Unwrap()
+            DataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[1]).Unwrap(),
+            Interaction = isGet ? AbstractRovuInfo.EInteraction.Get : AbstractRovuInfo.EInteraction.Set,
         };
     }
     public VarovuInfo GetVarovuInfo(IVarovu varovu)
     {
-        throw new NotImplementedException();
+        var compType = typeof(IVarovu<,,>);
+        var rovuGenerics =
+            varovu.GetType()
+                .GetInterfaces()
+                .FirstMatch(x => x.IsGenericType && x.GetGenericTypeDefinition() == compType)
+                .Expect($"{varovu} implements Unsafe.IVarovu but not IVarovu<C, RKey, RVal>?")
+                .GenericTypeArguments;
+        return new()
+        {
+            Varovu = varovu,
+            RovetuType = (RovetuTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[0]).Unwrap(),
+            KeyType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[1]).Unwrap(),
+            DataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[2]).Unwrap()
+        };
     }
 
     private IOption<IFZOTypeInfo<IFZOType>> CalculateDynamicType(Type systemType)
