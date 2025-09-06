@@ -5,6 +5,7 @@ using Rt = FourZeroOne.Core.Roggis;
 using Kt = FourZeroOne.Core.Korssas;
 using Km = Types.Korssa;
 using FourZeroOne.Core;
+using FourZeroOne.Roveggi.Unsafe;
 
 public class CoreTypeMatcher : ITypeMatcher
 {
@@ -347,7 +348,86 @@ public class CoreTypeMatcher : ITypeMatcher
             {
                 typeof(Kt.Range.Get.End), SimpleKorssa(new Km.Range.Get.End())
             },
+            {
+                typeof(Kt.Rovi.Get<,>), (t, c) =>
+                    new Km.Rovi.Get
+                    {
+                        RovetuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        DataType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
+                        RovuInfoGetter = RovuInfoGetter(c)
+                    }
+            },
+            {
+                typeof(Kt.Rovi.With<,>), (t, c) =>
+                    new Km.Rovi.Get
+                    {
+                        RovetuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        DataType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
+                        RovuInfoGetter = RovuInfoGetter(c)
+                    }
+            },
+            {
+                typeof(Kt.Rovi.Varovi.Get<,,>), (t, c) =>
+                    new Km.Rovi.Varovi.Get
+                    {
+                        RovetuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        KeyType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
+                        DataType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
+                        VarovuInfoGetter = VarovuInfoGetter(c)
+                    }
+            },
+            {
+                typeof(Kt.Rovi.Varovi.With<,,>), (t, c) =>
+                    new Km.Rovi.Varovi.With
+                    {
+                        RovetuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        KeyType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
+                        DataType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
+                        VarovuInfoGetter = VarovuInfoGetter(c)
+                    }
+            },
+            {
+                typeof(Kt.Rovi.Varovi.GetKeys<,,>), (t, c) =>
+                    new Km.Rovi.Varovi.GetKeys
+                    {
+                        RovetuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        KeyType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
+                        DataType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
+                        VarovuInfoGetter = VarovuInfoGetter(c)
+                    }
+            },
+            {
+                typeof(Kt.Rovi.Varovi.GetValues<,,>), (t, c) =>
+                    new Km.Rovi.Varovi.GetValues
+                    {
+                        RovetuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        KeyType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
+                        DataType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
+                        VarovuInfoGetter = VarovuInfoGetter(c)
+                    }
+            },
         };
+
+    private static Func<Kor, IResult<RovuInfo, AbstractRovuInfo>> RovuInfoGetter(FZOTypeMatch matcher) =>
+        k =>
+            k.GetType().GetProperty("Rovu")!.GetMethod!.Invoke(k, [])
+                .ExprAs(
+                rovuObj =>
+                    rovuObj switch
+                    {
+                        IRovu rovu => rovu.FZOTypeInfo(matcher).AsOk(Hint<AbstractRovuInfo>.HINT),
+                        IAbstractRovu abstractRovu => abstractRovu.FZOTypeInfo(matcher).AsErr(Hint<RovuInfo>.HINT),
+                        _ => throw new Exception("Rovu is not IRovu or IAbstractRovu?")
+                    });
+
+    private static Func<Kor, VarovuInfo> VarovuInfoGetter(FZOTypeMatch matcher) =>
+        k =>
+            k.GetType().GetProperty("Varovu")!.GetMethod!.Invoke(k, [])
+                .ExprAs(
+                varovuObj =>
+                    varovuObj is IVarovu varovu
+                        ? varovu.FZOTypeInfo(matcher)
+                        : throw new Exception("Varovu is not IVarovu?"));
     private static Func<Type, FZOTypeMatch, IKorssaType> SimpleKorssa(IKorssaType typeObj) => (_, _) => typeObj;
 
     public IOption<IKorssaType> GetKorssaType<K>(FZOTypeMatch caller)
