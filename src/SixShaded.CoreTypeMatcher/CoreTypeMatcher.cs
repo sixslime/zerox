@@ -10,6 +10,7 @@ using FourZeroOne.Roveggi.Unsafe;
 
 public class CoreTypeMatcher : ITypeMatcher
 {
+    // TODO: Korvessas
     private static readonly Dictionary<Type, Func<Type, FZOTypeMatch, IKorssaType>> KORSSA_MAP =
         new()
         {
