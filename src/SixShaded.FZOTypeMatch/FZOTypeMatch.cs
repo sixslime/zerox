@@ -154,20 +154,20 @@ public class FZOTypeMatch
     private RovetuTypeInfo CalculateRovetuInfo(Type systemType)
     {
         var matchedType = _matchers.Map(x => CallMatcherMethod<IRovetuType>(x, INTERFACE_ROVETU_METHOD, systemType, _getMethodCallArgs)).Filtered().GetAt(0);
+        RoggiTypeInfo? memoryDataType = null;
         for (var baseType = systemType.BaseType; baseType != null; baseType = baseType.BaseType)
         {
             if (baseType.IsGenericType && baseType.GetGenericTypeDefinition() == typeof(Rovedantu<>))
-                return new RovedantuTypeInfo()
-                {
-                    Origin = systemType,
-                    MatchedType = matchedType,
-                    MemoryDataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(baseType.GenericTypeArguments[0]).Expect("???")
-                };
+            {
+                memoryDataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(baseType.GenericTypeArguments[0]).Expect("???");
+                break;
+            }
         }
         return new()
         {
             Origin = systemType,
-            MatchedType = matchedType
+            MatchedType = matchedType,
+            MemoryDataType = memoryDataType.NullToNone(),
         };
     }
 
