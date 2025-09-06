@@ -338,6 +338,15 @@ public class CoreTypeMatcher : ITypeMatcher
             {
                 typeof(Kt.Multi.Count), SimpleKorssa(new Km.Multi.Count())
             },
+            {
+                typeof(Kt.Range.Create), SimpleKorssa(new Km.Range.Create())
+            },
+            {
+                typeof(Kt.Range.Get.Start), SimpleKorssa(new Km.Range.Get.Start())
+            },
+            {
+                typeof(Kt.Range.Get.End), SimpleKorssa(new Km.Range.Get.End())
+            },
         };
     private static Func<Type, FZOTypeMatch, IKorssaType> SimpleKorssa(IKorssaType typeObj) => (_, _) => typeObj;
 
