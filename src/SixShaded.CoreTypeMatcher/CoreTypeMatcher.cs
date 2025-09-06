@@ -2,6 +2,7 @@ namespace SixShaded.CoreTypeMatcher;
 
 using FZOTypeMatch;
 using Rt = FourZeroOne.Core.Roggis;
+using Rm = Types.Roggi;
 using Kt = FourZeroOne.Core.Korssas;
 using Km = Types.Korssa;
 using FourZeroOne.Core;
@@ -75,7 +76,7 @@ public class CoreTypeMatcher : ITypeMatcher
                 typeof(Kt.DefineMetaFunction<,>), (t, c) =>
                     new Km.DefineMetaFunction
                     {
-                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
                         MetaArgTypes = t.GenericTypeArguments[..1].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
                     }
             },
@@ -83,7 +84,7 @@ public class CoreTypeMatcher : ITypeMatcher
                 typeof(Kt.DefineMetaFunction<,,>), (t, c) =>
                     new Km.DefineMetaFunction
                     {
-                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
                         MetaArgTypes = t.GenericTypeArguments[..2].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
                     }
             },
@@ -91,7 +92,7 @@ public class CoreTypeMatcher : ITypeMatcher
                 typeof(Kt.DefineMetaFunction<,,,>), (t, c) =>
                     new Km.DefineMetaFunction
                     {
-                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[3].TryGetFZOTypeInfo(c).Unwrap(),
                         MetaArgTypes = t.GenericTypeArguments[..3].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
                     }
             },
@@ -99,7 +100,7 @@ public class CoreTypeMatcher : ITypeMatcher
                 typeof(Kt.DefineMetaFunction<,,,,>), (t, c) =>
                     new Km.DefineMetaFunction
                     {
-                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[4].TryGetFZOTypeInfo(c).Unwrap(),
                         MetaArgTypes = t.GenericTypeArguments[..4].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
                     }
             },
@@ -410,7 +411,122 @@ public class CoreTypeMatcher : ITypeMatcher
 
     private static readonly Dictionary<Type, Func<Type, FZOTypeMatch, IRoggiType>> ROGGI_MAP =
         new()
-            { };
+        {
+            {
+                typeof(Rt.Instructions.MellsanoAdd), SimpleRoggi(new Rm.Instructions.MellsanoAdd())
+            },
+            {
+                typeof(Rt.Instructions.LoadProgramState), SimpleRoggi(new Rm.Instructions.LoadProgramState())
+            },
+            {
+                typeof(Rt.Instructions.Assign<>), (t, c) =>
+                    new Rm.Instructions.Assign()
+                    {
+                        DataType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Rt.Bool), SimpleRoggi(new Rm.Bool())
+            },
+            {
+                typeof(Rt.Number), SimpleRoggi(new Rm.Number())
+            },
+            {
+                typeof(Rt.NumRange), SimpleRoggi(new Rm.NumRange())
+            },
+            {
+                typeof(Rt.ProgramState), SimpleRoggi(new Rm.ProgramState())
+            },
+            {
+                typeof(Rt.Multi<>), (t, c) =>
+                    new Rm.Multi
+                    {
+                        ElementType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Multi<>), (t, c) =>
+                    new Rm.IMulti
+                    {
+                        ElementType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(IRoveggi<>), (t, c) =>
+                    new Rm.Roveggi
+                    {
+                        RovetuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Roveggi<>), (t, c) =>
+                    new Rm.Roveggi
+                    {
+                        RovetuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Rt.MetaArgs<>), (t, c) =>
+                    new Rm.MetaArgs()
+                    {
+                        ArgTypes = t.GenericTypeArguments.Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+            {
+                typeof(Rt.MetaArgs<,>), (t, c) =>
+                    new Rm.MetaArgs()
+                    {
+                        ArgTypes = t.GenericTypeArguments.Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+            {
+                typeof(Rt.MetaArgs<,,>), (t, c) =>
+                    new Rm.MetaArgs()
+                    {
+                        ArgTypes = t.GenericTypeArguments.Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+            {
+                typeof(Rt.MetaFunction<>), (t, c) =>
+                    new Rm.MetaFunction()
+                    {
+                        OutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        ArgTypes = []
+                    }
+            },
+            {
+                typeof(Rt.MetaFunction<,>), (t, c) =>
+                    new Rm.MetaFunction()
+                    {
+                        OutputType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
+                        ArgTypes = t.GenericTypeArguments[..1].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+            {
+                typeof(Rt.MetaFunction<,,>), (t, c) =>
+                    new Rm.MetaFunction()
+                    {
+                        OutputType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
+                        ArgTypes = t.GenericTypeArguments[..2].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+            {
+                typeof(Rt.MetaFunction<,,,>), (t, c) =>
+                    new Rm.MetaFunction()
+                    {
+                        OutputType = (RoggiTypeInfo)t.GenericTypeArguments[3].TryGetFZOTypeInfo(c).Unwrap(),
+                        ArgTypes = t.GenericTypeArguments[..3].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+            {
+                typeof(Rt.OverflowingMetaFunction<,,,,>), (t, c) =>
+                    new Rm.MetaFunction()
+                    {
+                        OutputType = (RoggiTypeInfo)t.GenericTypeArguments[4].TryGetFZOTypeInfo(c).Unwrap(),
+                        ArgTypes = t.GenericTypeArguments[..4].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                    }
+            },
+        };
     private static Func<Kor, IResult<RovuInfo, AbstractRovuInfo>> RovuInfoGetter(FZOTypeMatch matcher) =>
         k =>
             k.GetType().GetProperty("Rovu")!.GetMethod!.Invoke(k, [])
@@ -432,6 +548,7 @@ public class CoreTypeMatcher : ITypeMatcher
                         ? varovu.FZOTypeInfo(matcher)
                         : throw new Exception("Varovu is not IVarovu?"));
     private static Func<Type, FZOTypeMatch, IKorssaType> SimpleKorssa(IKorssaType typeObj) => (_, _) => typeObj;
+    private static Func<Type, FZOTypeMatch, IRoggiType> SimpleRoggi(IRoggiType typeObj) => (_, _) => typeObj;
 
     public IOption<IKorssaType> GetKorssaType<K>(FZOTypeMatch caller)
         where K : Kor
