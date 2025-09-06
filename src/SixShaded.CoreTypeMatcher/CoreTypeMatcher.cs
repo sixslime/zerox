@@ -244,6 +244,100 @@ public class CoreTypeMatcher : ITypeMatcher
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
+            {
+                typeof(Kt.Multi.Clean<>), (t, c) =>
+                    new Km.Multi.Clean
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.Contains<>), (t, c) =>
+                    new Km.Multi.Clean
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.Create<>), (t, c) =>
+                    new Km.Multi.Clean
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.Distinct<>), (t, c) =>
+                    new Km.Multi.Clean
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.Except<>), (t, c) =>
+                    new Km.Multi.Clean
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.Flatten<>), (t, c) =>
+                    new Km.Multi.Clean
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.GetIndex<>), (t, c) =>
+                    new Km.Multi.Clean
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.GetSlice<>), (t, c) =>
+                    new Km.Multi.Clean
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.IndiciesOf<>), (t, c) =>
+                    new Km.Multi.Clean
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.Intersect<>), (t, c) =>
+                    new Km.Multi.Clean
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.Reverse<>), (t, c) =>
+                    new Km.Multi.Clean
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.Union<>), (t, c) =>
+                    new Km.Multi.Clean
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.Yield<>), (t, c) =>
+                    new Km.Multi.Clean
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.Count), SimpleKorssa(new Km.Multi.Count())
+            },
         };
     private static Func<Type, FZOTypeMatch, IKorssaType> SimpleKorssa(IKorssaType typeObj) => (_, _) => typeObj;
 
