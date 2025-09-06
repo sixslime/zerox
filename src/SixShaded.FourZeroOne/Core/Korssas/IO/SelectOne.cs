@@ -1,9 +1,9 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korssas.IO.Select;
+﻿namespace SixShaded.FourZeroOne.Core.Korssas.IO;
 
-public sealed record One<R> : Korssa.Defined.Function<IMulti<R>, R>
+public sealed record SelectOne<R> : Korssa.Defined.Function<IMulti<R>, R>
     where R : class, Rog
 {
-    public One(IKorssa<IMulti<R>> from) : base(from)
+    public SelectOne(IKorssa<IMulti<R>> from) : base(from)
     { }
 
     protected override ITask<IOption<R>> Evaluate(IKorssaContext runtime, IOption<IMulti<R>> fromOpt) =>

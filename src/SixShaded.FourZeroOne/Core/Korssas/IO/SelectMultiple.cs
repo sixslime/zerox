@@ -1,11 +1,11 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korssas.IO.Select;
+﻿namespace SixShaded.FourZeroOne.Core.Korssas.IO;
 
 using Roggis;
 
-public sealed record Multiple<R> : Korssa.Defined.Function<IMulti<R>, NumRange, Multi<R>>
+public sealed record SelectMultiple<R> : Korssa.Defined.Function<IMulti<R>, NumRange, Multi<R>>
     where R : class, Rog
 {
-    public Multiple(IKorssa<IMulti<R>> from, IKorssa<NumRange> count) : base(from, count)
+    public SelectMultiple(IKorssa<IMulti<R>> from, IKorssa<NumRange> count) : base(from, count)
     { }
 
     protected override async ITask<IOption<Multi<R>>> Evaluate(IKorssaContext runtime, IOption<IMulti<R>> fromOpt, IOption<NumRange> countOpt) =>
