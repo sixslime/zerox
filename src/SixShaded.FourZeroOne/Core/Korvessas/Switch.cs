@@ -9,7 +9,7 @@ public record Switch<R>(IKorssa<IMulti<MetaFunction<R>>> statements) : Korvessa<
 {
     protected override RecursiveMetaDefinition<IMulti<MetaFunction<R>>, R> InternalDefinition() =>
         (_, iStatements) =>
-            Core.kMetaFunctionRecursive<Number, R>(
+            Core.kMetaFunctionRecursive<Roggis.Number, R>(
                 [],
                 (iRecurse, iIndex) =>
                     iIndex.kRef()

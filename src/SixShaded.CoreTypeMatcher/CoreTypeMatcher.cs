@@ -445,7 +445,7 @@ public class CoreTypeMatcher : ITypeMatcher
                     }
             },
             {
-                typeof(Multi<>), (t, c) =>
+                typeof(IMulti<>), (t, c) =>
                     new Rm.IMulti
                     {
                         ElementType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
