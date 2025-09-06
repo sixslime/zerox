@@ -9,7 +9,7 @@ public sealed record MetaArgs<R1> : Roggi.Defined.NoOp, IMetaArgs
     public RogOpt[] Args => [Arg1];
 }
 
-public sealed record MetaArgs<R1, R2> : Roggi.Defined.NoOp
+public sealed record MetaArgs<R1, R2> : Roggi.Defined.NoOp, IMetaArgs
     where R1 : class, Rog
     where R2 : class, Rog
 {
@@ -19,7 +19,7 @@ public sealed record MetaArgs<R1, R2> : Roggi.Defined.NoOp
     public RogOpt[] Args => [Arg1, Arg2];
 }
 
-public sealed record MetaArgs<R1, R2, R3> : Roggi.Defined.NoOp
+public sealed record MetaArgs<R1, R2, R3> : Roggi.Defined.NoOp, IMetaArgs
     where R1 : class, Rog
     where R2 : class, Rog
     where R3 : class, Rog
