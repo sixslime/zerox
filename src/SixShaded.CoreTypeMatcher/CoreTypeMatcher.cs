@@ -182,6 +182,20 @@ public class CoreTypeMatcher : ITypeMatcher
             {
                 typeof(Kt.Bool.Not), SimpleKorssa(new Km.Bool.Not())
             },
+            {
+                typeof(Kt.IO.SelectOne<>), (t, c) =>
+                    new Km.IO.SelectOne
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.IO.SelectMultiple<>), (t, c) =>
+                    new Km.IO.SelectMultiple
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
         };
     private static Func<Type, FZOTypeMatch, IKorssaType> SimpleKorssa(IKorssaType typeObj) => (_, _) => typeObj;
 
