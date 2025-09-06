@@ -1,7 +1,7 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korvessas;
+﻿namespace SixShaded.FourZeroOne.Core.Korvessas.Multi;
 
-using Roggis;
 using Korvessa.Defined;
+using Roggis;
 using Syntax;
 
 public record Accumulate<RIn, ROut>(IKorssa<IMulti<RIn>> source, IKorssa<ROut> initialValue, IKorssa<MetaFunction<ROut, RIn, ROut>> function) : Korvessa<IMulti<RIn>, ROut, MetaFunction<ROut, RIn, ROut>, ROut>(source, initialValue, function)

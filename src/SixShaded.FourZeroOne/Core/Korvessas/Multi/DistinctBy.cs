@@ -1,8 +1,9 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korvessas;
+﻿namespace SixShaded.FourZeroOne.Core.Korvessas.Multi;
 
-using Roggis;
 using Korvessa.Defined;
+using Roggis;
 using Syntax;
+
 public record DistinctBy<R>(IKorssa<IMulti<R>> source, IKorssa<MetaFunction<R, Rog>> keyFunction) : Korvessa<IMulti<R>, MetaFunction<R, Rog>, Multi<R>>(source, keyFunction)
     where R : class, Rog
 {

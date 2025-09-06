@@ -1,7 +1,7 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korvessas;
+﻿namespace SixShaded.FourZeroOne.Core.Korvessas.Multi;
 
-using Roggis;
 using Korvessa.Defined;
+using Roggis;
 using Syntax;
 
 // be careful, can generate infinite sequences, yada yada.

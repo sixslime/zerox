@@ -1,9 +1,10 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korvessas;
+﻿namespace SixShaded.FourZeroOne.Core.Korvessas.Number;
 
 using Korvessa.Defined;
-using Syntax;
 using Roggis;
-public record Max(IKorssa<Number> a, IKorssa<Number> b) : Korvessa<Number, Number, Number>(a, b)
+using Syntax;
+
+public record Min(IKorssa<Number> a, IKorssa<Number> b) : Korvessa<Number, Number, Number>(a, b)
 {
     protected override RecursiveMetaDefinition<Number, Number, Number> InternalDefinition() =>
         (_, iA, iB) =>
@@ -11,7 +12,7 @@ public record Max(IKorssa<Number> a, IKorssa<Number> b) : Korvessa<Number, Numbe
                 .kIsGreaterThan(iB.kRef())
                 .kIfTrue<Number>(new()
                 {
-                    Then = iA.kRef(),
-                    Else = iB.kRef()
+                    Then = iB.kRef(),
+                    Else = iA.kRef()
                 });
 }

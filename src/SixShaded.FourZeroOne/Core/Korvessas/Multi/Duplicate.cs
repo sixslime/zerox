@@ -1,7 +1,7 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korvessas;
+﻿namespace SixShaded.FourZeroOne.Core.Korvessas.Multi;
 
-using Roggis;
 using Korvessa.Defined;
+using Roggis;
 using Syntax;
 
 public record Duplicate<R>(IKorssa<R> value, IKorssa<Number> count) : Korvessa<R, Number, Multi<R>>(value, count)

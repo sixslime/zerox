@@ -1,7 +1,7 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korvessas;
+﻿namespace SixShaded.FourZeroOne.Core.Korvessas.Multi;
 
-using Roggis;
 using Korvessa.Defined;
+using Roggis;
 using Syntax;
 
 public record MapWithIndex<RIn, ROut>(IKorssa<IMulti<RIn>> multi, IKorssa<MetaFunction<RIn, Number, ROut>> mapFunction) : Korvessa<IMulti<RIn>, MetaFunction<RIn, Number, ROut>, Multi<ROut>>(multi, mapFunction)

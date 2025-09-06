@@ -1,7 +1,7 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korvessas;
+﻿namespace SixShaded.FourZeroOne.Core.Korvessas.Multi;
 
-using Roggis;
 using Korvessa.Defined;
+using Roggis;
 using Syntax;
 
 public record Concat<R>(IKorssa<IMulti<R>> a, IKorssa<IMulti<R>> b) : Korvessa<IMulti<R>, IMulti<R>, Multi<R>>(a, b)

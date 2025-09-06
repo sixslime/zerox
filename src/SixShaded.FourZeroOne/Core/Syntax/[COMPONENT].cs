@@ -4,6 +4,7 @@ using Korssas.Rovi;
 using Korssas.Rovi.Varovi;
 using Roggis;
 using Korvessa.Defined;
+using Korvessas.Update;
 using Roveggi.Unsafe;
 using Roveggi;
 
@@ -56,7 +57,7 @@ public static partial class KorssaSyntax
             Rovu = rovu,
         };
 
-    public static Korvessas.UpdateRovi<C, R> kUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, IKorssa<MetaFunction<R, R>> changeFunc)
+    public static UpdateRovi<C, R> kUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, IKorssa<MetaFunction<R, R>> changeFunc)
         where C : IRovetu
         where R : class, Rog =>
         new(holder, changeFunc)
@@ -64,7 +65,7 @@ public static partial class KorssaSyntax
             Rovu = rovu
         };
 
-    public static Korvessas.UpdateRovi<C, R> kUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, MetaDefinition<R, R> changeFunc)
+    public static UpdateRovi<C, R> kUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, MetaDefinition<R, R> changeFunc)
         where C : IRovetu
         where R : class, Rog =>
         new(holder, Core.kMetaFunction([], changeFunc))
@@ -72,7 +73,7 @@ public static partial class KorssaSyntax
             Rovu = rovu
         };
 
-    public static Korvessas.SafeUpdateRovi<C, R> kSafeUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, IKorssa<MetaFunction<R, R>> changeFunc)
+    public static SafeUpdateRovi<C, R> kSafeUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, IKorssa<MetaFunction<R, R>> changeFunc)
         where C : IRovetu
         where R : class, Rog =>
         new(holder, changeFunc)
@@ -80,7 +81,7 @@ public static partial class KorssaSyntax
             Rovu = rovu
         };
 
-    public static Korvessas.SafeUpdateRovi<C, R> kSafeUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, MetaDefinition<R, R> changeFunc)
+    public static SafeUpdateRovi<C, R> kSafeUpdateRovi<C, R>(this IKorssa<IRoveggi<C>> holder, IRovu<C, R> rovu, MetaDefinition<R, R> changeFunc)
         where C : IRovetu
         where R : class, Rog =>
         new(holder, Core.kMetaFunction([], changeFunc))
@@ -106,7 +107,7 @@ public static partial class KorssaSyntax
             Varovu = varovu,
         };
 
-    public static Korvessas.UpdateVarovi<C, RKey, RVal> kUpdateVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> holder, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, IKorssa<MetaFunction<RVal, RVal>> changeFunc)
+    public static UpdateVarovi<C, RKey, RVal> kUpdateVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> holder, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, IKorssa<MetaFunction<RVal, RVal>> changeFunc)
         where C : IRovetu
         where RKey : class, Rog
         where RVal : class, Rog =>
@@ -115,7 +116,7 @@ public static partial class KorssaSyntax
             Varovu = varovu
         };
 
-    public static Korvessas.SafeUpdateVarovi<C, RKey, RVal> kSafeUpdateVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> holder, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, MetaDefinition<RVal, RVal> changeFunc)
+    public static SafeUpdateVarovi<C, RKey, RVal> kSafeUpdateVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> holder, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, MetaDefinition<RVal, RVal> changeFunc)
         where C : IRovetu
         where RKey : class, Rog
         where RVal : class, Rog =>
@@ -124,7 +125,7 @@ public static partial class KorssaSyntax
             Varovu = varovu
         };
 
-    public static Korvessas.SafeUpdateVarovi<C, RKey, RVal> kSafeUpdateVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> holder, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, IKorssa<MetaFunction<RVal, RVal>> changeFunc)
+    public static SafeUpdateVarovi<C, RKey, RVal> kSafeUpdateVarovi<C, RKey, RVal>(this IKorssa<IRoveggi<C>> holder, IVarovu<C, RKey, RVal> varovu, IKorssa<RKey> key, IKorssa<MetaFunction<RVal, RVal>> changeFunc)
         where C : IRovetu
         where RKey : class, Rog
         where RVal : class, Rog =>

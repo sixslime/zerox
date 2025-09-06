@@ -1,9 +1,8 @@
-﻿namespace SixShaded.FourZeroOne.Core.Korvessas;
+﻿namespace SixShaded.FourZeroOne.Core.Korvessas.Update;
 
-using Roggis;
 using Korvessa.Defined;
+using Roggis;
 using Syntax;
-using Roveggi;
 
 public record UpdateRovi<C, R>(IKorssa<IRoveggi<C>> roveggi, IKorssa<MetaFunction<R, R>> updateFunction) : Korvessa<IRoveggi<C>, MetaFunction<R, R>, IRoveggi<C>>(roveggi, updateFunction)
     where C : IRovetu

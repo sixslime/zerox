@@ -4,6 +4,7 @@ using Roggis;
 using Korssas.Memory;
 using Korssas.Memory.Rovedanggi;
 using Korvessa.Defined;
+using Korvessas.Update;
 using Roveggi;
 public static partial class KorssaSyntax
 {
@@ -30,18 +31,18 @@ public static partial class KorssaSyntax
         new(address);
 
     public static Korssas.Memory.ProgramState.Load kLoad(this IKorssa<ProgramState> state) => new(state);
-    public static Korvessas.UpdateRovedanggi<R> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<MetaFunction<R, R>> updateFunction)
+    public static UpdateRovedanggi<R> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<MetaFunction<R, R>> updateFunction)
         where R : class, Rog =>
         new(address, updateFunction);
 
-    public static Korvessas.UpdateRovedanggi<R> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, MetaDefinition<R, R> updateFunction)
+    public static UpdateRovedanggi<R> kUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, MetaDefinition<R, R> updateFunction)
         where R : class, Rog =>
         new(address, Core.kMetaFunction([], updateFunction));
-    public static Korvessas.SafeUpdateRovedanggi<R> kSafeUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<MetaFunction<R, R>> updateFunction)
+    public static SafeUpdateRovedanggi<R> kSafeUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<MetaFunction<R, R>> updateFunction)
         where R : class, Rog =>
         new(address, updateFunction);
 
-    public static Korvessas.SafeUpdateRovedanggi<R> kSafeUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, MetaDefinition<R, R> updateFunction)
+    public static SafeUpdateRovedanggi<R> kSafeUpdate<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, MetaDefinition<R, R> updateFunction)
         where R : class, Rog =>
         new(address, Core.kMetaFunction([], updateFunction));
 

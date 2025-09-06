@@ -408,6 +408,9 @@ public class CoreTypeMatcher : ITypeMatcher
             },
         };
 
+    private static readonly Dictionary<Type, Func<Type, FZOTypeMatch, IRoggiType>> ROGGI_MAP =
+        new()
+            { };
     private static Func<Kor, IResult<RovuInfo, AbstractRovuInfo>> RovuInfoGetter(FZOTypeMatch matcher) =>
         k =>
             k.GetType().GetProperty("Rovu")!.GetMethod!.Invoke(k, [])
@@ -440,8 +443,13 @@ public class CoreTypeMatcher : ITypeMatcher
     }
 
     public IOption<IRoggiType> GetRoggiType<R>(FZOTypeMatch caller)
-        where R : Rog =>
-        new None<IRoggiType>();
+        where R : Rog
+    {
+        var type = typeof(R);
+        return ROGGI_MAP.TryGetValue(type.IsGenericType ? type.GetGenericTypeDefinition() : type, out var generator)
+            ? generator(type, caller).AsSome()
+            : new None<IRoggiType>();
+    }
 
     public IOption<IRovetuType> GetRovetuType<C>(FZOTypeMatch caller)
         where C : IRovetu =>
