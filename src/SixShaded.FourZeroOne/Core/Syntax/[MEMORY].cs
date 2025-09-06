@@ -18,14 +18,14 @@ public static partial class KorssaSyntax
         where R : class, Rog =>
         new(ident);
 
-    public static Insert<R> kWrite<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<R> data)
+    public static Write<R> kWrite<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<R> data)
         where R : class, Rog =>
         new(address, data);
-    public static Insert<R> kRedact<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address)
+    public static Write<R> kRedact<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address)
         where R : class, Rog =>
         new(address, Core.kNollaFor<R>());
 
-    public static Get<R> kRead<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address)
+    public static Read<R> kRead<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address)
         where R : class, Rog =>
         new(address);
 

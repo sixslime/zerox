@@ -230,6 +230,20 @@ public class CoreTypeMatcher : ITypeMatcher
                         RovedantuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
+            {
+                typeof(Kt.Memory.Rovedanggi.Read<>), (t, c) =>
+                    new Km.Memory.Rovedanggi.Read()
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Memory.Rovedanggi.Write<>), (t, c) =>
+                    new Km.Memory.Rovedanggi.Write()
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
         };
     private static Func<Type, FZOTypeMatch, IKorssaType> SimpleKorssa(IKorssaType typeObj) => (_, _) => typeObj;
 
