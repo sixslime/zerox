@@ -196,6 +196,26 @@ public class CoreTypeMatcher : ITypeMatcher
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
+            {
+                typeof(Kt.Memory.Assign<>), (t, c) =>
+                    new Km.Memory.Assign()
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Memory.Reference<>), (t, c) =>
+                    new Km.Memory.Reference()
+                    {
+                        RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Memory.ProgramState.Get), SimpleKorssa(new Km.Memory.ProgramState.Get())
+            },
+            {
+                typeof(Kt.Memory.ProgramState.Load), SimpleKorssa(new Km.Memory.ProgramState.Load())
+            },
         };
     private static Func<Type, FZOTypeMatch, IKorssaType> SimpleKorssa(IKorssaType typeObj) => (_, _) => typeObj;
 

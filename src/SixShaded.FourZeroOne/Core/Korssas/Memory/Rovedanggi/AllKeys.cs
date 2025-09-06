@@ -3,6 +3,8 @@
 using SixShaded.FourZeroOne.Core.Roggis;
 using SixShaded.FourZeroOne.Roveggi;
 
+// DEV: 'R' technically does not need to exist here.
+// could make Unsafe.IRovedantu interface to match here.
 public sealed record AllKeys<D, R> : Korssa.Defined.Value<Multi<IRoveggi<D>>>
     where D : Rovedantu<R>
     where R : class, Rog
