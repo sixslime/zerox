@@ -13,8 +13,4 @@
     <ProjectReference Include="..\SixShaded.NotRust\SixShaded.NotRust.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Types\Rovi\Varovi\" />
-  </ItemGroup>
-
 </Project>
