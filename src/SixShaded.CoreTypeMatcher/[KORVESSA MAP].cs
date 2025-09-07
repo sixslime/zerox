@@ -84,5 +84,9 @@ internal static partial class Maps
                         DataType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
+            { typeof(Kt.Number.Clamp), SimpleKorssa(new Km.Number.Clamp()) },
+            { typeof(Kt.Number.Min), SimpleKorssa(new Km.Number.Min()) },
+            { typeof(Kt.Number.Max), SimpleKorssa(new Km.Number.Max()) },
+            { typeof(Kt.Number.SingleRange), SimpleKorssa(new Km.Number.SingleRange()) },
         };
 }
