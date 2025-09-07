@@ -36,5 +36,53 @@ internal static partial class Maps
                         OutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
+            {
+                typeof(Kt.Update.UpdateRovi<,>), (t, c) =>
+                    new Km.Update.UpdateRovi()
+                    {
+                        RovuInfoGetter = RovuInfoGetter(c),
+                        DataType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Update.SafeUpdateRovi<,>), (t, c) =>
+                    new Km.Update.SafeUpdateRovi()
+                    {
+                        RovuInfoGetter = RovuInfoGetter(c),
+                        DataType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Update.UpdateVarovi<,,>), (t, c) =>
+                    new Km.Update.UpdateVarovi()
+                    {
+                        VarovuInfoGetter = VarovuInfoGetter(c),
+                        KeyType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
+                        DataType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Update.SafeUpdateVarovi<,,>), (t, c) =>
+                    new Km.Update.SafeUpdateVarovi()
+                    {
+                        VarovuInfoGetter = VarovuInfoGetter(c),
+                        KeyType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
+                        DataType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Update.UpdateRovedanggi<>), (t, c) =>
+                    new Km.Update.UpdateRovedanggi()
+                    {
+                        DataType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Update.SafeUpdateRovedanggi<>), (t, c) =>
+                    new Km.Update.SafeUpdateRovedanggi()
+                    {
+                        DataType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
         };
 }
