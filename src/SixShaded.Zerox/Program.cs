@@ -6,6 +6,8 @@ using SixShaded.FourZeroOne.Core.Syntax;
 using FZOTypeMatch;
 using FZOTypeMatch.Syntax;
 using CoreTypeMatcher;
+using MinimaFZO;
+using FourZeroOne.FZOSpec;
 internal class Program
 {
     public static async Task Main(string[] args)
@@ -26,8 +28,7 @@ internal class Program
             }
         }
         var typeMatch = new FZOTypeMatch([new CoreTypeMatcher()]);
-        var testKorssa = 1.kFixed().kAdd(2.kFixed());
-
+        var testKorssa = (0..7).kFixed().kMap(iN => true.kFixed());
         Log(testKorssa);
         Log(testKorssa.FZOTypeInfo(typeMatch));
         Log(1.kFixed().FZOTypeInfo(typeMatch));
