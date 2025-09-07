@@ -88,5 +88,85 @@ internal static partial class Maps
             { typeof(Kt.Number.Min), SimpleKorssa(new Km.Number.Min()) },
             { typeof(Kt.Number.Max), SimpleKorssa(new Km.Number.Max()) },
             { typeof(Kt.Number.SingleRange), SimpleKorssa(new Km.Number.SingleRange()) },
+            {
+                typeof(Kt.Multi.Concat<>), (t, c) =>
+                    new Km.Multi.Concat()
+                    {
+                        ElementType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.AllMatch<>), (t, c) =>
+                    new Km.Multi.AllMatch()
+                    {
+                        ElementType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.FirstMatch<>), (t, c) =>
+                    new Km.Multi.FirstMatch()
+                    {
+                        ElementType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.AnyMatch<>), (t, c) =>
+                    new Km.Multi.AnyMatch()
+                    {
+                        ElementType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.Filter<>), (t, c) =>
+                    new Km.Multi.Filter()
+                    {
+                        ElementType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.Duplicate<>), (t, c) =>
+                    new Km.Multi.Duplicate()
+                    {
+                        ElementType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.DistinctBy<>), (t, c) =>
+                    new Km.Multi.DistinctBy()
+                    {
+                        ElementType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.Sequence<>), (t, c) =>
+                    new Km.Multi.Sequence()
+                    {
+                        ElementType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.Accumulate<,>), (t, c) =>
+                    new Km.Multi.Accumulate()
+                    {
+                        SourceType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        ResultType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.Map<,>), (t, c) =>
+                    new Km.Multi.Map()
+                    {
+                        SourceType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        ResultType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
+            {
+                typeof(Kt.Multi.MapWithIndex<,>), (t, c) =>
+                    new Km.Multi.MapWithIndex()
+                    {
+                        SourceType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        ResultType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
+                    }
+            },
         };
 }
