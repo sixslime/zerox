@@ -97,6 +97,21 @@ public class FZOTypeMatch
             DataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[2]).Unwrap()
         };
     }
+    public RodaInfo GetRodaInfo(Addr roda)
+    {
+        var compType = typeof(IRoda<>);
+        var rodaGenerics =
+            roda.GetType()
+                .GetInterfaces()
+                .FirstMatch(x => x.IsGenericType && x.GetGenericTypeDefinition() == compType)
+                .Expect("Logically unreachable")
+                .GenericTypeArguments;
+        return new()
+        {
+            Roda = roda,
+            DataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rodaGenerics[0]).Unwrap()
+        };
+    }
 
     private IOption<IFZOTypeInfo<IFZOType>> CalculateDynamicType(Type systemType)
     {
