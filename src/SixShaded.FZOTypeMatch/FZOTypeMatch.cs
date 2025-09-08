@@ -133,6 +133,7 @@ public class FZOTypeMatch
             null,
         ];
         RoggiTypeInfo? outType = null;
+        IOption<RoggiTypeInfo> combinerOpt = new None<RoggiTypeInfo>();
         foreach (var t in systemType.GetInterfaces())
         {
             if (!t.IsGenericType) continue;
@@ -145,13 +146,25 @@ public class FZOTypeMatch
             else if (openDef == typeof(IHasArgs<,>)) argTypes[0] = (RoggiTypeInfo)GetFZOTypeInfoDynamic(generics[0]).Expect("???");
             else if (openDef == typeof(IHasArgs<,,>)) argTypes[1] = (RoggiTypeInfo)GetFZOTypeInfoDynamic(generics[1]).Expect("???");
             else if (openDef == typeof(IHasArgs<,,,>)) argTypes[2] = (RoggiTypeInfo)GetFZOTypeInfoDynamic(generics[2]).Expect("???");
+            else if (openDef == typeof(IHasCombinerArgs<,>))
+            {
+                combinerOpt = ((RoggiTypeInfo)GetFZOTypeInfoDynamic(generics[0]).Expect("???")).AsSome();
+            }
         }
         return new()
         {
             Origin = systemType,
             Match = _matchers.Map(x => CallMatcherMethod<IKorssaType>(x, INTERFACE_KORSSA_METHOD, systemType, _getMethodCallArgs)).Filtered().GetAt(0),
             ResultType = outType!,
-            ArgTypes = argTypes.FilterMap(x => x.NullToNone()).ToArray(),
+            ArgTypes = combinerOpt.Check(out var combinerType)
+                ? new KorssaTypeInfo.EArgTypes.Combiner()
+                {
+                    Type = combinerType
+                }
+                : new KorssaTypeInfo.EArgTypes.Positional()
+                {
+                    Types = argTypes.FilterMap(x => x.NullToNone()).ToArray()
+                }
         };
     }
 

@@ -57,6 +57,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "[scratchpad]", "[scratchpad
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.Scratchpad.MyTui", "scratchpad\SixShaded.Scratchpad.MyTui\SixShaded.Scratchpad.MyTui.csproj", "{CA9DED9B-C44C-4E70-BAF0-0A6D66F9D67C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.Aleph", "src\SixShaded.Aleph\SixShaded.Aleph.csproj", "{7248D6AF-852B-463E-8A79-4B16C71FFCB2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +133,10 @@ Global
 		{CA9DED9B-C44C-4E70-BAF0-0A6D66F9D67C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA9DED9B-C44C-4E70-BAF0-0A6D66F9D67C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA9DED9B-C44C-4E70-BAF0-0A6D66F9D67C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7248D6AF-852B-463E-8A79-4B16C71FFCB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7248D6AF-852B-463E-8A79-4B16C71FFCB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7248D6AF-852B-463E-8A79-4B16C71FFCB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7248D6AF-852B-463E-8A79-4B16C71FFCB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -155,6 +161,7 @@ Global
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {6E053241-4627-4E92-9A95-A356AF73AB06}
 		{85024F52-A2D2-46AC-BB3B-459FE4D338AF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{CA9DED9B-C44C-4E70-BAF0-0A6D66F9D67C} = {575A5977-D600-4578-9A16-0610EC0778AF}
+		{7248D6AF-852B-463E-8A79-4B16C71FFCB2} = {6E053241-4627-4E92-9A95-A356AF73AB06}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C6A2B243-BFE2-4013-999A-0063037A133B}
