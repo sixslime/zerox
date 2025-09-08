@@ -1,4 +1,5 @@
 ﻿namespace SixShaded.FZOTypeMatch;
+
 using FourZeroOne.Roveggi.Unsafe;
 
 public record VarovuInfo

@@ -1,5 +1,7 @@
 namespace SixShaded.FZOTypeMatch.Syntax;
+
 using FourZeroOne.Roveggi.Unsafe;
+
 public static class Extensions
 {
     public static KorssaTypeInfo FZOTypeInfo(this Kor korssa, FZOTypeMatch typeMatch) => typeMatch.GetKorssaTypeInfo(korssa);

@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.FZOTypeMatch;
 
 using FourZeroOne.Roveggi.Unsafe;
+
 public interface ITypeMatcher
 {
     public IOption<IKorssaType> GetKorssaType<K>(FZOTypeMatch caller)

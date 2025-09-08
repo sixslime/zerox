@@ -6,41 +6,34 @@ using FourZeroOne.Roveggi.Unsafe;
 // really really shitty code design bro.
 public class FZOTypeMatch
 {
+    private static readonly MethodInfo INTERFACE_KORSSA_METHOD = typeof(ITypeMatcher).GetMethod("GetKorssaType")!;
+    private static readonly MethodInfo INTERFACE_ROGGI_METHOD = typeof(ITypeMatcher).GetMethod("GetRoggiType")!;
+    private static readonly MethodInfo INTERFACE_ROVETU_METHOD = typeof(ITypeMatcher).GetMethod("GetRovetuType")!;
+    private readonly object[] _getMethodCallArgs;
     private readonly ITypeMatcher[] _matchers;
     private readonly Dictionary<Type, IFZOTypeInfo<IFZOType>> _typeMap = new();
-    private readonly object[] _getMethodCallArgs;
 
     public FZOTypeMatch(ITypeMatcher[] matchers)
     {
         _getMethodCallArgs = [this];
         _matchers = matchers;
     }
+
     public IEnumerable<ITypeMatcher> Matchers => _matchers;
 
     public IOption<IFZOTypeInfo<IFZOType>> GetFZOTypeInfoDynamic(Type systemType)
     {
         if (_typeMap.TryGetValue(systemType, out var cachedValue))
             return cachedValue.AsSome();
-
         var o = CalculateDynamicType(systemType);
         if (o.Check(out var typeInfo))
             _typeMap[systemType] = typeInfo;
         return o;
     }
-    public KorssaTypeInfo GetKorssaTypeInfo(Kor korssa)
-    {
-        return (KorssaTypeInfo)(GetFZOTypeInfoDynamic(korssa.GetType()).Unwrap());
-    }
 
-    public RoggiTypeInfo GetRoggiTypeInfo(Rog roggi)
-    {
-        return (RoggiTypeInfo)(GetFZOTypeInfoDynamic(roggi.GetType()).Unwrap());
-    }
-
-    public RovetuTypeInfo GetRovetuTypeInfo(IRoveggi<IRovetu> roveggi)
-    {
-        return (RovetuTypeInfo)(GetFZOTypeInfoDynamic(roveggi.GetType()).Unwrap());
-    }
+    public KorssaTypeInfo GetKorssaTypeInfo(Kor korssa) => (KorssaTypeInfo)GetFZOTypeInfoDynamic(korssa.GetType()).Unwrap();
+    public RoggiTypeInfo GetRoggiTypeInfo(Rog roggi) => (RoggiTypeInfo)GetFZOTypeInfoDynamic(roggi.GetType()).Unwrap();
+    public RovetuTypeInfo GetRovetuTypeInfo(IRoveggi<IRovetu> roveggi) => (RovetuTypeInfo)GetFZOTypeInfoDynamic(roveggi.GetType()).Unwrap();
 
     public RovuInfo GetRovuInfo(IRovu rovu)
     {
@@ -55,15 +48,17 @@ public class FZOTypeMatch
         {
             Rovu = rovu,
             RovetuType = (RovetuTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[0]).Unwrap(),
-            DataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[1]).Unwrap()
+            DataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[1]).Unwrap(),
         };
     }
+
     public AbstractRovuInfo GetRovuInfo(IAbstractRovu abstractRovu)
     {
         var compTypeSet = typeof(ISetRovu<,>);
         var compTypeGet = typeof(IGetRovu<,>);
+
         // bs but whatever
-        var (isGet, rovuGenerics) =
+        (bool isGet, var rovuGenerics) =
             abstractRovu.GetType()
                 .GetInterfaces()
                 .FilterMap(x => x.IsGenericType.ToOptionLazy(x.GetGenericTypeDefinition))
@@ -80,6 +75,7 @@ public class FZOTypeMatch
             Interaction = isGet ? AbstractRovuInfo.EInteraction.Get : AbstractRovuInfo.EInteraction.Set,
         };
     }
+
     public VarovuInfo GetVarovuInfo(IVarovu varovu)
     {
         var compType = typeof(IVarovu<,,>);
@@ -94,9 +90,10 @@ public class FZOTypeMatch
             Varovu = varovu,
             RovetuType = (RovetuTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[0]).Unwrap(),
             KeyType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[1]).Unwrap(),
-            DataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[2]).Unwrap()
+            DataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rovuGenerics[2]).Unwrap(),
         };
     }
+
     public RodaInfo GetRodaInfo(Addr roda)
     {
         var compType = typeof(IRoda<>);
@@ -109,7 +106,7 @@ public class FZOTypeMatch
         return new()
         {
             Roda = roda,
-            DataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rodaGenerics[0]).Unwrap()
+            DataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rodaGenerics[0]).Unwrap(),
         };
     }
 
@@ -123,9 +120,9 @@ public class FZOTypeMatch
             return CalculateRovetuInfo(systemType.GenericTypeArguments[0]).AsSome();
         if (systemType.IsAssignableTo(typeof(IRovetu)))
             return CalculateRovetuInfo(systemType).AsSome();
-
         return new None<IFZOTypeInfo<IFZOType>>();
     }
+
     private KorssaTypeInfo CalculateKorssaInfo(Type systemType)
     {
         // this is so fucking retarded guys.
@@ -133,7 +130,7 @@ public class FZOTypeMatch
         [
             null,
             null,
-            null
+            null,
         ];
         RoggiTypeInfo? outType = null;
         foreach (var t in systemType.GetInterfaces())
@@ -141,6 +138,7 @@ public class FZOTypeMatch
             if (!t.IsGenericType) continue;
             var openDef = t.GetGenericTypeDefinition();
             var generics = t.GenericTypeArguments;
+
             // DEV: assumes that all IHasArgs<...> implements previous IHasArgs.
             // does not use IHasNoArgs.
             if (openDef == typeof(IKorssa<>)) outType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(generics[0]).Expect("???");
@@ -157,15 +155,13 @@ public class FZOTypeMatch
         };
     }
 
-    
-    private RoggiTypeInfo CalculateRoggiInfo(Type systemType)
-    {
-        return new()
+    private RoggiTypeInfo CalculateRoggiInfo(Type systemType) =>
+        new()
         {
             Origin = systemType,
-            MatchedType = _matchers.Map(x => CallMatcherMethod<IRoggiType>(x, INTERFACE_ROGGI_METHOD, systemType, _getMethodCallArgs)).Filtered().GetAt(0)
+            MatchedType = _matchers.Map(x => CallMatcherMethod<IRoggiType>(x, INTERFACE_ROGGI_METHOD, systemType, _getMethodCallArgs)).Filtered().GetAt(0),
         };
-    }
+
     private RovetuTypeInfo CalculateRovetuInfo(Type systemType)
     {
         var matchedType = _matchers.Map(x => CallMatcherMethod<IRovetuType>(x, INTERFACE_ROVETU_METHOD, systemType, _getMethodCallArgs)).Filtered().GetAt(0);
@@ -186,10 +182,6 @@ public class FZOTypeMatch
         };
     }
 
-    private static readonly MethodInfo INTERFACE_KORSSA_METHOD = typeof(ITypeMatcher).GetMethod("GetKorssaType")!;
-    private static readonly MethodInfo INTERFACE_ROGGI_METHOD = typeof(ITypeMatcher).GetMethod("GetRoggiType")!;
-    private static readonly MethodInfo INTERFACE_ROVETU_METHOD = typeof(ITypeMatcher).GetMethod("GetRovetuType")!;
-
     // this is scary bro.
     private static IOption<T> CallMatcherMethod<T>(ITypeMatcher matcher, MethodInfo interfaceMethod, Type type, object[] callArgs)
         where T : IFZOType
@@ -197,7 +189,7 @@ public class FZOTypeMatch
         var interfaceMap = matcher.GetType().GetInterfaceMap(typeof(ITypeMatcher));
         int methodIndex = Array.FindIndex(interfaceMap.InterfaceMethods, method => method == interfaceMethod);
         if (methodIndex == -1)
-            throw new Exception($"cannot find unclosed {interfaceMethod.Name} method in interface map.");
-        return (IOption<T>)(interfaceMap.TargetMethods[methodIndex].MakeGenericMethod(type).Invoke(matcher, callArgs)!);
+            throw new($"cannot find unclosed {interfaceMethod.Name} method in interface map.");
+        return (IOption<T>)interfaceMap.TargetMethods[methodIndex].MakeGenericMethod(type).Invoke(matcher, callArgs)!;
     }
 }
