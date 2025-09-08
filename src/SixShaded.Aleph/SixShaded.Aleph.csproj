@@ -12,4 +12,8 @@
     <ProjectReference Include="..\SixShaded.NotRust\SixShaded.NotRust.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Terminal.Gui" Version="2.0.0-develop.4538" />
+  </ItemGroup>
+
 </Project>
