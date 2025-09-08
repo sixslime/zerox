@@ -10,6 +10,9 @@ internal static partial class Maps
         new()
         {
             {
+                typeof(Rog), SimpleRoggi(new Rm.Any())
+            },
+            {
                 typeof(Rt.Instructions.MellsanoAdd), SimpleRoggi(new Rm.Instructions.MellsanoAdd())
             },
             {

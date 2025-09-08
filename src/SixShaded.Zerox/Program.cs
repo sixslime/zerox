@@ -6,6 +6,7 @@ using SixShaded.FourZeroOne.Core.Syntax;
 using FZOTypeMatch;
 using FZOTypeMatch.Syntax;
 using CoreTypeMatcher;
+using Types = CoreTypeMatcher.Types;
 using MinimaFZO;
 using FourZeroOne.FZOSpec;
 internal class Program
@@ -28,9 +29,16 @@ internal class Program
             }
         }
         var typeMatch = new FZOTypeMatch([new CoreTypeMatcher()]);
-        var testKorssa = (0..7).kFixed().kMap(iN => true.kFixed());
+        var testKorssa =
+            Core.kSubEnvironment<Rog>(
+            new()
+            {
+                Environment = [1.kFixed().kAsVariable(out var iV)],
+                Value = iV.kRef()
+            });
         Log(testKorssa);
         Log(testKorssa.FZOTypeInfo(typeMatch));
+        Log((testKorssa.Arg2.FZOTypeInfo(typeMatch).Match.Unwrap() as Types.Korssa.Memory.Reference).RodaInfoGetter(testKorssa.Arg2));
         Log(1.kFixed().FZOTypeInfo(typeMatch));
     }
 

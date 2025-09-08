@@ -10,6 +10,9 @@ internal static partial class Maps
         new()
         {
             {
+                typeof(Kor), SimpleKorssa(new Km.Any())
+            },
+            {
                 typeof(Kt.Exists), SimpleKorssa(new Km.Exists())
             },
             {

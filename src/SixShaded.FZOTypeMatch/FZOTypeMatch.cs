@@ -149,8 +149,8 @@ public class FZOTypeMatch
         return new()
         {
             Origin = systemType,
-            MatchedType = _matchers.Map(x => CallMatcherMethod<IKorssaType>(x, INTERFACE_KORSSA_METHOD, systemType, _getMethodCallArgs)).Filtered().GetAt(0),
-            OutputType = outType!,
+            Match = _matchers.Map(x => CallMatcherMethod<IKorssaType>(x, INTERFACE_KORSSA_METHOD, systemType, _getMethodCallArgs)).Filtered().GetAt(0),
+            ResultType = outType!,
             ArgTypes = argTypes.FilterMap(x => x.NullToNone()).ToArray(),
         };
     }
@@ -159,7 +159,7 @@ public class FZOTypeMatch
         new()
         {
             Origin = systemType,
-            MatchedType = _matchers.Map(x => CallMatcherMethod<IRoggiType>(x, INTERFACE_ROGGI_METHOD, systemType, _getMethodCallArgs)).Filtered().GetAt(0),
+            Match = _matchers.Map(x => CallMatcherMethod<IRoggiType>(x, INTERFACE_ROGGI_METHOD, systemType, _getMethodCallArgs)).Filtered().GetAt(0),
         };
 
     private RovetuTypeInfo CalculateRovetuInfo(Type systemType)
@@ -177,7 +177,7 @@ public class FZOTypeMatch
         return new()
         {
             Origin = systemType,
-            MatchedType = matchedType,
+            Match = matchedType,
             MemoryDataType = memoryDataType.NullToNone(),
         };
     }
