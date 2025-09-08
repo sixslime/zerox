@@ -30,15 +30,25 @@ public class Master
         // TODO
         // - make better exception messages.
         // - split into functions
-
         var axoiType = typeof(X);
         var axoi = (IsAxoi)axoiType.GetConstructor([typeof(AxoiCreationKey)])!.Invoke([AxoiCreationKey.KEY]);
         if (!ASSEMBLY.RegisteredAxois.TryAdd(axoiType, axoi)) return;
-
         // DEBUG
-        Console.WriteLine($"REGISTERING AXOI: {axoiType.Namespace!.Split(".")[^1]}");
+        Console.WriteLine($"REGISTERING AXOI: {axoi.Name}");
+        ValidateRovetus(axoi);
+        
+        // maybe not pass ASSEMBLY?
+        // idk this shit is a mess.
+        OnRegisterAxoiEvent?.Invoke(
+        null, new()
+        {
+            Axoi = axoi
+        });
+    }
 
-        Type[] rovetuTypes = axoiType.Assembly.ExportedTypes.Where(x => x.IsAssignableTo(typeof(IRovetu))).ToArray();
+    private static void ValidateRovetus(IsAxoi axoi)
+    {
+        Type[] rovetuTypes = axoi.GetType().Assembly.ExportedTypes.Where(x => x.IsAssignableTo(typeof(IRovetu))).ToArray();
         (Type genericType, int genericIndex)[] validFieldTypes = [(typeof(Roveggi.Defined.Rovu<,>), 0), (typeof(Roveggi.Defined.AbstractGetRovu<,>), 0), (typeof(Roveggi.Defined.AbstractSetRovu<,>), 0), (typeof(Roveggi.Defined.Varovu<,,>), 0)];
         var implementedAbstractRovus = new Dictionary<Type, HashSet<Roveggi.Unsafe.IAbstractRovu>>();
 
@@ -54,22 +64,22 @@ public class Master
             {
                 // validate field is static:
                 if (!field.IsStatic)
-                    throw new MetaAssemblyException(axoiType, $"field '{field.Name}' in rovetu '{rovetuType.Name}' is not static.");
+                    throw new MetaAssemblyException(axoi, $"field '{field.Name}' in rovetu '{rovetuType.Name}' is not static.");
 
                 // validate field is not null:
                 object? fieldValue = field.GetValue(null);
                 if (fieldValue is null)
-                    throw new MetaAssemblyException(axoiType, $"field '{field.Name}' in rovetu '{rovetuType.Name}' is null.");
+                    throw new MetaAssemblyException(axoi, $"field '{field.Name}' in rovetu '{rovetuType.Name}' is null.");
                 var fieldType = field.FieldType;
                 if (field.Name == "__IMPLEMENTS")
                 {
                     // validate rovetu is not abstract:
                     if (isAbstract)
-                        throw new MetaAssemblyException(axoiType, $"'{rovetuType.Name}' is abstract but has an '__IMPLEMENTS' field (not allowed).");
+                        throw new MetaAssemblyException(axoi, $"'{rovetuType.Name}' is abstract but has an '__IMPLEMENTS' field (not allowed).");
 
                     // validate __implements type:
                     if (!(fieldType.IsGenericType && fieldType.GetGenericTypeDefinition() == typeof(ImplementationStatement<>) && fieldType.GetGenericArguments()[0] == rovetuType))
-                        throw new MetaAssemblyException(axoiType, $"'__IMPLEMENTS' field in '{rovetuType.Name}' must be of type ImplementationStatement<{rovetuType.Name}>");
+                        throw new MetaAssemblyException(axoi, $"'__IMPLEMENTS' field in '{rovetuType.Name}' must be of type ImplementationStatement<{rovetuType.Name}>");
 
                     // construct context:
                     var implContextType = typeof(ImplementationContext<>).MakeGenericType(rovetuType);
@@ -93,20 +103,20 @@ public class Master
                         throw new PleaseFixException($"set mappings in ImplementationContext is not of exact type '{typeof(SetMapping).Name}'");
                     ASSEMBLY.RovenData.GetImplementations[rovetuType] = getMap;
                     ASSEMBLY.RovenData.SetImplementations[rovetuType] = setMap;
-                    implementedAbstractRovus[rovetuType] = [..getMap.Keys, ..setMap.Keys];
+                    implementedAbstractRovus[rovetuType] = [.. getMap.Keys, .. setMap.Keys];
                     continue;
                 }
                 // validate rovu type:
                 if (!(fieldType.IsGenericType && validFieldTypes.Any(x => fieldType.GetGenericTypeDefinition() == x.genericType && fieldType.GenericTypeArguments[x.genericIndex] == rovetuType)))
                 {
                     throw new MetaAssemblyException(
-                    axoiType, $"'{field.Name}' field in rovetu '{rovetuType.Name}' is not a valid type ({fieldType.Name})." +
+                    axoi, $"'{field.Name}' field in rovetu '{rovetuType.Name}' is not a valid type ({fieldType.Name})." +
                           $"Valid types are:\n{string.Join("\n", validFieldTypes.Map(x => x.genericType.Name))}");
                 }
 
                 // validate field is not abstract if rovetu is concrete:
                 if (!isAbstract && fieldType.IsAssignableTo(typeof(Roveggi.Unsafe.IAbstractRovu)))
-                    throw new MetaAssemblyException(axoiType, $"'{field.Name}' field is abstract, but rovetu '{rovetuType.Name}' is concrete.");
+                    throw new MetaAssemblyException(axoi, $"'{field.Name}' field is abstract, but rovetu '{rovetuType.Name}' is concrete.");
             }
         }
 
@@ -120,21 +130,13 @@ public class Master
                 foreach (var field in abstractBaseRovetuType.GetFields())
                 {
                     if (field.GetValue(null) is Roveggi.Unsafe.IAbstractRovu abstractRovu && !implementedAbstractRovus[rovetuType].Remove(abstractRovu))
-                        throw new MetaAssemblyException(axoiType, $"rovetu '{rovetuType.Name}' does not implement '{field.Name}' from '{abstractBaseRovetuType.Name}'.");
+                        throw new MetaAssemblyException(axoi, $"rovetu '{rovetuType.Name}' does not implement '{field.Name}' from '{abstractBaseRovetuType.Name}'.");
                 }
             }
             if (implementedAbstractRovus[rovetuType].Count > 0)
-                throw new MetaAssemblyException(axoiType, $"rovetu '{rovetuType.Name}' implements rovus from rovetus it does not inheret from:\n {string.Join("\n", implementedAbstractRovus[rovetuType])})");
+                throw new MetaAssemblyException(axoi, $"rovetu '{rovetuType.Name}' implements rovus from rovetus it does not inheret from:\n {string.Join("\n", implementedAbstractRovus[rovetuType])})");
         }
-        // maybe not pass ASSEMBLY?
-        // idk this shit is a mess.
-        OnRegisterAxoiEvent(
-        ASSEMBLY, new RegisterAxoiEventArgs()
-        {
-            Axoi = axoi
-        });
     }
-
     public record RegisterAxoiEventArgs
     {
         public required IsAxoi Axoi { get; init; }
@@ -144,7 +146,7 @@ public class Master
         internal static readonly AxoiCreationKey KEY = new();
         private AxoiCreationKey() { }
     }
-    public class MetaAssemblyException(Type axoi, string message) : Exception($"FourZeroOne Assembly Error\n Axoi: {axoi.Namespace!.Split(".")[^1]}\n{message}");
+    public class MetaAssemblyException(IsAxoi axoi, string message) : Exception($"FourZeroOne Assembly Error\n Axoi: {axoi.Name}\n{message}");
 
     internal class PleaseFixException(string message) : Exception($"[Master] PLZ FIX: {message}");
 
