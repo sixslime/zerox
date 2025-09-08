@@ -1,8 +1,6 @@
 namespace SixShaded.CoreTypeMatcher;
 
 using FZOTypeMatch;
-
-
 using FourZeroOne.Core;
 using FourZeroOne.Roveggi.Unsafe;
 
@@ -12,9 +10,8 @@ public class CoreTypeMatcher : ITypeMatcher
         new(
         [
             ..Maps.Korssa,
-            ..Maps.Korvessa
+            ..Maps.Korvessa,
         ]);
-
     private static readonly Dictionary<Type, Func<Type, FZOTypeMatch, IRoggiType>> ROGGI_MAP = Maps.Roggi;
 
     public IOption<IKorssaType> GetKorssaType<K>(FZOTypeMatch caller)

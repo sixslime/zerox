@@ -3,6 +3,7 @@ namespace SixShaded.CoreTypeMatcher;
 using Kt = FourZeroOne.Core.Korssas;
 using Km = Types.Korssa;
 using FZOTypeMatch;
+
 internal static partial class Maps
 {
     public static Dictionary<Type, Func<Type, FZOTypeMatch, IKorssaType>> Korssa =>
@@ -64,7 +65,7 @@ internal static partial class Maps
                     new Km.DefineMetaFunction
                     {
                         MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
-                        MetaArgTypes = []
+                        MetaArgTypes = [],
                     }
             },
             {
@@ -72,7 +73,7 @@ internal static partial class Maps
                     new Km.DefineMetaFunction
                     {
                         MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
-                        MetaArgTypes = t.GenericTypeArguments[..1].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                        MetaArgTypes = t.GenericTypeArguments[..1].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray(),
                     }
             },
             {
@@ -80,7 +81,7 @@ internal static partial class Maps
                     new Km.DefineMetaFunction
                     {
                         MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
-                        MetaArgTypes = t.GenericTypeArguments[..2].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                        MetaArgTypes = t.GenericTypeArguments[..2].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray(),
                     }
             },
             {
@@ -88,7 +89,7 @@ internal static partial class Maps
                     new Km.DefineMetaFunction
                     {
                         MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[3].TryGetFZOTypeInfo(c).Unwrap(),
-                        MetaArgTypes = t.GenericTypeArguments[..3].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                        MetaArgTypes = t.GenericTypeArguments[..3].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray(),
                     }
             },
             {
@@ -96,7 +97,7 @@ internal static partial class Maps
                     new Km.DefineMetaFunction
                     {
                         MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[4].TryGetFZOTypeInfo(c).Unwrap(),
-                        MetaArgTypes = t.GenericTypeArguments[..4].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                        MetaArgTypes = t.GenericTypeArguments[..4].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray(),
                     }
             },
             {
@@ -104,7 +105,7 @@ internal static partial class Maps
                     new Km.Execute
                     {
                         MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
-                        MetaArgTypes = []
+                        MetaArgTypes = [],
                     }
             },
             {
@@ -112,7 +113,7 @@ internal static partial class Maps
                     new Km.Execute
                     {
                         MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
-                        MetaArgTypes = t.GenericTypeArguments[..1].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                        MetaArgTypes = t.GenericTypeArguments[..1].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray(),
                     }
             },
             {
@@ -120,7 +121,7 @@ internal static partial class Maps
                     new Km.Execute
                     {
                         MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
-                        MetaArgTypes = t.GenericTypeArguments[..2].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                        MetaArgTypes = t.GenericTypeArguments[..2].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray(),
                     }
             },
             {
@@ -128,28 +129,28 @@ internal static partial class Maps
                     new Km.Execute
                     {
                         MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[3].TryGetFZOTypeInfo(c).Unwrap(),
-                        MetaArgTypes = t.GenericTypeArguments[..3].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                        MetaArgTypes = t.GenericTypeArguments[..3].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray(),
                     }
             },
             {
                 typeof(Kt.ToBoxedArgs<>), (t, c) =>
                     new Km.ToBoxedArgs
                     {
-                        ArgTypes = t.GenericTypeArguments.Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                        ArgTypes = t.GenericTypeArguments.Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray(),
                     }
             },
             {
                 typeof(Kt.ToBoxedArgs<,>), (t, c) =>
                     new Km.ToBoxedArgs
                     {
-                        ArgTypes = t.GenericTypeArguments.Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                        ArgTypes = t.GenericTypeArguments.Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray(),
                     }
             },
             {
                 typeof(Kt.ToBoxedArgs<,,>), (t, c) =>
                     new Km.ToBoxedArgs
                     {
-                        ArgTypes = t.GenericTypeArguments.Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray()
+                        ArgTypes = t.GenericTypeArguments.Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray(),
                     }
             },
             {
@@ -195,16 +196,18 @@ internal static partial class Maps
             },
             {
                 typeof(Kt.Memory.Assign<>), (t, c) =>
-                    new Km.Memory.Assign()
+                    new Km.Memory.Assign
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        RodaInfoGetter = RodaInfoGetter(c),
                     }
             },
             {
                 typeof(Kt.Memory.Reference<>), (t, c) =>
-                    new Km.Memory.Reference()
+                    new Km.Memory.Reference
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        RodaInfoGetter = RodaInfoGetter(c),
                     }
             },
             {
@@ -215,28 +218,28 @@ internal static partial class Maps
             },
             {
                 typeof(Kt.Memory.Rovedanggi.AllKeys<,>), (t, c) =>
-                    new Km.Memory.Rovedanggi.AllKeys()
+                    new Km.Memory.Rovedanggi.AllKeys
                     {
                         RovedantuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
             {
                 typeof(Kt.Memory.Rovedanggi.AllValues<,>), (t, c) =>
-                    new Km.Memory.Rovedanggi.AllValues()
+                    new Km.Memory.Rovedanggi.AllValues
                     {
                         RovedantuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
             {
                 typeof(Kt.Memory.Rovedanggi.Read<>), (t, c) =>
-                    new Km.Memory.Rovedanggi.Read()
+                    new Km.Memory.Rovedanggi.Read
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
             {
                 typeof(Kt.Memory.Rovedanggi.Write<>), (t, c) =>
-                    new Km.Memory.Rovedanggi.Write()
+                    new Km.Memory.Rovedanggi.Write
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
@@ -350,7 +353,7 @@ internal static partial class Maps
                     {
                         RovetuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                         DataType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
-                        RovuInfoGetter = RovuInfoGetter(c)
+                        RovuInfoGetter = RovuInfoGetter(c),
                     }
             },
             {
@@ -359,7 +362,7 @@ internal static partial class Maps
                     {
                         RovetuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                         DataType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
-                        RovuInfoGetter = RovuInfoGetter(c)
+                        RovuInfoGetter = RovuInfoGetter(c),
                     }
             },
             {
@@ -369,7 +372,7 @@ internal static partial class Maps
                         RovetuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                         KeyType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
                         DataType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
-                        VarovuInfoGetter = VarovuInfoGetter(c)
+                        VarovuInfoGetter = VarovuInfoGetter(c),
                     }
             },
             {
@@ -379,7 +382,7 @@ internal static partial class Maps
                         RovetuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                         KeyType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
                         DataType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
-                        VarovuInfoGetter = VarovuInfoGetter(c)
+                        VarovuInfoGetter = VarovuInfoGetter(c),
                     }
             },
             {
@@ -389,7 +392,7 @@ internal static partial class Maps
                         RovetuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                         KeyType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
                         DataType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
-                        VarovuInfoGetter = VarovuInfoGetter(c)
+                        VarovuInfoGetter = VarovuInfoGetter(c),
                     }
             },
             {
@@ -399,7 +402,7 @@ internal static partial class Maps
                         RovetuType = (RovetuTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                         KeyType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
                         DataType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
-                        VarovuInfoGetter = VarovuInfoGetter(c)
+                        VarovuInfoGetter = VarovuInfoGetter(c),
                     }
             },
         };
