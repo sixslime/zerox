@@ -13,7 +13,7 @@ public sealed record Write<R> : Korssa.Defined.Function<IRoveggi<Rovedantu<R>>, 
             addressObject =>
                 new Roggis.Instructions.Assign<R>
                 {
-                    Address = addressObject.Rovedanggi(),
+                    Roda = addressObject.Rovedanggi(),
                     Data = in2
                 })
             .ToCompletedITask();

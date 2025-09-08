@@ -12,12 +12,18 @@ public static partial class KorssaSyntax
         where R : class, Rog
     {
         ident = new();
-        return new(ident, korssa);
+        return new(korssa)
+        {
+            Roda = ident
+        };
     }
 
     public static Reference<R> kRef<R>(this IRoda<R> ident)
         where R : class, Rog =>
-        new(ident);
+        new()
+        {
+            Roda = ident
+        };
 
     public static Write<R> kWrite<R>(this IKorssa<IRoveggi<Rovedantu<R>>> address, IKorssa<R> data)
         where R : class, Rog =>
