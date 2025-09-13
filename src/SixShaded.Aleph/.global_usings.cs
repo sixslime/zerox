@@ -17,3 +17,4 @@ global using Terminal.Gui;
 global using Terminal.Gui.App;
 global using Terminal.Gui.Text;
 global using Terminal.Gui.Configuration;
+global using SixShaded.FourZeroOne.FZOSpec;

@@ -9,9 +9,16 @@ using CoreTypeMatcher;
 using Types = CoreTypeMatcher.Types;
 using MinimaFZO;
 using FourZeroOne.FZOSpec;
+using Aleph;
 internal class Program
 {
     public static async Task Main(string[] args)
+    {
+        Init();
+        AlephConsole.Start(new MinimaProcessorFZO());
+    }
+
+    private static void Init()
     {
         Master.RegisterAxoi<FourZeroOne.Axois.Infinite.Axoi>();
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -28,20 +35,7 @@ internal class Program
                 }
             }
         }
-        var typeMatch = new FZOTypeMatch([new CoreTypeMatcher()]);
-        var testKorssa =
-            Core.kSubEnvironment<Rog>(
-            new()
-            {
-                Environment = [1.kFixed().kAsVariable(out var iV)],
-                Value = iV.kRef()
-            });
-        Log(testKorssa);
-        Log(testKorssa.FZOTypeInfo(typeMatch));
-        Log((testKorssa.Arg2.FZOTypeInfo(typeMatch).Match.Unwrap() as Types.Korssa.Memory.Reference).RodaInfoGetter(testKorssa.Arg2));
-        Log(1.kFixed().FZOTypeInfo(typeMatch));
     }
-
     private static void Log(object obj)
     {
         Console.WriteLine("LOG:");
@@ -54,7 +48,7 @@ internal class Program
  * Macro -> Korvessa
  * Resolution -> Roggi
  * Composition -> Roveggi
- * CompositionType -> Roveggitu
+ * CompositionType -> Rovetu
  * ComponentIdentifier -> Rovu
  * Rule -> Mellsano
  * Matcher -> Ullasem
