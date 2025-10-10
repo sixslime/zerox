@@ -10,7 +10,6 @@ public static class AlephConsole
     public static void Start(IProcessorFZO processor, Action<AlephContext> sessionSender)
     {
         throw new NotImplementedException();
-        Task.
     }
 }
 
