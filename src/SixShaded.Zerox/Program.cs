@@ -15,7 +15,7 @@ internal class Program
     public static async Task Main(string[] args)
     {
         Init();
-        AlephConsole.Start(new MinimaProcessorFZO());
+        AlephConsole.Start(new MinimaProcessorFZO(), _ => { });
     }
 
     private static void Init()
