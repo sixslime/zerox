@@ -117,20 +117,3 @@ public class Session
         }
     }
 }
-
-public class TrackpointUpdatedEventArgs : EventArgs
-{
-    public required Trackpoint NewTrackpoint { get; init; }
-}
-
-public interface IProgressionContext
-{
-    public bool IsBackward { get; }
-    public Task<IOption<Trackpoint.Step>> Next();
-}
-
-public interface IProgressor
-{
-    public string Identifier { get; }
-    public Task Consume(IProgressionContext context);
-}
