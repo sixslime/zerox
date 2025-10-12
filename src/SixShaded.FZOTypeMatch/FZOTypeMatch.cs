@@ -190,7 +190,9 @@ public class FZOTypeMatch
         return new()
         {
             Origin = systemType,
+            IsConcrete = systemType.IsAssignableTo(typeof(IConcreteRovetu)),
             Match = matchedType,
+            Inherits = systemType.GetInterfaces().Where(x => x.IsAssignableTo(typeof(IRovetu)) && x != typeof(IRovetu) && x != typeof(IConcreteRovetu)).Map(GetFZOTypeInfoDynamic).Filtered().FilterCast<RovetuTypeInfo>().ToArray(),
             MemoryDataType = memoryDataType.NullToNone(),
         };
     }
