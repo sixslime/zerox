@@ -35,6 +35,12 @@ internal static partial class Maps
                         ? roda.FZOTypeInfo(matcher)
                         : throw new("Roda is not IRoda?"));
 
+    private static Func<T, V> PropertyGetter<T, V>(string propertyName)
+        where T : notnull =>
+        t =>
+            t.GetType().GetProperty(propertyName)!.GetMethod!.Invoke(t, [])!
+                .MaybeA<V>()
+                .Expect($"Property '{propertyName}' was not of type '{typeof(V).Name}' on type {t.GetType().Name}");
     private static Func<Type, FZOTypeMatch, IKorssaType> SimpleKorssa(IKorssaType typeObj) => (_, _) => typeObj;
     private static Func<Type, FZOTypeMatch, IRoggiType> SimpleRoggi(IRoggiType typeObj) => (_, _) => typeObj;
 }

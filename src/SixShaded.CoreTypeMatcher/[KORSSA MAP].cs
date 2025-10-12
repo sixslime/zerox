@@ -26,6 +26,7 @@ internal static partial class Maps
                     new Km.Fixed
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
+                        RoggiGetter = PropertyGetter<Kor, Rog>("Roggi")
                     }
             },
             {
@@ -69,6 +70,10 @@ internal static partial class Maps
                     {
                         MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                         MetaArgTypes = [],
+                        MetaKorssaGetter = PropertyGetter<Kor, Kor>("Korssa"),
+                        ArgRodasGetter = PropertyGetter<Kor, Addr[]>("ArgAddresses"),
+                        SelfRodaGetter = PropertyGetter<Kor, Addr>("SelfRoda"),
+                        CapturedRodasGetter = PropertyGetter<Kor, Addr[]>("Captures"),
                     }
             },
             {
@@ -77,6 +82,10 @@ internal static partial class Maps
                     {
                         MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[1].TryGetFZOTypeInfo(c).Unwrap(),
                         MetaArgTypes = t.GenericTypeArguments[..1].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray(),
+                        MetaKorssaGetter = PropertyGetter<Kor, Kor>("Korssa"),
+                        ArgRodasGetter = PropertyGetter<Kor, Addr[]>("ArgAddresses"),
+                        SelfRodaGetter = PropertyGetter<Kor, Addr>("SelfRoda"),
+                        CapturedRodasGetter = PropertyGetter<Kor, Addr[]>("Captures"),
                     }
             },
             {
@@ -85,6 +94,10 @@ internal static partial class Maps
                     {
                         MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[2].TryGetFZOTypeInfo(c).Unwrap(),
                         MetaArgTypes = t.GenericTypeArguments[..2].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray(),
+                        MetaKorssaGetter = PropertyGetter<Kor, Kor>("Korssa"),
+                        ArgRodasGetter = PropertyGetter<Kor, Addr[]>("ArgAddresses"),
+                        SelfRodaGetter = PropertyGetter<Kor, Addr>("SelfRoda"),
+                        CapturedRodasGetter = PropertyGetter<Kor, Addr[]>("Captures"),
                     }
             },
             {
@@ -93,6 +106,10 @@ internal static partial class Maps
                     {
                         MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[3].TryGetFZOTypeInfo(c).Unwrap(),
                         MetaArgTypes = t.GenericTypeArguments[..3].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray(),
+                        MetaKorssaGetter = PropertyGetter<Kor, Kor>("Korssa"),
+                        ArgRodasGetter = PropertyGetter<Kor, Addr[]>("ArgAddresses"),
+                        SelfRodaGetter = PropertyGetter<Kor, Addr>("SelfRoda"),
+                        CapturedRodasGetter = PropertyGetter<Kor, Addr[]>("Captures"),
                     }
             },
             {
@@ -101,6 +118,10 @@ internal static partial class Maps
                     {
                         MetaOutputType = (RoggiTypeInfo)t.GenericTypeArguments[4].TryGetFZOTypeInfo(c).Unwrap(),
                         MetaArgTypes = t.GenericTypeArguments[..4].Map(x => (RoggiTypeInfo)x.TryGetFZOTypeInfo(c).Unwrap()).ToArray(),
+                        MetaKorssaGetter = PropertyGetter<Kor, Kor>("Korssa"),
+                        ArgRodasGetter = PropertyGetter<Kor, Addr[]>("ArgAddresses"),
+                        SelfRodaGetter = PropertyGetter<Kor, Addr>("SelfRoda"),
+                        CapturedRodasGetter = PropertyGetter<Kor, Addr[]>("Captures"),
                     }
             },
             {
