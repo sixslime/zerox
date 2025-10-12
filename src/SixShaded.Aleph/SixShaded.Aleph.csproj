@@ -8,13 +8,19 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\lib\SixShaded.SixLib.GFunc\SixShaded.SixLib.GFunc.csproj" />
+    <ProjectReference Include="..\SixShaded.CoreTypeMatcher\SixShaded.CoreTypeMatcher.csproj" />
     <ProjectReference Include="..\SixShaded.FourZeroOne\SixShaded.FourZeroOne.csproj" />
+    <ProjectReference Include="..\SixShaded.FZOTypeMatch\SixShaded.FZOTypeMatch.csproj" />
     <ProjectReference Include="..\SixShaded.NotRust\SixShaded.NotRust.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MorseCode.ITask" Version="2.0.3" />
     <PackageReference Include="Terminal.Gui" Version="2.0.0-develop.4538" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Logical\Views\" />
   </ItemGroup>
 
 </Project>
