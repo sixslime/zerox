@@ -11,5 +11,9 @@ public interface ILanguageKey
     public IOption<Translation> TranslateKorssa(TranslationBuilder builder, KorssaTranslationContext context);
     public IOption<Translation> TranslateRoggi(TranslationBuilder builder, object context);
     public IOption<Translation> TranslateRovetu(TranslationBuilder builder, object context);
+    public IOption<Translation> TranslateRoda(TranslationBuilder builder, object context);
+    public IOption<Translation> TranslateRovu(TranslationBuilder builder, object context);
+    public IOption<Translation> TranslateVarovu(TranslationBuilder builder, object context);
+    public IOption<Translation> TranslateAbstractRovu(TranslationBuilder builder, object context);
     public string TranslateNolla();
 }

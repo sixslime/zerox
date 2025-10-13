@@ -17,7 +17,11 @@ public class TranslationBuilder
     public IOption<Translation> BuildAsSome() => Build().AsSome();
     public TranslationBuilder Text(string text)
     {
-        _segments.Add(new TextSegment()
+        _segments.Add(
+        new TextSegment
+        {
+            Text = text
+        });
         return this;
     }
     public TranslationBuilder InlineTranslation(KorssaTypeInfo value)
@@ -51,10 +55,12 @@ public class TranslationBuilder
 
     public TranslationBuilder Marker(ITranslationMarker marker)
     {
+        _segments.Add(marker);
         return this;
     }
     public TranslationBuilder Resolution(ITranslationResolution resolution)
     {
+        _segments.Add(resolution);
         return this;
     }
 }
