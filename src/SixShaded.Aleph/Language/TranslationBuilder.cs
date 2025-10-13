@@ -1,7 +1,14 @@
 namespace SixShaded.Aleph.Language;
 using FZOTypeMatch;
+using Segments;
 public class TranslationBuilder
 {
+    private List<ITranslationSegment> _segments = [];
+
+    internal TranslationBuilder()
+    {
+
+    }
     public Translation Build()
     {
         throw new NotImplementedException();
@@ -10,6 +17,7 @@ public class TranslationBuilder
     public IOption<Translation> BuildAsSome() => Build().AsSome();
     public TranslationBuilder Text(string text)
     {
+        _segments.Add(new TextSegment()
         return this;
     }
     public TranslationBuilder InlineTranslation(KorssaTypeInfo value)
