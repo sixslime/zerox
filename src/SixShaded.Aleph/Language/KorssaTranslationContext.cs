@@ -2,14 +2,24 @@ namespace SixShaded.Aleph.Language;
 using FZOTypeMatch;
 public class KorssaTranslationContext
 {
-    internal KorssaTranslationContext(Kor source)
+    internal KorssaTranslationContext(KorssaTypeInfo source)
     {
-        _source = source;
+        TypeInfo = source;
     }
-    private Kor _source;
-    public int ArgCount => _source.ArgKorssas.Length;
+
+    public KorssaTypeInfo TypeInfo { get; }
     public ITranslationMarker NextArg()
     {
         throw new NotImplementedException();
+    }
+
+    public ITranslationMarker RestArgs(string seperator)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ITranslationResolution Resolve(Func<Kor, string> expression)
+    {
+        throw new NotImplementedException(); 
     }
 }

@@ -8,9 +8,8 @@ using TranslationBuilders;
 // builder pattern, similar to StringBuilder
 public interface ILanguageKey
 {
-    public IOption<KorssaTranslation> TranslateKorssa(IKorssaType type, KorssaTranslationBuilder builder);
-    public string TranslateRoggi(IRoggiType type);
-    public string TranslateRovetu(IRovetuType type);
-    public string TranslateRovu(FourZeroOne.Roveggi.Unsafe.IRovu rovu);
-    public string TranslateRoda(Addr roda);
+    public IOption<Translation> TranslateKorssa(TranslationBuilder builder, KorssaTranslationContext context);
+    public IOption<Translation> TranslateRoggi(TranslationBuilder builder, object context);
+    public IOption<Translation> TranslateRovetu(TranslationBuilder builder, object context);
+    public string TranslateNolla();
 }
