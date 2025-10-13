@@ -24,35 +24,23 @@ public class TranslationBuilder
         });
         return this;
     }
-    public TranslationBuilder InlineTranslation(KorssaTypeInfo value)
-    {
-        return this;
-    }
-    public TranslationBuilder InlineTranslation(RoggiTypeInfo value)
-    {
-        return this;
-    }
-    public TranslationBuilder InlineTranslation(RovetuTypeInfo value)
-    {
-        return this;
-    }
-    public TranslationBuilder InlineTranslation(RodaInfo value)
-    {
-        return this;
-    }
-    public TranslationBuilder InlineTranslation(RovuInfo value)
-    {
-        return this;
-    }
-    public TranslationBuilder InlineTranslation(VarovuInfo value)
-    {
-        return this;
-    }
-    public TranslationBuilder InlineTranslation(AbstractRovuInfo value)
-    {
-        return this;
-    }
+    public TranslationBuilder InlineTranslation(KorssaTypeInfo value) => InternalInlineTranlation(value);
+    public TranslationBuilder InlineTranslation(RoggiTypeInfo value) => InternalInlineTranlation(value);
+    public TranslationBuilder InlineTranslation(RovetuTypeInfo value) => InternalInlineTranlation(value);
+    public TranslationBuilder InlineTranslation(RodaInfo value) => InternalInlineTranlation(value);
+    public TranslationBuilder InlineTranslation(RovuInfo value) => InternalInlineTranlation(value);
+    public TranslationBuilder InlineTranslation(VarovuInfo value) => InternalInlineTranlation(value);
+    public TranslationBuilder InlineTranslation(AbstractRovuInfo value) => InternalInlineTranlation(value);
 
+    private TranslationBuilder InternalInlineTranlation(object value)
+    {
+        _segments.Add(
+        new InlineTranslationSegment()
+        {
+            Value = value
+        });
+        return this;
+    }
     public TranslationBuilder Marker(ITranslationMarker marker)
     {
         _segments.Add(marker);

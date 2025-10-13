@@ -1,6 +1,3 @@
 ﻿namespace SixShaded.Aleph.Language;
 
-public interface ITranslationResolution : ITranslationSegment
-{
-
-}
+public interface ITranslationResolution : ITranslationSegment;
