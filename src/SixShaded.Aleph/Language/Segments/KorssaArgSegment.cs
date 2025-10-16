@@ -1,6 +1,6 @@
 namespace SixShaded.Aleph.Language.Segments;
 
-internal class KorssaOneArgSegment : ITranslationMarker
+internal class KorssaArgSegment : ITranslationMarker
 {
     public required int Index { get; init; }
 }

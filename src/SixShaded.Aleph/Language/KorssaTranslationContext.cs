@@ -5,40 +5,19 @@ using Segments;
 public class KorssaTranslationContext
 {
     private int _currentArgIndex = 0;
-    private bool _restArgsRetrieved = false;
-    internal KorssaTranslationContext(KorssaTypeInfo source)
+    internal KorssaTranslationContext(Kor source)
     {
-        TypeInfo = source;
+        Korssa = source;
     }
 
-    public KorssaTypeInfo TypeInfo { get; }
+    public Kor Korssa { get; }
     public ITranslationMarker NextArg()
     {
-        if (_restArgsRetrieved)
-            throw new Exception("Cannot call NextArg() when RestArgs() was already called.");
-        return new KorssaOneArgSegment()
+        if (_currentArgIndex >= Korssa.ArgKorssas.Length)
+            throw new Exception("NextArg() called when Korssa did not have another arg.");
+        return new KorssaArgSegment()
         {
             Index = _currentArgIndex++
-        };
-    }
-
-    public ITranslationMarker RestArgs(string seperator)
-    {
-        if (_restArgsRetrieved)
-            throw new Exception("Cannot call RestArgs() when RestArgs() was already called.");
-        _restArgsRetrieved = true;
-        return new KorssaRestArgsSegment()
-        {
-            Seperator = seperator,
-            StartIndex = _currentArgIndex
-        };
-    }
-
-    public ITranslationResolution Resolve(Func<Kor, string> expression)
-    {
-        return new ResolutionSegment<Kor>()
-        {
-            Expression = expression
         };
     }
 }

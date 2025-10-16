@@ -1,6 +1,8 @@
 namespace SixShaded.Aleph.Language;
 using FZOTypeMatch;
 using Segments;
+using FourZeroOne.Roggi.Unsafe;
+using FourZeroOne.Roveggi.Unsafe;
 public class TranslationBuilder
 {
     private List<ITranslationSegment> _segments = [];
@@ -24,13 +26,12 @@ public class TranslationBuilder
         });
         return this;
     }
-    public TranslationBuilder InlineTranslation(KorssaTypeInfo value) => InternalInlineTranlation(value);
-    public TranslationBuilder InlineTranslation(RoggiTypeInfo value) => InternalInlineTranlation(value);
-    public TranslationBuilder InlineTranslation(RovetuTypeInfo value) => InternalInlineTranlation(value);
-    public TranslationBuilder InlineTranslation(RodaInfo value) => InternalInlineTranlation(value);
-    public TranslationBuilder InlineTranslation(RovuInfo value) => InternalInlineTranlation(value);
-    public TranslationBuilder InlineTranslation(VarovuInfo value) => InternalInlineTranlation(value);
-    public TranslationBuilder InlineTranslation(AbstractRovuInfo value) => InternalInlineTranlation(value);
+    public TranslationBuilder InlineTranslation(Kor value) => InternalInlineTranlation(value);
+    public TranslationBuilder InlineTranslation(Rog value) => InternalInlineTranlation(value);
+    public TranslationBuilder InlineTranslation(Addr value) => InternalInlineTranlation(value);
+    public TranslationBuilder InlineTranslation(IRovu value) => InternalInlineTranlation(value);
+    public TranslationBuilder InlineTranslation(IVarovu value) => InternalInlineTranlation(value);
+    public TranslationBuilder InlineTranslation(IAbstractRovu value) => InternalInlineTranlation(value);
 
     private TranslationBuilder InternalInlineTranlation(object value)
     {
@@ -44,11 +45,6 @@ public class TranslationBuilder
     public TranslationBuilder Marker(ITranslationMarker marker)
     {
         _segments.Add(marker);
-        return this;
-    }
-    public TranslationBuilder Resolution(ITranslationResolution resolution)
-    {
-        _segments.Add(resolution);
         return this;
     }
 }
