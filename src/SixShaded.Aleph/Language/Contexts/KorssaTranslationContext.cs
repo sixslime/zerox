@@ -1,4 +1,4 @@
-namespace SixShaded.Aleph.Language;
+namespace SixShaded.Aleph.Language.Contexts;
 using FZOTypeMatch;
 using Segments;
 
