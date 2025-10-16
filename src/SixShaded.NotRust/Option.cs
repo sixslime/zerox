@@ -76,6 +76,8 @@ public static class Option
     public static IOption<T> NullToNone<T>(this T? value) => value is not null ? value.AsSome() : new None<T>();
     public static T Or<T>(this IOption<T> option, T noneValue) => option.Check(out var val) ? val : noneValue;
     public static T OrElse<T>(this IOption<T> option, Func<T> noneEval) => option.Check(out var val) ? val : noneEval();
+    public static IOption<T> OrTry<T>(this IOption<T> option, IOption<T> noneValue) => option.IsSome() ? option : noneValue;
+    public static IOption<T> OrElseTry<T>(this IOption<T> option, Func<IOption<T>> noneEval) => option.IsSome() ? option : noneEval();
 
     public static IResult<T, E> OrErr<T, E>(this IOption<T> option, E err) =>
         option.Check(out var ok)
