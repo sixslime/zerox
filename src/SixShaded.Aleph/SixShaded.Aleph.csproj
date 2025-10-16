@@ -19,8 +19,4 @@
     <PackageReference Include="Terminal.Gui" Version="2.0.0-develop.4538" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Logical\UI\" />
-  </ItemGroup>
-
 </Project>
