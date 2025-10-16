@@ -97,15 +97,20 @@ public class FZOTypeMatch
     public RodaInfo GetRodaInfo(Addr roda)
     {
         var compType = typeof(IRoda<>);
+        var rodaType = roda.GetType();
         var rodaGenerics =
-            roda.GetType()
-                .GetInterfaces()
+            rodaType.GetInterfaces()
                 .FirstMatch(x => x.IsGenericType && x.GetGenericTypeDefinition() == compType)
                 .Expect("Logically unreachable")
                 .GenericTypeArguments;
         return new()
         {
             Roda = roda,
+            DynamicId =
+                (rodaType.IsGenericType && rodaType.GetGenericTypeDefinition() == typeof(DynamicRoda<>))
+                .ToOptionLazy(() =>
+                    // OPTIMIZE: cache delegates for each dynamic roda return type
+                    (ulong)rodaType.GetProperty("DynamicId")!.GetMethod!.Invoke(roda, [])!),
             DataType = (RoggiTypeInfo)GetFZOTypeInfoDynamic(rodaGenerics[0]).Unwrap(),
         };
     }

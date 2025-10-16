@@ -37,8 +37,7 @@ public class Session
                 Selections = thisContext.Selections.ToPSequence(),
             };
 
-        // DEV/OPTIMIZE: this could be optimized
-        // PSequence should be indexable by range
+        // DEV/OPTIMIZE: PSequence should be indexable by range
         Trackpoints =
             CurrentTrackpointIndex == Trackpoints.Count - 1
                 ? Trackpoints.WithEntries(trackpoint)
@@ -52,7 +51,7 @@ public class Session
         TrackpointUpdatedEvent?.Invoke(
         this, new()
         {
-            NewTrackpoint = CurrentTrackpoint.Unwrap(),
+            Trackpoint = CurrentTrackpoint.Unwrap(),
         });
 
     private void SetProgressionContext(ProgressionContext? context) => _activeProgressionContext = context is null ? INACTIVE_CONTEXT : context.AsSome();

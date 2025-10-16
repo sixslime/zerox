@@ -2,5 +2,5 @@ namespace SixShaded.Aleph.Logical;
 
 public class TrackpointUpdatedEventArgs : EventArgs
 {
-    public required Trackpoint NewTrackpoint { get; init; }
+    public required Trackpoint Trackpoint { get; init; }
 }

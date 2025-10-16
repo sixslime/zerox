@@ -1,7 +1,7 @@
 ﻿namespace SixShaded.Aleph.Language;
 using FZOTypeMatch;
 using CoreTypeMatcher;
-public record LanguageProvider
+public class LanguageProvider(ILanguageKey key)
 {
-    public required ILanguageKey Key { get; init; }
+    public ILanguageKey Key { get; } = key;
 }
