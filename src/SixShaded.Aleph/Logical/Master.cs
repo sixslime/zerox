@@ -2,21 +2,14 @@ namespace SixShaded.Aleph.Logical;
 
 public class Master
 {
+    private static Master? _instance;
     private int _sessionIndex = -1;
+    public static Master Instance => _instance ?? throw new("Master object not initialized.");
+    public required Language.LanguageProvider LanguageProvider { get; init; }
     public IPSequence<Session> Sessions { get; private set; } = new PSequence<Session>();
-
+    public IOption<Session> CurrentSession => Sessions.At(_sessionIndex);
     public event EventHandler<SessionSwitchedEventArgs>? SessionSwitchedEvent;
 
-    public IOption<Session> CurrentSession => Sessions.At(_sessionIndex);
-
-    private void NotifySwitchSession()
-    {
-        SessionSwitchedEvent?.Invoke(
-        this, new()
-        {
-            Session = CurrentSession.Unwrap()
-        });
-    }
     public int AddSession(Session session)
     {
         Sessions = Sessions.WithEntries(session);
@@ -30,4 +23,22 @@ public class Master
         NotifySwitchSession();
         return true;
     }
+
+    internal void Init(Language.LanguageProvider languageProvider)
+    {
+        if (_instance is not null)
+            throw new("Master already initialized.");
+        _instance =
+            new()
+            {
+                LanguageProvider = languageProvider,
+            };
+    }
+
+    private void NotifySwitchSession() =>
+        SessionSwitchedEvent?.Invoke(
+        this, new()
+        {
+            Session = CurrentSession.Unwrap(),
+        });
 }

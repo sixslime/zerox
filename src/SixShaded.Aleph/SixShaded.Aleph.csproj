@@ -20,7 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Logical\Views\" />
+    <Folder Include="Logical\UI\" />
+    <Folder Include="Views\" />
   </ItemGroup>
 
 </Project>

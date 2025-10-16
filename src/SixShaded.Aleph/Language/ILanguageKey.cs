@@ -1,4 +1,5 @@
 ﻿namespace SixShaded.Aleph.Language;
+
 using Contexts;
 using FZOTypeMatch;
 

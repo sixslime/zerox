@@ -70,7 +70,6 @@ public class Session
             _backwardIterator = backward ? BackwardIteration().GetEnumerator() : null;
         }
 
-        public bool IsBackward { get; }
         public bool Active => _session._activeProgressionContext.Check(out var active) && active == this;
         public List<Trackpoint.Step> Steps { get; } = new();
         public List<int[]> Selections { get; } = new();
@@ -97,6 +96,7 @@ public class Session
             }.AsSome();
         }
 
+        public bool IsBackward { get; }
 
         public async Task<IOption<Trackpoint.Step>> Next()
         {
