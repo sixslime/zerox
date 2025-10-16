@@ -19,7 +19,8 @@ internal class Program
         Init();
         AlephConsole.Run(new()
         {
-            LanguageProvider = new(new StandardCoreKey())
+            LanguageProvider = new(new StandardCoreKey()),
+            Processor = new MinimaProcessorFZO(),
         }, (_) => { });
     }
 

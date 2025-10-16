@@ -33,10 +33,8 @@ public class AlephConsole
 
     public void AddSession(IStateFZO rootState)
     {
-        Application.Invoke(() =>
-            Master.Instance.AddSession(new()
-            {
-
-            })
+        Application.Invoke(
+        () =>
+            Master.Instance.AddSession(rootState));
     }
 }

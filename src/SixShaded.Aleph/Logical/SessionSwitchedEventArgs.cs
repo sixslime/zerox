@@ -1,6 +1,6 @@
 namespace SixShaded.Aleph.Logical;
 
-public class SessionSwitchedEventArgs : EventArgs
+internal class SessionSwitchedEventArgs : EventArgs
 {
     public required Session Session { get; init; }
 }

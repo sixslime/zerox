@@ -142,10 +142,6 @@ internal class Session
 
         public void Dispose()
         {
-            if (_activeSelectionPrompt.Check(out var activeSelection))
-            {
-                _session.NotifySelectionCancelled(activeSelection);
-            }
             _input.Dispose();
             Active = false;
         }

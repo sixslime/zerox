@@ -13,7 +13,11 @@ internal class Master
 
     public int AddSession(IStateFZO rootState)
     {
-        Sessions = Sessions.WithEntries(session);
+        Sessions = Sessions.WithEntries(new Session()
+        {
+            Processor = Processor,
+            Root = rootState,
+        });
         return Sessions.Count - 1;
     }
 
