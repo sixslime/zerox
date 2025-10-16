@@ -34,7 +34,7 @@ public class KorssaTranslationContext
         };
     }
 
-    public ITranslationResolution Resolve(Func<Kor, string> expression)
+    public ITranslationResolution Resolve(Func<Kor, TranslationBuilder, Translation> expression)
     {
         return new ResolutionSegment<Kor>()
         {
