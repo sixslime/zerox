@@ -10,12 +10,17 @@ using Types = CoreTypeMatcher.Types;
 using MinimaFZO;
 using FourZeroOne.FZOSpec;
 using Aleph;
+using Aleph.Language.Builtin.Keys;
+
 internal class Program
 {
     public static async Task Main(string[] args)
     {
         Init();
-        AlephConsole.Start(new MinimaProcessorFZO(), _ => { });
+        AlephConsole.Run(new()
+        {
+            LanguageProvider = new(new StandardCoreKey())
+        }, (_) => { });
     }
 
     private static void Init()

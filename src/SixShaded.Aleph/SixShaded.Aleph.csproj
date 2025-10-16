@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="Logical\UI\" />
-    <Folder Include="Views\" />
   </ItemGroup>
 
 </Project>

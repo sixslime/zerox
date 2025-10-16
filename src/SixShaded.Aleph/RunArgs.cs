@@ -1,6 +1,6 @@
 namespace SixShaded.Aleph;
 
-public record StartArgs
+public record RunArgs
 {
     public required Language.LanguageProvider LanguageProvider { get; init; }
 }
