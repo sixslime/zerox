@@ -24,7 +24,7 @@ public class Master
         return true;
     }
 
-    internal void Init(Language.LanguageProvider languageProvider)
+    internal static void Init(Language.LanguageProvider languageProvider)
     {
         if (_instance is not null)
             throw new("Master already initialized.");

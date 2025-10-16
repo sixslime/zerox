@@ -1,11 +1,16 @@
 namespace SixShaded.Aleph;
+using Logical;
+using Language;
+using Views;
 
-public static class AlephConsole
+public class AlephConsole
 {
-    public static void Start(IProcessorFZO processor, Action<AlephContext> sessionSender) => throw new NotImplementedException();
-}
-
-public class AlephContext
-{
-    public void AddSession(IStateFZO state) => throw new NotImplementedException();
+    private static AlephConsole? _instance;
+    public static void Start(StartArgs args, Action<AlephConsole> postInitializationAction)
+    {
+        if (_instance is not null) throw new Exception("Already Started");
+        _instance = new();
+        Master.Init(args.LanguageProvider);
+        // TODO
+    }
 }
