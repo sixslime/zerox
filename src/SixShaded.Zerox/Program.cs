@@ -17,11 +17,7 @@ internal class Program
     public static async Task Main(string[] args)
     {
         Init();
-        AlephConsole.Run(new()
-        {
-            LanguageProvider = new(new StandardCoreKey()),
-            Processor = new MinimaProcessorFZO(),
-        }, (_) => { });
+        await AlephConsole.Test();
     }
 
     private static void Init()

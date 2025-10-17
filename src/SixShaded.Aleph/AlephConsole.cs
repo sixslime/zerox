@@ -1,6 +1,7 @@
 namespace SixShaded.Aleph;
 using Logical;
 using Language;
+using MinimaFZO;
 using Views;
 
 public class AlephConsole
@@ -31,6 +32,20 @@ public class AlephConsole
         Application.Shutdown();
     }
 
+    public static async Task Test()
+    {
+        _instance = new(new()
+        {
+            LanguageProvider = new(new Language.Builtin.Keys.StandardCoreKey()),
+            Processor = new MinimaProcessorFZO(),
+        });
+        Master.Init(new()
+        {
+            LanguageProvider = _instance._args.LanguageProvider,
+            Processor = _instance._args.Processor,
+        });
+        await Tester.Test(_instance);
+    }
     public void AddSession(IStateFZO rootState)
     {
         Application.Invoke(

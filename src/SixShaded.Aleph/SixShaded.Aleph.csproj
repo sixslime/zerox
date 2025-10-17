@@ -11,6 +11,7 @@
     <ProjectReference Include="..\SixShaded.CoreTypeMatcher\SixShaded.CoreTypeMatcher.csproj" />
     <ProjectReference Include="..\SixShaded.FourZeroOne\SixShaded.FourZeroOne.csproj" />
     <ProjectReference Include="..\SixShaded.FZOTypeMatch\SixShaded.FZOTypeMatch.csproj" />
+    <ProjectReference Include="..\SixShaded.MinimaFZO\SixShaded.MinimaFZO.csproj" />
     <ProjectReference Include="..\SixShaded.NotRust\SixShaded.NotRust.csproj" />
   </ItemGroup>
 

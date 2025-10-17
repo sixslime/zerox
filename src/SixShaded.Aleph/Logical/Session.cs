@@ -13,7 +13,7 @@ internal class Session
     public bool InProgress => _activeProgressionContext.IsSome();
     public PSequence<Trackpoint> Trackpoints { get; private set; } = new();
     public int CurrentTrackpointIndex { get; private set; } = -1;
-    public IOption<Trackpoint> CurrentTrackpoint => Trackpoints.At(CurrentTrackpointIndex);
+    public IOption<Trackpoint> CurrentTrackpoint => CurrentTrackpointIndex >= 0 ? Trackpoints.At(CurrentTrackpointIndex) : new None<Trackpoint>();
     public event EventHandler<TrackpointUpdatedEventArgs>? TrackpointUpdatedEvent;
     public event EventHandler<SelectionPromptedEventArgs>? SelectionPromptedEvent;
     public event EventHandler<SelectionCancelledEventArgs>? SelectionCancelledEvent;

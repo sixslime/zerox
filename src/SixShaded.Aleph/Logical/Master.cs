@@ -8,7 +8,7 @@ internal class Master
     public required Language.LanguageProvider LanguageProvider { get; init; }
     public required IProcessorFZO Processor { get; init; }
     public IPSequence<Session> Sessions { get; private set; } = new PSequence<Session>();
-    public IOption<Session> CurrentSession => Sessions.At(_sessionIndex);
+    public IOption<Session> CurrentSession => _sessionIndex >= 0 ? Sessions.At(_sessionIndex) : new None<Session>();
     public event EventHandler<SessionSwitchedEventArgs>? SessionSwitchedEvent;
 
     public int AddSession(IStateFZO rootState)

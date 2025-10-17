@@ -19,7 +19,7 @@ public record MinimaStateFZO : IStateFZO
     IEnumerable<EKorssaMutation> IStateFZO.KorssaMutationStack => _prepStack.Elements;
     IOption<IStateFZO.IOrigin> IStateFZO.Initialized => _initialized;
 
-    IStateFZO IStateFZO.Initialize(IStateFZO.IOrigin source)
+    public IStateFZO Initialize(IStateFZO.IOrigin source)
     {
         if (_initialized.IsSome())
             throw new InvalidOperationException("Attempted initialization of an already initialized IStateFZO");
