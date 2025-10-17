@@ -28,7 +28,7 @@ public class AlephConsole
 
     public void Run()
     {
-        
+
     }
 
     public void AddSession(IStateFZO rootState)

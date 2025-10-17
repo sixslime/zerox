@@ -11,13 +11,16 @@ using MinimaFZO;
 using FourZeroOne.FZOSpec;
 using Aleph;
 using Aleph.Language.Builtin.Keys;
+using SixShaded.SixLib.ICEE;
 
 internal class Program
 {
     public static async Task Main(string[] args)
     {
         Init();
-        await AlephConsole.Test();
+        char[] buf = new char[5];
+        
+        Console.WriteLine(buf.ICEE());
     }
 
     private static void Init()
