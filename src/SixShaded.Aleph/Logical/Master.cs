@@ -4,12 +4,14 @@ internal class Master
 {
     private static Master? _instance;
     private int _sessionIndex = -1;
+    public static bool IsInitialized => _instance is not null;
     public static Master Instance => _instance ?? throw new("Master object not initialized.");
-    public required Language.LanguageProvider LanguageProvider { get; init; }
+    public required Language.ILanguageKey LanguageKey { get; init; }
     public required IProcessorFZO Processor { get; init; }
     public IPSequence<Session> Sessions { get; private set; } = new PSequence<Session>();
     public IOption<Session> CurrentSession => _sessionIndex >= 0 ? Sessions.At(_sessionIndex) : new None<Session>();
     public event EventHandler<SessionSwitchedEventArgs>? SessionSwitchedEvent;
+    public event EventHandler<SessionSwitchedEventArgs>? SessionAddedEvent;
 
     public int AddSession(IStateFZO rootState)
     {
@@ -18,6 +20,7 @@ internal class Master
             Processor = Processor,
             Root = rootState,
         });
+        NotifyAddSession();
         return Sessions.Count - 1;
     }
 
@@ -36,7 +39,7 @@ internal class Master
         _instance =
             new()
             {
-                LanguageProvider = args.LanguageProvider,
+                LanguageKey = args.LanguageKey,
                 Processor = args.Processor,
             };
     }
@@ -47,10 +50,15 @@ internal class Master
         {
             Session = CurrentSession.Unwrap(),
         });
-
+    private void NotifyAddSession() =>
+        SessionAddedEvent?.Invoke(
+        this, new()
+        {
+            Session = Sessions.At(Sessions.Count-1).Unwrap()
+        });
     internal record InitArgs
     {
-        public required Language.LanguageProvider LanguageProvider { get; init; }
+        public required Language.ILanguageKey LanguageKey { get; init; }
         public required IProcessorFZO Processor { get; init; }
     }
 }
