@@ -7,7 +7,7 @@ using Views;
 public class AlephConsole
 {
     private static AlephConsole? _instance;
-    private RunArgs _args;
+    private readonly RunArgs _args;
     private AlephConsole(RunArgs args)
     {
         _args = args;
@@ -44,7 +44,7 @@ public class AlephConsole
             LanguageProvider = _instance._args.LanguageProvider,
             Processor = _instance._args.Processor,
         });
-        await Tester.Test(_instance);
+        await Tester.Test(_instance, _instance._args);
     }
     public void AddSession(IStateFZO rootState)
     {

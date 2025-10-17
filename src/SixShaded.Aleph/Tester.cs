@@ -5,7 +5,7 @@ using FourZeroOne.Core.Syntax;
 using FourZeroOne.Core.Roggis;
 internal class Tester
 {
-    public static async Task Test(AlephConsole console)
+    public static async Task Test(AlephConsole console, RunArgs args)
     {
         IStateFZO state = new MinimaStateFZO().Initialize(
         new Origin()
