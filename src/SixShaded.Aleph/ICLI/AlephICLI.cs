@@ -66,6 +66,7 @@ public static class AlephICLI
             SingleReader = true,
             SingleWriter = false,
         });
+        KeyReader.Start();
     }
 
     private static async Task ProgramLoop()
@@ -128,13 +129,14 @@ public static class AlephICLI
     {
         foreach (var segment in args.Text.Segments)
         {
-            Console.ResetColor();
             if (segment.Foreground is not null) Console.ForegroundColor = (ConsoleColor)segment.Foreground;
             if (segment.Background is not null) Console.BackgroundColor = (ConsoleColor)segment.Background;
             string prefix = (segment.Bold ? "\x1b[1m" : "") + (segment.Underline ? "\x1b[4m" : "");
             string suffix = (segment.Bold ? "\x1b[0m" : "") + (segment.Underline ? "\x1b[0m" : "");
-            Console.Out.Write($"{prefix}{segment.Text}{suffix}");
+            await Console.Out.WriteAsync($"{prefix}{segment.Text}{suffix}");
         }
+        Console.ResetColor();
+
     }
 
     private static async Task HandleKeyPressed(EProgramEvent.KeyPressed args)
@@ -171,6 +173,7 @@ public static class AlephICLI
     }
     private static async Task Shutdown()
     {
+        KeyReader.Stop();
         _masterListener!.Dispose();
         foreach (var listener in _sessionListeners!) listener.Dispose();
         _eventsChannel!.Writer.TryComplete();

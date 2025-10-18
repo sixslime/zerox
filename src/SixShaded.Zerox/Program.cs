@@ -9,7 +9,7 @@ using CoreTypeMatcher;
 using Types = CoreTypeMatcher.Types;
 using MinimaFZO;
 using FourZeroOne.FZOSpec;
-using Aleph;
+using Aleph.ICLI;
 using Aleph.Language.Builtin.Keys;
 using SixShaded.SixLib.ICEE;
 
@@ -18,7 +18,13 @@ internal class Program
     public static async Task Main(string[] args)
     {
         Init();
-        Console.ForegroundColor = ConsoleColor.Magenta; Console.Out.Write("foo"); Console.ResetColor(); Console.Out.Flush();
+        AlephICLI.Run(
+        new()
+        {
+            LanguageKey = new StandardCoreKey(),
+            Processor = new MinimaProcessorFZO(),
+        });
+        await Task.Delay(TimeSpan.FromSeconds(60));
     }
 
     private static void Loop(string msg)
