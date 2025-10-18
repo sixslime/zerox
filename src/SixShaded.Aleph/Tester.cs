@@ -6,7 +6,7 @@ using FourZeroOne.Core.Roggis;
 using ICLI;
 internal class Tester
 {
-    public static async Task Test(ICLI.AlephICLI icli, AlephArgs args)
+    public static async Task Test(AlephArgs args)
     {
         IStateFZO state = new MinimaStateFZO().Initialize(
         new Origin()
