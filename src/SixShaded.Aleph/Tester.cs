@@ -3,10 +3,10 @@ using MinimaFZO;
 using Logical;
 using FourZeroOne.Core.Syntax;
 using FourZeroOne.Core.Roggis;
-using AlephConsole;
+using ICLI;
 internal class Tester
 {
-    public static async Task Test(AlephConsole.AlephConsole console, RunArgs args)
+    public static async Task Test(ICLI.AlephICLI icli, AlephArgs args)
     {
         IStateFZO state = new MinimaStateFZO().Initialize(
         new Origin()

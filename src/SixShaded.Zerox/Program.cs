@@ -19,8 +19,17 @@ internal class Program
     {
         Init();
         char[] buf = new char[5];
-        
-        Console.WriteLine(buf.ICEE());
+
+        Console.WriteLine("\x1b[1mThis text is bold.\x1b[0m");
+    }
+
+    private static void Loop(string msg)
+    {
+        while (true)
+        {
+            var e = Console.ReadKey();
+            Console.WriteLine(msg);
+        }
     }
 
     private static void Init()

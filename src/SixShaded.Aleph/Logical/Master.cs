@@ -32,7 +32,7 @@ internal class Master
         return true;
     }
 
-    internal static void Init(InitArgs args)
+    internal static void Init(AlephArgs args)
     {
         if (_instance is not null)
             throw new("Master already initialized.");
