@@ -11,7 +11,7 @@ internal class Master
     public IPSequence<Session> Sessions { get; private set; } = new PSequence<Session>();
     public IOption<Session> CurrentSession => _sessionIndex >= 0 ? Sessions.At(_sessionIndex) : new None<Session>();
     public event EventHandler<SessionSwitchedEventArgs>? SessionSwitchedEvent;
-    public event EventHandler<SessionSwitchedEventArgs>? SessionAddedEvent;
+    public event EventHandler<SessionAddedEventArgs>? SessionAddedEvent;
 
     public int AddSession(IStateFZO rootState)
     {

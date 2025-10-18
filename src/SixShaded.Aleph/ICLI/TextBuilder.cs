@@ -9,7 +9,7 @@ internal class TextBuilder
 
     private readonly List<TextSegment> _segments = [];
     public static TextBuilder Start() => new();
-    public TextSegment[] Build() => _segments.ToArray();
+    public ConsoleText Build() => _segments.ToArray();
     public TextBuilder Text(string text, ConsoleColor? foreground = null, ConsoleColor? background = null, bool bold = false, bool underline = false)
     {
         _segments.Add(
@@ -24,4 +24,44 @@ internal class TextBuilder
         return this;
     }
 
+    public TextBuilder WithForeground(ConsoleColor? color)
+    {
+        if (_segments.Count == 0) return this;
+        _segments[^1] =
+            _segments[^1] with
+            {
+                Foreground = color
+            };
+        return this;
+    }
+    public TextBuilder WithBackround(ConsoleColor? color)
+    {
+        if (_segments.Count == 0) return this;
+        _segments[^1] =
+            _segments[^1] with
+            {
+                Background = color
+            };
+        return this;
+    }
+    public TextBuilder WithBold(bool value = true)
+    {
+        if (_segments.Count == 0) return this;
+        _segments[^1] =
+            _segments[^1] with
+            {
+                Bold = value
+            };
+        return this;
+    }
+    public TextBuilder WithUnderline(bool value = true)
+    {
+        if (_segments.Count == 0) return this;
+        _segments[^1] =
+            _segments[^1] with
+            {
+                Underline = value
+            };
+        return this;
+    }
 }

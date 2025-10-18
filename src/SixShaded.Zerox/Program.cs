@@ -18,9 +18,7 @@ internal class Program
     public static async Task Main(string[] args)
     {
         Init();
-        char[] buf = new char[5];
-
-        Console.WriteLine("\x1b[1mThis text is bold.\x1b[0m");
+        Console.ForegroundColor = ConsoleColor.Magenta; Console.Out.Write("foo"); Console.ResetColor(); Console.Out.Flush();
     }
 
     private static void Loop(string msg)
