@@ -74,7 +74,7 @@ public static class AlephICLI
         bool exit = false;
         while (!exit)
         {
-            var reader = _eventsChannel.Reader;
+            var reader = _eventsChannel!.Reader;
             if (!await reader.WaitToReadAsync())
             {
                 exit = true;
