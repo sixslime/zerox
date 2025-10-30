@@ -10,25 +10,10 @@ using State;
 
 public static class AlephICLI
 {
-    private static readonly ReaderWriterLock PROGRAM_LOCK = new();
     private static RunningFields? _runData;
     private static TaskCompletionSource? _terminationCompletionSource;
 
-    private static RunningFields _program
-    {
-        get
-        {
-            PROGRAM_LOCK.AcquireReaderLock(500);
-            try { return _program; }
-            finally { PROGRAM_LOCK.ReleaseReaderLock(); }
-        }
-        set
-        {
-            PROGRAM_LOCK.AcquireWriterLock(100);
-            try { _program = value; }
-            finally { PROGRAM_LOCK.ReleaseWriterLock(); }
-        }
-    }
+    private static RunningFields _program => _runData!;
 
     private static ChannelWriter<IProgramEvent> _eventWriter => _program.EventsChannel.Writer;
     private static ChannelReader<IProgramEvent> _eventReader => _program.EventsChannel.Reader;
@@ -75,7 +60,15 @@ public static class AlephICLI
         bool exit = false;
         while (!exit)
         {
-            if (!await _eventReader.WaitToReadAsync())
+            try
+            {
+                if (!await _eventReader.WaitToReadAsync())
+                {
+                    exit = true;
+                    break;
+                }
+            }
+            catch (TaskCanceledException)
             {
                 exit = true;
                 break;
@@ -87,10 +80,16 @@ public static class AlephICLI
                 if (exit) break;
             }
         }
-        Shutdown();
+        DoShutdown();
     }
 
-    private static void Shutdown()
+    private static void InitiateShutdown()
+    {
+        _program.TerminationRequested = true;
+        _program.EventsChannel.Writer.TryComplete();
+
+    }
+    private static void DoShutdown()
     {
         _program.Dispose();
         _runData = null;
@@ -109,8 +108,8 @@ public static class AlephICLI
 
         public void Dispose()
         {
-            MasterListener.Dispose();
             KeyReader.Dispose();
+            MasterListener.Dispose();
             foreach (var listener in SessionListeners) listener.Dispose();
             EventsChannel.Writer.TryComplete();
         }
@@ -129,7 +128,7 @@ public static class AlephICLI
 
         public async Task Stop()
         {
-            _program.TerminationRequested = true;
+            InitiateShutdown();
             await _terminationCompletionSource!.Task;
         }
     }
@@ -146,11 +145,11 @@ public static class AlephICLI
 
         public void SendEvent(IProgramEvent action)
         {
-            if (_eventWriter.TryWrite(action)) return;
+            if (_program.TerminationRequested || _eventWriter.TryWrite(action)) return;
             Task.Run(async () => await _eventWriter.WriteAsync(action).ConfigureAwait(false));
         }
 
-        public void SendTerminationRequest() => _program.TerminationRequested = true;
+        public void SendTerminationRequest() => InitiateShutdown();
     }
 }
 

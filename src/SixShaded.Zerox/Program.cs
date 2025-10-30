@@ -18,13 +18,16 @@ internal class Program
     public static async Task Main(string[] args)
     {
         Init();
-        AlephICLI.Run(
+        var handle = AlephICLI.Run(
         new()
         {
             LanguageKey = new StandardCoreKey(),
             Processor = new MinimaProcessorFZO(),
         });
-        await Task.Delay(TimeSpan.FromSeconds(60));
+        await Task.Delay(TimeSpan.FromSeconds(3));
+        Console.WriteLine("STOP");
+        await handle.Stop();
+        Console.WriteLine("STOPPED");
     }
 
     private static void Loop(string msg)

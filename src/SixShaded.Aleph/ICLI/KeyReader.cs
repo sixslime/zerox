@@ -28,6 +28,7 @@ internal class KeyReader : IDisposable
     public void Dispose()
     {
         lock (_activeLock) _isActive = false;
+
     }
     public void Loop()
     {
