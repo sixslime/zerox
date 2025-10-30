@@ -1,5 +1,7 @@
 namespace SixShaded.Aleph.ICLI;
 using Logical;
+using ProgramEvents;
+
 internal class MasterListener : IDisposable
 {
     public static MasterListener Link(IProgramContext context, Master master) => new(context, master);
@@ -15,18 +17,18 @@ internal class MasterListener : IDisposable
 
     private void SessionAddedListener(object? sender, SessionAddedEventArgs args)
     {
-        AlephICLI.FireEventAndForget(
-        new EProgramEvent.SessionAdded()
+        LinkedProgram.SendEvent(
+        new SessionAdded()
         {
-            Args = args
+            Args = args,
         });
     }
     private void SessionSwitchedListener(object? sender, SessionSwitchedEventArgs args)
     {
-        AlephICLI.FireEventAndForget(
-        new EProgramEvent.SessionSwitched()
+        LinkedProgram.SendEvent(
+        new SessionSwitched()
         {
-            Args = args
+            Args = args,
         });
     }
     public void Dispose()

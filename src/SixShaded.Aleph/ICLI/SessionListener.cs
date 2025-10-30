@@ -1,5 +1,7 @@
 namespace SixShaded.Aleph.ICLI;
 using Logical;
+using ProgramEvents;
+
 internal class SessionListener : IDisposable
 {
     public static SessionListener Link(IProgramContext context, Session session) => new(context, session);
@@ -16,29 +18,29 @@ internal class SessionListener : IDisposable
 
     private void TrackpointUpdatedListener(object? sender, TrackpointUpdatedEventArgs args)
     {
-        AlephICLI.FireEventAndForget(
-        new EProgramEvent.TrackpointUpdated()
+        LinkedProgram.SendEvent(
+        new TrackpointUpdated()
         {
+            Args = args,
             Source = Session,
-            Args = args
         });
     }
     private void SelectionPromptedListener(object? sender, SelectionPromptedEventArgs args)
     {
-        AlephICLI.FireEventAndForget(
-        new EProgramEvent.SelectionPrompted()
+        LinkedProgram.SendEvent(
+        new SelectionPrompted()
         {
+            Args = args,
             Source = Session,
-            Args = args
         });
     }
     private void SelectionCancelledListener(object? sender, SelectionCancelledEventArgs args)
     {
-        AlephICLI.FireEventAndForget(
-        new EProgramEvent.SelectionCancelled()
+        LinkedProgram.SendEvent(
+        new SelectionCancelled()
         {
+            Args = args,
             Source = Session,
-            Args = args
         });
     }
     public void Dispose()
