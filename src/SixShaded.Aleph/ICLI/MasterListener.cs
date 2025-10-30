@@ -3,11 +3,11 @@ using Logical;
 internal class MasterListener : IDisposable
 {
     public static MasterListener Link(IProgramContext context, Master master) => new(context, master);
-    public IProgramContext LinkedContext { get; }
+    public IProgramContext LinkedProgram { get; }
     public Master Master { get; }
-    private MasterListener(IProgramContext context, Master instance)
+    private MasterListener(IProgramContext program, Master instance)
     {
-        LinkedContext = context;
+        LinkedProgram = program;
         Master = instance;
         Master.SessionAddedEvent += SessionAddedListener;
         Master.SessionSwitchedEvent += SessionSwitchedListener;

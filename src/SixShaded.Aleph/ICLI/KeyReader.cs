@@ -1,14 +1,16 @@
 namespace SixShaded.Aleph.ICLI;
 using System.Threading;
+using ProgramEvents;
+
 internal class KeyReader : IDisposable
 {
     public static KeyReader Link(IProgramContext context, int pollInterval) => new(context, pollInterval);
-    public IProgramContext LinkedContext { get; }
+    public IProgramContext LinkedProgram { get; }
     public int PollInterval { get; }
 
-    private KeyReader(IProgramContext context, int pollInterval)
+    private KeyReader(IProgramContext program, int pollInterval)
     {
-        LinkedContext = context;
+        LinkedProgram = program;
         PollInterval = pollInterval;
         _isActive = true;
         _thread =
@@ -37,7 +39,11 @@ internal class KeyReader : IDisposable
                 while (Console.KeyAvailable)
                 {
                     var key = Console.ReadKey(true);
-                    // TODO
+                    LinkedProgram.SendEvent(
+                    new KeyPressed()
+                    {
+                        KeyInfo = key,
+                    });
                 }
             }
             Thread.Sleep(PollInterval);

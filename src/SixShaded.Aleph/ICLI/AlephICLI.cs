@@ -122,7 +122,7 @@ public static class AlephICLI
 
         public void AddSession(IStateFZO rootState) =>
             ProgramContext.Instance.SendEvent(
-            new AddSessionRequest
+            new AddSession
             {
                 RootState = rootState,
             });
