@@ -13,10 +13,9 @@ public static class AlephICLI
     private static MasterListener? _masterListener;
     private static HashSet<SessionListener>? _sessionListeners;
 
-    private static Channel<EProgramEvent>? _eventsChannel;
-        
+    private static Channel<IProgramEvent>? _eventsChannel;
 
-    internal static ChannelWriter<EProgramEvent> EventWriter => _eventsChannel!.Writer;
+    private static ChannelWriter<IProgramEvent> _eventWriter => _eventsChannel!.Writer;
     internal static ProgramState ProgramState
     {
         get
@@ -41,10 +40,6 @@ public static class AlephICLI
         return new ICLIHandleObject();
     }
 
-    internal static void FireEventAndForget(EProgramEvent programEvent)
-    {
-        Task.Run(async () => await EventWriter.WriteAsync(programEvent));
-    }
     private static void Init(AlephArgs args)
     {
         if (Master.IsInitialized)
@@ -59,7 +54,7 @@ public static class AlephICLI
         _sessionListeners = new(3);
         _stateLock = new();
         _programState = new();
-        _eventsChannel = Channel.CreateUnbounded<EProgramEvent>(
+        _eventsChannel = Channel.CreateUnbounded<IProgramEvent>(
         new()
         {
             AllowSynchronousContinuations = true,
@@ -185,17 +180,26 @@ public static class AlephICLI
 
     private class ICLIHandleObject : IAlephICLIHandle
     {
+        public static readonly ICLIHandleObject INSTANCE = new();
         public async Task AddSession(IStateFZO rootState) =>
-            await EventWriter.WriteAsync(
+            await _eventWriter.WriteAsync(
             new EProgramEvent.NewSessionRequest
             {
                 RootState = rootState,
             });
 
-        public async Task Stop() => await EventWriter.WriteAsync(new EProgramEvent.StopProgram());
+        public async Task Stop() => await _eventWriter.WriteAsync(new EProgramEvent.StopProgram());
     }
 
-    
+    private class ProgramContextObject : IProgramContext
+    {
+        public static readonly ProgramContextObject INSTANCE = new();
+        public void SendEvent(IProgramEvent action)
+        {
+            if (_eventWriter.TryWrite(action)) return;
+            Task.Run(async () => await _eventWriter.WriteAsync(action).ConfigureAwait(false));
+        }
+    }
 }
 
 internal interface IInputHandler
