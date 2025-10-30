@@ -33,6 +33,9 @@ internal static class Config
                     {
                         "submit", "enter"
                     },
+                    {
+                        "help", "g"
+                    },
                 }
             },
         };
@@ -59,6 +62,9 @@ internal static class Config
             },
             {
                 "forward", EKeyFunction.Forward
+            },
+            {
+                "help", EKeyFunction.Help
             },
         };
     internal static IPMap<AlephKeyPress, EKeyFunction> Keybinds => CONFIG.Value.Keybinds;

@@ -9,4 +9,5 @@ internal enum EKeyFunction
     Right,
     Submit,
     Forward,
+    Help,
 }

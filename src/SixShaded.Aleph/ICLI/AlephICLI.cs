@@ -4,7 +4,7 @@ using Logical;
 using Language;
 using MinimaFZO;
 using System.Threading.Channels;
-
+using State;
 public static class AlephICLI
 {
     private static IInputHandler? _inputHandler;
@@ -125,9 +125,9 @@ public static class AlephICLI
         await Shutdown();
     }
 
-    private static async Task HandleWriteText(EProgramEvent.WriteText args)
+    private static async Task WriteConsoleText(ConsoleText text)
     {
-        foreach (var segment in args.Text.Segments)
+        foreach (var segment in text.Segments)
         {
             if (segment.Foreground is not null) Console.ForegroundColor = (ConsoleColor)segment.Foreground;
             if (segment.Background is not null) Console.BackgroundColor = (ConsoleColor)segment.Background;
@@ -136,8 +136,9 @@ public static class AlephICLI
             await Console.Out.WriteAsync($"{prefix}{segment.Text}{suffix}");
         }
         Console.ResetColor();
-
     }
+
+    private static Task HandleWriteText(EProgramEvent.WriteText args) => WriteConsoleText(args.Text);
 
     private static async Task HandleKeyPressed(EProgramEvent.KeyPressed args)
     {
@@ -196,9 +197,6 @@ public static class AlephICLI
 
     
 }
-
-internal record ProgramState
-{ }
 
 internal interface IInputHandler
 {
