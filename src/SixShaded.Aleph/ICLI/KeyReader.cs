@@ -1,50 +1,46 @@
 namespace SixShaded.Aleph.ICLI;
 using System.Threading;
-internal static class KeyReader
+internal class KeyReader : IDisposable
 {
+    public static KeyReader Link(IProgramContext context, int pollInterval) => new(context, pollInterval);
+    public IProgramContext LinkedContext { get; }
+    public int PollInterval { get; }
 
-    private static bool _isActive = false;
-    public static bool IsActive {
-        get
-        {
-            lock (ACTIVE_LOCK) return _isActive;
-        }
-        private set
-        {
-            lock (ACTIVE_LOCK) _isActive = value;
-        }
-    }
-    private static Thread? _thread;
-    private static readonly object ACTIVE_LOCK = new();
-    public static void Start()
+    private KeyReader(IProgramContext context, int pollInterval)
     {
-        if (IsActive) return;
-        IsActive = true;
+        LinkedContext = context;
+        PollInterval = pollInterval;
+        _isActive = true;
         _thread =
             new(Loop)
             {
                 IsBackground = true,
-                Name = "AlephConsole KeyReader Thread"
+                Name = "AlephConsole KeyReader Thread",
             };
         _thread.Start();
     }
+    private bool _isActive;
+    private readonly Thread _thread;
+    private readonly object _activeLock = new();
 
-    public static void Stop()
+    public void Dispose()
     {
-        if (!IsActive) return;
-        IsActive = false;
-        _thread = null;
+        lock (_activeLock) _isActive = false;
     }
-    public static void Loop()
+    public void Loop()
     {
-        while (IsActive)
+        while (true)
         {
-            var key = Console.ReadKey(true);
-            AlephICLI.FireEventAndForget(
-            new EProgramEvent.KeyPressed()
+            lock (_activeLock)
             {
-                KeyInfo = key
-            });
+                if (!_isActive) return;
+                while (Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey(true);
+                    // TODO
+                }
+            }
+            Thread.Sleep(PollInterval);
         }
     }
 }

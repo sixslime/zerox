@@ -2,9 +2,12 @@ namespace SixShaded.Aleph.ICLI;
 using Logical;
 internal class SessionListener : IDisposable
 {
+    public static SessionListener Link(IProgramContext context, Session session) => new(context, session);
+    public IProgramContext LinkedContext { get; }
     public Session Session { get; }
-    public SessionListener(Session session)
+    private SessionListener(IProgramContext context, Session session)
     {
+        LinkedContext = context;
         Session = session;
         Session.TrackpointUpdatedEvent += TrackpointUpdatedListener;
         Session.SelectionPromptedEvent += SelectionPromptedListener;

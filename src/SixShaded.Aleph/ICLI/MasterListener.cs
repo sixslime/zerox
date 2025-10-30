@@ -2,9 +2,12 @@ namespace SixShaded.Aleph.ICLI;
 using Logical;
 internal class MasterListener : IDisposable
 {
+    public MasterListener Link(IProgramContext context, Master master) => new(context, master);
+    public IProgramContext LinkedContext { get; }
     public Master Master { get; }
-    public MasterListener(Master instance)
+    private MasterListener(IProgramContext context, Master instance)
     {
+        LinkedContext = context;
         Master = instance;
         Master.SessionAddedEvent += SessionAddedListener;
         Master.SessionSwitchedEvent += SessionSwitchedListener;
