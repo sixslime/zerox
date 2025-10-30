@@ -9,7 +9,7 @@ internal class TextBuilder
 
     private readonly List<TextSegment> _segments = [];
     public static TextBuilder Start() => new();
-    public ConsoleText Build() => _segments.ToArray();
+    public ConsoleText Finish() => _segments.ToArray();
     public TextBuilder Text(string text, ConsoleColor? foreground = null, ConsoleColor? background = null, bool bold = false, bool underline = false)
     {
         _segments.Add(

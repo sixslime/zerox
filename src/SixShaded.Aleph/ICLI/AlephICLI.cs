@@ -1,43 +1,43 @@
 namespace SixShaded.Aleph.ICLI;
 
+using System.Runtime.InteropServices;
 using Logical;
 using Language;
 using MinimaFZO;
 using System.Threading.Channels;
+using ProgramEvents;
 using State;
+
 public static class AlephICLI
 {
-    private static IInputHandler? _inputHandler;
-    private static ReaderWriterLock? _stateLock;
-    private static ProgramState? _programState;
-    private static MasterListener? _masterListener;
-    private static HashSet<SessionListener>? _sessionListeners;
+    private static readonly ReaderWriterLock PROGRAM_LOCK = new();
+    private static RunningFields? _runData;
+    private static TaskCompletionSource? _terminationCompletionSource;
 
-    private static Channel<IProgramEvent>? _eventsChannel;
-
-    private static ChannelWriter<IProgramEvent> _eventWriter => _eventsChannel!.Writer;
-    internal static ProgramState ProgramState
+    private static RunningFields _program
     {
         get
         {
-            if (_programState == null) throw new("ProgramState not yet initialized.");
-            _stateLock!.AcquireReaderLock(500);
-            try { return _programState; }
-            finally { _stateLock.ReleaseReaderLock(); }
+            PROGRAM_LOCK.AcquireReaderLock(500);
+            try { return _program; }
+            finally { PROGRAM_LOCK.ReleaseReaderLock(); }
         }
-        private set
+        set
         {
-            _stateLock!.AcquireWriterLock(100);
-            try { _programState = value; }
-            finally { _stateLock.ReleaseWriterLock(); }
+            PROGRAM_LOCK.AcquireWriterLock(100);
+            try { _program = value; }
+            finally { PROGRAM_LOCK.ReleaseWriterLock(); }
         }
     }
+
+    private static ChannelWriter<IProgramEvent> _eventWriter => _program.EventsChannel.Writer;
+    private static ChannelReader<IProgramEvent> _eventReader => _program.EventsChannel.Reader;
 
     public static IAlephICLIHandle Run(AlephArgs args)
     {
         Init(args);
         Task.Run(ProgramLoop);
-        return new ICLIHandleObject();
+        return new ICLIHandle();
     }
 
     private static void Init(AlephArgs args)
@@ -50,18 +50,24 @@ public static class AlephICLI
             LanguageKey = args.LanguageKey,
             Processor = args.Processor,
         });
-        _masterListener = new(Master.Instance);
-        _sessionListeners = new(3);
-        _stateLock = new();
-        _programState = new();
-        _eventsChannel = Channel.CreateUnbounded<IProgramEvent>(
-        new()
-        {
-            AllowSynchronousContinuations = true,
-            SingleReader = true,
-            SingleWriter = false,
-        });
-        KeyReader.Start();
+        _runData =
+            new()
+            {
+                InputHandler = null!, // TODO
+                MasterListener = MasterListener.Link(ProgramContext.Instance, Master.Instance),
+                SessionListeners = new(3),
+                State = new(),
+                EventsChannel =
+                    Channel.CreateUnbounded<IProgramEvent>(
+                    new()
+                    {
+                        AllowSynchronousContinuations = true,
+                        SingleReader = true,
+                        SingleWriter = false,
+                    }),
+                KeyReader = KeyReader.Link(ProgramContext.Instance, 50),
+            };
+        _terminationCompletionSource = new();
     }
 
     private static async Task ProgramLoop()
@@ -69,136 +75,82 @@ public static class AlephICLI
         bool exit = false;
         while (!exit)
         {
-            var reader = _eventsChannel!.Reader;
-            if (!await reader.WaitToReadAsync())
+            if (!await _eventReader.WaitToReadAsync())
             {
                 exit = true;
                 break;
             }
-            await foreach (var currentEvent in reader.ReadAllAsync())
+            await foreach (var currentEvent in _eventReader.ReadAllAsync())
             {
-                switch (currentEvent)
-                {
-                case EProgramEvent.StopProgram:
-                    exit = true;
-                    break;
-                case EProgramEvent.NewSessionRequest args:
-                    await HandleNewSessionRequest(args);
-                    break;
-                case EProgramEvent.KeyPressed args:
-                    await HandleKeyPressed(args);
-                    break;
-                case EProgramEvent.SelectionSend args:
-                    await HandleSelectionSend(args);
-                    break;
-                case EProgramEvent.WriteText args:
-                    await HandleWriteText(args);
-                    break;
-                case EProgramEvent.SelectionPrompted args:
-                    await HandleSelectionPrompted(args);
-                    break;
-                case EProgramEvent.SelectionCancelled args:
-                    await HandleSelectionCancelled(args);
-                    break;
-                case EProgramEvent.TrackpointUpdated args:
-                    await HandleTrackpointUpdated(args);
-                    break;
-                case EProgramEvent.SessionAdded args:
-                    await HandleSessionAdded(args);
-                    break;
-                case EProgramEvent.SessionSwitched args:
-                    await HandleSessionSwitched(args);
-                    break;
-                default:
-                    exit = true;
-                    Console.WriteLine($"Encountered unknown program event: {currentEvent}");
-                    break;
-                }
+                await currentEvent.Handle(ProgramContext.Instance);
+                if (_program.TerminationRequested) exit = true;
                 if (exit) break;
             }
         }
-        await Shutdown();
+        Shutdown();
     }
 
-    private static async Task WriteConsoleText(ConsoleText text)
+    private static void Shutdown()
     {
-        foreach (var segment in text.Segments)
+        _program.Dispose();
+        _runData = null;
+        _terminationCompletionSource!.TrySetResult();
+    }
+
+    private class RunningFields : IDisposable
+    {
+        public required IInputHandler InputHandler { get; set; }
+        public required MasterListener MasterListener { get; set; }
+        public required KeyReader KeyReader { get; set; }
+        public required ProgramState State { get; set; }
+        public required HashSet<SessionListener> SessionListeners { get; set; }
+        public required Channel<IProgramEvent> EventsChannel { get; set; }
+        public bool TerminationRequested { get; set; }
+
+        public void Dispose()
         {
-            if (segment.Foreground is not null) Console.ForegroundColor = (ConsoleColor)segment.Foreground;
-            if (segment.Background is not null) Console.BackgroundColor = (ConsoleColor)segment.Background;
-            string prefix = (segment.Bold ? "\x1b[1m" : "") + (segment.Underline ? "\x1b[4m" : "");
-            string suffix = (segment.Bold ? "\x1b[0m" : "") + (segment.Underline ? "\x1b[0m" : "");
-            await Console.Out.WriteAsync($"{prefix}{segment.Text}{suffix}");
+            MasterListener.Dispose();
+            KeyReader.Dispose();
+            foreach (var listener in SessionListeners) listener.Dispose();
+            EventsChannel.Writer.TryComplete();
         }
-        Console.ResetColor();
     }
 
-    private static Task HandleWriteText(EProgramEvent.WriteText args) => WriteConsoleText(args.Text);
-
-    private static async Task HandleKeyPressed(EProgramEvent.KeyPressed args)
+    private class ICLIHandle : IAlephICLIHandle
     {
-        if (_inputHandler is null) return;
-        await _inputHandler.RecieveInput(args.KeyInfo);
-    }
+        public static ICLIHandle Instance { get; } = new();
 
-    private static async Task HandleNewSessionRequest(EProgramEvent.NewSessionRequest args)
-    { }
-
-    private static async Task HandleSelectionSend(EProgramEvent.SelectionSend args)
-    { }
-
-    private static async Task HandleSelectionPrompted(EProgramEvent.SelectionPrompted args)
-    {
-
-    }
-    private static async Task HandleSelectionCancelled(EProgramEvent.SelectionCancelled args)
-    {
-
-    }
-    private static async Task HandleTrackpointUpdated(EProgramEvent.TrackpointUpdated args)
-    {
-
-    }
-    private static async Task HandleSessionAdded(EProgramEvent.SessionAdded args)
-    {
-        _sessionListeners!.Add(new(args.Args.Session));
-    }
-    private static async Task HandleSessionSwitched(EProgramEvent.SessionSwitched args)
-    {
-
-    }
-    private static async Task Shutdown()
-    {
-        KeyReader.Stop();
-        _masterListener!.Dispose();
-        foreach (var listener in _sessionListeners!) listener.Dispose();
-        _eventsChannel!.Writer.TryComplete();
-        _eventsChannel = null;
-        _masterListener = null;
-        _sessionListeners = null;
-    }
-
-    private class ICLIHandleObject : IAlephICLIHandle
-    {
-        public static readonly ICLIHandleObject INSTANCE = new();
-        public async Task AddSession(IStateFZO rootState) =>
-            await _eventWriter.WriteAsync(
-            new EProgramEvent.NewSessionRequest
+        public void AddSession(IStateFZO rootState) =>
+            ProgramContext.Instance.SendEvent(
+            new AddSessionRequest
             {
                 RootState = rootState,
             });
 
-        public async Task Stop() => await _eventWriter.WriteAsync(new EProgramEvent.StopProgram());
+        public async Task Stop()
+        {
+            _program.TerminationRequested = true;
+            await _terminationCompletionSource!.Task;
+        }
     }
 
-    private class ProgramContextObject : IProgramContext
+    private class ProgramContext : IProgramContext
     {
-        public static readonly ProgramContextObject INSTANCE = new();
+        public static ProgramContext Instance { get; } = new();
+
+        public ProgramState State
+        {
+            get => _program.State;
+            set => _program.State = value;
+        }
+
         public void SendEvent(IProgramEvent action)
         {
             if (_eventWriter.TryWrite(action)) return;
             Task.Run(async () => await _eventWriter.WriteAsync(action).ConfigureAwait(false));
         }
+
+        public void SendTerminationRequest() => _program.TerminationRequested = true;
     }
 }
 

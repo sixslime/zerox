@@ -2,7 +2,7 @@ namespace SixShaded.Aleph.ICLI;
 using Logical;
 internal class MasterListener : IDisposable
 {
-    public MasterListener Link(IProgramContext context, Master master) => new(context, master);
+    public static MasterListener Link(IProgramContext context, Master master) => new(context, master);
     public IProgramContext LinkedContext { get; }
     public Master Master { get; }
     private MasterListener(IProgramContext context, Master instance)

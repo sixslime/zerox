@@ -1,6 +1,6 @@
 ﻿namespace SixShaded.Aleph.ICLI;
 
-public interface IProgramEvent
+internal interface IProgramEvent
 {
     public Task Handle(IProgramContext context);
 }

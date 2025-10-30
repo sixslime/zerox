@@ -2,6 +2,6 @@
 
 public interface IAlephICLIHandle
 {
-    public Task AddSession(IStateFZO rootState);
+    public void AddSession(IStateFZO rootState);
     public Task Stop();
 }
