@@ -4,5 +4,5 @@ internal class SelectionCancelled : IProgramEvent
 {
     public required Logical.Session Source { get; init; }
     public required Logical.SelectionCancelledEventArgs Args { get; init; }
-    public Task Handle(IProgramContext context) => throw new NotImplementedException();
+    public Task Handle(IEventSender context) => throw new NotImplementedException();
 }

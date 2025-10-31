@@ -4,10 +4,10 @@ using ProgramEvents;
 
 internal class MasterListener : IDisposable
 {
-    public static MasterListener Link(IProgramContext context, Master master) => new(context, master);
-    public IProgramContext LinkedProgram { get; }
+    public static MasterListener Link(IEventSender context, Master master) => new(context, master);
+    public IEventSender LinkedProgram { get; }
     public Master Master { get; }
-    private MasterListener(IProgramContext program, Master instance)
+    private MasterListener(IEventSender program, Master instance)
     {
         LinkedProgram = program;
         Master = instance;

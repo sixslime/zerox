@@ -4,11 +4,11 @@ using ProgramEvents;
 
 internal class KeyReader : IDisposable
 {
-    public static KeyReader Link(IProgramContext context, int pollInterval) => new(context, pollInterval);
-    public IProgramContext LinkedProgram { get; }
+    public static KeyReader Link(IEventSender context, int pollInterval) => new(context, pollInterval);
+    public IEventSender LinkedProgram { get; }
     public int PollInterval { get; }
 
-    private KeyReader(IProgramContext program, int pollInterval)
+    private KeyReader(IEventSender program, int pollInterval)
     {
         LinkedProgram = program;
         PollInterval = pollInterval;

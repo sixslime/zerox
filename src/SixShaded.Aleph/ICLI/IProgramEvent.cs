@@ -2,5 +2,5 @@
 
 internal interface IProgramEvent
 {
-    public Task Handle(IProgramContext context);
+    public Task Handle(IEventSender context);
 }

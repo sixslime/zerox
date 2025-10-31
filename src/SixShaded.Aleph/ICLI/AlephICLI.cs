@@ -39,7 +39,7 @@ public static class AlephICLI
             new()
             {
                 InputHandler = null!, // TODO
-                MasterListener = MasterListener.Link(ProgramContext.Instance, Master.Instance),
+                MasterListener = MasterListener.Link(EventSender.Instance, Master.Instance),
                 SessionListeners = new(3),
                 State = new(),
                 EventsChannel =
@@ -50,7 +50,7 @@ public static class AlephICLI
                         SingleReader = true,
                         SingleWriter = false,
                     }),
-                KeyReader = KeyReader.Link(ProgramContext.Instance, 50),
+                KeyReader = KeyReader.Link(EventSender.Instance, 50),
             };
         _terminationCompletionSource = new();
     }
@@ -75,7 +75,7 @@ public static class AlephICLI
             }
             await foreach (var currentEvent in _eventReader.ReadAllAsync())
             {
-                await currentEvent.Handle(ProgramContext.Instance);
+                await currentEvent.Handle(EventSender.Instance);
                 if (_program.TerminationRequested) exit = true;
                 if (exit) break;
             }
@@ -128,26 +128,14 @@ public static class AlephICLI
     }
 
     // everything accessed through this is synchronized.
-    private class ProgramContext : IProgramContext
+    private class EventSender : IEventSender
     {
-        public static ProgramContext Instance { get; } = new();
-
-        public ProgramState State
-        {
-            get => _program.State;
-            set => _program.State = value;
-        }
+        public static EventSender Instance { get; } = new();
         public void SendEvent(IProgramEvent action)
         {
             if (_program.TerminationRequested || _eventWriter.TryWrite(action)) return;
             Task.Run(async () => await _eventWriter.WriteAsync(action).ConfigureAwait(false));
         }
 
-        public void SendTerminationRequest() => InitiateShutdown();
     }
-}
-
-internal interface IInputHandler
-{
-    public Task RecieveInput(ConsoleKeyInfo key);
 }

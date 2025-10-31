@@ -4,10 +4,10 @@ using ProgramEvents;
 
 internal class SessionListener : IDisposable
 {
-    public static SessionListener Link(IProgramContext context, Session session) => new(context, session);
-    public IProgramContext LinkedProgram { get; }
+    public static SessionListener Link(IEventSender context, Session session) => new(context, session);
+    public IEventSender LinkedProgram { get; }
     public Session Session { get; }
-    private SessionListener(IProgramContext program, Session session)
+    private SessionListener(IEventSender program, Session session)
     {
         LinkedProgram = program;
         Session = session;
