@@ -119,13 +119,7 @@ public static class AlephICLI
     {
         public static ICLIHandle Instance { get; } = new();
 
-        public void AddSession(IStateFZO rootState) =>
-            ProgramContext.Instance.SendEvent(
-            new AddSession
-            {
-                RootState = rootState,
-            });
-
+        public void AddSession(IStateFZO rootState) => Master.Instance.AddSession(rootState);
         public async Task Stop()
         {
             InitiateShutdown();
@@ -133,6 +127,7 @@ public static class AlephICLI
         }
     }
 
+    // everything accessed through this is synchronized.
     private class ProgramContext : IProgramContext
     {
         public static ProgramContext Instance { get; } = new();
@@ -142,7 +137,6 @@ public static class AlephICLI
             get => _program.State;
             set => _program.State = value;
         }
-
         public void SendEvent(IProgramEvent action)
         {
             if (_program.TerminationRequested || _eventWriter.TryWrite(action)) return;

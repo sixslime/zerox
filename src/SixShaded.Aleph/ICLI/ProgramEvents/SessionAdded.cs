@@ -3,5 +3,9 @@ namespace SixShaded.Aleph.ICLI.ProgramEvents;
 internal class SessionAdded : IProgramEvent
 {
     public required Logical.SessionAddedEventArgs Args { get; init; }
-    public Task Handle(IProgramContext context) => throw new NotImplementedException();
+
+    public Task Handle(IProgramContext context)
+    {
+
+    }
 }
