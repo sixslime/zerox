@@ -5,6 +5,7 @@ using Logical;
 using Language;
 using MinimaFZO;
 using System.Threading.Channels;
+using Config;
 using ProgramEvents;
 using State;
 
@@ -38,7 +39,7 @@ public static class AlephICLI
         _runData =
             new()
             {
-                InputHandler = null!, // TODO
+                InputHandler = new(),
                 MasterListener = MasterListener.Link(EventSender.Instance, Master.Instance),
                 SessionListeners = new(3),
                 State = new(),
@@ -98,7 +99,7 @@ public static class AlephICLI
 
     private class RunningFields : IDisposable
     {
-        public required IInputHandler InputHandler { get; set; }
+        public required MainInputHandler InputHandler { get; set; }
         public required MasterListener MasterListener { get; set; }
         public required KeyReader KeyReader { get; set; }
         public required ProgramState State { get; set; }
@@ -115,6 +116,20 @@ public static class AlephICLI
         }
     }
 
+    private class MainInputHandler : IInputHandler
+    {
+        public void HandleInput(AlephKeyPress key, IProgramActions actionContext) => throw new NotImplementedException();
+    }
+
+    private class ProgramActions : IProgramActions
+    {
+        public static ProgramActions Instance { get; } = new();
+        public ProgramState State => _program.State;
+        public void DoInput(AlephKeyPress key)
+        {
+            _program.InputHandler.HandleInput(key, this);
+        }
+    }
     private class ICLIHandle : IAlephICLIHandle
     {
         public static ICLIHandle Instance { get; } = new();
@@ -136,6 +151,5 @@ public static class AlephICLI
             if (_program.TerminationRequested || _eventWriter.TryWrite(action)) return;
             Task.Run(async () => await _eventWriter.WriteAsync(action).ConfigureAwait(false));
         }
-
     }
 }

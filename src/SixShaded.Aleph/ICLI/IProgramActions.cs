@@ -2,5 +2,5 @@
 
 internal interface IProgramActions
 {
-
+    public void DoInput(Config.AlephKeyPress key);
 }
