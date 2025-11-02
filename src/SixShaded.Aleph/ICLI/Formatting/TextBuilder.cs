@@ -22,25 +22,34 @@ internal class TextBuilder
         return this;
     }
 
-    public TextBuilder Format(TextFormat format)
-    {
-        if (_segments.Count == 0) return this;
-        _segments[^1] =
-            _segments[^1] with
+    public TextBuilder AppendText(string text) =>
+        TransformLastSegment(
+        segment =>
+            segment with
+            {
+                Text = segment.Text + text
+            });
+
+    public TextBuilder Format(TextFormat format) =>
+        TransformLastSegment(
+        segment =>
+            segment with
             {
                 Format = format
-            };
-        return this;
-    }
+            });
 
-    public TextBuilder Format(Func<TextFormat, TextFormat> formatChange)
+    public TextBuilder Format(Func<TextFormat, TextFormat> formatChange) =>
+        TransformLastSegment(
+        segment =>
+            segment with
+            {
+                Format = formatChange(segment.Format)
+            });
+
+    private TextBuilder TransformLastSegment(Func<TextSegment, TextSegment> func)
     {
         if (_segments.Count == 0) return this;
-        _segments[^1] =
-            _segments[^1] with
-            {
-                Format = formatChange(_segments[^1].Format)
-            };
+        _segments[^1] = func(_segments[^1]);
         return this;
     }
 }

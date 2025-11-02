@@ -15,4 +15,16 @@ internal record TextFormat
             Bold = true,
         };
 
+    public static TextFormat Structure { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.White
+        };
+
+    public static TextFormat Notification { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.Yellow,
+            Background = ConsoleColor.DarkGray,
+        };
 }

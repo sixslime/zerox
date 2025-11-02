@@ -48,12 +48,14 @@ internal class Master
         SessionSwitchedEvent?.Invoke(
         this, new()
         {
+            Index = SessionIndex,
             Session = CurrentSession.Unwrap(),
         });
     private void NotifyAddSession() =>
         SessionAddedEvent?.Invoke(
         this, new()
         {
+            Index = Sessions.Count - 1,
             Session = Sessions.At(Sessions.Count-1).Unwrap()
         });
     internal record InitArgs

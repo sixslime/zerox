@@ -186,6 +186,8 @@ public static class AlephICLI
         public static ProgramActions Instance { get; } = new();
         public ProgramState State => _program.State;
         public void DoInput(AlephKeyPress key) => _program.InputMaster.HandleInput(key, this);
+        public void SetState(Func<ProgramState, ProgramState> changeFunction) => _program.State = changeFunction(_program.State);
+        public void SetState(ProgramState state) => _program.State = state;
     }
 
     private class ICLIHandle : IAlephICLIHandle
