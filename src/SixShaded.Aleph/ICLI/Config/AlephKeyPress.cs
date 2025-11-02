@@ -58,5 +58,5 @@ internal class AlephKeyPress
         other.Alt == Alt &&
         other.Control == Control;
 
-    public override string ToString() => $"{(Control ? "Ctrl+" : "")}{(Shift ? "Shift+" : "")}{(Alt ? "Alt+" : "")}+{KeyString.ToLower()}";
+    public override string ToString() => $"{(Control ? "Ctrl+" : "")}{(Shift ? "Shift+" : "")}{(Alt ? "Alt+" : "")}{KeyString.ToLower()}";
 }

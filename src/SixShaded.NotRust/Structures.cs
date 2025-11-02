@@ -140,6 +140,9 @@ public static class StructureExtensions
         where K : notnull =>
         new PMap<K, T>().WithEntries(enumerable.Map(x => x.Tiple()));
 
+    public static PMap<K, V> ToPMap<K, V>(this Dictionary<K, V> dict)
+        where K : notnull =>
+        new PMap<K, V>(dict);
     public static PSet<T> ToPSet<T>(this IEnumerable<T> enumerable) => new PSet<T>().WithEntries(enumerable);
     public static PStack<T> ToPStack<T>(this IEnumerable<T> enumerable) => new PStack<T>().WithEntries(enumerable);
     public static PStack<T> NewFromTop<T>(this IPStack<T> stack) => stack.TopValue.Check(out var v) ? new PStack<T>().WithEntries(v) : new();

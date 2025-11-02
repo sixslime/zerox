@@ -31,7 +31,7 @@ internal static class Config
                         "right", "l"
                     },
                     {
-                        "submit", "enter"
+                        "submit", "(enter)"
                     },
                     {
                         "help", "g"
@@ -68,6 +68,25 @@ internal static class Config
             },
         };
     internal static IPMap<AlephKeyPress, EKeyFunction> Keybinds => CONFIG.Value.Keybinds;
+    private static readonly Lazy<IPMap<EKeyFunction, IPSequence<AlephKeyPress>>> REVERSE_KEYBIND_LOOKUP =
+        new(
+        () =>
+        {
+            var dict = new Dictionary<EKeyFunction, IPSequence<AlephKeyPress>>();
+            foreach (var pair in Keybinds.Elements)
+            {
+                if (dict.TryGetValue(pair.B, out var list))
+                {
+                    dict[pair.B] = list.WithEntries(pair.A);
+                }
+                else
+                {
+                    dict[pair.B] = new PSequence<AlephKeyPress>([pair.A]);
+                }
+            }
+            return dict.ToPMap();
+        });
+    public static IPMap<EKeyFunction, IPSequence<AlephKeyPress>> ReverseKeybindLookup => REVERSE_KEYBIND_LOOKUP.Value;
 
     private static EvaluatedConfig GetConfig()
     {

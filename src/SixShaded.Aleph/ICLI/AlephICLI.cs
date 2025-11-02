@@ -1,5 +1,6 @@
 namespace SixShaded.Aleph.ICLI;
 
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Logical;
 using Language;
@@ -8,14 +9,13 @@ using System.Threading.Channels;
 using Config;
 using ProgramEvents;
 using State;
+using Formatting;
 
 public static class AlephICLI
 {
     private static RunningFields? _runData;
     private static TaskCompletionSource? _terminationCompletionSource;
-
     private static RunningFields _program => _runData!;
-
     private static ChannelWriter<IProgramEvent> _eventWriter => _program.EventsChannel.Writer;
     private static ChannelReader<IProgramEvent> _eventReader => _program.EventsChannel.Reader;
 
@@ -88,8 +88,8 @@ public static class AlephICLI
     {
         _program.TerminationRequested = true;
         _program.EventsChannel.Writer.TryComplete();
-
     }
+
     private static void DoShutdown()
     {
         _program.Dispose();
@@ -119,13 +119,65 @@ public static class AlephICLI
     private class InputMaster
     {
         public IInputHandler[] InputHandlers { get; set; } = [];
-        public void HandleInput(AlephKeyPress key, IProgramActions actionContext)
+
+        public void HandleInput(AlephKeyPress key, IProgramActions actions)
         {
-            foreach (var handler in InputHandlers)
+            if (InputHandlers.FilterMap(x => x.ShouldHandle(_program.State)).GetAt(0).CheckNone(out var inputProtocol))
             {
-                if (handler.HandleInput(key, actionContext)) break;
+                ConsoleText.Text("No input handler matches current state?\n")
+                    .Format(
+                    TextFormat.Error with
+                    {
+                        Underline = true,
+                    })
+                    .Print();
+                return;
+            }
+            switch (inputProtocol)
+            {
+            case EInputProtocol.Direct p:
+                p.DirectAction(key, actions);
+                break;
+            case EInputProtocol.Keybind p:
+                if (Config.Config.Keybinds.At(key).CheckNone(out var keyFunction))
+                {
+                    ConsoleText.Text($"Unbound key: '{key}'\n")
+                        .Format(TextFormat.Error)
+                        .Print();
+                    break;
+                }
+
+                // DEBUG
+                ConsoleText.Text($"Keypress: '{key}' -> {keyFunction}\n")
+                    .Format(
+                    TextFormat.Default with
+                    {
+                        Foreground = ConsoleColor.DarkGray,
+                    })
+                    .Print();
+                if (keyFunction == EKeyFunction.Help)
+                {
+                    PrintHelp(p);
+                    break;
+                }
+                if (p.ActionMap.At(keyFunction).CheckNone(out var keyAction))
+                {
+                    ConsoleText.Text($"Key function '{keyFunction}' has no meaning in this context.")
+                        .Format(
+                        TextFormat.Error with
+                        {
+                            Foreground = ConsoleColor.Yellow,
+                        })
+                        .Print();
+                    break;
+                }
+                keyAction.ActionFunction(actions);
+                break;
             }
         }
+
+        private static void PrintHelp(EInputProtocol.Keybind keybindProtocol)
+        { }
     }
 
     // everything performed through this is synchronized.
@@ -133,16 +185,15 @@ public static class AlephICLI
     {
         public static ProgramActions Instance { get; } = new();
         public ProgramState State => _program.State;
-        public void DoInput(AlephKeyPress key)
-        {
-            _program.InputMaster.HandleInput(key, this);
-        }
+        public void DoInput(AlephKeyPress key) => _program.InputMaster.HandleInput(key, this);
     }
+
     private class ICLIHandle : IAlephICLIHandle
     {
         public static ICLIHandle Instance { get; } = new();
-
+        public Task Finish => _terminationCompletionSource is null ? Task.CompletedTask : _terminationCompletionSource.Task;
         public void AddSession(IStateFZO rootState) => Master.Instance.AddSession(rootState);
+
         public async Task Stop()
         {
             InitiateShutdown();
@@ -154,6 +205,7 @@ public static class AlephICLI
     private class EventSender : IEventSender
     {
         public static EventSender Instance { get; } = new();
+
         public void SendEvent(IProgramEvent action)
         {
             if (_program.TerminationRequested || _eventWriter.TryWrite(action)) return;

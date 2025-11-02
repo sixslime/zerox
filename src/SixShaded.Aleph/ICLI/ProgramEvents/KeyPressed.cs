@@ -7,5 +7,6 @@ internal class KeyPressed : IProgramEvent
     public Task Handle(IProgramActions actions)
     {
         actions.DoInput(KeyInfo);
+        return Task.CompletedTask;
     }
 }

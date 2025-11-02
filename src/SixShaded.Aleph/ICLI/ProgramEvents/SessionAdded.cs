@@ -6,6 +6,6 @@ internal class SessionAdded : IProgramEvent
 
     public Task Handle(IProgramActions actions)
     {
-
+        return Task.CompletedTask;
     }
 }

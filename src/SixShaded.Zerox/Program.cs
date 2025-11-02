@@ -24,10 +24,7 @@ internal class Program
             LanguageKey = new StandardCoreKey(),
             Processor = new MinimaProcessorFZO(),
         });
-        await Task.Delay(TimeSpan.FromSeconds(3));
-        Console.WriteLine("STOP");
-        await handle.Stop();
-        Console.WriteLine("STOPPED");
+        await handle.Finish;
     }
 
     private static void Loop(string msg)
