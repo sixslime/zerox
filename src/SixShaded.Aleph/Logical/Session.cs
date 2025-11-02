@@ -11,7 +11,7 @@ internal class Session
     public required IStateFZO Root { get; init; }
     public required IProcessorFZO Processor { get; init; }
     public bool InProgress => _activeProgressionContext.IsSome();
-    public PSequence<Trackpoint> Trackpoints { get; private set; } = new();
+    public IPSequence<Trackpoint> Trackpoints { get; private set; } = new PSequence<Trackpoint>();
     public int CurrentTrackpointIndex { get; private set; } = -1;
     public IOption<Trackpoint> CurrentTrackpoint => CurrentTrackpointIndex >= 0 ? Trackpoints.At(CurrentTrackpointIndex) : new None<Trackpoint>();
     public event EventHandler<TrackpointUpdatedEventArgs>? TrackpointUpdatedEvent;

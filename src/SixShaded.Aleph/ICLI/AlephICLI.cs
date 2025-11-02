@@ -128,6 +128,7 @@ public static class AlephICLI
         }
     }
 
+    // everything performed through this is synchronized.
     private class ProgramActions : IProgramActions
     {
         public static ProgramActions Instance { get; } = new();
@@ -149,7 +150,7 @@ public static class AlephICLI
         }
     }
 
-    // everything accessed through this is synchronized.
+    // everything sent through this is synchronized.
     private class EventSender : IEventSender
     {
         public static EventSender Instance { get; } = new();

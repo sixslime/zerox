@@ -3,13 +3,13 @@ namespace SixShaded.Aleph.Logical;
 internal class Master
 {
     private static Master? _instance;
-    private int _sessionIndex = -1;
+    public int SessionIndex { get; private set; } = -1;
     public static bool IsInitialized => _instance is not null;
     public static Master Instance => _instance ?? throw new("Master object not initialized.");
     public required Language.ILanguageKey LanguageKey { get; init; }
     public required IProcessorFZO Processor { get; init; }
     public IPSequence<Session> Sessions { get; private set; } = new PSequence<Session>();
-    public IOption<Session> CurrentSession => _sessionIndex >= 0 ? Sessions.At(_sessionIndex) : new None<Session>();
+    public IOption<Session> CurrentSession => SessionIndex >= 0 ? Sessions.At(SessionIndex) : new None<Session>();
     public event EventHandler<SessionSwitchedEventArgs>? SessionSwitchedEvent;
     public event EventHandler<SessionAddedEventArgs>? SessionAddedEvent;
 
@@ -27,7 +27,7 @@ internal class Master
     public bool SwitchSession(int index)
     {
         if (index > Sessions.Count - 1) return false;
-        _sessionIndex = index;
+        SessionIndex = index;
         NotifySwitchSession();
         return true;
     }

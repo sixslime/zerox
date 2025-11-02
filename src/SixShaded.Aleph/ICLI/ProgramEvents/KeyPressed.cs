@@ -4,8 +4,8 @@ internal class KeyPressed : IProgramEvent
 {
     public required ConsoleKeyInfo KeyInfo { get; init; }
     
-    public Task Handle(IProgramActions context)
+    public Task Handle(IProgramActions actions)
     {
-        context.DoInput(KeyInfo);
+        actions.DoInput(KeyInfo);
     }
 }
