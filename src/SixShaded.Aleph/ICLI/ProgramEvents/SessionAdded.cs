@@ -19,7 +19,8 @@ internal class SessionAdded : IProgramEvent
                 new SessionInfo()
                 {
                     SessionIndex = Args.Index
-                })
+                }),
+                SelectedSession = state.SelectedSession == -1 ? 0 : state.SelectedSession
             });
         return Task.CompletedTask;
     }

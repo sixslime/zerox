@@ -12,7 +12,6 @@ internal class MasterListener : IDisposable
         LinkedProgram = program;
         Master = instance;
         Master.SessionAddedEvent += SessionAddedListener;
-        Master.SessionSwitchedEvent += SessionSwitchedListener;
     }
 
     private void SessionAddedListener(object? sender, SessionAddedEventArgs args)
@@ -23,17 +22,8 @@ internal class MasterListener : IDisposable
             Args = args,
         });
     }
-    private void SessionSwitchedListener(object? sender, SessionSwitchedEventArgs args)
-    {
-        LinkedProgram.SendEvent(
-        new SessionSwitched()
-        {
-            Args = args,
-        });
-    }
     public void Dispose()
     {
         Master.SessionAddedEvent -= SessionAddedListener;
-        Master.SessionSwitchedEvent -= SessionSwitchedListener;
     }
 }
