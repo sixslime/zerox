@@ -4,7 +4,7 @@ internal class SessionAdded : IProgramEvent
 {
     public required Logical.SessionAddedEventArgs Args { get; init; }
 
-    public Task Handle(IEventSender context)
+    public Task Handle(IProgramActions context)
     {
 
     }

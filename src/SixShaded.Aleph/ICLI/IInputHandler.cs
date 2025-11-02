@@ -2,5 +2,11 @@
 
 internal interface IInputHandler
 {
-    public void HandleInput(Config.AlephKeyPress key, IProgramActions actionContext);
+    /// <summary>
+    /// return true if handled, false if should pass to next handler.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="actionContext"></param>
+    /// <returns></returns>
+    public bool HandleInput(Config.AlephKeyPress key, IProgramActions actionContext);
 }

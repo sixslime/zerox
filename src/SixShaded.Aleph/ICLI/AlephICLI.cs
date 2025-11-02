@@ -39,7 +39,7 @@ public static class AlephICLI
         _runData =
             new()
             {
-                InputHandler = new(),
+                InputMaster = new(),
                 MasterListener = MasterListener.Link(EventSender.Instance, Master.Instance),
                 SessionListeners = new(3),
                 State = new(),
@@ -76,7 +76,7 @@ public static class AlephICLI
             }
             await foreach (var currentEvent in _eventReader.ReadAllAsync())
             {
-                await currentEvent.Handle(EventSender.Instance);
+                await currentEvent.Handle(ProgramActions.Instance);
                 if (_program.TerminationRequested) exit = true;
                 if (exit) break;
             }
@@ -99,7 +99,7 @@ public static class AlephICLI
 
     private class RunningFields : IDisposable
     {
-        public required MainInputHandler InputHandler { get; set; }
+        public required InputMaster InputMaster { get; set; }
         public required MasterListener MasterListener { get; set; }
         public required KeyReader KeyReader { get; set; }
         public required ProgramState State { get; set; }
@@ -116,9 +116,16 @@ public static class AlephICLI
         }
     }
 
-    private class MainInputHandler : IInputHandler
+    private class InputMaster
     {
-        public void HandleInput(AlephKeyPress key, IProgramActions actionContext) => throw new NotImplementedException();
+        public IInputHandler[] InputHandlers { get; set; } = [];
+        public void HandleInput(AlephKeyPress key, IProgramActions actionContext)
+        {
+            foreach (var handler in InputHandlers)
+            {
+                if (handler.HandleInput(key, actionContext)) break;
+            }
+        }
     }
 
     private class ProgramActions : IProgramActions
@@ -127,7 +134,7 @@ public static class AlephICLI
         public ProgramState State => _program.State;
         public void DoInput(AlephKeyPress key)
         {
-            _program.InputHandler.HandleInput(key, this);
+            _program.InputMaster.HandleInput(key, this);
         }
     }
     private class ICLIHandle : IAlephICLIHandle

@@ -6,6 +6,6 @@ internal class KeyPressed : IProgramEvent
     
     public Task Handle(IProgramActions context)
     {
-        context.SendInput()
+        context.DoInput(KeyInfo);
     }
 }
