@@ -13,31 +13,59 @@ internal static class Config
                 "keybinds", new ConfigTable
                 {
                     {
-                        "back", "q"
+                        "back", ";"
                     },
                     {
-                        "forward", "w"
+                        "forward", "f"
                     },
                     {
-                        "up", "k"
+                        "up", "a"
                     },
                     {
-                        "down", "j"
+                        "down", "u"
                     },
                     {
-                        "left", "h"
+                        "left", "o"
                     },
                     {
-                        "right", "l"
+                        "right", "e"
                     },
                     {
                         "submit", "(enter)"
                     },
                     {
-                        "help", "g"
+                        "help", "q"
                     },
                 }
             },
+            {
+                "selection", new ConfigTable
+                {
+                    {
+                        "keys", new List<string>()
+                        {
+                            "u",
+                            "h",
+                            "e",
+                            "t",
+                            "o",
+                            "n",
+                            "a",
+                            "s",
+                            "f",
+                            "c",
+                            "y",
+                            "r"
+                        }
+                    },
+                    {
+                        "submit", "(enter)"
+                    },
+                    {
+                        "cancel", ";"
+                    }
+                }
+            }
         };
     private static readonly Dictionary<string, EKeyFunction> KEYFUNCTION_MAP =
         new()
@@ -68,6 +96,7 @@ internal static class Config
             },
         };
     internal static IPMap<AlephKeyPress, EKeyFunction> Keybinds => CONFIG.Value.Keybinds;
+    internal static SelectionKeys Selection => CONFIG.Value.Selection;
     private static readonly Lazy<IPMap<EKeyFunction, IPSequence<AlephKeyPress>>> REVERSE_KEYBIND_LOOKUP =
         new(
         () =>
@@ -108,42 +137,59 @@ internal static class Config
         foreach ((string actionString, object val) in (IConfigTable)rawConfig["keybinds"])
         {
             if (!KEYFUNCTION_MAP.TryGetValue(actionString, out var keyFunction)) continue;
-            if (val is not string keystr) continue;
-            string[] keyArr = keystr.Split(' ');
-            bool shift = false;
-            bool alt = false;
-            bool ctrl = false;
-            foreach (string mod in keyArr[..^1])
-            {
-                switch (mod.ToLower())
-                {
-                case "s":
-                    shift = true;
-                    continue;
-                case "a":
-                    alt = true;
-                    continue;
-                case "c":
-                    ctrl = true;
-                    continue;
-                }
-            }
-            var alephKey =
-                new AlephKeyPress
-                {
-                    Alt = alt,
-                    Shift = shift,
-                    Control = ctrl,
-                    KeyString = keyArr[^1],
-                };
-            keybindMap[alephKey] = keyFunction;
+            if (val is not string keystr) throw new ConfigKeyException($"keybinds.{actionString}", "string expected");
+            keybindMap[StringToAlephKey(keystr)] = keyFunction;
         }
+        var selectionConfig = (IConfigTable)rawConfig["selection"];
+        var selectionKeys =
+            new SelectionKeys()
+            {
+                Cancel = selectionConfig["cancel"] is string cancelstr ? StringToAlephKey(cancelstr) : throw new ConfigKeyException("selection.cancel", "string expected"),
+                Submit = selectionConfig["sumbit"] is string submitstr ? StringToAlephKey(submitstr) : throw new ConfigKeyException("selection.cancel", "string expected"),
+                Keys =
+                    selectionConfig["keys"] is IList<object> list
+                        ? list.Enumerate()
+                            .Map(x => x.value is string str ? str : throw new ConfigKeyException($"selection.keys[{x.index})", "string expected"))
+                            .ToPSequence()
+                        : throw new ConfigKeyException("selection.cancel", "string expected"),
+            };
         return new()
         {
+            Selection = selectionKeys,
             Keybinds = new PMap<AlephKeyPress, EKeyFunction>(keybindMap),
         };
     }
 
+    private static AlephKeyPress StringToAlephKey(string keystr)
+    {
+        string[] keyArr = keystr.Split(' ');
+        bool shift = false;
+        bool alt = false;
+        bool ctrl = false;
+        foreach (string mod in keyArr[..^1])
+        {
+            switch (mod.ToLower())
+            {
+            case "s":
+                shift = true;
+                continue;
+            case "a":
+                alt = true;
+                continue;
+            case "c":
+                ctrl = true;
+                continue;
+            }
+        }
+        return
+            new AlephKeyPress
+            {
+                Alt = alt,
+                Shift = shift,
+                Control = ctrl,
+                KeyString = keyArr[^1],
+            };
+    }
     private static void MergeConfig(IConfigTable baseConfig, IConfigTable mergingConfig)
     {
         foreach ((string key, object value) in mergingConfig)
@@ -161,6 +207,7 @@ internal static class Config
 
     private class EvaluatedConfig
     {
-        internal required IPMap<AlephKeyPress, EKeyFunction> Keybinds { get; init; }
+        public required SelectionKeys Selection { get; init; }
+        public required IPMap<AlephKeyPress, EKeyFunction> Keybinds { get; init; }
     }
 }
