@@ -42,21 +42,7 @@ internal static class Config
                 "selection", new ConfigTable
                 {
                     {
-                        "keys", new List<string>()
-                        {
-                            "u",
-                            "h",
-                            "e",
-                            "t",
-                            "o",
-                            "n",
-                            "a",
-                            "s",
-                            "f",
-                            "c",
-                            "y",
-                            "r"
-                        }
+                        "indicators", "uehtoansfycr"
                     },
                     {
                         "submit", "(enter)"
@@ -146,12 +132,7 @@ internal static class Config
             {
                 Cancel = selectionConfig["cancel"] is string cancelstr ? StringToAlephKey(cancelstr) : throw new ConfigKeyException("selection.cancel", "string expected"),
                 Submit = selectionConfig["sumbit"] is string submitstr ? StringToAlephKey(submitstr) : throw new ConfigKeyException("selection.cancel", "string expected"),
-                Keys =
-                    selectionConfig["keys"] is IList<object> list
-                        ? list.Enumerate()
-                            .Map(x => x.value is string str ? str : throw new ConfigKeyException($"selection.keys[{x.index})", "string expected"))
-                            .ToPSequence()
-                        : throw new ConfigKeyException("selection.cancel", "string expected"),
+                Indicators = selectionConfig["sumbit"] is string indicators ? indicators : throw new ConfigKeyException("selection.cancel", "string expected"),
             };
         return new()
         {

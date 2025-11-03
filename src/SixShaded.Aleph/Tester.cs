@@ -8,20 +8,6 @@ internal class Tester
 {
     public static async Task Test(AlephArgs args)
     {
-        IStateFZO state = new MinimaStateFZO().Initialize(
-        new Origin()
-        {
-            InitialMemory = new MinimaMemoryFZO(),
-            Program = 
-                (1..5)
-                .kFixed()
-                .kMap(iX => iX.kRef().kYield().kIOSelectOne().kMultiply(10.kFixed()))
-        });
-        Master.Instance.AddSession(state);
-        Master.Instance.SwitchSession(0);
-        Master.Instance.CurrentSession.Unwrap().SelectionPromptedEvent += HandleSelection;
-        Console.WriteLine(Master.Instance.CurrentSession);
-        await Master.Instance.CurrentSession.Unwrap().Progress(new FullProgressor());
 
     }
 
