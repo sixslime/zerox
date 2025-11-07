@@ -31,6 +31,9 @@ internal class AlephKeyPress
             {
                 ConsoleKey.Tab, "tab"
             },
+            {
+                ConsoleKey.Escape, "escape"
+            }
         };
     public required bool Shift { get; init; }
     public required bool Control { get; init; }

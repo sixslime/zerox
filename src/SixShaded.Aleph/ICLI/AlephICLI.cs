@@ -59,6 +59,8 @@ public static class AlephICLI
     private static async Task ProgramLoop()
     {
         bool exit = false;
+        ConsoleText.Text("Waiting for session...")
+            .Format(TextFormat)
         while (!exit)
         {
             try
@@ -118,7 +120,7 @@ public static class AlephICLI
 
     private class InputMaster
     {
-        public IInputHandler[] InputHandlers { get; set; } = [];
+        public IInputHandler[] InputHandlers { get; } = [new InputHandlers.LimboInputHandler()];
 
         public void HandleInput(AlephKeyPress key, IProgramActions actions)
         {
@@ -162,7 +164,7 @@ public static class AlephICLI
                 }
                 if (p.ActionMap.At(keyFunction).CheckNone(out var keyAction))
                 {
-                    ConsoleText.Text($"Key function '{keyFunction}' has no meaning in this context.")
+                    ConsoleText.Text($"Key function '{keyFunction}' has no meaning in this context.\n")
                         .Format(
                         TextFormat.Error with
                         {
@@ -188,6 +190,7 @@ public static class AlephICLI
         public void DoInput(AlephKeyPress key) => _program.InputMaster.HandleInput(key, this);
         public void SetState(Func<ProgramState, ProgramState> changeFunction) => _program.State = changeFunction(_program.State);
         public void SetState(ProgramState state) => _program.State = state;
+        public void Quit() => InitiateShutdown();
     }
 
     private class ICLIHandle : IAlephICLIHandle

@@ -36,6 +36,9 @@ internal static class Config
                     {
                         "help", "q"
                     },
+                    {
+                        "quit", "(escape)"
+                    }
                 }
             },
             {
@@ -80,6 +83,9 @@ internal static class Config
             {
                 "help", EKeyFunction.Help
             },
+            {
+                "quit", EKeyFunction.Quit
+            }
         };
     internal static IPMap<AlephKeyPress, EKeyFunction> Keybinds => CONFIG.Value.Keybinds;
     internal static SelectionKeys Selection => CONFIG.Value.Selection;
@@ -131,8 +137,8 @@ internal static class Config
             new SelectionKeys()
             {
                 Cancel = selectionConfig["cancel"] is string cancelstr ? StringToAlephKey(cancelstr) : throw new ConfigKeyException("selection.cancel", "string expected"),
-                Submit = selectionConfig["sumbit"] is string submitstr ? StringToAlephKey(submitstr) : throw new ConfigKeyException("selection.cancel", "string expected"),
-                Indicators = selectionConfig["sumbit"] is string indicators ? indicators : throw new ConfigKeyException("selection.cancel", "string expected"),
+                Submit = selectionConfig["submit"] is string submitstr ? StringToAlephKey(submitstr) : throw new ConfigKeyException("selection.cancel", "string expected"),
+                Indicators = selectionConfig["indicators"] is string indicators ? indicators : throw new ConfigKeyException("selection.cancel", "string expected"),
             };
         return new()
         {

@@ -27,4 +27,10 @@ internal record TextFormat
             Foreground = ConsoleColor.Yellow,
             Background = ConsoleColor.DarkGray,
         };
+
+    public static TextFormat Info { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.Blue
+        };
 }
