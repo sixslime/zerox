@@ -10,5 +10,5 @@ internal enum EKeyFunction
     Submit,
     Forward,
     Help,
-    Quit,
+    Exit,
 }

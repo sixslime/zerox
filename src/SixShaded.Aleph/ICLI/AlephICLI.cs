@@ -59,8 +59,9 @@ public static class AlephICLI
     private static async Task ProgramLoop()
     {
         bool exit = false;
-        ConsoleText.Text("Waiting for session...")
-            .Format(TextFormat)
+        ConsoleText.Text("Waiting for session...\n")
+            .Format(TextFormat.Info)
+            .Print();
         while (!exit)
         {
             try
@@ -179,7 +180,49 @@ public static class AlephICLI
         }
 
         private static void PrintHelp(EInputProtocol.Keybind keybindProtocol)
-        { }
+        {
+            var text = TextBuilder.Start();
+            text.Divider("help")
+                .Text("* ")
+                .Format(TextFormat.Structure)
+                .Text(keybindProtocol.ContextDescription + "\n\n")
+                .Format(
+                TextFormat.Title with
+                {
+                    Bold = false
+                })
+                .Text("AVAILABLE ACTIONS:\n\n")
+                .Format(
+                TextFormat.Structure with
+                {
+                    Underline = true,
+                    Bold = true
+                });
+            foreach (var keybind in keybindProtocol.ActionMap.Elements)
+            {
+                var rightSide =
+                    Config.Config.ReverseKeybindLookup
+                        .At(keybind.A)
+                        .RemapAs(x => string.Join(" | ", x.Elements))
+                        .Or("(none)");
+                text
+                    .Text("- ")
+                    .Format(TextFormat.Structure)
+                    .Text(keybind.B.Name.ToUpper())
+                    .Format(
+                    TextFormat.Important with
+                    {
+                        Bold = true
+                    })
+                    .Text(" : ")
+                    .Text(rightSide)
+                    .Format(TextFormat.Object)
+                    .Text("\n   " + keybind.B.Description)
+                    .Format(TextFormat.Info)
+                    .Text("\n");
+            }
+            text.Divider().Print();
+        }
     }
 
     // everything performed through this is synchronized.
@@ -190,7 +233,7 @@ public static class AlephICLI
         public void DoInput(AlephKeyPress key) => _program.InputMaster.HandleInput(key, this);
         public void SetState(Func<ProgramState, ProgramState> changeFunction) => _program.State = changeFunction(_program.State);
         public void SetState(ProgramState state) => _program.State = state;
-        public void Quit() => InitiateShutdown();
+        public void Exit() => InitiateShutdown();
     }
 
     private class ICLIHandle : IAlephICLIHandle

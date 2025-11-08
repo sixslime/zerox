@@ -8,14 +8,15 @@ internal class LimboInputHandler : IInputHandler
     private static readonly EInputProtocol RETURN_VAL =
         new EInputProtocol.Keybind()
         {
+            ContextDescription = "Waiting for first session",
             ActionMap =
                 new PMap<EKeyFunction, InputAction>(
                 new()
                 {
                     {
-                        EKeyFunction.Quit, InputAction.Quit
+                        EKeyFunction.Exit, InputAction.Exit
                     }
                 })
         };
-    public IOption<EInputProtocol> ShouldHandle(ProgramState state) => RETURN_VAL.AsSome();
+    public IOption<EInputProtocol> ShouldHandle(ProgramState state) => (state.Sessions.Count == 0 && state.HiddenSessions.Count == 0).ToOption(RETURN_VAL);
 }

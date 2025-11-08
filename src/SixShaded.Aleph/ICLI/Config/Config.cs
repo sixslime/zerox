@@ -37,7 +37,7 @@ internal static class Config
                         "help", "q"
                     },
                     {
-                        "quit", "(escape)"
+                        "exit", "(escape)"
                     }
                 }
             },
@@ -84,7 +84,7 @@ internal static class Config
                 "help", EKeyFunction.Help
             },
             {
-                "quit", EKeyFunction.Quit
+                "exit", EKeyFunction.Exit
             }
         };
     internal static IPMap<AlephKeyPress, EKeyFunction> Keybinds => CONFIG.Value.Keybinds;

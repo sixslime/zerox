@@ -18,7 +18,7 @@ internal record TextFormat
     public static TextFormat Structure { get; } =
         new()
         {
-            Foreground = ConsoleColor.White
+            Foreground = ConsoleColor.DarkCyan
         };
 
     public static TextFormat Notification { get; } =
@@ -32,5 +32,24 @@ internal record TextFormat
         new()
         {
             Foreground = ConsoleColor.Blue
+        };
+
+    public static TextFormat Title { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.White,
+            Bold = true,
+        };
+
+    public static TextFormat Important { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.Magenta,
+            Bold = true,
+        };
+    public static TextFormat Object { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.DarkYellow,
         };
 }

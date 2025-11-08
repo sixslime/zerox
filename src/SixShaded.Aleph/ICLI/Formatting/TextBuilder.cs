@@ -11,6 +11,7 @@ internal class TextBuilder
     public static TextBuilder Start() => new();
     public ConsoleText AsObject() => _segments.ToArray();
     public void Print() => AsObject().Print();
+
     public TextBuilder Text(string text)
     {
         _segments.Add(
@@ -21,7 +22,6 @@ internal class TextBuilder
         });
         return this;
     }
-
     public TextBuilder AppendText(string text) =>
         TransformLastSegment(
         segment =>

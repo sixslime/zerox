@@ -2,12 +2,12 @@
 
 internal record InputAction
 {
-    public static InputAction Quit { get; } =
+    public static InputAction Exit { get; } =
         new()
         {
-            Name = "quit",
-            Description = "quit AlephICLI",
-            ActionFunction = actions => actions.Quit(),
+            Name = "exit",
+            Description = "Exit program.",
+            ActionFunction = actions => actions.Exit(),
         };
     public required string Name { get; init; }
     public required string Description { get; init; }

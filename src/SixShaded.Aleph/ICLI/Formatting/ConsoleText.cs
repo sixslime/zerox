@@ -17,8 +17,8 @@ internal class ConsoleText(TextSegment[] segments)
             string prefix = (format.Bold ? "\x1b[1m" : "") + (format.Underline ? "\x1b[4m" : "");
             string suffix = (format.Bold ? "\x1b[0m" : "") + (format.Underline ? "\x1b[0m" : "");
             Console.Out.Write($"{prefix}{segment.Text}{suffix}");
+            Console.ResetColor();
         }
-        Console.ResetColor();
     }
 
 }
