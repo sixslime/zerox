@@ -9,6 +9,7 @@ internal class SessionAdded : IProgramEvent
     {
         ConsoleText.Text($"> New session added ({Args.Index})")
             .Format(TextFormat.Notification)
+            .Text("\n")
             .Print();
         program.SetState(
         state =>

@@ -16,21 +16,6 @@ internal static class Config
                         "back", ";"
                     },
                     {
-                        "forward", "f"
-                    },
-                    {
-                        "up", "a"
-                    },
-                    {
-                        "down", "u"
-                    },
-                    {
-                        "left", "o"
-                    },
-                    {
-                        "right", "e"
-                    },
-                    {
                         "submit", "(enter)"
                     },
                     {
@@ -38,7 +23,16 @@ internal static class Config
                     },
                     {
                         "exit", "(escape)"
-                    }
+                    },
+                    {
+                        "quickInfo", "a"
+                    },
+                    {
+                        "session.showOperationStack", "p"
+                    },
+                    {
+                        "session.showOperationExpansions", "f"
+                    },
                 }
             },
             {
@@ -63,29 +57,23 @@ internal static class Config
                 "back", EKeyFunction.Back
             },
             {
-                "up", EKeyFunction.Up
-            },
-            {
-                "down", EKeyFunction.Down
-            },
-            {
-                "left", EKeyFunction.Left
-            },
-            {
-                "right", EKeyFunction.Right
-            },
-            {
                 "submit", EKeyFunction.Submit
-            },
-            {
-                "forward", EKeyFunction.Forward
             },
             {
                 "help", EKeyFunction.Help
             },
             {
                 "exit", EKeyFunction.Exit
-            }
+            },
+            {
+                "quickInfo", EKeyFunction.QuickInfo
+            },
+            {
+                "session.showOperationStack", EKeyFunction.SessionShowOperationStack
+            },
+            {
+                "session.showOperationExpansions", EKeyFunction.SessionShowOperationExpansions
+            },
         };
     internal static IPMap<AlephKeyPress, EKeyFunction> Keybinds => CONFIG.Value.Keybinds;
     internal static SelectionKeys Selection => CONFIG.Value.Selection;

@@ -24,9 +24,23 @@ internal class Program
             LanguageKey = new StandardCoreKey(),
             Processor = new MinimaProcessorFZO(),
         });
+        var testKorssa = 10.kFixed().kAdd(10.kFixed().kSubtract(5.kFixed())).kAtLeast(20.kFixed());
+        await Task.Delay(3000);
+        handle.AddSession(
+        new MinimaStateFZO().Initialize(
+        new Origin()
+        {
+            Program = testKorssa,
+            InitialMemory = new MinimaMemoryFZO()
+        }));
         await handle.Finish;
     }
 
+    private class Origin : IStateFZO.IOrigin
+    {
+        public required Kor Program { get; init; }
+        public required IMemoryFZO InitialMemory { get; init; }
+    }
     private static void Loop(string msg)
     {
         while (true)

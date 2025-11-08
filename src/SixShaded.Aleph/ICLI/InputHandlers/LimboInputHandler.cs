@@ -2,7 +2,6 @@ namespace SixShaded.Aleph.ICLI.InputHandlers;
 
 using Config;
 using State;
-
 internal class LimboInputHandler : IInputHandler
 {
     private static readonly EInputProtocol RETURN_VAL =

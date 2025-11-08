@@ -1,4 +1,6 @@
 namespace SixShaded.Aleph.Language.Syntax;
 
-public static class Extensions
-{ }
+internal static class Extensions
+{
+    public static LanguageProvider AsProvider(this ILanguageKey key) => new(key);
+}

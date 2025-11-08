@@ -4,11 +4,10 @@ internal enum EKeyFunction
 {
     Back,
     Up,
-    Down,
-    Left,
-    Right,
     Submit,
-    Forward,
     Help,
+    QuickInfo,
     Exit,
+    SessionShowOperationStack,
+    SessionShowOperationExpansions,
 }

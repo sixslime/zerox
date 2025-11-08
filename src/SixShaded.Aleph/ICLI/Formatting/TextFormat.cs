@@ -14,7 +14,11 @@ internal record TextFormat
             Foreground = ConsoleColor.DarkRed,
             Bold = true,
         };
-
+    public static TextFormat Subtle { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.DarkBlue
+        };
     public static TextFormat Structure { get; } =
         new()
         {
@@ -24,8 +28,9 @@ internal record TextFormat
     public static TextFormat Notification { get; } =
         new()
         {
-            Foreground = ConsoleColor.Yellow,
-            Background = ConsoleColor.DarkGray,
+            Foreground = ConsoleColor.Black,
+            Background = ConsoleColor.DarkMagenta,
+            Bold = true,
         };
 
     public static TextFormat Info { get; } =
@@ -44,12 +49,12 @@ internal record TextFormat
     public static TextFormat Important { get; } =
         new()
         {
-            Foreground = ConsoleColor.Magenta,
+            Foreground = ConsoleColor.Yellow,
             Bold = true,
         };
     public static TextFormat Object { get; } =
         new()
         {
-            Foreground = ConsoleColor.DarkYellow,
+            Foreground = ConsoleColor.Magenta,
         };
 }

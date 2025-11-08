@@ -10,6 +10,7 @@ using Config;
 using ProgramEvents;
 using State;
 using Formatting;
+using InputHandlers;
 
 public static class AlephICLI
 {
@@ -121,7 +122,11 @@ public static class AlephICLI
 
     private class InputMaster
     {
-        public IInputHandler[] InputHandlers { get; } = [new InputHandlers.LimboInputHandler()];
+        public IInputHandler[] InputHandlers { get; } =
+        [
+            new LimboInputHandler(),
+            new SessionInspectInputHandler(),
+        ];
 
         public void HandleInput(AlephKeyPress key, IProgramActions actions)
         {
@@ -200,7 +205,7 @@ public static class AlephICLI
                 });
             foreach (var keybind in keybindProtocol.ActionMap.Elements)
             {
-                var rightSide =
+                var keybindDisplay =
                     Config.Config.ReverseKeybindLookup
                         .At(keybind.A)
                         .RemapAs(x => string.Join(" | ", x.Elements))
@@ -214,12 +219,19 @@ public static class AlephICLI
                     {
                         Bold = true
                     })
-                    .Text(" : ")
-                    .Text(rightSide)
-                    .Format(TextFormat.Object)
-                    .Text("\n   " + keybind.B.Description)
+                    .Text(" < ")
+                    .Format(TextFormat.Structure)
+                    .Text(keybindDisplay)
+                    .Format(
+                    TextFormat.Object with
+                    {
+                        Bold = true
+                    })
+                    .Text(" >\n   ")
+                    .Format(TextFormat.Structure)
+                    .Text(keybind.B.Description)
                     .Format(TextFormat.Info)
-                    .Text("\n");
+                    .Text("\n\n");
             }
             text.Divider().Print();
         }
