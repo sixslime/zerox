@@ -57,4 +57,16 @@ internal record TextFormat
         {
             Foreground = ConsoleColor.Magenta,
         };
+
+    public static TextFormat Resolved { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.Green
+        };
+
+    public static TextFormat Unresolved { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.Red
+        };
 }

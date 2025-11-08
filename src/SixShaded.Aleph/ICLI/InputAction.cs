@@ -1,5 +1,6 @@
 ﻿namespace SixShaded.Aleph.ICLI;
-
+using Formatting;
+using Logical;
 internal record InputAction
 {
     public static InputAction Exit { get; } =
@@ -15,7 +16,24 @@ internal record InputAction
         {
             Name = "operation stack",
             Description = "Show the current session's operation stack.",
-            ActionFunction = actions => { }
+            ActionFunction =
+                actions =>
+                {
+                    var session = actions.State.GetCurrentSession().GetLogicalSession();
+                    var currentState =
+                        session.CurrentTrackpoint
+                            .RemapAs(x => x.ForwardSteps.At(^1))
+                            .Press()
+                            .RemapAs(x => x.State)
+                            .Or(session.Root);
+                    var text = TextBuilder.Start();
+                    text.Divider("operation stack");
+                    foreach (var node in currentState.OperationStack.Reverse())
+                    {
+                        text.TranslateOperation(node).Text("\n");
+                    }
+                    text.Print();
+                }
         };
     public static InputAction ShowCurrentOperationExpansions { get; } =
         new()

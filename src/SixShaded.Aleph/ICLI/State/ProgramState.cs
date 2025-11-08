@@ -6,4 +6,6 @@ internal record ProgramState
     public int SelectedSession { get; init; } = -1;
     public IPSequence<SessionInfo> Sessions { get; init; } = new PSequence<SessionInfo>();
     public IPSequence<SessionInfo> HiddenSessions { get; init; } = new PSequence<SessionInfo>();
+
+    public SessionInfo GetCurrentSession() => Sessions.At(SelectedSession).Expect("No current session?");
 }

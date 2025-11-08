@@ -29,7 +29,7 @@ internal class Tester
         public required IMemoryFZO InitialMemory { get; init; }
     }
 
-    private class FullProgressor : IProgressor
+    private class FullProgressor : Progressor
     {
         public string Identifier => "full";
 

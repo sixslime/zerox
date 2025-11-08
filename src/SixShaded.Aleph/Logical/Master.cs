@@ -1,11 +1,11 @@
 namespace SixShaded.Aleph.Logical;
-
+using Language;
 internal class Master
 {
     private static Master? _instance;
     public static bool IsInitialized => _instance is not null;
     public static Master Instance => _instance ?? throw new("Master object not initialized.");
-    public required Language.ILanguageKey LanguageKey { get; init; }
+    public required LanguageProvider LanguageProvider { get; init; }
     public required IProcessorFZO Processor { get; init; }
     public IPSequence<Session> Sessions { get; private set; } = new PSequence<Session>();
 
@@ -29,7 +29,7 @@ internal class Master
         _instance =
             new()
             {
-                LanguageKey = args.LanguageKey,
+                LanguageProvider = new(args.LanguageKey),
                 Processor = args.Processor,
             };
     }

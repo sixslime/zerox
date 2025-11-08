@@ -52,7 +52,7 @@ public interface IPMap<K, T> : IHasElements<ITiple<K, T>>, IEntryAddable<ITiple<
 public interface IPSet<T> : IHasElements<T>, IEntryAddable<T>, IEntryRemovable<T>, IIndexReadableInfallible<T, bool>, IMergable<IPSet<T>>, IIntersectable<IPSet<T>>
 { }
 
-public interface IPSequence<T> : IHasElements<T>, IIndexReadable<int, T>, IEntryAddable<ITiple<int, T>>, IEntryAddable<T>, IMergable<IPSequence<T>>, IEntryRemovable<int>
+public interface IPSequence<T> : IHasElements<T>, IIndexReadable<Index, T>, IEntryAddable<ITiple<int, T>>, IEntryAddable<T>, IMergable<IPSequence<T>>, IEntryRemovable<int>
 {
     public IPSequence<T> _WithInsertionAt(int index, IEnumerable<T> items);
 }
@@ -285,7 +285,7 @@ public class PSequence<T>() : IPSequence<T>
     public override int GetHashCode() => _list.GetHashCode();
     public int Count => _list.CountAndCache();
     public IEnumerable<T> Elements => _list;
-    public IOption<T> At(int index) => _list.At(index);
+    public IOption<T> At(Index index) => _list.At(index);
     IMergable<IPSequence<T>> IMergable<IPSequence<T>>._MergedWith(IPSequence<T> union) => this.WithEntries(union.Elements);
 
     IEntryAddable<ITiple<int, T>> IEntryAddable<ITiple<int, T>>._WithEntries(IEnumerable<ITiple<int, T>> entries)
@@ -369,7 +369,7 @@ public class PStack<T>() : IPStack<T>
     }
 }
 
-public class CachingEnumerable<T> : IEnumerable<T>, IIndexReadable<int, T>
+public class CachingEnumerable<T> : IEnumerable<T>, IIndexReadable<Index, T>
 {
     private readonly List<T> _list;
     private int _cachedIndex = -1;
@@ -451,9 +451,14 @@ public class CachingEnumerable<T> : IEnumerable<T>, IIndexReadable<int, T>
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public IOption<T> At(int index)
+    public IOption<T> At(Index index)
     {
-        while (_cachedIndex < index && _iter is not null)
+        if (index.IsFromEnd)
+        {
+            CountAndCache();
+            return _list[index].AsSome();
+        }
+        while (_cachedIndex < index.Value && _iter is not null)
         {
             if (!_iter.MoveNext()) return new None<T>();
             _cachedIndex++;

@@ -27,12 +27,12 @@ internal class Session
         return true;
     }
 
-    public async Task<bool> Progress(IProgressor progressor, bool backward = false)
+    public async Task<bool> Progress(Progressor progressor, bool backward = false)
     {
         if (InProgress) return false;
         var thisContext = new ProgressionContext(this, backward);
         SetProgressionContext(thisContext);
-        await progressor.Consume(thisContext);
+        await progressor.Function(thisContext);
         if (!thisContext.Active) return false;
         var trackpoint =
             new Trackpoint

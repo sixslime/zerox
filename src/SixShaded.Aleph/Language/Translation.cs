@@ -1,6 +1,8 @@
 namespace SixShaded.Aleph.Language;
 
-public class Translation
+using System.Collections;
+
+public class Translation : IEnumerable<ITranslationSegment>
 {
     internal Translation(IEnumerable<ITranslationSegment> segments)
     {
@@ -8,4 +10,6 @@ public class Translation
     }
 
     internal IPSequence<ITranslationSegment> Segments { get; }
+    public IEnumerator<ITranslationSegment> GetEnumerator() => Segments.Elements.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

@@ -2,7 +2,7 @@ namespace SixShaded.Aleph.Logical;
 
 public record Trackpoint
 {
-    public required IProgressor Progressor { get; init; }
+    public required Progressor Progressor { get; init; }
     public required IPSequence<int[]> Selections { get; init; }
     public required IPSequence<Step> ForwardSteps { get; init; }
 
