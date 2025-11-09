@@ -18,7 +18,7 @@ internal class Program
     public static async Task Main(string[] args)
     {
         Init();
-        var handle = AlephICLI.Run(
+        var aleph = AlephICLI.Run(
         new()
         {
             LanguageKey = new StandardCoreKey(),
@@ -26,14 +26,14 @@ internal class Program
         });
         var testKorssa = 10.kFixed().kAdd(10.kFixed().kSubtract(5.kFixed())).kAtLeast(20.kFixed());
         await Task.Delay(3000);
-        handle.AddSession(
+        aleph.AddSession(
         new MinimaStateFZO().Initialize(
         new Origin()
         {
             Program = testKorssa,
             InitialMemory = new MinimaMemoryFZO()
         }));
-        await handle.Finish;
+        await aleph.Finish;
     }
 
     private class Origin : IStateFZO.IOrigin

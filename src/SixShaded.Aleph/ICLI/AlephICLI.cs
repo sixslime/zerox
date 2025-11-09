@@ -53,6 +53,11 @@ public static class AlephICLI
                         SingleWriter = false,
                     }),
                 KeyReader = KeyReader.Link(EventSender.Instance, 50),
+                InputHandlers =
+                [
+                    new LimboInputHandler(),
+                    new SessionInspectInputHandler(),
+                ],
             };
         _terminationCompletionSource = new();
     }
@@ -80,6 +85,7 @@ public static class AlephICLI
             }
             await foreach (var currentEvent in _eventReader.ReadAllAsync())
             {
+                UpdateInputProtocol();
                 await currentEvent.Handle(ProgramActions.Instance);
                 if (_program.TerminationRequested) exit = true;
                 if (exit) break;
@@ -88,6 +94,21 @@ public static class AlephICLI
         DoShutdown();
     }
 
+    private static void UpdateInputProtocol()
+    {
+        if (_program.InputHandlers.FilterMap(x => x.ShouldHandle(_program.State)).GetAt(0).Check(out var inputProtocol))
+        {
+            _program.CurrentInputProtocol = inputProtocol;
+            return;
+        }
+        ConsoleText.Text("No input handler matches current state?\n")
+            .Format(
+            TextFormat.Error with
+            {
+                Underline = true,
+            })
+            .Print();
+    }
     private static void InitiateShutdown()
     {
         _program.TerminationRequested = true;
@@ -103,7 +124,8 @@ public static class AlephICLI
 
     private class RunningFields : IDisposable
     {
-        public required InputMaster InputMaster { get; set; }
+        public required IInputHandler[] InputHandlers { get; set; }
+        public EInputProtocol? CurrentInputProtocol { get; set; } = null;
         public required MasterListener MasterListener { get; set; }
         public required KeyReader KeyReader { get; set; }
         public required ProgramState State { get; set; }
@@ -120,121 +142,100 @@ public static class AlephICLI
         }
     }
 
-    private class InputMaster
+    private static void HandleInput(AlephKeyPress key, IProgramActions actions)
     {
-        public IInputHandler[] InputHandlers { get; } =
-        [
-            new LimboInputHandler(),
-            new SessionInspectInputHandler(),
-        ];
-
-        public void HandleInput(AlephKeyPress key, IProgramActions actions)
+        switch (_program.CurrentInputProtocol)
         {
-            if (InputHandlers.FilterMap(x => x.ShouldHandle(_program.State)).GetAt(0).CheckNone(out var inputProtocol))
+        case EInputProtocol.Direct p:
+            p.DirectAction(key, actions);
+            break;
+        case EInputProtocol.Keybind p:
+            if (Config.Config.Keybinds.At(key).CheckNone(out var keyFunction))
             {
-                ConsoleText.Text("No input handler matches current state?\n")
+                ConsoleText.Text($"Unbound key: '{key}'\n")
+                    .Format(TextFormat.Error)
+                    .Print();
+                break;
+            }
+            // DEBUG
+            ConsoleText.Text($"Keypress: '{key}' -> {keyFunction}\n")
+                .Format(
+                TextFormat.Default with
+                {
+                    Foreground = ConsoleColor.DarkGray,
+                })
+                .Print();
+            if (keyFunction == EKeyFunction.Help)
+            {
+                PrintHelp(p);
+                break;
+            }
+            if (p.ActionMap.At(keyFunction).CheckNone(out var keyAction))
+            {
+                ConsoleText.Text($"Key function '{keyFunction}' has no meaning in this context.\n")
                     .Format(
                     TextFormat.Error with
                     {
-                        Underline = true,
+                        Foreground = ConsoleColor.Yellow,
                     })
                     .Print();
-                return;
-            }
-            switch (inputProtocol)
-            {
-            case EInputProtocol.Direct p:
-                p.DirectAction(key, actions);
-                break;
-            case EInputProtocol.Keybind p:
-                if (Config.Config.Keybinds.At(key).CheckNone(out var keyFunction))
-                {
-                    ConsoleText.Text($"Unbound key: '{key}'\n")
-                        .Format(TextFormat.Error)
-                        .Print();
-                    break;
-                }
-
-                // DEBUG
-                ConsoleText.Text($"Keypress: '{key}' -> {keyFunction}\n")
-                    .Format(
-                    TextFormat.Default with
-                    {
-                        Foreground = ConsoleColor.DarkGray,
-                    })
-                    .Print();
-                if (keyFunction == EKeyFunction.Help)
-                {
-                    PrintHelp(p);
-                    break;
-                }
-                if (p.ActionMap.At(keyFunction).CheckNone(out var keyAction))
-                {
-                    ConsoleText.Text($"Key function '{keyFunction}' has no meaning in this context.\n")
-                        .Format(
-                        TextFormat.Error with
-                        {
-                            Foreground = ConsoleColor.Yellow,
-                        })
-                        .Print();
-                    break;
-                }
-                keyAction.ActionFunction(actions);
                 break;
             }
+            keyAction.ActionFunction(actions);
+            break;
         }
+    }
 
-        private static void PrintHelp(EInputProtocol.Keybind keybindProtocol)
+    private static void PrintHelp(EInputProtocol.Keybind keybindProtocol)
+    {
+        var text = TextBuilder.Start();
+        text.Divider("help")
+            .Text("* ")
+            .Format(TextFormat.Structure)
+            .Text(keybindProtocol.ContextDescription + "\n\n")
+            .Format(
+            TextFormat.Title with
+            {
+                Bold = false
+            })
+            .Text("AVAILABLE ACTIONS:\n\n")
+            .Format(
+            TextFormat.Structure with
+            {
+                Underline = true,
+                Bold = true
+            });
+        foreach (var keybind in keybindProtocol.ActionMap.Elements)
         {
-            var text = TextBuilder.Start();
-            text.Divider("help")
-                .Text("* ")
+            var keybindDisplay =
+                Config.Config.ReverseKeybindLookup
+                    .At(keybind.A)
+                    .RemapAs(x => string.Join(" | ", x.Elements))
+                    .Or("(none)");
+            text
+                .Text("- ")
                 .Format(TextFormat.Structure)
-                .Text(keybindProtocol.ContextDescription + "\n\n")
+                .Text(keybind.B.Name.ToUpper())
                 .Format(
-                TextFormat.Title with
+                TextFormat.Important with
                 {
-                    Bold = false
-                })
-                .Text("AVAILABLE ACTIONS:\n\n")
-                .Format(
-                TextFormat.Structure with
-                {
-                    Underline = true,
                     Bold = true
-                });
-            foreach (var keybind in keybindProtocol.ActionMap.Elements)
-            {
-                var keybindDisplay =
-                    Config.Config.ReverseKeybindLookup
-                        .At(keybind.A)
-                        .RemapAs(x => string.Join(" | ", x.Elements))
-                        .Or("(none)");
-                text
-                    .Text("- ")
-                    .Format(TextFormat.Structure)
-                    .Text(keybind.B.Name.ToUpper())
-                    .Format(
-                    TextFormat.Important with
-                    {
-                        Bold = true
-                    })
-                    .Text(" < ")
-                    .Format(TextFormat.Structure)
-                    .Text(keybindDisplay)
-                    .Format(
-                    TextFormat.Object with
-                    {
-                        Bold = true
-                    })
-                    .Text(" >\n   ")
-                    .Format(TextFormat.Structure)
-                    .Text(keybind.B.Description)
-                    .Format(TextFormat.Info)
-                    .Text("\n\n");
-            }
-            text.Divider().Print();
+                })
+                .Text(" < ")
+                .Format(TextFormat.Structure)
+                .Text(keybindDisplay)
+                .Format(
+                TextFormat.Object with
+                {
+                    Bold = true
+                })
+                .Text(" >\n   ")
+                .Format(TextFormat.Structure)
+                .Text(keybind.B.Description)
+                .Format(TextFormat.Info)
+                .Text("\n\n");
         }
+        text.Divider().Print();
     }
 
     // everything performed through this is synchronized.
