@@ -40,7 +40,6 @@ public static class AlephICLI
         _runData =
             new()
             {
-                InputMaster = new(),
                 MasterListener = MasterListener.Link(EventSender.Instance, Master.Instance),
                 SessionListeners = new(3),
                 State = new(),
@@ -94,6 +93,19 @@ public static class AlephICLI
         DoShutdown();
     }
 
+    private static void InitiateShutdown()
+    {
+        _program.TerminationRequested = true;
+        _program.EventsChannel.Writer.TryComplete();
+    }
+
+    private static void DoShutdown()
+    {
+        _program.Dispose();
+        _runData = null;
+        _terminationCompletionSource!.TrySetResult();
+    }
+
     private static void UpdateInputProtocol()
     {
         if (_program.InputHandlers.FilterMap(x => x.ShouldHandle(_program.State)).GetAt(0).Check(out var inputProtocol))
@@ -108,38 +120,6 @@ public static class AlephICLI
                 Underline = true,
             })
             .Print();
-    }
-    private static void InitiateShutdown()
-    {
-        _program.TerminationRequested = true;
-        _program.EventsChannel.Writer.TryComplete();
-    }
-
-    private static void DoShutdown()
-    {
-        _program.Dispose();
-        _runData = null;
-        _terminationCompletionSource!.TrySetResult();
-    }
-
-    private class RunningFields : IDisposable
-    {
-        public required IInputHandler[] InputHandlers { get; set; }
-        public EInputProtocol? CurrentInputProtocol { get; set; } = null;
-        public required MasterListener MasterListener { get; set; }
-        public required KeyReader KeyReader { get; set; }
-        public required ProgramState State { get; set; }
-        public required HashSet<SessionListener> SessionListeners { get; set; }
-        public required Channel<IProgramEvent> EventsChannel { get; set; }
-        public bool TerminationRequested { get; set; }
-
-        public void Dispose()
-        {
-            KeyReader.Dispose();
-            MasterListener.Dispose();
-            foreach (var listener in SessionListeners) listener.Dispose();
-            EventsChannel.Writer.TryComplete();
-        }
     }
 
     private static void HandleInput(AlephKeyPress key, IProgramActions actions)
@@ -157,6 +137,7 @@ public static class AlephICLI
                     .Print();
                 break;
             }
+
             // DEBUG
             ConsoleText.Text($"Keypress: '{key}' -> {keyFunction}\n")
                 .Format(
@@ -196,18 +177,18 @@ public static class AlephICLI
             .Format(
             TextFormat.Title with
             {
-                Bold = false
+                Bold = false,
             })
             .Text("AVAILABLE ACTIONS:\n\n")
             .Format(
             TextFormat.Structure with
             {
                 Underline = true,
-                Bold = true
+                Bold = true,
             });
         foreach (var keybind in keybindProtocol.ActionMap.Elements)
         {
-            var keybindDisplay =
+            string keybindDisplay =
                 Config.Config.ReverseKeybindLookup
                     .At(keybind.A)
                     .RemapAs(x => string.Join(" | ", x.Elements))
@@ -219,7 +200,7 @@ public static class AlephICLI
                 .Format(
                 TextFormat.Important with
                 {
-                    Bold = true
+                    Bold = true,
                 })
                 .Text(" < ")
                 .Format(TextFormat.Structure)
@@ -227,7 +208,7 @@ public static class AlephICLI
                 .Format(
                 TextFormat.Object with
                 {
-                    Bold = true
+                    Bold = true,
                 })
                 .Text(" >\n   ")
                 .Format(TextFormat.Structure)
@@ -238,14 +219,34 @@ public static class AlephICLI
         text.Divider().Print();
     }
 
+    private class RunningFields : IDisposable
+    {
+        public required IInputHandler[] InputHandlers { get; set; }
+        public EInputProtocol? CurrentInputProtocol { get; set; }
+        public required MasterListener MasterListener { get; set; }
+        public required KeyReader KeyReader { get; set; }
+        public required ProgramState State { get; set; }
+        public required HashSet<SessionListener> SessionListeners { get; set; }
+        public required Channel<IProgramEvent> EventsChannel { get; set; }
+        public bool TerminationRequested { get; set; }
+
+        public void Dispose()
+        {
+            KeyReader.Dispose();
+            MasterListener.Dispose();
+            foreach (var listener in SessionListeners) listener.Dispose();
+            EventsChannel.Writer.TryComplete();
+        }
+    }
+
     // everything performed through this is synchronized.
     private class ProgramActions : IProgramActions
     {
         public static ProgramActions Instance { get; } = new();
+        public void SetState(ProgramState state) => _program.State = state;
         public ProgramState State => _program.State;
         public void DoInput(AlephKeyPress key) => _program.InputMaster.HandleInput(key, this);
         public void SetState(Func<ProgramState, ProgramState> changeFunction) => _program.State = changeFunction(_program.State);
-        public void SetState(ProgramState state) => _program.State = state;
         public void Exit() => InitiateShutdown();
     }
 
