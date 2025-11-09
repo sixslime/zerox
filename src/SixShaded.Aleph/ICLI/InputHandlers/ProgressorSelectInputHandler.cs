@@ -19,5 +19,5 @@ internal class ProgressorSelectInputHandler : IInputHandler
         }
     ];
     public IOption<EInputProtocol> ShouldHandle(ProgramState state) => 
-    (state.GetCurrentSession().UIContext is ESessionUIContext.SelectingProgressor s).ToO
+    (state.GetCurrentSession().UIContext is ESessionUIContext.SelectingProgressor s)
 }
