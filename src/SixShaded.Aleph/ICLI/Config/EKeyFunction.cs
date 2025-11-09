@@ -10,4 +10,6 @@ internal enum EKeyFunction
     Exit,
     SessionShowOperationStack,
     SessionShowOperationExpansions,
+    SessionProgressForward,
+    SessionProgressBackward,
 }

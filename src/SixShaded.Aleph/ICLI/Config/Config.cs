@@ -33,6 +33,12 @@ internal static class Config
                     {
                         "session.showOperationExpansions", "f"
                     },
+                    {
+                        "session.progressForward", "n"
+                    },
+                    {
+                        "session.progressBackward", "s n"
+                    }
                 }
             },
             {
@@ -73,6 +79,12 @@ internal static class Config
             },
             {
                 "session.showOperationExpansions", EKeyFunction.SessionShowOperationExpansions
+            },
+            {
+                "session.progressForward", EKeyFunction.SessionProgressForward
+            },
+            {
+                "session.progressBackward", EKeyFunction.SessionProgressBackward
             },
         };
     internal static IPMap<AlephKeyPress, EKeyFunction> Keybinds => CONFIG.Value.Keybinds;

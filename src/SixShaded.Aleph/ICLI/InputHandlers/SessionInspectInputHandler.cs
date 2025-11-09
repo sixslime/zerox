@@ -25,6 +25,22 @@ internal class SessionInspectInputHandler : IInputHandler
                     {
                         EKeyFunction.QuickInfo, InputAction.QuickInfo
                     },
+                    {
+                        EKeyFunction.SessionProgressForward, new()
+                        {
+                            Name = "forward progress",
+                            Description = "Progress the current session forward by a selected progresor.",
+                            ActionFunction = actions => { }
+                        }
+                    },
+                    {
+                        EKeyFunction.SessionProgressBackward, new()
+                        {
+                            Name = "backward progress",
+                            Description = "Reverse progress in the current session by a selected progresor.",
+                            ActionFunction = actions => { }
+                        }
+                    },
                 })
         };
     public IOption<EInputProtocol> ShouldHandle(ProgramState state) => RETURN_VAL.AsSome();

@@ -29,25 +29,5 @@ internal class Tester
         public required IMemoryFZO InitialMemory { get; init; }
     }
 
-    private class FullProgressor : Progressor
-    {
-        public string Identifier => "full";
-
-        public async Task Consume(IProgressionContext context)
-        {
-            while ((await context.Next()).Check(out var step))
-            {
-                if (step.NextStep.Split(out var ok, out var err))
-                {
-                    Console.WriteLine(ok);
-                }
-                else
-                {
-                    Console.WriteLine(err);
-                    Console.WriteLine(string.Join("\n", err.HaltingState.KorssaMutationStack));
-                    Console.WriteLine(string.Join("\n", err.HaltingState.OperationStack));
-                }
-            }
-        }
-    }
+    
 }
