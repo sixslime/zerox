@@ -1,8 +1,13 @@
 namespace SixShaded.Aleph.ICLI.ProgramEvents;
-
-internal class SelectionPrompted : IProgramEvent
+using Formatting;
+internal class TrackpointUpdated : IProgramEvent
 {
     public required Logical.Session Source { get; init; }
-    public required Logical.SelectionPromptedEventArgs Args { get; init; }
-    public Task Handle(IProgramActions actions) => throw new NotImplementedException();
+    public required Logical.TrackpointUpdatedEventArgs Args { get; init; }
+
+    public Task Handle(IProgramActions actions)
+    {
+        ConsoleText.Text("Selection Prompted (UNIMPLEMENTED)\n").Format(TextFormat.Error);
+        return Task.CompletedTask;
+    }
 }

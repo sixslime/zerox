@@ -30,7 +30,22 @@ internal class SessionInspectInputHandler : IInputHandler
                         {
                             Name = "forward progress",
                             Description = "Progress the current session forward by a selected progresor.",
-                            ActionFunction = actions => { }
+                            ActionFunction =
+                                actions =>
+                                {
+                                    actions.SetState(
+                                    state =>
+                                        state.WithCurrentSession(
+                                        session =>
+                                            session with
+                                            {
+                                                UIContext =
+                                                new ESessionUIContext.SelectingProgressor()
+                                                {
+                                                    Backward = false
+                                                }
+                                            }));
+                                }
                         }
                     },
                     {
@@ -38,10 +53,28 @@ internal class SessionInspectInputHandler : IInputHandler
                         {
                             Name = "backward progress",
                             Description = "Reverse progress in the current session by a selected progresor.",
-                            ActionFunction = actions => { }
+                            ActionFunction =
+                                actions =>
+                                {
+                                    actions.SetState(
+                                    state =>
+                                        state.WithCurrentSession(
+                                        session =>
+                                            session with
+                                            {
+                                                UIContext =
+                                                new ESessionUIContext.SelectingProgressor()
+                                                {
+                                                    Backward = true
+                                                }
+                                            }));
+                                }
                         }
                     },
                 })
         };
-    public IOption<EInputProtocol> ShouldHandle(ProgramState state) => RETURN_VAL.AsSome();
+    public IOption<EInputProtocol> ShouldHandle(ProgramState state) => (state.GetCurrentSession().UIContext is ESessionUIContext.TopLevel).ToOption(RETURN_VAL);
+
+    public void Tick(bool isActiveHandler, ProgramState state)
+    { }
 }

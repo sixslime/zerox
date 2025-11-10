@@ -52,7 +52,7 @@ public interface IPMap<K, T> : IHasElements<ITiple<K, T>>, IEntryAddable<ITiple<
 public interface IPSet<T> : IHasElements<T>, IEntryAddable<T>, IEntryRemovable<T>, IIndexReadableInfallible<T, bool>, IMergable<IPSet<T>>, IIntersectable<IPSet<T>>
 { }
 
-public interface IPSequence<T> : IHasElements<T>, IIndexReadable<Index, T>, IEntryAddable<ITiple<int, T>>, IEntryAddable<T>, IMergable<IPSequence<T>>, IEntryRemovable<int>
+public interface IPSequence<T> : IHasElements<T>, IIndexReadable<Index, T>, IEntryAddable<ITiple<Index, T>>, IEntryAddable<T>, IMergable<IPSequence<T>>, IEntryRemovable<int>
 {
     public IPSequence<T> _WithInsertionAt(int index, IEnumerable<T> items);
 }
@@ -288,7 +288,7 @@ public class PSequence<T>() : IPSequence<T>
     public IOption<T> At(Index index) => _list.At(index);
     IMergable<IPSequence<T>> IMergable<IPSequence<T>>._MergedWith(IPSequence<T> union) => this.WithEntries(union.Elements);
 
-    IEntryAddable<ITiple<int, T>> IEntryAddable<ITiple<int, T>>._WithEntries(IEnumerable<ITiple<int, T>> entries)
+    IEntryAddable<ITiple<Index, T>> IEntryAddable<ITiple<Index, T>>._WithEntries(IEnumerable<ITiple<Index, T>> entries)
     {
         var nlist = new List<T>(_list);
         foreach (var t in entries) nlist[t.A] = t.B;

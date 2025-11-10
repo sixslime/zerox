@@ -13,11 +13,22 @@ internal class Session
     public bool InProgress => _activeProgressionContext.IsSome();
     public IPSequence<Trackpoint> Trackpoints { get; private set; } = new PSequence<Trackpoint>();
     public int CurrentTrackpointIndex { get; private set; } = -1;
+    
     public IOption<Trackpoint> CurrentTrackpoint => CurrentTrackpointIndex >= 0 ? Trackpoints.At(CurrentTrackpointIndex) : new None<Trackpoint>();
     public event EventHandler<TrackpointUpdatedEventArgs>? TrackpointUpdatedEvent;
     public event EventHandler<SelectionPromptedEventArgs>? SelectionPromptedEvent;
     public event EventHandler<SelectionCancelledEventArgs>? SelectionCancelledEvent;
 
+    public IStateFZO GetLatestState(bool includeInProgress)
+    {
+        var rootState =
+            Trackpoints.At(^1)
+                .RemapAs(x => x.ForwardSteps.At(^1).RemapAs(y => y.State))
+                .Press()
+                .Or(Root);
+        if (!includeInProgress || !_activeProgressionContext.Check(out var progression) || progression.Steps.Count == 0) return rootState;
+        return progression.Steps[^1].State;
+    }
     public bool GotoTrackpoint(int index)
     {
         if (!Trackpoints.At(index).IsSome()) return false;
@@ -27,10 +38,10 @@ internal class Session
         return true;
     }
 
-    public async Task<bool> Progress(Progressor progressor, bool backward = false)
+    public async Task<bool> Progress(Progressor progressor)
     {
         if (InProgress) return false;
-        var thisContext = new ProgressionContext(this, backward);
+        var thisContext = new ProgressionContext(this, progressor.Backward);
         SetProgressionContext(thisContext);
         await progressor.Function(thisContext);
         if (!thisContext.Active) return false;
@@ -50,6 +61,15 @@ internal class Session
         CurrentTrackpointIndex++;
         NotifyTrackpointUpdated();
         return true;
+    }
+
+    public Session Branch(bool includeInProgress)
+    {
+        return new()
+        {
+            Root = GetLatestState(includeInProgress),
+            Processor = Processor,
+        };
     }
 
     private void NotifySelectionPrompted(SelectionPromptedEventArgs args)

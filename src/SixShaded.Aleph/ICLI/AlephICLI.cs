@@ -16,6 +16,7 @@ public static class AlephICLI
 {
     private static RunningFields? _runData;
     private static TaskCompletionSource? _terminationCompletionSource;
+    private static Task? _runningTask;
     private static RunningFields _program => _runData!;
     private static ChannelWriter<IProgramEvent> _eventWriter => _program.EventsChannel.Writer;
     private static ChannelReader<IProgramEvent> _eventReader => _program.EventsChannel.Reader;
@@ -23,7 +24,7 @@ public static class AlephICLI
     public static IAlephICLIHandle Run(AlephArgs args)
     {
         Init(args);
-        Task.Run(ProgramLoop);
+        _runningTask = Task.Run(ProgramLoop);
         return new ICLIHandle();
     }
 
@@ -55,6 +56,7 @@ public static class AlephICLI
                 InputHandlers =
                 [
                     new LimboInputHandler(),
+                    new ProgressorSelectInputHandler(),
                     new SessionInspectInputHandler(),
                 ],
             };
@@ -111,8 +113,12 @@ public static class AlephICLI
         EInputProtocol? inputProtocol = null;
         foreach (var handler in _program.InputHandlers)
         {
-            if (inputProtocol is not null || !handler.ShouldHandle(_program.State).Check(out inputProtocol))
+            if (inputProtocol is not null || handler.ShouldHandle(_program.State).CheckNone(out var prot))
+            {
                 handler.Tick(false, _program.State);
+                continue;
+            }
+            inputProtocol = prot;
             handler.Tick(true, _program.State);
         }
         _program.CurrentInputProtocol = inputProtocol;
@@ -253,13 +259,24 @@ public static class AlephICLI
         public ProgramState State => _program.State;
         public void DoInput(AlephKeyPress key) => HandleInput(key, this);
         public void SetState(Func<ProgramState, ProgramState> changeFunction) => _program.State = changeFunction(_program.State);
+        public void SendProgressor(Progressor progressor)
+        {
+            ConsoleText.Text("Progressing to: ")
+                .Format(TextFormat.Info)
+                .Text(progressor.Name)
+                .Format(TextFormat.Object)
+                .Text("\n")
+                .Print();
+            _program.State.GetCurrentSession().GetLogicalSession().Progress(progressor);
+
+        }
         public void Exit() => InitiateShutdown();
     }
 
     private class ICLIHandle : IAlephICLIHandle
     {
         public static ICLIHandle Instance { get; } = new();
-        public Task Finish => _terminationCompletionSource is null ? Task.CompletedTask : _terminationCompletionSource.Task;
+        public Task Finish => _runningTask ?? Task.CompletedTask;
         public void AddSession(IStateFZO rootState) => Master.Instance.AddSession(rootState);
 
         public async Task Stop()

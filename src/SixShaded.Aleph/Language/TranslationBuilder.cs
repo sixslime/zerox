@@ -12,7 +12,7 @@ public class TranslationBuilder
     internal TranslationBuilder()
     { }
 
-    public Translation Build() => throw new NotImplementedException();
+    public Translation Build() => new(_segments);
     public IOption<Translation> BuildAsSome() => Build().AsSome();
 
     public TranslationBuilder Text(string text)

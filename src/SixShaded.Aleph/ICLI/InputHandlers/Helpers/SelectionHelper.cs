@@ -44,7 +44,7 @@ internal class SelectionHelper
         if (key.Equals(Config.Selection.Cancel))
         {
             Tick(false, program.State);
-            ConsoleText.Text("\n").Print();
+            ConsoleText.Text("\nSelection cancelled.\n").Format(TextFormat.Info).Print();
             CancelAction(program);
             return;
         }
