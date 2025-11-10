@@ -29,16 +29,32 @@ internal static class Extensions
                 text.Text(s.Text).Format(TextFormat.Object);
                 break;
             case Language.Segments.KorssaArgSegment s:
-                if (resolvingIndex > s.Index) text.Text("\u2588").Format(TextFormat.Resolved);
-                else if (resolvingIndex == s.Index) text.Text("\u2591").Format(TextFormat.Important);
-                else text.Text("\u25af").Format(TextFormat.Unresolved);
+                if (resolvingIndex > s.Index)
+                    text.Text("*")
+                        .Format(TextFormat.Positive with
+                        {
+                            Background = ConsoleColor.DarkGray
+                        });
+                else if (resolvingIndex == s.Index)
+                    text.Text("#")
+                        .Format(TextFormat.Title with
+                        {
+                            Background = ConsoleColor.DarkGray
+                        });
+                else
+                    text.Text(".")
+                        .Format(TextFormat.Negative)
+                        .Format(
+                        TextFormat.Negative with
+                        {
+                            Background = ConsoleColor.DarkGray
+                        });
                 break;
             case Language.Segments.InlineTranslationSegment s:
                 // TODO
                 throw new NotImplementedException();
             }
         }
-        text.Divider();
         return text;
     }
 }

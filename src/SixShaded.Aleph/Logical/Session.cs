@@ -59,6 +59,7 @@ internal class Session
                 ? Trackpoints.WithEntries(trackpoint)
                 : Trackpoints.Elements.Take(CurrentTrackpointIndex + 1).Also(trackpoint.Yield()).ToPSequence();
         CurrentTrackpointIndex++;
+        SetProgressionContext(null);
         NotifyTrackpointUpdated();
         return true;
     }

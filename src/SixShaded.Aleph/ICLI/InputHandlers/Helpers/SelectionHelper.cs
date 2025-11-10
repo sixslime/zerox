@@ -115,7 +115,7 @@ internal class SelectionHelper
                 .Format(TextFormat.Structure)
                 .Text(_buffer)
                 .Format(
-                TextFormat.Resolved with
+                TextFormat.Positive with
                 {
                     Underline = true,
                     Bold = true,

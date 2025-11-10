@@ -2,6 +2,7 @@ namespace SixShaded.Aleph.ICLI;
 
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 using Logical;
 using Language;
 using MinimaFZO;
@@ -32,6 +33,7 @@ public static class AlephICLI
     {
         if (Master.IsInitialized)
             throw new("Aleph is already initialized.");
+        Console.OutputEncoding = Encoding.Unicode;
         Master.Init(
         new()
         {
@@ -69,6 +71,7 @@ public static class AlephICLI
         ConsoleText.Text("Waiting for session...\n")
             .Format(TextFormat.Info)
             .Print();
+        UpdateInputProtocol();
         while (!exit)
         {
             try
@@ -86,8 +89,8 @@ public static class AlephICLI
             }
             await foreach (var currentEvent in _eventReader.ReadAllAsync())
             {
-                UpdateInputProtocol();
                 await currentEvent.Handle(ProgramActions.Instance);
+                UpdateInputProtocol();
                 if (_program.TerminationRequested) exit = true;
                 if (exit) break;
             }

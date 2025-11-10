@@ -7,7 +7,7 @@ internal class TrackpointUpdated : IProgramEvent
 
     public Task Handle(IProgramActions actions)
     {
-        ConsoleText.Text("Selection Prompted (UNIMPLEMENTED)\n").Format(TextFormat.Error);
+        ConsoleText.Text("Trackpoint updated (UNIMPLEMENTED)\n").Format(TextFormat.Error);
         return Task.CompletedTask;
     }
 }

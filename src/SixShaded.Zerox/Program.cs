@@ -1,6 +1,7 @@
 ﻿namespace SixShaded.Zerox;
 
 using System.Reflection;
+using System.Text;
 using SixShaded.FourZeroOne;
 using SixShaded.FourZeroOne.Core.Syntax;
 using FZOTypeMatch;
@@ -25,7 +26,7 @@ internal class Program
             Processor = new MinimaProcessorFZO(),
         });
         var testKorssa = 10.kFixed().kAdd(10.kFixed().kSubtract(5.kFixed())).kAtLeast(20.kFixed());
-        await Task.Delay(3000);
+        await Task.Delay(100);
         aleph.AddSession(
         new MinimaStateFZO().Initialize(
         new Origin()
