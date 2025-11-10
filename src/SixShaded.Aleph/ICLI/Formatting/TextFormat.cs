@@ -69,4 +69,8 @@ internal record TextFormat
         {
             Foreground = ConsoleColor.Red
         };
+    public static TextFormat Hint { get; } = new()
+    {
+        Foreground = ConsoleColor.DarkGreen,
+    }
 }

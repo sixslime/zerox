@@ -6,7 +6,14 @@ internal class ConsoleText(TextSegment[] segments)
 
     public static implicit operator ConsoleText(TextSegment[] segments) => new(segments);
     public static implicit operator TextSegment[](ConsoleText text) => text.Segments;
+    public static ConsoleText operator +(ConsoleText a, ConsoleText b) =>
+        new(
+        [
+            ..a.Segments,
+            ..b.Segments
+        ]);
 
+    public ConsoleText Append(ConsoleText other) => this + other;
     public void Print()
     {
         foreach (var segment in Segments)

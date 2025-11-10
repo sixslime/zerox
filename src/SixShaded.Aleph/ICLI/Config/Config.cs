@@ -52,7 +52,13 @@ internal static class Config
                     },
                     {
                         "cancel", ";"
-                    }
+                    },
+                    {
+                        "show", "q"
+                    },
+                    {
+                        "delete", "(backspace)"
+                    },
                 }
             }
         };
@@ -133,12 +139,15 @@ internal static class Config
             keybindMap[StringToAlephKey(keystr)] = keyFunction;
         }
         var selectionConfig = (IConfigTable)rawConfig["selection"];
+        // a little atrocious but its whatever
         var selectionKeys =
             new SelectionKeys()
             {
                 Cancel = selectionConfig["cancel"] is string cancelstr ? StringToAlephKey(cancelstr) : throw new ConfigKeyException("selection.cancel", "string expected"),
-                Submit = selectionConfig["submit"] is string submitstr ? StringToAlephKey(submitstr) : throw new ConfigKeyException("selection.cancel", "string expected"),
-                Indicators = selectionConfig["indicators"] is string indicators ? indicators : throw new ConfigKeyException("selection.cancel", "string expected"),
+                Submit = selectionConfig["submit"] is string submitstr ? StringToAlephKey(submitstr) : throw new ConfigKeyException("selection.submit", "string expected"),
+                Delete = selectionConfig["delete"] is string deletestr ? StringToAlephKey(deletestr) : throw new ConfigKeyException("selection.delete", "string expected"),
+                ShowAvailable = selectionConfig["show"] is string showstr ? StringToAlephKey(showstr) : throw new ConfigKeyException("selection.show", "string expected"),
+                Indicators = selectionConfig["indicators"] is string indicators ? indicators.ToLower() : throw new ConfigKeyException("selection.indicators", "string expected"),
             };
         return new()
         {

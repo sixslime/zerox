@@ -9,8 +9,8 @@ internal class TextBuilder
 
     private readonly List<TextSegment> _segments = [];
     public static TextBuilder Start() => new();
-    public ConsoleText AsObject() => _segments.ToArray();
-    public void Print() => AsObject().Print();
+    public ConsoleText Build() => _segments.ToArray();
+    public void Print() => Build().Print();
 
     public TextBuilder Text(string text)
     {

@@ -18,6 +18,11 @@ internal class ProgressorSelectInputHandler : IInputHandler
                 },
         }
     ];
+
+    public void Tick(bool active, ProgramState state)
+    {
+
+    }
     public IOption<EInputProtocol> ShouldHandle(ProgramState state) => 
     (state.GetCurrentSession().UIContext is ESessionUIContext.SelectingProgressor s)
 }

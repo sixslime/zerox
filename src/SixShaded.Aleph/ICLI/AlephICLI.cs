@@ -108,18 +108,24 @@ public static class AlephICLI
 
     private static void UpdateInputProtocol()
     {
-        if (_program.InputHandlers.FilterMap(x => x.ShouldHandle(_program.State)).GetAt(0).Check(out var inputProtocol))
+        EInputProtocol? inputProtocol = null;
+        foreach (var handler in _program.InputHandlers)
         {
-            _program.CurrentInputProtocol = inputProtocol;
-            return;
+            if (inputProtocol is not null || !handler.ShouldHandle(_program.State).Check(out inputProtocol))
+                handler.Tick(false, _program.State);
+            handler.Tick(true, _program.State);
         }
-        ConsoleText.Text("No input handler matches current state?\n")
-            .Format(
-            TextFormat.Error with
-            {
-                Underline = true,
-            })
-            .Print();
+        _program.CurrentInputProtocol = inputProtocol;
+        if (inputProtocol is null)
+        {
+            ConsoleText.Text("No input handler matches current state?\n")
+                .Format(
+                TextFormat.Error with
+                {
+                    Underline = true,
+                })
+                .Print();
+        }
     }
 
     private static void HandleInput(AlephKeyPress key, IProgramActions actions)
@@ -245,7 +251,7 @@ public static class AlephICLI
         public static ProgramActions Instance { get; } = new();
         public void SetState(ProgramState state) => _program.State = state;
         public ProgramState State => _program.State;
-        public void DoInput(AlephKeyPress key) => _program.InputMaster.HandleInput(key, this);
+        public void DoInput(AlephKeyPress key) => HandleInput(key, this);
         public void SetState(Func<ProgramState, ProgramState> changeFunction) => _program.State = changeFunction(_program.State);
         public void Exit() => InitiateShutdown();
     }
@@ -267,7 +273,7 @@ public static class AlephICLI
     private class EventSender : IEventSender
     {
         public static EventSender Instance { get; } = new();
-
+        public void AddSessionListener(Session session) => _program.SessionListeners.Add(SessionListener.Link(this, session));
         public void SendEvent(IProgramEvent action)
         {
             if (_program.TerminationRequested || _eventWriter.TryWrite(action)) return;

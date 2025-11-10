@@ -16,6 +16,7 @@ internal class MasterListener : IDisposable
 
     private void SessionAddedListener(object? sender, SessionAddedEventArgs args)
     {
+        LinkedProgram.AddSessionListener(args.Session);
         LinkedProgram.SendEvent(
         new SessionAdded()
         {

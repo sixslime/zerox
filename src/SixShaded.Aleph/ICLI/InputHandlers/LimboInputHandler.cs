@@ -17,5 +17,9 @@ internal class LimboInputHandler : IInputHandler
                     }
                 })
         };
+
+    public void Tick(bool _)
+    { }
+
     public IOption<EInputProtocol> ShouldHandle(ProgramState state) => (state.Sessions.Count == 0 && state.HiddenSessions.Count == 0).ToOption(RETURN_VAL);
 }
