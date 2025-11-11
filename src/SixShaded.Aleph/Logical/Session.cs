@@ -19,16 +19,24 @@ internal class Session
     public event EventHandler<SelectionPromptedEventArgs>? SelectionPromptedEvent;
     public event EventHandler<SelectionCancelledEventArgs>? SelectionCancelledEvent;
 
-    public IStateFZO GetLatestState(bool includeInProgress)
+    public IStateFZO GetCurrentState(bool includeInProgress)
     {
-        var rootState =
-            Trackpoints.At(^1)
-                .RemapAs(x => x.ForwardSteps.At(^1).RemapAs(y => y.State))
-                .Press()
-                .Or(Root);
+        var rootState = GetStateAtTrackpoint(CurrentTrackpointIndex);
         if (!includeInProgress || !_activeProgressionContext.Check(out var progression) || progression.Steps.Count == 0) return rootState;
         return progression.Steps[^1].State;
     }
+
+    public IStateFZO GetStateAtTrackpoint(int index)
+    {
+        return Trackpoints.Elements
+            .Take(index + 1)
+            .Reverse()
+            .FilterMap(x => x.ForwardSteps.At(^1))
+            .Map(x => x.State)
+            .GetAt(0)
+            .Or(Root);
+    }
+
     public bool GotoTrackpoint(int index)
     {
         if (!Trackpoints.At(index).IsSome()) return false;
@@ -62,15 +70,6 @@ internal class Session
         SetProgressionContext(null);
         NotifyTrackpointUpdated();
         return true;
-    }
-
-    public Session Branch(bool includeInProgress)
-    {
-        return new()
-        {
-            Root = GetLatestState(includeInProgress),
-            Processor = Processor,
-        };
     }
 
     private void NotifySelectionPrompted(SelectionPromptedEventArgs args)

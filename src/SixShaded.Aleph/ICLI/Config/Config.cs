@@ -34,10 +34,10 @@ internal static class Config
                         "session.showOperationExpansions", "e"
                     },
                     {
-                        "session.progressForward", "n"
+                        "session.progressForward", "t"
                     },
                     {
-                        "session.progressBackward", "s n"
+                        "session.progressBackward", "s t"
                     }
                 }
             },

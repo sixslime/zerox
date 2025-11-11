@@ -12,4 +12,6 @@ internal enum EKeyFunction
     SessionShowOperationExpansions,
     SessionProgressForward,
     SessionProgressBackward,
+    SessionShowMemory,
+    SessionBranch,
 }

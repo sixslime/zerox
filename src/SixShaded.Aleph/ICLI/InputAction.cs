@@ -20,7 +20,7 @@ internal record InputAction
                 actions =>
                 {
                     var session = actions.State.GetCurrentSession().GetLogicalSession();
-                    var currentState = session.GetLatestState(true);
+                    var currentState = session.GetCurrentState(true);
                     var text = TextBuilder.Start();
                     text.Divider("operation stack");
                     foreach (var node in currentState.OperationStack.Reverse())
