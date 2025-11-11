@@ -7,7 +7,7 @@ internal class SelectionCancelled : IProgramEvent
 
     public Task Handle(IProgramActions actions)
     {
-        ConsoleText.Text("Selection Cancelled (UNIMPLEMENTED)\n").Format(TextFormat.Error);
+        ConsoleText.Text("Selection Cancelled (UNIMPLEMENTED)\n").Format(TextFormat.Error).Print();
         return Task.CompletedTask;
     }
 }

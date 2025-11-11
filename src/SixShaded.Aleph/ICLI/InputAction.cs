@@ -20,17 +20,21 @@ internal record InputAction
                 actions =>
                 {
                     var session = actions.State.GetCurrentSession().GetLogicalSession();
-                    var currentState =
-                        session.CurrentTrackpoint
-                            .RemapAs(x => x.ForwardSteps.At(^1))
-                            .Press()
-                            .RemapAs(x => x.State)
-                            .Or(session.Root);
+                    var currentState = session.GetLatestState(true);
                     var text = TextBuilder.Start();
                     text.Divider("operation stack");
                     foreach (var node in currentState.OperationStack.Reverse())
                     {
-                        text.TranslateOperation(node).Text("\n");
+                        text.TranslateOperation(node)
+                            .Text(" : ")
+                            .Format(TextFormat.Structure);
+                        foreach (var rogOpt in node.ArgRoggiStack.Reverse())
+                        {
+                            text.TranslateRogOpt(rogOpt)
+                                .Text("; ")
+                                .Format(TextFormat.Structure);
+                        }
+                        text.Text("\n");
                     }
                     text.Print();
                 }

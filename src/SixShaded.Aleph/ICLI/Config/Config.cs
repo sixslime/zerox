@@ -28,10 +28,10 @@ internal static class Config
                         "quickInfo", "a"
                     },
                     {
-                        "session.showOperationStack", "p"
+                        "session.showOperationStack", "u"
                     },
                     {
-                        "session.showOperationExpansions", "f"
+                        "session.showOperationExpansions", "e"
                     },
                     {
                         "session.progressForward", "n"

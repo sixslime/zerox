@@ -7,7 +7,7 @@ internal class SelectionPrompted : IProgramEvent
 
     public Task Handle(IProgramActions actions)
     {
-        ConsoleText.Text("Selection Prompted (UNIMPLEMENTED)\n").Format(TextFormat.Error);
+        ConsoleText.Text("Selection Prompted (UNIMPLEMENTED)\n").Format(TextFormat.Error).Print();
         return Task.CompletedTask;
     }
 }

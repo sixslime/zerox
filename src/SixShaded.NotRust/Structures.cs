@@ -456,7 +456,11 @@ public class CachingEnumerable<T> : IEnumerable<T>, IIndexReadable<Index, T>
         if (index.IsFromEnd)
         {
             CountAndCache();
-            return _list[index].AsSome();
+            try { return _list[index].AsSome(); }
+            catch
+            {
+                return new None<T>();
+            }
         }
         while (_cachedIndex < index.Value && _iter is not null)
         {
@@ -464,7 +468,11 @@ public class CachingEnumerable<T> : IEnumerable<T>, IIndexReadable<Index, T>
             _cachedIndex++;
             _list.Add(_iter.Current);
         }
-        return _list[index].AsSome();
+        try
+        {
+            return _list[index].AsSome();
+        }
+        catch { return new None<T>(); }
     }
 }
 

@@ -32,6 +32,18 @@ internal class ProgressorSelectInputHandler : IInputHandler
     [
         new()
         {
+            Name = "Next Resolution",
+            StopConditionDescription = "any operation is resolved",
+            Backward = false,
+            Function =
+                async context =>
+                {
+                    while ((await context.Next()).Check(out var step) && step.NextStep.CheckOk(out var pstep) && pstep is not EProcessorStep.Resolve) { }
+                    await context.Next();
+                },
+        },
+        new()
+        {
             Name = "Next Operation",
             StopConditionDescription = "a new operation is pushed to the stack",
             Backward = false,
@@ -41,7 +53,7 @@ internal class ProgressorSelectInputHandler : IInputHandler
                     while ((await context.Next()).Check(out var step) && step.NextStep.CheckOk(out var pstep) && pstep is not EProcessorStep.PushOperation) { }
                     await context.Next();
                 },
-        }
+        },
     ];
     private static readonly Progressor[] BACKWARD_PROGRESSORS =
     [

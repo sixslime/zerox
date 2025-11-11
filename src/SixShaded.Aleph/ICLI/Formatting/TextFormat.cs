@@ -8,6 +8,12 @@ internal record TextFormat
     public bool Underline { get; init; } = false;
     public static TextFormat Default { get; } = new();
 
+    public TextFormat Inverted() =>
+        this with
+        {
+            Foreground = Background ?? ConsoleColor.Black,
+            Background = Foreground ?? ConsoleColor.Gray,
+        };
     public static TextFormat Error { get; } =
         new()
         {

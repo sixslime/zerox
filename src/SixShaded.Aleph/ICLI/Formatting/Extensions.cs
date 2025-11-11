@@ -23,10 +23,11 @@ internal static class Extensions
         int resolvingIndex = node.ArgRoggiStack.Count();
         foreach (var segment in _languageProvider.TranslateKorssa(node.Operation))
         {
+            var korvessa = node.Operation as FourZeroOne.Korvessa.Unsafe.IKorvessa<Rog>;
             switch (segment)
             {
             case Language.Segments.TextSegment s:
-                text.Text(s.Text).Format(TextFormat.Object);
+                text.Text(s.Text).Format(korvessa is not null ? TextFormat.Important with { Bold = true } : TextFormat.Object);
                 break;
             case Language.Segments.KorssaArgSegment s:
                 if (resolvingIndex > s.Index)
@@ -42,7 +43,7 @@ internal static class Extensions
                             Background = ConsoleColor.DarkGray
                         });
                 else
-                    text.Text(".")
+                    text.Text("~")
                         .Format(TextFormat.Negative)
                         .Format(
                         TextFormat.Negative with
@@ -54,6 +55,31 @@ internal static class Extensions
                 // TODO
                 throw new NotImplementedException();
             }
+        }
+        return text;
+    }
+
+    public static TextBuilder TranslateRogOpt(this TextBuilder text, RogOpt rogOpt)
+    {
+        var format = rogOpt.IsSome() ? TextFormat.Positive with { Bold = true } : TextFormat.Negative with {Bold = false};
+        if (rogOpt.Check(out var rog))
+        {
+            foreach (var segment in _languageProvider.TranslateRoggi(rog))
+            {
+                switch (segment)
+                {
+                case Language.Segments.TextSegment s:
+                    text.Text(s.Text).Format(format);
+                    break;
+                case Language.Segments.InlineTranslationSegment s:
+                    // TODO
+                    throw new NotImplementedException();
+                }
+            }
+        }
+        else
+        {
+            text.Text(_languageProvider.TranslateNolla()).Format(format);
         }
         return text;
     }
