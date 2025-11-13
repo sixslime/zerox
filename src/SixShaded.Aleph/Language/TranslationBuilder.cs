@@ -15,36 +15,77 @@ public class TranslationBuilder
     public Translation Build() => new(_segments);
     public IOption<Translation> BuildAsSome() => Build().AsSome();
 
-    public TranslationBuilder Text(string text)
-    {
-        _segments.Add(
-        new TextSegment
+    public TranslationBuilder Text(string text) =>
+        AddSegment(
+        new TextSegment()
         {
-            Text = text,
+            Text = text
         });
-        return this;
-    }
 
-    public TranslationBuilder InlineTranslation(Kor value) => InternalInlineTranlation(value);
-    public TranslationBuilder InlineTranslation(Rog value) => InternalInlineTranlation(value);
-    public TranslationBuilder InlineTranslation(Addr value) => InternalInlineTranlation(value);
-    public TranslationBuilder InlineTranslation(IRovu value) => InternalInlineTranlation(value);
-    public TranslationBuilder InlineTranslation(IVarovu value) => InternalInlineTranlation(value);
-    public TranslationBuilder InlineTranslation(IAbstractRovu value) => InternalInlineTranlation(value);
-
-    public TranslationBuilder Marker(ITranslationMarker marker)
-    {
-        _segments.Add(marker);
-        return this;
-    }
-
-    private TranslationBuilder InternalInlineTranlation(object value)
-    {
-        _segments.Add(
-        new InlineTranslationSegment
+    public TranslationBuilder InlineTranslation(Kor value) =>
+        AddSegment(
+        new InlineKorssaSegment
         {
             Value = value,
         });
+
+    public TranslationBuilder InlineTranslation(RogOpt value) =>
+        AddSegment(
+        new InlineRoggiSegment
+        {
+            Value = value,
+        });
+
+    public TranslationBuilder InlineTranslation(Addr value) =>
+        AddSegment(
+        new InlineRodaSegment
+        {
+            Value = value,
+        });
+
+    public TranslationBuilder InlineTranslation(IRovu value) =>
+        AddSegment(
+        new InlineRovuSegment
+        {
+            Value = value,
+        });
+
+    public TranslationBuilder InlineTranslation(IVarovu value) =>
+        AddSegment(
+        new InlineVarovuSegment
+        {
+            Value = value,
+        });
+
+    public TranslationBuilder InlineTranslation(IAbstractRovu value) =>
+        AddSegment(
+        new InlineAbstractRovuSegment
+        {
+            Value = value,
+        });
+    public TranslationBuilder InlineTranslation(KorssaTypeInfo value) =>
+        AddSegment(
+        new InlineKorssaTypeInfoSegment()
+        {
+            Value = value,
+        });
+    public TranslationBuilder InlineTranslation(RovetuTypeInfo value) =>
+        AddSegment(
+        new InlineRovetuTypeInfoSegment()
+        {
+            Value = value,
+        });
+    public TranslationBuilder InlineTranslation(RoggiTypeInfo value) =>
+        AddSegment(
+        new InlineRoggiTypeInfoSegment()
+        {
+            Value = value,
+        });
+    public TranslationBuilder Marker(ITranslationMarker marker) => AddSegment(marker);
+
+    private TranslationBuilder AddSegment(ITranslationSegment segment)
+    {
+        _segments.Add(segment);
         return this;
     }
 }

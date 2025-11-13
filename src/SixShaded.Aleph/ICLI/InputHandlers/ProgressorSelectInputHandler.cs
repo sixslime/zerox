@@ -54,6 +54,18 @@ internal class ProgressorSelectInputHandler : IInputHandler
                     await context.Next();
                 },
         },
+        new()
+        {
+            Name = "Next Identity Korssa",
+            StopConditionDescription = "an identity (0 arguement) korssa is pushed to the stack",
+            Backward = false,
+            Function =
+                async context =>
+                {
+                    while ((await context.Next()).Check(out var step) && step.NextStep.CheckOk(out var pstep) && (pstep is not EProcessorStep.PushOperation p || p.OperationKorssa.ArgKorssas.Length != 0)) { }
+                    await context.Next();
+                },
+        },
     ];
     private static readonly Progressor[] BACKWARD_PROGRESSORS =
     [

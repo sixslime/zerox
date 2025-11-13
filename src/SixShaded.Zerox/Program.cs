@@ -25,7 +25,17 @@ internal class Program
             LanguageKey = new StandardCoreKey(),
             Processor = new MinimaProcessorFZO(),
         });
-        var testKorssa = 10.kFixed().kAdd(10.kFixed().kSubtract(5.kFixed())).kAtLeast(20.kFixed());
+        var testKorssa =
+            Core.kSubEnvironment<Rog>(
+            new()
+            {
+                Environment =
+                [
+                    10.kFixed().kAsVariable(out var iVal),
+                    20.kFixed().kAsVariable(out var iVal2)
+                ],
+                Value = iVal.kRef().kAtMost(iVal2.kRef())
+            });
         await Task.Delay(100);
         aleph.AddSession(
         new MinimaStateFZO().Initialize(

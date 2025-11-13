@@ -3,7 +3,7 @@ namespace SixShaded.Aleph.Language;
 using Contexts;
 using Segments;
 using SixShaded.FourZeroOne.Roveggi.Unsafe;
-
+using FZOTypeMatch;
 internal class LanguageProvider(ILanguageKey key)
 {
     public ILanguageKey LanguageKey { get; } = key;
@@ -74,5 +74,8 @@ internal class LanguageProvider(ILanguageKey key)
                     .Build();
             });
 
+    public string TranslateTypeInfo(KorssaTypeInfo val) => LanguageKey.TranslateKorssaTypeInfo(val).Or(val.Match.RemapAs(x => x.GetType()).Or(val.Origin).Name);
+    public string TranslateTypeInfo(RovetuTypeInfo val) => LanguageKey.TranslateRovetuTypeInfo(val).Or(val.Match.RemapAs(x => x.GetType()).Or(val.Origin).Name);
+    public string TranslateTypeInfo(RoggiTypeInfo val) => LanguageKey.TranslateRoggiTypeInfo(val).Or(val.Match.RemapAs(x => x.GetType()).Or(val.Origin).Name);
     public string TranslateNolla() => LanguageKey.TranslateNolla().Or("\u2205");
 }

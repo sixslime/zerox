@@ -25,19 +25,25 @@ internal static class Config
                         "exit", "(escape)"
                     },
                     {
-                        "quickInfo", "a"
+                        "quickInfo", "u"
                     },
                     {
-                        "session.showOperationStack", "u"
+                        "session.showOperationStack", "e"
                     },
                     {
-                        "session.showOperationExpansions", "e"
+                        "session.showOperationExpansions", "o"
                     },
                     {
-                        "session.progressForward", "t"
+                        "session.showMemory", "a"
                     },
                     {
-                        "session.progressBackward", "s t"
+                        "session.progressForward", "n"
+                    },
+                    {
+                        "session.progressBackward", "s n"
+                    },
+                    {
+                        "session.makeBranch", "c"
                     }
                 }
             },
@@ -91,6 +97,12 @@ internal static class Config
             },
             {
                 "session.progressBackward", EKeyFunction.SessionProgressBackward
+            },
+            {
+                "session.showMemory", EKeyFunction.SessionShowMemory
+            },
+            {
+                "session.makeBranch", EKeyFunction.SessionBranch
             },
         };
     internal static IPMap<AlephKeyPress, EKeyFunction> Keybinds => CONFIG.Value.Keybinds;

@@ -277,84 +277,84 @@ internal static partial class Maps
             },
             {
                 typeof(Kt.Multi.Contains<>), (t, c) =>
-                    new Km.Multi.Clean
+                    new Km.Multi.Contains
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
             {
                 typeof(Kt.Multi.Create<>), (t, c) =>
-                    new Km.Multi.Clean
+                    new Km.Multi.Create
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
             {
                 typeof(Kt.Multi.Distinct<>), (t, c) =>
-                    new Km.Multi.Clean
+                    new Km.Multi.Distinct
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
             {
                 typeof(Kt.Multi.Except<>), (t, c) =>
-                    new Km.Multi.Clean
+                    new Km.Multi.Except
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
             {
                 typeof(Kt.Multi.Flatten<>), (t, c) =>
-                    new Km.Multi.Clean
+                    new Km.Multi.Flatten
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
             {
                 typeof(Kt.Multi.GetIndex<>), (t, c) =>
-                    new Km.Multi.Clean
+                    new Km.Multi.GetIndex
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
             {
                 typeof(Kt.Multi.GetSlice<>), (t, c) =>
-                    new Km.Multi.Clean
+                    new Km.Multi.GetSlice
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
             {
                 typeof(Kt.Multi.IndiciesOf<>), (t, c) =>
-                    new Km.Multi.Clean
+                    new Km.Multi.IndiciesOf
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
             {
                 typeof(Kt.Multi.Intersect<>), (t, c) =>
-                    new Km.Multi.Clean
+                    new Km.Multi.Intersect
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
             {
                 typeof(Kt.Multi.Reverse<>), (t, c) =>
-                    new Km.Multi.Clean
+                    new Km.Multi.Reverse
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
             {
                 typeof(Kt.Multi.Union<>), (t, c) =>
-                    new Km.Multi.Clean
+                    new Km.Multi.Union
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }
             },
             {
                 typeof(Kt.Multi.Yield<>), (t, c) =>
-                    new Km.Multi.Clean
+                    new Km.Multi.Yield
                     {
                         RoggiType = (RoggiTypeInfo)t.GenericTypeArguments[0].TryGetFZOTypeInfo(c).Unwrap(),
                     }

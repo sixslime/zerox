@@ -29,7 +29,7 @@ internal class SessionInspectInputHandler : IInputHandler
                         EKeyFunction.SessionProgressForward, new()
                         {
                             Name = "forward progress",
-                            Description = "Progress the current session forward by a selected progresor.",
+                            Description = "Select a progressor to progress the current session forward.",
                             ActionFunction =
                                 actions =>
                                 {
@@ -52,7 +52,7 @@ internal class SessionInspectInputHandler : IInputHandler
                         EKeyFunction.SessionProgressBackward, new()
                         {
                             Name = "backward progress",
-                            Description = "Reverse progress in the current session by a selected progresor.",
+                            Description = "Select a progressor to reverse progress on the current session.",
                             ActionFunction =
                                 actions =>
                                 {
