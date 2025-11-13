@@ -31,7 +31,7 @@ internal record InputAction
 
                         int resolvingIndex = node.ArgRoggiStack.Count();
                         if (node.Operation is IKorvessa<Rog> korvessa)
-                            text.Text("$").Format(TextFormat.Hint with { Underline = true });
+                            text.Text("$").Format(TextFormat.Hint);
                         text.Text(" ");
                         bool isMetaExecute = Language.Builtin.Keys.StandardCoreKey.TYPEMATCH.GetKorssaTypeInfo(node.Operation).Match.Check(out var match) && match is CoreTypeMatcher.Types.Korssa.MetaExecuted;
                         foreach (var segment in Master.Instance.LanguageProvider.TranslateKorssa(node.Operation))
@@ -94,6 +94,7 @@ internal record InputAction
                         }
                         text.Text("\n");
                     }
+                    text.Divider();
                     text.Print();
                 }
         };

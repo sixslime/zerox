@@ -8,12 +8,13 @@ internal class ProgressorSelectInputHandler : IInputHandler
     private readonly Helpers.SelectionHelper _selectionHelper =
         new()
         {
+            Title = "select progressor",
             EntryGenerator =
                 state =>
                     GetProgressors(state).Map(
                     progressor =>
                         ConsoleText.Text(progressor.Name)
-                            .Format(TextFormat.Object)
+                            .Format(TextFormat.Default with { Bold = true })
                             .Build())
                     .ToArray(),
             SelectAction =
@@ -21,11 +22,13 @@ internal class ProgressorSelectInputHandler : IInputHandler
                 {
                     actions.SendProgressor(GetProgressors(actions.State)[index]);
                     actions.BackToTopLevel();
+                    TextBuilder.Start().Divider().Print();
                 },
             CancelAction =
                 actions =>
                 {
                     actions.BackToTopLevel();
+                    TextBuilder.Start().Divider().Print();
                 },
         };
     private static readonly Progressor[] FORWARD_PROGRESSORS =

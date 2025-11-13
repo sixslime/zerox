@@ -17,6 +17,7 @@ internal class SelectionHelper
     public required Func<State.ProgramState, ConsoleText[]> EntryGenerator { get; init; }
     public required Action<int, IProgramActions> SelectAction { get; init; }
     public required Action<IProgramActions> CancelAction { get; init; }
+    public required string Title { get; init; }
 
     private void HandleKeypress(AlephKeyPress key, IProgramActions program)
     {
@@ -85,6 +86,7 @@ internal class SelectionHelper
         if (active)
         {
             _entries = EntryGenerator(state);
+            TextBuilder.Start().Divider(Title, true).Print();
             PrintRemainingEntries();
         }
         else
