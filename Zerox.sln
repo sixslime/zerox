@@ -45,7 +45,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AXOI", "AXOI", "{1C7B3712-2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.VeiledOhOne", "src\SixShaded.VeiledOhOne\SixShaded.VeiledOhOne.csproj", "{13A4B4B4-AED5-4E5E-A619-22B7668A7FC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.FourZeroOne.Axois.Infinite", "SixShaded.FourZeroOne.Axois.Infinite\SixShaded.FourZeroOne.Axois.Infinite.csproj", "{3B75C1D0-EEE9-4D7E-885C-560999D60071}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.FourZeroOne.Axois.Infinite", "src\SixShaded.FourZeroOne.Axois.Infinite\SixShaded.FourZeroOne.Axois.Infinite.csproj", "{3B75C1D0-EEE9-4D7E-885C-560999D60071}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixShaded.FZOTypeMatch", "src\SixShaded.FZOTypeMatch\SixShaded.FZOTypeMatch.csproj", "{338CBDB4-2FE8-4BA3-AEF6-3E8BAC9188EC}"
 EndProject
