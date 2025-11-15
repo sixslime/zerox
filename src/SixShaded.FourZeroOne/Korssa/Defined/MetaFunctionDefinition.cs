@@ -14,5 +14,4 @@ public abstract record MetaFunctionDefinition<R, M>(params Addr[] argAddresses) 
     public Addr[] ArgAddresses { get; } = argAddresses;
     public abstract IKorssa<R> Korssa { get; }
     IRoda<M> IMetaFunctionDefinition<R, M>.SelfAddress => SelfRoda;
-    Roggi.Unsafe.IMetaFunction<R> IMetaFunctionDefinition<R, M>.ConstructConcreteMetaFunction(IMemory memory) => ConstructConcreteMetaFunction(memory);
 }

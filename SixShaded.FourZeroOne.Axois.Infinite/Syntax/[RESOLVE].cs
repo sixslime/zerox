@@ -11,11 +11,11 @@ using u.Constructs.Move;
 
 partial class KorssaSyntax
 {
-    public static Korvessa<IRoveggi<uAbility>, IRoveggi<uResolvedAbility>> kAbstractResolve(this IKorssa<IRoveggi<uAbility>> ability) => ResolveAbility.Construct(ability);
-    public static Korvessa<IRoveggi<uMove>, IMulti<IRoveggi<uResolvedMove>>> kAbstractResolve(this IKorssa<IRoveggi<uMove>> move) => ResolveMove.Construct(move);
-    public static Korvessa<IRoveggi<uSourcedAbility>, IRoveggi<uResolvedSourcedAbility>> kResolve(this IKorssa<IRoveggi<uSourcedAbility>> ability) => ResolveSourcedAbility.Construct(ability);
-    public static Korvessa<IRoveggi<uUnsourcedAbility>, IRoveggi<uResolvedUnsourcedAbility>> kResolve(this IKorssa<IRoveggi<uUnsourcedAbility>> ability) => ResolveUnsourcedAbility.Construct(ability);
-    public static Korvessa<IRoveggi<uPositionalMove>, IRoveggi<uResolvedPositionalMove>> kResolve(this IKorssa<IRoveggi<uPositionalMove>> move) => ResolvePositionalMove.Construct(move);
-    public static Korvessa<IRoveggi<uNumericalMove>, Multi<IRoveggi<uResolvedNumericalMove>>> kResolve(this IKorssa<IRoveggi<uNumericalMove>> move) => ResolveNumericalMove.Construct(move);
-    public static Korvessa<IRoveggi<uPlayableAction>, IRoveggi<uResolvedAction>> kResolve(this IKorssa<IRoveggi<uPlayableAction>> action) => ResolveAction.Construct(action);
+    public static ResolveAbility kAbstractResolve(this IKorssa<IRoveggi<uAbility>> ability) => new(ability);
+    public static ResolveMove kAbstractResolve(this IKorssa<IRoveggi<uMove>> move) => new(move);
+    public static ResolveSourcedAbility kResolve(this IKorssa<IRoveggi<uSourcedAbility>> ability) => new(ability);
+    public static ResolveUnsourcedAbility kResolve(this IKorssa<IRoveggi<uUnsourcedAbility>> ability) => new(ability);
+    public static ResolvePositionalMove kResolve(this IKorssa<IRoveggi<uPositionalMove>> move) => new(move);
+    public static ResolveNumericalMove kResolve(this IKorssa<IRoveggi<uNumericalMove>> move) => new(move);
+    public static ResolveAction kResolve(this IKorssa<IRoveggi<uPlayableAction>> action) => new(action);
 }

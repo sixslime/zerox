@@ -1,27 +1,74 @@
 ﻿namespace SixShaded.Zerox;
 
 using System.Reflection;
+using System.Text;
 using SixShaded.FourZeroOne;
+using SixShaded.FourZeroOne.Core.Syntax;
+using FZOTypeMatch;
+using FZOTypeMatch.Syntax;
+using CoreTypeMatcher;
+using Types = CoreTypeMatcher.Types;
+using MinimaFZO;
+using FourZeroOne.FZOSpec;
+using Aleph.ICLI;
+using Aleph.Language.Builtin.Keys;
+using SixShaded.SixLib.ICEE;
+
 internal class Program
 {
     public static async Task Main(string[] args)
     {
-        Master.RegisterAxoi<FourZeroOne.Axois.Infinite.Axoi>();
-        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-        foreach (var assembly in assemblies)
+        Init();
+        var aleph = AlephICLI.Run(
+        new()
         {
-            if (!assembly.FullName!.StartsWith("SixShaded.FourZeroOne.Axois")) continue;
-            Console.WriteLine($"=== {assembly.FullName} ===");
-            foreach (var type in assembly.GetExportedTypes())
+            LanguageKey = new StandardCoreKey(),
+            Processor = new MinimaProcessorFZO(),
+        });
+        var testKorssa =
+            Core.kSubEnvironment<Rog>(
+            new()
             {
-                Console.WriteLine(type.Name);
-                foreach (var field in type.GetFields())
-                {
-                    Console.WriteLine($" - {field.Name}");
-                }
-            }
-        }
+                Environment =
+                [
+                    10.kFixed().kAsVariable(out var iVal),
+                    20.kFixed().kAsVariable(out var iVal2)
+                ],
+                Value = iVal.kRef().kAtMost(iVal2.kRef())
+            });
+        await Task.Delay(100);
+        aleph.AddSession(
+        new MinimaStateFZO().Initialize(
+        new Origin()
+        {
+            Program = testKorssa,
+            InitialMemory = new MinimaMemoryFZO()
+        }));
+        await aleph.Finish;
+    }
 
+    private class Origin : IStateFZO.IOrigin
+    {
+        public required Kor Program { get; init; }
+        public required IMemoryFZO InitialMemory { get; init; }
+    }
+    private static void Loop(string msg)
+    {
+        while (true)
+        {
+            var e = Console.ReadKey();
+            Console.WriteLine(msg);
+        }
+    }
+
+    private static void Init()
+    {
+        Master.RegisterAxoi<FourZeroOne.Axois.Infinite.Axoi>();
+    }
+    private static void Log(object obj)
+    {
+        Console.WriteLine("LOG:");
+        Console.WriteLine(obj);
     }
 }
 
@@ -30,7 +77,7 @@ internal class Program
  * Macro -> Korvessa
  * Resolution -> Roggi
  * Composition -> Roveggi
- * CompositionType -> Roveggitu
+ * CompositionType -> Rovetu
  * ComponentIdentifier -> Rovu
  * Rule -> Mellsano
  * Matcher -> Ullasem
@@ -59,7 +106,7 @@ internal class Program
  */
 
 /* DEV
- * 
+ * mabye change "Axoi" to "Axxoc"
  */
 
 /* TODO

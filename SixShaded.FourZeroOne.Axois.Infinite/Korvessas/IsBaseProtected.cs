@@ -8,32 +8,27 @@ using Core = Core.Syntax.Core;
 using u.Constructs.HexTypes;
 using Infinite = Syntax.Infinite;
 
-public static class IsBaseProtected
+public record IsBaseProtected(IKorssa<IRoveggi<uPlayerIdentifier>> player) : Korvessa<IRoveggi<uPlayerIdentifier>, Bool>(player)
 {
-    public static Korvessa<IRoveggi<uPlayerIdentifier>, Bool> Construct(IKorssa<IRoveggi<uPlayerIdentifier>> player) =>
-        new(player)
-        {
-            Du = Axoi.Korvedu("IsBaseProtected"),
-            Definition =
-                (_, iPlayer) =>
-                    Infinite.AllUnits
-                        .kAnyMatch(
-                        iUnit =>
-                            iUnit.kRef()
-                                .kRead()
-                                .kGetRovi(uUnitData.OWNER)
-                                .kEquals(iPlayer.kRef())
-                                .ksLazyAnd(
-                                iUnit.kRef()
-                                    .kRead()
-                                    .kGetRovi(uUnitData.POSITION)
-                                    .kRead()
-                                    .kGetRovi(uHexData.TYPE)
-                                    .kIsType<uBaseHex>()
-                                    .kGetRovi(uBaseHex.OWNER)
-                                    .kEquals(iPlayer.kRef())
-                                    .kCatchNolla(
-                                    () =>
-                                        false.kFixed()))),
-        };
+    protected override RecursiveMetaDefinition<IRoveggi<uPlayerIdentifier>, Bool> InternalDefinition() =>
+        (_, iPlayer) =>
+            Infinite.AllUnits
+                .kAnyMatch(
+                iUnit =>
+                    iUnit.kRef()
+                        .kRead()
+                        .kGetRovi(uUnitData.OWNER)
+                        .kEquals(iPlayer.kRef())
+                        .ksLazyAnd(
+                        iUnit.kRef()
+                            .kRead()
+                            .kGetRovi(uUnitData.POSITION)
+                            .kRead()
+                            .kGetRovi(uHexData.TYPE)
+                            .kIsType<uBaseHex>()
+                            .kGetRovi(uBaseHex.OWNER)
+                            .kEquals(iPlayer.kRef())
+                            .kCatchNolla(
+                            () =>
+                                false.kFixed())));
 }

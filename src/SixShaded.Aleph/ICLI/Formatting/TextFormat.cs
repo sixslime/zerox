@@ -1,0 +1,84 @@
+namespace SixShaded.Aleph.ICLI.Formatting;
+internal record TextFormat
+{
+    
+    public ConsoleColor? Background { get; init; } = null;
+    public ConsoleColor? Foreground { get; init; } = null;
+    public bool Bold { get; init; } = false;
+    public bool Underline { get; init; } = false;
+    public static TextFormat Default { get; } = new();
+
+    public TextFormat Inverted() =>
+        this with
+        {
+            Foreground = Background ?? ConsoleColor.Black,
+            Background = Foreground ?? ConsoleColor.Gray,
+        };
+    public static TextFormat Error { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.DarkRed,
+            Bold = true,
+        };
+    public static TextFormat Subtle { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.DarkBlue
+        };
+    public static TextFormat Structure { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.DarkCyan
+        };
+
+    public static TextFormat Notification { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.Black,
+            Background = ConsoleColor.DarkMagenta,
+            Bold = true,
+        };
+
+    public static TextFormat Info { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.Blue
+        };
+
+    public static TextFormat Title { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.White,
+            Bold = true,
+        };
+
+    public static TextFormat Important { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.Yellow,
+            Bold = true,
+        };
+    public static TextFormat Object { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.Magenta,
+        };
+
+    public static TextFormat Positive { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.Green
+        };
+
+    public static TextFormat Negative { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.Red
+        };
+
+    public static TextFormat Hint { get; } =
+        new()
+        {
+            Foreground = ConsoleColor.DarkGreen,
+        };
+}

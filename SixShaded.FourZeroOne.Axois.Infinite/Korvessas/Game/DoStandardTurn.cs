@@ -12,28 +12,23 @@ using UnitIdent = IRoveggi<u.Identifier.uUnitIdentifier>;
 using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
 
-public static class DoStandardTurn
+public record DoStandardTurn(IKorssa<PlayerIdent> player) : Korvessa<PlayerIdent, Rog>(player)
 {
-    public static Korvessa<PlayerIdent, Rog> Construct(IKorssa<PlayerIdent> player) =>
-        new(player)
-        {
-            Du = Axoi.Korvedu("DoStandardTurn"),
-            Definition =
-                (_, iPlayer) =>
-                    Core.kMulti<Rog>(
-                    new()
-                    {
-                        iPlayer.kRef()
-                            .kDoUnitEffectCycle(),
-                        iPlayer.kRef()
-                            .kSafeUpdate(
-                            iPlayerData =>
-                                iPlayerData.kRef()
-                                    .kWithRefreshedEnergy()
-                                    .kWithRestockedHand()),
-                        iPlayer.kRef()
-                            .kAllowPlay()
-                            .kMap(iAction => iAction.kRef().kGetRovi(uResolved.INSTRUCTIONS)),
-                    }),
-        };
+    protected override RecursiveMetaDefinition<PlayerIdent, Rog> InternalDefinition() =>
+        (_, iPlayer) =>
+            Core.kMulti<Rog>(
+            new()
+            {
+                iPlayer.kRef()
+                    .kDoUnitEffectCycle(),
+                iPlayer.kRef()
+                    .kSafeUpdate(
+                    iPlayerData =>
+                        iPlayerData.kRef()
+                            .kWithRefreshedEnergy()
+                            .kWithRestockedHand()),
+                iPlayer.kRef()
+                    .kAllowPlay()
+                    .kMap(iAction => iAction.kRef().kGetRovi(uResolved.INSTRUCTIONS)),
+            });
 }

@@ -4,6 +4,7 @@ using Rovetus.Identifier;
 using Core = Core.Syntax.Core;
 using u = Rovetus;
 using u.Constructs.Ability;
+using Korvessas.HexCoordinates;
 using u.Constructs;
 using HexOffset = IRoveggi<u.Constructs.uHexOffset>;
 using HexIdentifier = IRoveggi<u.Identifier.uHexIdentifier>;
@@ -13,13 +14,13 @@ using HexPosition = IRoveggi<u.Identifier.uHexIdentifier>;
 partial class KorssaSyntax
 {
     public static Korssas.LineIntersections kLineIntersectionsTo(this IKorssa<HexCoords> from, IKorssa<HexCoords> to) => new(from, to);
-    public static Korvessa<HexCoords, HexCoords, HexOffset> kAdd(this IKorssa<HexCoords> a, IKorssa<HexCoords> b) => Korvessas.HexCoordinates.Add.Construct(a, b);
-    public static Korvessa<HexCoords, HexCoords, HexOffset> kSubtract(this IKorssa<HexCoords> a, IKorssa<HexCoords> b) => Korvessas.HexCoordinates.Subtract.Construct(a, b);
-    public static Korvessa<HexCoords, HexOffset> kAsOffset(this IKorssa<HexCoords> coords) => Korvessas.HexCoordinates.AsOffset.Construct(coords);
-    public static Korvessa<HexCoords, HexIdentifier> kAsAbsolute(this IKorssa<HexCoords> coords) => Korvessas.HexCoordinates.AsAbsolute.Construct(coords);
-    public static Korvessa<IMulti<HexOffset>, IRoveggi<uUnitIdentifier>, Multi<HexIdentifier>> kAffixToUnit(this IKorssa<IMulti<HexOffset>> hitArea, IKorssa<IRoveggi<uUnitIdentifier>> unit) => Korvessas.HexCoordinates.AffixHitArea.Construct(hitArea, unit);
-    public static Korvessa<HexCoords, HexCoords, Number, HexOffset> kRotateAround(this IKorssa<HexCoords> coords, IKorssa<HexCoords> anchor, IKorssa<Number> rotation) => Korvessas.HexCoordinates.RotateAround.Construct(coords, anchor, rotation);
-    public static Korvessa<HexCoords, Multi<HexOffset>> kAdjacent(this IKorssa<HexCoords> hex) => Korvessas.HexCoordinates.GetAdjacent.Construct(hex);
+    public static Add kAdd(this IKorssa<HexCoords> a, IKorssa<HexCoords> b) => new(a, b);
+    public static Subtract kSubtract(this IKorssa<HexCoords> a, IKorssa<HexCoords> b) => new(a, b);
+    public static AsOffset kAsOffset(this IKorssa<HexCoords> coords) => new(coords);
+    public static AsAbsolute kAsAbsolute(this IKorssa<HexCoords> coords) => new(coords);
+    public static AffixHitArea kAffixToUnit(this IKorssa<IMulti<HexOffset>> hitArea, IKorssa<IRoveggi<uUnitIdentifier>> unit) => new(hitArea, unit);
+    public static RotateAround kRotateAround(this IKorssa<HexCoords> coords, IKorssa<HexCoords> anchor, IKorssa<Number> rotation) => new(coords, anchor, rotation);
+    public static GetAdjacent kAdjacent(this IKorssa<HexCoords> hex) => new(hex);
 
     public static FourZeroOne.Core.Korssas.Fixed<HexOffset> kAsHex(this (int, int, int) coordinates) =>
         new(

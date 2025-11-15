@@ -24,6 +24,7 @@ public static class TipleExtensions
 {
     public static Tiple<Ta, Tb> Concrete<Ta, Tb>(this ITiple<Ta, Tb> tup) => tup is Tiple<Ta, Tb> o ? o : new(tup.A, tup.B);
     public static ITiple<Ta, Tb> Tiple<Ta, Tb>(this ITiple<Ta, Tb> tiple) => tiple;
+    public static ITiple<Tb, Ta> Swapped<Ta, Tb>(this ITiple<Ta, Tb> tiple) => new Tiple<Tb, Ta>(tiple.B, tiple.A);
     public static ITiple<Ta, Tb> Tiple<Ta, Tb>(this ValueTuple<Ta, Tb> tup) => new Tiple<Ta, Tb>(tup.Item1, tup.Item2);
     public static IEnumerable<ITiple<Ta, Tb>> Tipled<Ta, Tb>(this IEnumerable<Tiple<Ta, Tb>> tiples) => tiples.Map(x => (ITiple<Ta, Tb>)x);
     public static IEnumerable<ITiple<Ta, Tb>> Tipled<Ta, Tb>(this IEnumerable<ITiple<Ta, Tb>> tiples) => tiples;

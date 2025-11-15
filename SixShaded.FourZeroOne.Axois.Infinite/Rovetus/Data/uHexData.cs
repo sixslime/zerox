@@ -4,5 +4,5 @@ using Identifier;
 
 public interface uHexData : IConcreteRovetu
 {
-    public static readonly Rovu<uHexData, IRoveggi<Constructs.HexTypes.uHexType>> TYPE = new(Axoi.Du, "type");
+    public static readonly Rovu<uHexData, IRoveggi<Constructs.HexTypes.uHexType>> TYPE = new("type");
 }

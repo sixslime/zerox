@@ -12,21 +12,21 @@ public static partial class Core
 
 public static partial class KorssaSyntax
 {
-    public static Korvessa<R, MetaFunction<R>, R> kCatchNolla<R>(this IKorssa<R> value, IKorssa<MetaFunction<R>> fallback)
+    public static Korvessas.CatchNolla<R> kCatchNolla<R>(this IKorssa<R> value, IKorssa<MetaFunction<R>> fallback)
         where R : class, Rog =>
-        Korvessas.CatchNolla<R>.Construct(value, fallback);
+        new(value, fallback);
 
-    public static Korvessa<R, MetaFunction<R>, R> kCatchNolla<R>(this IKorssa<R> value, MetaDefinition<R> fallback)
+    public static Korvessas.CatchNolla<R> kCatchNolla<R>(this IKorssa<R> value, MetaDefinition<R> fallback)
         where R : class, Rog =>
-        Korvessas.CatchNolla<R>.Construct(value, fallback().kMetaBoxed([]));
+        new(value, fallback().kMetaBoxed([]));
 
     public static Korssas.Exists kExists(this Kor korssa) => new(korssa);
 
-    public static Korvessa<Rog, MetaFunction<R>, R> kKeepNolla<R>(this Kor potentialNolla, MetaDefinition<R> value)
+    public static Korvessas.KeepNolla<R> kKeepNolla<R>(this Kor potentialNolla, MetaDefinition<R> value)
         where R : class, Rog =>
-        Korvessas.KeepNolla<R>.Construct(potentialNolla, Core.kMetaFunction([], value));
+        new(potentialNolla, Core.kMetaFunction([], value));
 
-    public static Korvessa<Rog, MetaFunction<R>, R> kKeepNolla<R>(this Kor potentialNolla, IKorssa<MetaFunction<R>> value)
+    public static Korvessas.KeepNolla<R> kKeepNolla<R>(this Kor potentialNolla, IKorssa<MetaFunction<R>> value)
         where R : class, Rog =>
-        Korvessas.KeepNolla<R>.Construct(potentialNolla, value);
+        new(potentialNolla, value);
 }

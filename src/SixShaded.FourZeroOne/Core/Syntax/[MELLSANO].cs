@@ -90,40 +90,6 @@ public static class MellsanoMatcherSyntax
         where TMatch : Kor =>
         new();
 
-    public static KorvessaUllasem<RVal> mIsKorvessa<RVal>(this Structure.Mellsano.MatcherBuilder<RVal> _, Axodu axoiSource, string identifier)
-        where RVal : class, Rog =>
-        new()
-        {
-            Dusem = new(axoiSource, identifier),
-        };
-
-    public static KorvessaUllasem<RArg1, ROut> mIsKorvessa<RArg1, ROut>(this Structure.Mellsano.MatcherBuilder<RArg1, ROut> _, Axodu axoiSource, string identifier)
-        where RArg1 : class, Rog
-        where ROut : class, Rog =>
-        new()
-        {
-            Dusem = new(axoiSource, identifier),
-        };
-
-    public static KorvessaUllasem<RArg1, RArg2, ROut> mIsKorvessa<RArg1, RArg2, ROut>(this Structure.Mellsano.MatcherBuilder<RArg1, RArg2, ROut> _, Axodu axoiSource, string identifier)
-        where RArg1 : class, Rog
-        where RArg2 : class, Rog
-        where ROut : class, Rog =>
-        new()
-        {
-            Dusem = new(axoiSource, identifier),
-        };
-
-    public static KorvessaUllasem<RArg1, RArg2, RArg3, ROut> mIsKorvessa<RArg1, RArg2, RArg3, ROut>(this Structure.Mellsano.MatcherBuilder<RArg1, RArg2, RArg3, ROut> _, Axodu axoiSource, string identifier)
-        where RArg1 : class, Rog
-        where RArg2 : class, Rog
-        where RArg3 : class, Rog
-        where ROut : class, Rog =>
-        new()
-        {
-            Dusem = new(axoiSource, identifier),
-        };
-
     public static AnyUllasem<IHasNoArgs<RVal>> mAny<RVal>(this Structure.Mellsano.MatcherBuilder<RVal> _, List<IUllasem<IHasNoArgs<RVal>>> entries)
         where RVal : class, Rog =>
         new()

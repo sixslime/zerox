@@ -1,10 +1,10 @@
 ﻿namespace SixShaded.FourZeroOne.Core.Korssas.Memory;
 
-public sealed record Reference<R>(IRoda<R> address) : Korssa.Defined.Value<R>
+public sealed record Reference<R>() : Korssa.Defined.Value<R>
     where R : class, Rog
 {
-    public readonly IRoda<R> Address = address;
+    public required IRoda<R> Roda { get; init; }
 
-    protected override ITask<IOption<R>> Evaluate(IKorssaContext runtime) => runtime.CurrentMemory.GetObject(Address).ToCompletedITask();
-    protected override IOption<string> CustomToString() => $"&{Address}".AsSome();
+    protected override ITask<IOption<R>> Evaluate(IKorssaContext runtime) => runtime.CurrentMemory.GetObject(Roda).ToCompletedITask();
+    protected override IOption<string> CustomToString() => $"&{Roda}".AsSome();
 }

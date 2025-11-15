@@ -3,7 +3,7 @@
 public sealed record Fixed<R> : Korssa.Defined.PureValue<R>
     where R : class, Rog
 {
-    public readonly R Roggi;
+    public R Roggi { get; }
 
     public Fixed(R roggi)
     {

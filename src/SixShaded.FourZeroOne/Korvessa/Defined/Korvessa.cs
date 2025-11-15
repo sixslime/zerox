@@ -3,98 +3,109 @@ namespace SixShaded.FourZeroOne.Korvessa.Defined;
 using Core.Roggis;
 using Core.Korssas;
 using Core.Syntax;
+using Roggi.Unsafe;
 
-public record Korvessa<RVal> : Korssa.Defined.StateImplementedKorssa<RVal>, IKorvessaSignature<RVal>
+public abstract record Korvessa<RVal> : KorvessaBehavior<RVal>
     where RVal : class, Rog
 {
-    public required RecursiveMetaDefinition<RVal> Definition
-    {
-        init =>
-            ConcreteDefinition =
-                new DefineMetaFunction<RVal>(value)
-                {
-                    Captures = [],
-                }.ConstructConcreteMetaFunction(KorvessaDummyMemory.INSTANCE);
-    }
+    protected abstract RecursiveMetaDefinition<RVal> InternalDefinition();
 
-    public MetaFunction<RVal> ConcreteDefinition { get; private init; } = null!;
-    protected override IOption<FZOSpec.EStateImplemented> MakeData(IKorssaContext _) => ConcreteDefinition.ConstructMetaExecute().AsSome();
-    protected override IOption<string> CustomToString() => $"{Du.Axodu.Name}.{Du.Identifier}()".AsSome();
-    public required Korvedu Du { get; init; }
-    public object[] CustomData { get; init; } = [];
+    private static MetaFunction<RVal> MakeConcreteDefinition(RecursiveMetaDefinition<RVal> definition) =>
+        new DefineMetaFunction<RVal>(definition)
+        {
+            Captures = []
+        }.ConstructConcreteMetaFunction(KorvessaDummyMemory.INSTANCE);
+
+    private MetaFunction<RVal>? _defCache = null;
+
+    public MetaFunction<RVal> Definition
+    {
+        get { _defCache ??= MakeConcreteDefinition(InternalDefinition());
+            return _defCache;
+        }
+    }
+    public override IMetaFunction<RVal> DefinitionUnsafe => Definition;
+
 }
 
-public record Korvessa<RArg1, ROut> : Korssa.Defined.StateImplementedKorssa<RArg1, ROut>, IKorvessaSignature<RArg1, ROut>
+public abstract record Korvessa<RArg1, ROut>(IKorssa<RArg1> in1) : KorvessaBehavior<ROut>(in1)
     where RArg1 : class, Rog
     where ROut : class, Rog
 {
-    public Korvessa(IKorssa<RArg1> in1) : base(in1)
-    { }
+    protected abstract RecursiveMetaDefinition<RArg1, ROut> InternalDefinition();
 
-    public required RecursiveMetaDefinition<RArg1, ROut> Definition
+    private static MetaFunction<RArg1, ROut> MakeConcreteDefinition(RecursiveMetaDefinition<RArg1, ROut> definition) =>
+        new DefineMetaFunction<RArg1, ROut>(definition)
+        {
+            Captures = []
+        }.ConstructConcreteMetaFunction(KorvessaDummyMemory.INSTANCE);
+
+    private MetaFunction<RArg1, ROut>? _defCache = null;
+
+    public MetaFunction<RArg1, ROut> Definition
     {
-        init =>
-            ConcreteDefinition =
-                new DefineMetaFunction<RArg1, ROut>(value)
-                {
-                    Captures = [],
-                }.ConstructConcreteMetaFunction(KorvessaDummyMemory.INSTANCE);
+        get
+        {
+            _defCache ??= MakeConcreteDefinition(InternalDefinition());
+            return _defCache;
+        }
     }
+    public override IMetaFunction<ROut> DefinitionUnsafe => Definition;
 
-    public MetaFunction<RArg1, ROut> ConcreteDefinition { get; private init; } = null!;
-    protected override IOption<FZOSpec.EStateImplemented> MakeData(IKorssaContext _, IOption<RArg1> in1) => ConcreteDefinition.ConstructMetaExecute(in1).AsSome();
-    protected override IOption<string> CustomToString() => $"{Du.Axodu.Name}.{Du.Identifier}({Arg1})".AsSome();
-    public required Korvedu Du { get; init; }
-    public object[] CustomData { get; init; } = [];
 }
 
-public record Korvessa<RArg1, RArg2, ROut> : Korssa.Defined.StateImplementedKorssa<RArg1, RArg2, ROut>, IKorvessaSignature<RArg1, RArg2, ROut>
+public abstract record Korvessa<RArg1, RArg2, ROut>(IKorssa<RArg1> in1, IKorssa<RArg2> in2) : KorvessaBehavior<ROut>(in1, in2)
     where RArg1 : class, Rog
     where RArg2 : class, Rog
     where ROut : class, Rog
 {
-    public Korvessa(IKorssa<RArg1> in1, IKorssa<RArg2> in2) : base(in1, in2)
-    { }
+    protected abstract RecursiveMetaDefinition<RArg1, RArg2, ROut> InternalDefinition();
 
-    public required RecursiveMetaDefinition<RArg1, RArg2, ROut> Definition
+    private static MetaFunction<RArg1, RArg2, ROut> MakeConcreteDefinition(RecursiveMetaDefinition<RArg1, RArg2, ROut> definition) =>
+        new DefineMetaFunction<RArg1, RArg2, ROut>(definition)
+        {
+            Captures = []
+        }.ConstructConcreteMetaFunction(KorvessaDummyMemory.INSTANCE);
+
+    private MetaFunction<RArg1, RArg2, ROut>? _defCache = null;
+
+    public MetaFunction<RArg1, RArg2, ROut> Definition
     {
-        init =>
-            ConcreteDefinition =
-                new DefineMetaFunction<RArg1, RArg2, ROut>(value)
-                {
-                    Captures = [],
-                }.ConstructConcreteMetaFunction(KorvessaDummyMemory.INSTANCE);
+        get
+        {
+            _defCache ??= MakeConcreteDefinition(InternalDefinition());
+            return _defCache;
+        }
     }
+    public override IMetaFunction<ROut> DefinitionUnsafe => Definition;
 
-    public MetaFunction<RArg1, RArg2, ROut> ConcreteDefinition { get; private init; } = null!;
-    protected override IOption<FZOSpec.EStateImplemented> MakeData(IKorssaContext _, IOption<RArg1> in1, IOption<RArg2> in2) => ConcreteDefinition.ConstructMetaExecute(in1, in2).AsSome();
-    protected override IOption<string> CustomToString() => $"{Du.Axodu.Name}.{Du.Identifier}({Arg1}, {Arg2})".AsSome();
-    public required Korvedu Du { get; init; }
-    public object[] CustomData { get; init; } = [];
 }
 
-public record Korvessa<RArg1, RArg2, RArg3, ROut> : Korssa.Defined.StateImplementedKorssa<RArg1, RArg2, RArg3, ROut>, IKorvessaSignature<RArg1, RArg2, RArg3, ROut>
+
+public abstract record Korvessa<RArg1, RArg2, RArg3, ROut>(IKorssa<RArg1> in1, IKorssa<RArg2> in2, IKorssa<RArg3> in3) : KorvessaBehavior<ROut>(in1, in2, in3)
     where RArg1 : class, Rog
     where RArg2 : class, Rog
     where RArg3 : class, Rog
     where ROut : class, Rog
 {
-    public Korvessa(IKorssa<RArg1> in1, IKorssa<RArg2> in2, IKorssa<RArg3> in3) : base(in1, in2, in3)
-    { }
+    protected abstract RecursiveMetaDefinition<RArg1, RArg2, RArg3, ROut> InternalDefinition();
 
-    public required RecursiveMetaDefinition<RArg1, RArg2, RArg3, ROut> Definition
+    private static MetaFunction<RArg1, RArg2, RArg3, ROut> MakeConcreteDefinition(RecursiveMetaDefinition<RArg1, RArg2, RArg3, ROut> definition) =>
+        new DefineMetaFunction<RArg1, RArg2, RArg3, ROut>(definition)
+        {
+            Captures = []
+        }.ConstructConcreteMetaFunction(KorvessaDummyMemory.INSTANCE);
+
+    private MetaFunction<RArg1, RArg2, RArg3, ROut>? _defCache = null;
+
+    public MetaFunction<RArg1, RArg2, RArg3, ROut> Definition
     {
-        init =>
-            ConcreteDefinition =
-                new DefineMetaFunction<RArg1, RArg2, RArg3, ROut>(value)
-                {
-                    Captures = [],
-                }.ConstructConcreteMetaFunction(KorvessaDummyMemory.INSTANCE);
+        get
+        {
+            _defCache ??= MakeConcreteDefinition(InternalDefinition());
+            return _defCache;
+        }
     }
+    public override IMetaFunction<ROut> DefinitionUnsafe => Definition;
 
-    public MetaFunction<RArg1, RArg2, RArg3, ROut> ConcreteDefinition { get; private init; } = null!;
-    protected override IOption<FZOSpec.EStateImplemented> MakeData(IKorssaContext _, IOption<RArg1> in1, IOption<RArg2> in2, IOption<RArg3> in3) => ConcreteDefinition.ConstructMetaExecute(in1, in2, in3).AsSome();
-    protected override IOption<string> CustomToString() => $"{Du.Axodu.Name}.{Du.Identifier}({Arg1}, {Arg2}, {Arg3})".AsSome();
-    public required Korvedu Du { get; init; }
-    public object[] CustomData { get; init; } = [];
 }

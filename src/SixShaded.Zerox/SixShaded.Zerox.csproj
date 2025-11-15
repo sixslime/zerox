@@ -16,11 +16,14 @@
     <ProjectReference Include="..\..\lib\SixShaded.SixLib.ICEE.FZO\SixShaded.SixLib.ICEE.FZO.csproj" />
     <ProjectReference Include="..\..\lib\SixShaded.SixLib.ICEE\SixShaded.SixLib.ICEE.csproj" />
     <ProjectReference Include="..\..\SixShaded.FourZeroOne.Axois.Infinite\SixShaded.FourZeroOne.Axois.Infinite.csproj" />
+    <ProjectReference Include="..\SixShaded.Aleph\SixShaded.Aleph.csproj" />
     <ProjectReference Include="..\SixShaded.CatGlance\SixShaded.CatGlance.csproj" />
+    <ProjectReference Include="..\SixShaded.CoreTypeMatcher\SixShaded.CoreTypeMatcher.csproj" />
     <ProjectReference Include="..\SixShaded.DeTesAssertIntegrity\SixShaded.DeTesAssertIntegrity.csproj" />
     <ProjectReference Include="..\SixShaded.DeTes\SixShaded.DeTes.csproj" />
     <ProjectReference Include="..\SixShaded.FourZeroOne.Plugins.Axiom\SixShaded.FourZeroOne.Plugins.Axiom.csproj" />
     <ProjectReference Include="..\SixShaded.FourZeroOne\SixShaded.FourZeroOne.csproj" />
+    <ProjectReference Include="..\SixShaded.FZOTypeMatch\SixShaded.FZOTypeMatch.csproj" />
     <ProjectReference Include="..\SixShaded.MinimaFZO\SixShaded.MinimaFZO.csproj" />
     <ProjectReference Include="..\SixShaded.NotRust\SixShaded.NotRust.csproj" />
   </ItemGroup>

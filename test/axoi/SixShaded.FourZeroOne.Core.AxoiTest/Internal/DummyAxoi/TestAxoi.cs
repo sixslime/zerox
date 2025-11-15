@@ -6,14 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-internal class TestAxoi : IsAxoi
+internal class TestAxoi(Master.AxoiCreationKey key) : IsAxoi(key)
 {
-    private TestAxoi()
-    { }
-
-    public static Axodu Du =>
-        new()
-        {
-            Name = "coretest",
-        };
+    public override string Name => "test";
 }

@@ -13,90 +13,85 @@ using Core = Core.Syntax.Core;
 using Infinite = Syntax.Infinite;
 using u.Constructs.GameResults;
 
-public static class GameResultCheck
+public record GameResultCheck() : Korvessa<IRoveggi<uGameResult>>()
 {
-    public static Korvessa<IRoveggi<uGameResult>> Construct() =>
-        new()
-        {
-            Du = Axoi.Korvedu("GameResultCheck"),
-            Definition =
-                _ =>
-                    Core.kSelector<IRoveggi<uGameResult>>(
+    protected override RecursiveMetaDefinition<IRoveggi<uGameResult>> InternalDefinition() =>
+        _ =>
+            Core.kSelector<IRoveggi<uGameResult>>(
+                new()
+                {
+                    () =>
+                        Core.kSubEnvironment<IRoveggi<uGameResult>>(
                         new()
                         {
-                            () =>
-                                Core.kSubEnvironment<IRoveggi<uGameResult>>(
-                                new()
-                                {
-                                    Environment =
-                                    [
-                                        Infinite.AllPlayers
-                                            .kAccumulateInto(
-                                            Core.kCompose<uWinConditionMet>(),
-                                            (iObj, iPlayer) =>
-                                                Core.kSubEnvironment<IRoveggi<uWinConditionMet>>(
-                                                new()
-                                                {
-                                                    Environment =
-                                                    [
-                                                        iPlayer.kRef()
-                                                            .kWinChecks()
-                                                            .kAsVariable(out var iWinChecks),
-                                                    ],
-                                                    Value =
-                                                        iWinChecks.kRef()
-                                                            .kGetRovi(uCheckable.PASSED)
-                                                            .kIfTrue<IRoveggi<uWinConditionMet>>(
-                                                            new()
-                                                            {
-                                                                Then =
-                                                                    iObj.kRef()
-                                                                        .kWithVarovi(uWinConditionMet.PLAYERS, iPlayer.kRef(), iWinChecks.kRef()),
-                                                                Else =
-                                                                    iObj.kRef(),
-                                                            }),
-                                                }))
-                                            .kAsVariable(out var iWinType),
-                                    ],
-                                    Value =
-                                        iWinType.kRef()
-                                            .kGetVarovaKeys(uWinConditionMet.PLAYERS)
-                                            .kCount()
-                                            .kIsGreaterThan(0.kFixed())
-                                            .kIfTrue<IRoveggi<uGameResult>>(
-                                            new()
-                                            {
-                                                Then = iWinType.kRef(),
-                                                Else = Core.kNollaFor<IRoveggi<uGameResult>>(),
-                                            }),
-                                }),
-                            () =>
-                                Infinite.Game
-                                    .kRead()
-                                    .kGetRovi(uGame.DEAD_ROTATIONS)
-                                    .kIsGreaterThan(10.kFixed())
+                            Environment =
+                            [
+                                Infinite.AllPlayers
+                                    .kAccumulateInto(
+                                    Core.kCompose<uWinConditionMet>(),
+                                    (iObj, iPlayer) =>
+                                        Core.kSubEnvironment<IRoveggi<uWinConditionMet>>(
+                                        new()
+                                        {
+                                            Environment =
+                                            [
+                                                iPlayer.kRef()
+                                                    .kWinChecks()
+                                                    .kAsVariable(out var iWinChecks),
+                                            ],
+                                            Value =
+                                                iWinChecks.kRef()
+                                                    .kGetRovi(uCheckable.PASSED)
+                                                    .kIfTrue<IRoveggi<uWinConditionMet>>(
+                                                    new()
+                                                    {
+                                                        Then =
+                                                            iObj.kRef()
+                                                                .kWithVarovi(uWinConditionMet.PLAYERS, iPlayer.kRef(), iWinChecks.kRef()),
+                                                        Else =
+                                                            iObj.kRef(),
+                                                    }),
+                                        }))
+                                    .kAsVariable(out var iWinType),
+                            ],
+                            Value =
+                                iWinType.kRef()
+                                    .kGetVarovaKeys(uWinConditionMet.PLAYERS)
+                                    .kCount()
+                                    .kIsGreaterThan(0.kFixed())
                                     .kIfTrue<IRoveggi<uGameResult>>(
                                     new()
                                     {
-                                        Then =
-                                            Core.kCompose<uNoProgression>(),
-                                        Else =
-                                            Core.kNollaFor<IRoveggi<uGameResult>>(),
+                                        Then = iWinType.kRef(),
+                                        Else = Core.kNollaFor<IRoveggi<uGameResult>>(),
                                     }),
-                            () =>
-                                Infinite.Game
-                                    .kRead()
-                                    .kGetRovi(uGame.ROTATION_COUNT)
-                                    .kIsGreaterThan(80.kFixed())
-                                    .kIfTrue<IRoveggi<uGameResult>>(
-                                    new()
-                                    {
-                                        Then =
-                                            Core.kCompose<uTooLong>(),
-                                        Else =
-                                            Core.kNollaFor<IRoveggi<uGameResult>>(),
-                                    }),
-                        })
-                        .kWithRovi(uGameResult.FINAL_STATE, Core.kGetProgramState()),
-        };
+                        }),
+                    () =>
+                        Infinite.Game
+                            .kRead()
+                            .kGetRovi(uGame.DEAD_ROTATIONS)
+                            .kIsGreaterThan(10.kFixed())
+                            .kIfTrue<IRoveggi<uGameResult>>(
+                            new()
+                            {
+                                Then =
+                                    Core.kCompose<uNoProgression>(),
+                                Else =
+                                    Core.kNollaFor<IRoveggi<uGameResult>>(),
+                            }),
+                    () =>
+                        Infinite.Game
+                            .kRead()
+                            .kGetRovi(uGame.ROTATION_COUNT)
+                            .kIsGreaterThan(80.kFixed())
+                            .kIfTrue<IRoveggi<uGameResult>>(
+                            new()
+                            {
+                                Then =
+                                    Core.kCompose<uTooLong>(),
+                                Else =
+                                    Core.kNollaFor<IRoveggi<uGameResult>>(),
+                            }),
+                })
+                .kWithRovi(uGameResult.FINAL_STATE, Core.kGetProgramState());
 }

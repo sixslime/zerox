@@ -113,7 +113,7 @@ public class MinimaProcessorFZO : IProcessorFZO
             // DEBUG
             //Console.ForegroundColor = ConsoleColor.Red;
             //if (resolvedOperation.CheckOk(out var r)) Console.WriteLine(r);
-            Console.ResetColor();
+            //Console.ResetColor();
             return
                 (resolvedOperation.CheckOk(out var finalRoggi) && !state.OperationStack.GetAt(1).IsSome())
                 .Not()

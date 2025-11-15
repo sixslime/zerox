@@ -8,31 +8,26 @@ using u.Data;
 using Core = Core.Syntax.Core;
 using u.Constructs;
 
-public static class CheckMoveSubject
+public record CheckMoveSubject(IKorssa<IRoveggi<uMove>> move, IKorssa<IRoveggi<uUnitIdentifier>> unit) : Korvessa<IRoveggi<uMove>, IRoveggi<uUnitIdentifier>, IRoveggi<uSubjectChecks>>(move, unit)
 {
-    public static Korvessa<IRoveggi<uMove>, IRoveggi<uUnitIdentifier>, IRoveggi<uSubjectChecks>> Construct(IKorssa<IRoveggi<uMove>> move, IKorssa<IRoveggi<uUnitIdentifier>> unit) =>
-        new(move, unit)
-        {
-            Du = Axoi.Korvedu("CheckMoveSubject"),
-            Definition =
-                (_, iMove, iUnit) =>
-                    Core.kSubEnvironment<IRoveggi<uSubjectChecks>>(
-                    new()
-                    {
-                        Environment =
-                        [
-                            iUnit.kRef()
-                                .kRead()
-                                .kAsVariable(out var iData),
-                        ],
-                        Value =
-                            Core.kCompose<uSubjectChecks>()
-                                .kWithRovi(
-                                uSubjectChecks.EFFECT_CHECK,
-                                iData.kRef()
-                                    .kGetRovi(uUnitData.EFFECTS)
-                                    .kAnyMatch(iEffect => iEffect.kRef().kGetRovi(uUnitEffect.TYPE).kIsType<uImmobileEffect>().kExists())
-                                    .kNot()),
-                    }),
-        };
+    protected override RecursiveMetaDefinition<IRoveggi<uMove>, IRoveggi<uUnitIdentifier>, IRoveggi<uSubjectChecks>> InternalDefinition() =>
+        (_, iMove, iUnit) =>
+            Core.kSubEnvironment<IRoveggi<uSubjectChecks>>(
+            new()
+            {
+                Environment =
+                [
+                    iUnit.kRef()
+                        .kRead()
+                        .kAsVariable(out var iData),
+                ],
+                Value =
+                    Core.kCompose<uSubjectChecks>()
+                        .kWithRovi(
+                        uSubjectChecks.EFFECT_CHECK,
+                        iData.kRef()
+                            .kGetRovi(uUnitData.EFFECTS)
+                            .kAnyMatch(iEffect => iEffect.kRef().kGetRovi(uUnitEffect.TYPE).kIsType<uImmobileEffect>().kExists())
+                            .kNot()),
+            });
 }

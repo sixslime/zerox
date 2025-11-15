@@ -3,13 +3,9 @@
 using Korvessa.Defined;
 using Syntax;
 
-public static class Compose<C>
+public record Compose<C>() : Korvessa<IRoveggi<C>>()
     where C : IConcreteRovetu
 {
-    public static Korvessa<IRoveggi<C>> Construct() =>
-        new()
-        {
-            Du = Axoi.Korvedu("Compose"),
-            Definition = _ => new Korssas.Fixed<IRoveggi<C>>(new Roveggi.Defined.Roveggi<C>()),
-        };
+    protected override RecursiveMetaDefinition<IRoveggi<C>> InternalDefinition() =>
+        _ => new Korssas.Fixed<IRoveggi<C>>(new Roveggi.Defined.Roveggi<C>());
 }

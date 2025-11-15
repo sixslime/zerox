@@ -10,36 +10,31 @@ using u.Data;
 using Infinite = Syntax.Infinite;
 using u.Constructs;
 
-public static class CheckAbilitySource
+public record CheckAbilitySource(IKorssa<IRoveggi<uSourcedAbility>> ability, IKorssa<IRoveggi<uUnitIdentifier>> unit) : Korvessa<IRoveggi<uSourcedAbility>, IRoveggi<uUnitIdentifier>, IRoveggi<uSourceChecks>>(ability, unit)
 {
-    public static Korvessa<IRoveggi<uSourcedAbility>, IRoveggi<uUnitIdentifier>, IRoveggi<uSourceChecks>> Construct(IKorssa<IRoveggi<uSourcedAbility>> ability, IKorssa<IRoveggi<uUnitIdentifier>> unit) =>
-        new(ability, unit)
-        {
-            Du = Axoi.Korvedu("CheckAbilityTarget"),
-            Definition =
-                (_, iAbility, iUnit) =>
-                    Core.kSubEnvironment<IRoveggi<uSourceChecks>>(
-                    new()
-                    {
-                        Environment =
-                        [
-                            iUnit.kRef()
-                                .kRead()
-                                .kAsVariable(out var iData),
-                        ],
-                        Value =
-                            Core.kCompose<uSourceChecks>()
-                                .kWithRovi(
-                                uSourceChecks.CORRECT_TEAM,
-                                iData.kRef()
-                                    .kGetRovi(uUnitData.OWNER)
-                                    .kEquals(Infinite.CurrentPlayer))
-                                .kWithRovi(
-                                uSourceChecks.EFFECT_CHECK,
-                                iData.kRef()
-                                    .kGetRovi(uUnitData.EFFECTS)
-                                    .kAnyMatch(iEffect => iEffect.kRef().kGetRovi(uUnitEffect.TYPE).kIsType<uShockEffect>().kExists())
-                                    .kNot()),
-                    }),
-        };
+    protected override RecursiveMetaDefinition<IRoveggi<uSourcedAbility>, IRoveggi<uUnitIdentifier>, IRoveggi<uSourceChecks>> InternalDefinition() =>
+        (_, iAbility, iUnit) =>
+            Core.kSubEnvironment<IRoveggi<uSourceChecks>>(
+            new()
+            {
+                Environment =
+                [
+                    iUnit.kRef()
+                        .kRead()
+                        .kAsVariable(out var iData),
+                ],
+                Value =
+                    Core.kCompose<uSourceChecks>()
+                        .kWithRovi(
+                        uSourceChecks.CORRECT_TEAM,
+                        iData.kRef()
+                            .kGetRovi(uUnitData.OWNER)
+                            .kEquals(Infinite.CurrentPlayer))
+                        .kWithRovi(
+                        uSourceChecks.EFFECT_CHECK,
+                        iData.kRef()
+                            .kGetRovi(uUnitData.EFFECTS)
+                            .kAnyMatch(iEffect => iEffect.kRef().kGetRovi(uUnitEffect.TYPE).kIsType<uShockEffect>().kExists())
+                            .kNot()),
+            });
 }

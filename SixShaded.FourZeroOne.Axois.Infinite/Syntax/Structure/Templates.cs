@@ -7,9 +7,10 @@ using u.Constructs.Move;
 using Core = Core.Syntax.Core;
 using u.Constructs;
 using u.Constructs.Ability;
+using Korvessas.Template;
 
 public class Templates
 {
-    public IKorssa<IRoveggi<uNumericalMove>> NumericalMove => Korvessas.Template.TemplateNumericalMove.Construct();
-    public IKorssa<IRoveggi<uPositionalMove>> PositionalMove => Korvessas.Template.TemplatePositionalMove.Construct();
+    public TemplateNumericalMove NumericalMove => new();
+    public TemplatePositionalMove PositionalMove => new();
 }

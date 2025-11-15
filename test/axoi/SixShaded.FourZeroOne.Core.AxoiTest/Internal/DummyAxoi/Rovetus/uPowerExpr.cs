@@ -9,6 +9,6 @@ using Core = Syntax.Core;
 
 internal interface uPowerExpr : IConcreteRovetu
 {
-    public static readonly Rovu<uPowerExpr, Number> NUM = new(TestAxoi.Du, "num");
-    public static readonly Rovu<uPowerExpr, Number> POWER = new(TestAxoi.Du, "power");
+    public static readonly Rovu<uPowerExpr, Number> NUM = new("num");
+    public static readonly Rovu<uPowerExpr, Number> POWER = new("power");
 }

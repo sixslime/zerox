@@ -2,5 +2,5 @@
 
 public interface uResolvedAbility : IRovetu, uResolved
 {
-    public static readonly AbstractGetRovu<uResolvedAbility, IRoveggi<Ability.uAbility>> ABILITY = new(Axoi.Du, "ability");
+    public static readonly AbstractGetRovu<uResolvedAbility, IRoveggi<Ability.uAbility>> ABILITY = new("ability");
 }

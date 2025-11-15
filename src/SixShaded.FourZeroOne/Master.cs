@@ -6,11 +6,14 @@ using SetMapping = Dictionary<Roveggi.Unsafe.IAbstractRovu, Roggi.Unsafe.IMetaFu
 
 // TODO
 // temporary name, this is the equavalent of an "Assembly" of 401
+// refactor this bullshit to use IsAxoi objects.
 public class Master
 {
     internal static readonly Master ASSEMBLY = new();
     internal RovenAssemblyData RovenData { get; } = new();
-    internal HashSet<Type> RegisteredAxois { get; } = new();
+    internal Dictionary<Type, IsAxoi> RegisteredAxois { get; } = new();
+
+    public static event EventHandler<RegisterAxoiEventArgs> OnRegisterAxoiEvent;
     static Master()
     {
         RegisterAxoi<Core.Axoi>();
@@ -26,14 +29,26 @@ public class Master
     {
         // TODO
         // - make better exception messages.
-
-        var axoi = typeof(X);
-        if (!ASSEMBLY.RegisteredAxois.Add(axoi)) return;
-
+        // - split into functions
+        var axoiType = typeof(X);
+        var axoi = (IsAxoi)axoiType.GetConstructor([typeof(AxoiCreationKey)])!.Invoke([AxoiCreationKey.KEY]);
+        if (!ASSEMBLY.RegisteredAxois.TryAdd(axoiType, axoi)) return;
         // DEBUG
-        Console.WriteLine($"REGISTERING AXOI: {axoi.Namespace!.Split(".")[^1]}");
+        Console.WriteLine($"REGISTERING AXOI: {axoi.Name}");
+        ValidateRovetus(axoi);
+        
+        // maybe not pass ASSEMBLY?
+        // idk this shit is a mess.
+        OnRegisterAxoiEvent?.Invoke(
+        null, new()
+        {
+            Axoi = axoi
+        });
+    }
 
-        Type[] rovetuTypes = axoi.Assembly.ExportedTypes.Where(x => x.IsAssignableTo(typeof(IRovetu))).ToArray();
+    private static void ValidateRovetus(IsAxoi axoi)
+    {
+        Type[] rovetuTypes = axoi.GetType().Assembly.ExportedTypes.Where(x => x.IsAssignableTo(typeof(IRovetu))).ToArray();
         (Type genericType, int genericIndex)[] validFieldTypes = [(typeof(Roveggi.Defined.Rovu<,>), 0), (typeof(Roveggi.Defined.AbstractGetRovu<,>), 0), (typeof(Roveggi.Defined.AbstractSetRovu<,>), 0), (typeof(Roveggi.Defined.Varovu<,,>), 0)];
         var implementedAbstractRovus = new Dictionary<Type, HashSet<Roveggi.Unsafe.IAbstractRovu>>();
 
@@ -88,10 +103,9 @@ public class Master
                         throw new PleaseFixException($"set mappings in ImplementationContext is not of exact type '{typeof(SetMapping).Name}'");
                     ASSEMBLY.RovenData.GetImplementations[rovetuType] = getMap;
                     ASSEMBLY.RovenData.SetImplementations[rovetuType] = setMap;
-                    implementedAbstractRovus[rovetuType] = [..getMap.Keys, ..setMap.Keys];
+                    implementedAbstractRovus[rovetuType] = [.. getMap.Keys, .. setMap.Keys];
                     continue;
                 }
-
                 // validate rovu type:
                 if (!(fieldType.IsGenericType && validFieldTypes.Any(x => fieldType.GetGenericTypeDefinition() == x.genericType && fieldType.GenericTypeArguments[x.genericIndex] == rovetuType)))
                 {
@@ -123,8 +137,16 @@ public class Master
                 throw new MetaAssemblyException(axoi, $"rovetu '{rovetuType.Name}' implements rovus from rovetus it does not inheret from:\n {string.Join("\n", implementedAbstractRovus[rovetuType])})");
         }
     }
-
-    public class MetaAssemblyException(Type axoi, string message) : Exception($"FourZeroOne Assembly Error\n Axoi: {axoi.Namespace!.Split(".")[^1]}\n{message}");
+    public record RegisterAxoiEventArgs
+    {
+        public required IsAxoi Axoi { get; init; }
+    }
+    public class AxoiCreationKey
+    {
+        internal static readonly AxoiCreationKey KEY = new();
+        private AxoiCreationKey() { }
+    }
+    public class MetaAssemblyException(IsAxoi axoi, string message) : Exception($"FourZeroOne Assembly Error\n Axoi: {axoi.Name}\n{message}");
 
     internal class PleaseFixException(string message) : Exception($"[Master] PLZ FIX: {message}");
 

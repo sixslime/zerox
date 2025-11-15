@@ -8,9 +8,9 @@ public static partial class Core
     public static Korssas.SubEnvironment<R> kSubEnvironment<R>(Structure.Korssa.SubEnvironment<R> block)
         where R : class, Rog =>
         new(block.Environment.kToMulti(), block.Value);
-    public static Korvessa<IMulti<MetaFunction<R>>, R> kSelector<R>(List<Func<IKorssa<R>>> statements)
+    public static Korvessas.Switch<R> kSelector<R>(List<Func<IKorssa<R>>> statements)
         where R : class, Rog =>
-        Korvessas.Switch<R>.Construct(kMulti([..statements.Map(x => x().kMetaBoxed([]))]));
+        new(kMulti([..statements.Map(x => x().kMetaBoxed([]))]));
 }
 
 public static partial class KorssaSyntax

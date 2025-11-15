@@ -2,6 +2,6 @@
 
 public interface uResolvedAction : IConcreteRovetu, uResolved
 {
-    public static readonly Rovu<uResolvedAction, IRoveggi<Identifier.uPlayerIdentifier>> PLAYER = new(Axoi.Du, "player");
-    public static readonly Rovu<uResolvedAction, IRoveggi<uPlayableAction>> ACTION = new(Axoi.Du, "action");
+    public static readonly Rovu<uResolvedAction, IRoveggi<Identifier.uPlayerIdentifier>> PLAYER = new("player");
+    public static readonly Rovu<uResolvedAction, IRoveggi<uPlayableAction>> ACTION = new("action");
 }

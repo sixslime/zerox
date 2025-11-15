@@ -52,7 +52,7 @@ public interface IPMap<K, T> : IHasElements<ITiple<K, T>>, IEntryAddable<ITiple<
 public interface IPSet<T> : IHasElements<T>, IEntryAddable<T>, IEntryRemovable<T>, IIndexReadableInfallible<T, bool>, IMergable<IPSet<T>>, IIntersectable<IPSet<T>>
 { }
 
-public interface IPSequence<T> : IHasElements<T>, IIndexReadable<int, T>, IEntryAddable<ITiple<int, T>>, IEntryAddable<T>, IMergable<IPSequence<T>>, IEntryRemovable<int>
+public interface IPSequence<T> : IHasElements<T>, IIndexReadable<Index, T>, IEntryAddable<ITiple<Index, T>>, IEntryAddable<T>, IMergable<IPSequence<T>>, IEntryRemovable<int>
 {
     public IPSequence<T> _WithInsertionAt(int index, IEnumerable<T> items);
 }
@@ -140,6 +140,9 @@ public static class StructureExtensions
         where K : notnull =>
         new PMap<K, T>().WithEntries(enumerable.Map(x => x.Tiple()));
 
+    public static PMap<K, V> ToPMap<K, V>(this Dictionary<K, V> dict)
+        where K : notnull =>
+        new PMap<K, V>(dict);
     public static PSet<T> ToPSet<T>(this IEnumerable<T> enumerable) => new PSet<T>().WithEntries(enumerable);
     public static PStack<T> ToPStack<T>(this IEnumerable<T> enumerable) => new PStack<T>().WithEntries(enumerable);
     public static PStack<T> NewFromTop<T>(this IPStack<T> stack) => stack.TopValue.Check(out var v) ? new PStack<T>().WithEntries(v) : new();
@@ -282,10 +285,10 @@ public class PSequence<T>() : IPSequence<T>
     public override int GetHashCode() => _list.GetHashCode();
     public int Count => _list.CountAndCache();
     public IEnumerable<T> Elements => _list;
-    public IOption<T> At(int index) => _list.At(index);
+    public IOption<T> At(Index index) => _list.At(index);
     IMergable<IPSequence<T>> IMergable<IPSequence<T>>._MergedWith(IPSequence<T> union) => this.WithEntries(union.Elements);
 
-    IEntryAddable<ITiple<int, T>> IEntryAddable<ITiple<int, T>>._WithEntries(IEnumerable<ITiple<int, T>> entries)
+    IEntryAddable<ITiple<Index, T>> IEntryAddable<ITiple<Index, T>>._WithEntries(IEnumerable<ITiple<Index, T>> entries)
     {
         var nlist = new List<T>(_list);
         foreach (var t in entries) nlist[t.A] = t.B;
@@ -366,7 +369,7 @@ public class PStack<T>() : IPStack<T>
     }
 }
 
-public class CachingEnumerable<T> : IEnumerable<T>, IIndexReadable<int, T>
+public class CachingEnumerable<T> : IEnumerable<T>, IIndexReadable<Index, T>
 {
     private readonly List<T> _list;
     private int _cachedIndex = -1;
@@ -448,15 +451,28 @@ public class CachingEnumerable<T> : IEnumerable<T>, IIndexReadable<int, T>
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public IOption<T> At(int index)
+    public IOption<T> At(Index index)
     {
-        while (_cachedIndex < index && _iter is not null)
+        if (index.IsFromEnd)
+        {
+            CountAndCache();
+            try { return _list[index].AsSome(); }
+            catch
+            {
+                return new None<T>();
+            }
+        }
+        while (_cachedIndex < index.Value && _iter is not null)
         {
             if (!_iter.MoveNext()) return new None<T>();
             _cachedIndex++;
             _list.Add(_iter.Current);
         }
-        return _list[index].AsSome();
+        try
+        {
+            return _list[index].AsSome();
+        }
+        catch { return new None<T>(); }
     }
 }
 

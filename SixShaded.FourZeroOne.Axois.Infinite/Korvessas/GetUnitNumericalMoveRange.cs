@@ -10,40 +10,35 @@ using u.Data;
 using Infinite = Syntax.Infinite;
 using u.Constructs;
 
-public static class GetUnitNumericalMoveRange
+public record GetUnitNumericalMoveRange(IKorssa<IRoveggi<uUnitIdentifier>> unit, IKorssa<NumRange> moveRange) : Korvessa<IRoveggi<uUnitIdentifier>, NumRange, NumRange>(unit, moveRange)
 {
-    public static Korvessa<IRoveggi<uUnitIdentifier>, NumRange, NumRange> Construct(IKorssa<IRoveggi<uUnitIdentifier>> unit, IKorssa<NumRange> moveRange) =>
-        new(unit, moveRange)
-        {
-            Du = Axoi.Korvedu("GetUnitNumericalMoveRange"),
-            Definition =
-                (_, iUnit, iMoveRange) =>
-                    Core.kSubEnvironment<NumRange>(
-                    new()
-                    {
-                        Environment =
-                        [
-                            iUnit.kRef()
-                                .kRead()
-                                .kGetRovi(uUnitData.EFFECTS)
-                                .kAnyMatch(iEffect => iEffect.kRef().kGetRovi(uUnitEffect.TYPE).kIsType<uSlowEffect>().kExists())
-                                .kIfTrue<Number>(
-                                new()
-                                {
-                                    Then = 2.kFixed(),
-                                    Else = 1.kFixed(),
-                                })
-                                .kAsVariable(out var iThisSlowFactor),
-                        ],
-                        Value =
-                            iMoveRange.kRef()
-                                .kStart()
-                                .kAtLeast(0.kFixed())
-                                .kDivide(iThisSlowFactor.kRef())
-                                .kRangeTo(
-                                iMoveRange.kRef()
-                                    .kEnd()
-                                    .kDivide(iThisSlowFactor.kRef())),
-                    }),
-        };
+    protected override RecursiveMetaDefinition<IRoveggi<uUnitIdentifier>, NumRange, NumRange> InternalDefinition() =>
+        (_, iUnit, iMoveRange) =>
+            Core.kSubEnvironment<NumRange>(
+            new()
+            {
+                Environment =
+                [
+                    iUnit.kRef()
+                        .kRead()
+                        .kGetRovi(uUnitData.EFFECTS)
+                        .kAnyMatch(iEffect => iEffect.kRef().kGetRovi(uUnitEffect.TYPE).kIsType<uSlowEffect>().kExists())
+                        .kIfTrue<Number>(
+                        new()
+                        {
+                            Then = 2.kFixed(),
+                            Else = 1.kFixed(),
+                        })
+                        .kAsVariable(out var iThisSlowFactor),
+                ],
+                Value =
+                    iMoveRange.kRef()
+                        .kStart()
+                        .kAtLeast(0.kFixed())
+                        .kDivide(iThisSlowFactor.kRef())
+                        .kRangeTo(
+                        iMoveRange.kRef()
+                            .kEnd()
+                            .kDivide(iThisSlowFactor.kRef())),
+            });
 }

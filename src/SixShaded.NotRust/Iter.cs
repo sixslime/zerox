@@ -20,6 +20,19 @@ public static class Iter
                 yield return some;
     }
 
+    public static IEnumerable<T> SeparateBy<T>(this IEnumerable<T> enumerable, T seperator)
+    {
+        var iter = enumerable.GetEnumerator();
+        if (!iter.MoveNext()) yield break;
+        var t = iter.Current;
+        while (iter.MoveNext())
+        {
+            yield return t;
+            yield return seperator;
+            t = iter.Current;
+        }
+        yield return t;
+    }
     public static IEnumerable<T> Filtered<T>(this IEnumerable<IOption<T>> enumerable)
     {
         foreach (var e in enumerable)
