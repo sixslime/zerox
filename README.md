@@ -7,9 +7,9 @@ Project Zerox is a loose designation for the following:
 * A minimal/default **implementation** of a *FourZeroOne* runtime. **[MinimaFZO](/src/SixShaded.MinimaFZO)**
 * A **testing framework** for programs written in *FourZeroOne*. **[DeTes](/src/SixShaded.DeTes)**
 * An implementation of **[401 Infinite](https://github.com/rtaylor034/401-infinite-paper)** written in *FourZeroOne*. **[Infinite](/SixShaded.FourZeroOne.Axois.Infinite)**
-* A **server** program that runs the above implementation of **[401 Infinite](https://github.com/rtaylor034/401-infinite-paper)** (acting as the backend). ***TBD***
+* A **server** program that runs said implementation of *401 Infinite*. ***TBD***
 * A **protocol/API** for client programs to interact with said server program. ***TBD***
-* A minimal/default **client** program that interacts with said server (acting as the frontend) through said protocol/API. ***TBD***
+* A minimal/default **client** program that interacts with said server through said protocol/API. ***TBD***
 
 Completion of all of these components should result in a fully playable digital version of **[401 Infinite](https://github.com/rtaylor034/401-infinite-paper)**.
 
