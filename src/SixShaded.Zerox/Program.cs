@@ -64,20 +64,6 @@ internal class Program
     private static void Init()
     {
         Master.RegisterAxoi<FourZeroOne.Axois.Infinite.Axoi>();
-        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-        foreach (var assembly in assemblies)
-        {
-            if (!assembly.FullName!.StartsWith("SixShaded.FourZeroOne.Axois")) continue;
-            Console.WriteLine($"=== {assembly.FullName} ===");
-            foreach (var type in assembly.GetExportedTypes())
-            {
-                Console.WriteLine(type.Name);
-                foreach (var field in type.GetFields())
-                {
-                    Console.WriteLine($" - {field.Name}");
-                }
-            }
-        }
     }
     private static void Log(object obj)
     {
